@@ -13,23 +13,23 @@ An agent is **learning** if it improves its performance on future tasks after ma
 
 about the world. Learning can range from the trivial, as exhibited by jotting down a phone number, to the profound, as exhibited by Albert Einstein, who inferred a new theory of the universe. In this chapter we will concentrate on one class of learning problem, which seems restricted but actually has vast applicability: from a collection of input–output pairs, learn a function that predicts the output for new inputs.
 
-Why would we want an agent to learn? If the design of the agent can be improved, why wouldn’t the designers just program in that improvement to begin with? There are three main reasons. First, the designers cannot anticipate all possible situations that the agent might find itself in. For example, a robot designed to navigate mazes must learn the layout of each new maze it encounters. Second, the designers cannot anticipate all changes over time; a program designed to predict tomorrow’s stock market prices must learn to adapt when conditions change from boom to bust. Third, sometimes human programmers have no idea how to program a solution themselves. For example, most people are good at recognizing the faces of family members, but even the best programmers are unable to program a computer to accomplish that task, except by using learning algorithms. This chapter first gives an overview of the various forms of learning, then describes one popular approach, decision- tree learning, in Section 18.3, followed by a theoretical analysis of learning in Sections 18.4 and 18.5. We look at various learning systems used in practice: linear models, nonlinear models (in particular, neural networks), nonparametric models, and support vector machines. Finally we show how ensembles of models can outperform a single model.
+Why would we want an agent to learn? If the design of the agent can be improved, why wouldn’t the designers just program in that improvement to begin with? There are three main reasons. First, the designers cannot anticipate all possible situations that the agent might find itself in. For example, a robot designed to navigate mazes must learn the layout of each new maze it encounters. Second, the designers cannot anticipate all changes over time; a program designed to predict tomorrow’s stock market prices must learn to adapt when conditions change from boom to bust. Third, sometimes human programmers have no idea how to program a solution themselves. For example, most people are good at recognizing the faces of family members, but even the best programmers are unable to program a computer to accomplish that task, except by using learning algorithms. This chapter first gives an overview of the various forms of learning, then describes one popular approach, decisiontree learning, in Section 18.3, followed by a theoretical analysis of learning in Sections 18.4 and 18.5. We look at various learning systems used in practice: linear models, nonlinear models (in particular, neural networks), nonparametric models, and support vector machines. Finally we show how ensembles of models can outperform a single model.
 
 18.1 FORMS OF LEARNING
 
 Any component of an agent can be improved by learning from data. The improvements, and the techniques used to make them, depend on four major factors:
 
-• Which _component_ is to be improved.
+- Which _component_ is to be improved.
 
 693  
 
-694 Chapter 18. Learning from Examples
 
-• What _prior knowledge_ the agent already has.
 
-• What _representation_ is used for the data and the component.
+- What _prior knowledge_ the agent already has.
 
-• What _feedback_ is available to learn from.
+- What _representation_ is used for the data and the component.
+
+- What _feedback_ is available to learn from.
 
 **Components to be learned**
 
@@ -51,9 +51,9 @@ Each of these components can be learned. Consider, for example, an agent trainin
 
 **Representation and prior knowledge**
 
-We have seen several examples of representations for agent components: propositional and first-order logical sentences for the components in a logical agent; Bayesian networks for the inferential components of a decision-theoretic agent, and so on. Effective learning algo- rithms have been devised for all of these representations. This chapter (and most of current machine learning research) covers inputs that form a **factored representation**—a vector of attribute values—and outputs that can be either a continuous numerical value or a discrete value. Chapter 19 covers functions and prior knowledge composed of first-order logic sen- tences, and Chapter 20 concentrates on Bayesian networks.
+We have seen several examples of representations for agent components: propositional and first-order logical sentences for the components in a logical agent; Bayesian networks for the inferential components of a decision-theoretic agent, and so on. Effective learning algorithms have been devised for all of these representations. This chapter (and most of current machine learning research) covers inputs that form a **factored representation**—a vector of attribute values—and outputs that can be either a continuous numerical value or a discrete value. Chapter 19 covers functions and prior knowledge composed of first-order logic sentences, and Chapter 20 concentrates on Bayesian networks.
 
-There is another way to look at the various types of learning. We say that learning a (possibly incorrect) general function or rule from specific input–output pairs is called **in- ductive learning**. We will see in Chapter 19 that we can also do **analytical** or **deductive**INDUCTIVE
+There is another way to look at the various types of learning. We say that learning a (possibly incorrect) general function or rule from specific input–output pairs is called **inductive learning**. We will see in Chapter 19 that we can also do **analytical** or **deductive**INDUCTIVE
 
 LEARNING
 
@@ -83,7 +83,7 @@ a function that maps from input to output. In component 1 above, the inputs are 
 
 In practice, these distinction are not always so crisp. In **semi-supervised learning** weSEMI-SUPERVISED LEARNING
 
-are given a few labeled examples and must make what we can of a large collection of un- labeled examples. Even the labels themselves may not be the oracular truths that we hope for. Imagine that you are trying to build a system to guess a person’s age from a photo. You gather some labeled examples by snapping pictures of people and asking their age. That’s supervised learning. But in reality some of the people lied about their age. It’s not just that there is random noise in the data; rather the inaccuracies are systematic, and to uncover them is an unsupervised learning problem involving images, self-reported ages, and true (un- known) ages. Thus, both noise and lack of labels create a continuum between supervised and unsupervised learning.
+are given a few labeled examples and must make what we can of a large collection of unlabeled examples. Even the labels themselves may not be the oracular truths that we hope for. Imagine that you are trying to build a system to guess a person’s age from a photo. You gather some labeled examples by snapping pictures of people and asking their age. That’s supervised learning. But in reality some of the people lied about their age. It’s not just that there is random noise in the data; rather the inaccuracies are systematic, and to uncover them is an unsupervised learning problem involving images, self-reported ages, and true (unknown) ages. Thus, both noise and lack of labels create a continuum between supervised and unsupervised learning.
 
 18.2 SUPERVISED LEARNING
 
@@ -101,13 +101,13 @@ Learning is a search through the space of possible hypotheses for one that will 
 
 1 A note on notation: except where noted, we will use j to index the N examples; xj will always be the input and yj the output. In cases where the input is specifically a vector of attribute values (beginning with Section 18.3), we will use **x**j for the jth example and we will use i to index the n attributes of each example. The elements of **x**j are written xj,1, xj,2, . . . , xj,n.  
 
-696 Chapter 18. Learning from Examples
+
 
 (c)(a) (b) (d) _x x x x_
 
 _f_(_x_) _f_(_x_) _f_(_x_) _f_(_x_)
 
-**Figure 18.1** (a) Example (x, f(x)) pairs and a consistent, linear hypothesis. (b) A con- sistent, degree-7 polynomial hypothesis for the same data set. (c) A different data set, which admits an exact degree-6 polynomial fit or an approximate linear fit. (d) A simple, exact sinusoidal fit to the same data set.
+**Figure 18.1** (a) Example (x, f(x)) pairs and a consistent, linear hypothesis. (b) A consistent, degree-7 polynomial hypothesis for the same data set. (c) A different data set, which admits an exact degree-6 polynomial fit or an approximate linear fit. (d) A simple, exact sinusoidal fit to the same data set.
 
 **generalizes** well if it correctly predicts the value of y for novel examples. Sometimes theGENERALIZATION
 
@@ -167,7 +167,7 @@ We will see that the expressiveness–complexity tradeoff is not as simple as it
 
 Decision tree induction is one of the simplest and yet most successful forms of machine learning. We first describe the representation—the hypothesis space—and then show how to learn a good hypothesis.  
 
-698 Chapter 18. Learning from Examples
+
 
 **18.3.1 The decision tree representation**
 
@@ -273,7 +273,7 @@ WaitEstimate?
 
 **Figure 18.2** A decision tree for deciding whether to wait for a table.  
 
-700 Chapter 18. Learning from Examples
+
 
 Example Input Attributes Goal
 
@@ -285,9 +285,9 @@ Alt Bar Fri Hun Pat Price Rain Res Type Est _WillWait_
 
 is shown in Figure 18.3. The positive examples are the ones in which the goal WillWait is true (**x**1, **x**3, . . .); the negative examples are the ones in which it is false (**x**2, **x**5, . . .).
 
-We want a tree that is consistent with the examples and is as small as possible. Un- fortunately, no matter how we measure size, it is an intractable problem to find the smallest consistent tree; there is no way to efficiently search through the 22n
+We want a tree that is consistent with the examples and is as small as possible. Unfortunately, no matter how we measure size, it is an intractable problem to find the smallest consistent tree; there is no way to efficiently search through the 22n
 
-trees. With some simple heuristics, however, we can find a good approximate solution: a small (but not smallest) con- sistent tree. The DECISION-TREE-LEARNING algorithm adopts a greedy divide-and-conquer strategy: always test the most important attribute first. This test divides the problem up into smaller subproblems that can then be solved recursively. By “most important attribute,” we mean the one that makes the most difference to the classification of an example. That way, we hope to get to the correct classification with a small number of tests, meaning that all paths in the tree will be short and the tree as a whole will be shallow.
+trees. With some simple heuristics, however, we can find a good approximate solution: a small (but not smallest) consistent tree. The DECISION-TREE-LEARNING algorithm adopts a greedy divide-and-conquer strategy: always test the most important attribute first. This test divides the problem up into smaller subproblems that can then be solved recursively. By “most important attribute,” we mean the one that makes the most difference to the classification of an example. That way, we hope to get to the correct classification with a small number of tests, meaning that all paths in the tree will be short and the tree as a whole will be shallow.
 
 Figure 18.4(a) shows that Type is a poor attribute, because it leaves us with four possible outcomes, each of which has the same number of positive as negative examples. On the other hand, in (b) we see that Patrons is a fairly important attribute, because if the value is None or Some , then we are left with example sets for which we can answer definitively (No and Yes , respectively). If the value is Full , we are left with a mixed set of examples. In general, after the first attribute test splits up the examples, each outcome is a new decision tree learning problem in itself, with fewer examples and one less attribute. There are four cases to consider for these recursive problems:
 
@@ -295,7 +295,7 @@ Figure 18.4(a) shows that Type is a poor attribute, because it leaves us with fo
 
 2\. If there are some positive and some negative examples, then choose the best attribute to split them. Figure 18.4(b) shows Hungry being used to split the remaining examples.
 
-3\. If there are no examples left, it means that no example has been observed for this com-  
+3\. If there are no examples left, it means that no example has been observed for this com 
 
 Section 18.3. Learning Decision Trees 701
 
@@ -357,7 +357,7 @@ ministic; or because we can’t observe an attribute that would distinguish the 
 
 The DECISION-TREE-LEARNING algorithm is shown in Figure 18.5. Note that the set of examples is crucial for _constructing_ the tree, but nowhere do the examples appear in the tree itself. A tree consists of just tests on attributes in the interior nodes, values of attributes on the branches, and output values on the leaf nodes. The details of the IMPORTANCE function are given in Section 18.3.4. The output of the learning algorithm on our sample training set is shown in Figure 18.6. The tree is clearly different from the original tree shown in Figure 18.2. One might conclude that the learning algorithm is not doing a very good job of learning the correct function. This would be the wrong conclusion to draw, however. The learning algorithm looks at the _examples_, not at the correct function, and in fact, its hypothesis (see Figure 18.6) not only is consistent with all the examples, but is considerably simpler than the original tree! The learning algorithm has no reason to include tests for Raining and Reservation , because it can classify all the examples without them. It has also detected an interesting and previously unsuspected pattern: the first author will wait for Thai food on weekends. It is also bound to make some mistakes for cases where it has seen no examples. For example, it has never seen a case where the wait is 0–10 minutes but the restaurant is full.  
 
-702 Chapter 18. Learning from Examples
+
 
 **function** DECISION-TREE-LEARNING(examples ,attributes,parent examples) **returns** a tree
 
@@ -373,7 +373,7 @@ subtree←DECISION-TREE-LEARNING(exs,attributes −A, examples) add a branch to 
 
 **return** tree
 
-**Figure 18.5** The decision-tree learning algorithm. The function IMPORTANCE is de- scribed in Section 18.3.4. The function PLURALITY-VALUE selects the most common output value among a set of examples, breaking ties randomly.
+**Figure 18.5** The decision-tree learning algorithm. The function IMPORTANCE is described in Section 18.3.4. The function PLURALITY-VALUE selects the most common output value among a set of examples, breaking ties randomly.
 
 None Some Full
 
@@ -405,7 +405,7 @@ Yes **No**
 
 In that case it says not to wait when Hungry is false, but I (SR) would certainly wait. With more training examples the learning program could correct this mistake.
 
-We note there is a danger of over-interpreting the tree that the algorithm selects. When there are several variables of similar importance, the choice between them is somewhat arbi- trary: with slightly different input examples, a different variable would be chosen to split on first, and the whole tree would look completely different. The function computed by the tree would still be similar, but the structure of the tree can vary widely.
+We note there is a danger of over-interpreting the tree that the algorithm selects. When there are several variables of similar importance, the choice between them is somewhat arbitrary: with slightly different input examples, a different variable would be chosen to split on first, and the whole tree would look completely different. The function computed by the tree would still be similar, but the structure of the tree can vary widely.
 
 We can evaluate the accuracy of a learning algorithm with a **learning curve**, as shownLEARNING CURVE
 
@@ -457,7 +457,7 @@ All we need, then, is a formal measure of “fairly good” and “really useles
 
 corresponds to a reduction in entropy. A random variable with only one value—a coin that always comes up heads—has no uncertainty and thus its entropy is defined as zero; thus, we gain no information by observing its value. A flip of a fair coin is equally likely to come up heads or tails, 0 or 1, and we will soon show that this counts as “1 bit” of entropy. The roll of a fair _four_\-sided die has 2 bits of entropy, because it takes two bits to describe one of four equally probable choices. Now consider an unfair coin that comes up heads 99% of the time. Intuitively, this coin has less uncertainty than the fair coin—if we guess heads we’ll be wrong only 1% of the time—so we would like it to have an entropy measure that is close to zero, but  
 
-704 Chapter 18. Learning from Examples
+
 
 positive. In general, the entropy of a random variable V with values vk, each with probability P (vk), is defined as
 
@@ -505,7 +505,7 @@ p + n
 
 The restaurant training set in Figure 18.3 has p = n = 6, so the corresponding entropy is B(0.5) or exactly 1 bit. A test on a single attribute A might give us only part of this 1 bit. We can measure exactly how much by looking at the entropy remaining _after_ the attribute test.
 
-An attribute A with d distinct values divides the training set E into subsets E1, . . . , Ed. Each subset Ek has pk positive examples and nk negative examples, so if we go along that branch, we will need an additional B(pk/(pk + nk)) bits of information to answer the ques- tion. A randomly chosen example from the training set has the kth value for the attribute with probability (pk + nk)/(p + n), so the expected entropy remaining after testing attribute A is
+An attribute A with d distinct values divides the training set E into subsets E1, . . . , Ed. Each subset Ek has pk positive examples and nk negative examples, so if we go along that branch, we will need an additional B(pk/(pk + nk)) bits of information to answer the question. A randomly chosen example from the training set has the kth value for the attribute with probability (pk + nk)/(p + n), so the expected entropy remaining after testing attribute A is
 
 Remainder (A) =
 
@@ -613,13 +613,13 @@ We can answer this question by using a statistical **significance test**. Such a
 
 by assuming that there is no underlying pattern (the so-called **null hypothesis**). Then the ac-NULL HYPOTHESIS
 
-tual data are analyzed to calculate the extent to which they deviate from a perfect absence of pattern. If the degree of deviation is statistically unlikely (usually taken to mean a 5% prob- ability or less), then that is considered to be good evidence for the presence of a significant pattern in the data. The probabilities are calculated from standard distributions of the amount of deviation one would expect to see in random sampling.
+tual data are analyzed to calculate the extent to which they deviate from a perfect absence of pattern. If the degree of deviation is statistically unlikely (usually taken to mean a 5% probability or less), then that is considered to be good evidence for the presence of a significant pattern in the data. The probabilities are calculated from standard distributions of the amount of deviation one would expect to see in random sampling.
 
 In this case, the null hypothesis is that the attribute is irrelevant and, hence, that the information gain for an infinitely large sample would be zero. We need to calculate the probability that, under the null hypothesis, a sample of size v = n + p would exhibit the observed deviation from the expected distribution of positive and negative examples. We can measure the deviation by comparing the actual numbers of positive and negative examples in
 
 2 The gain will be strictly positive except for the unlikely case where all the proportions are _exactly_ the same. (See Exercise 18.5.)  
 
-706 Chapter 18. Learning from Examples
+
 
 each subset, pk and nk, with the expected numbers, p̂k and n̂k, assuming true irrelevance:
 
@@ -667,33 +667,33 @@ One final warning: You might think that χ 2 pruning and information gain look s
 
 so why not combine them using an approach called **early stopping**—have the decision treeEARLY STOPPING
 
-algorithm stop generating nodes when there is no good attribute to split on, rather than going to all the trouble of generating nodes and then pruning them away. The problem with early stopping is that it stops us from recognizing situations where there is no one good attribute, but there are combinations of attributes that are informative. For example, consider the XOR function of two binary attributes. If there are roughly equal number of examples for all four combinations of input values, then neither attribute will be informative, yet the correct thing to do is to split on one of the attributes (it doesn’t matter which one), and then at the second level we will get splits that are informative. Early stopping would miss this, but generate- and-then-prune handles it correctly.
+algorithm stop generating nodes when there is no good attribute to split on, rather than going to all the trouble of generating nodes and then pruning them away. The problem with early stopping is that it stops us from recognizing situations where there is no one good attribute, but there are combinations of attributes that are informative. For example, consider the XOR function of two binary attributes. If there are roughly equal number of examples for all four combinations of input values, then neither attribute will be informative, yet the correct thing to do is to split on one of the attributes (it doesn’t matter which one), and then at the second level we will get splits that are informative. Early stopping would miss this, but generateand-then-prune handles it correctly.
 
 **18.3.6 Broadening the applicability of decision trees**
 
 In order to extend decision tree induction to a wider variety of problems, a number of issues must be addressed. We will briefly mention several, suggesting that a full understanding is best obtained by doing the associated exercises:
 
-• **Missing data**: In many domains, not all the attribute values will be known for every example. The values might have gone unrecorded, or they might be too expensive to obtain. This gives rise to two problems: First, given a complete decision tree, how should one classify an example that is missing one of the test attributes? Second, how  
+- **Missing data**: In many domains, not all the attribute values will be known for every example. The values might have gone unrecorded, or they might be too expensive to obtain. This gives rise to two problems: First, given a complete decision tree, how should one classify an example that is missing one of the test attributes? Second, how  
 
 Section 18.3. Learning Decision Trees 707
 
 should one modify the information-gain formula when some examples have unknown values for the attribute? These questions are addressed in Exercise 18.9.
 
-• **Multivalued attributes**: When an attribute has many possible values, the information gain measure gives an inappropriate indication of the attribute’s usefulness. In the ex- treme case, an attribute such as ExactTime has a different value for every example, which means each subset of examples is a singleton with a unique classification, and the information gain measure would have its highest value for this attribute. But choos- ing this split first is unlikely to yield the best tree. One solution is to use the **gain ratio**GAIN RATIO
+- **Multivalued attributes**: When an attribute has many possible values, the information gain measure gives an inappropriate indication of the attribute’s usefulness. In the extreme case, an attribute such as ExactTime has a different value for every example, which means each subset of examples is a singleton with a unique classification, and the information gain measure would have its highest value for this attribute. But choosing this split first is unlikely to yield the best tree. One solution is to use the **gain ratio**GAIN RATIO
 
 (Exercise 18.10). Another possibility is to allow a Boolean test of the form A= vk, that is, picking out just one of the possible values for an attribute, leaving the remaining values to possibly be tested later in the tree.
 
-• **Continuous and integer-valued input attributes**: Continuous or integer-valued at- tributes such as Height and Weight , have an infinite set of possible values. Rather than generate infinitely many branches, decision-tree learning algorithms typically find the **split point** that gives the highest information gain. For example, at a given node inSPLIT POINT
+- **Continuous and integer-valued input attributes**: Continuous or integer-valued attributes such as Height and Weight , have an infinite set of possible values. Rather than generate infinitely many branches, decision-tree learning algorithms typically find the **split point** that gives the highest information gain. For example, at a given node inSPLIT POINT
 
-the tree, it might be the case that testing on Weight > 160 gives the most informa- tion. Efficient methods exist for finding good split points: start by sorting the values of the attribute, and then consider only split points that are between two examples in sorted order that have different classifications, while keeping track of the running totals of positive and negative examples on each side of the split point. Splitting is the most expensive part of real-world decision tree learning applications.
+the tree, it might be the case that testing on Weight > 160 gives the most information. Efficient methods exist for finding good split points: start by sorting the values of the attribute, and then consider only split points that are between two examples in sorted order that have different classifications, while keeping track of the running totals of positive and negative examples on each side of the split point. Splitting is the most expensive part of real-world decision tree learning applications.
 
-• **Continuous-valued output attributes**: If we are trying to predict a numerical output value, such as the price of an apartment, then we need a **regression tree** rather than aREGRESSION TREE
+- **Continuous-valued output attributes**: If we are trying to predict a numerical output value, such as the price of an apartment, then we need a **regression tree** rather than aREGRESSION TREE
 
-classification tree. A regression tree has at each leaf a linear function of some subset of numerical attributes, rather than a single value. For example, the branch for two- bedroom apartments might end with a linear function of square footage, number of bathrooms, and average income for the neighborhood. The learning algorithm must decide when to stop splitting and begin applying linear regression (see Section 18.6) over the attributes.
+classification tree. A regression tree has at each leaf a linear function of some subset of numerical attributes, rather than a single value. For example, the branch for twobedroom apartments might end with a linear function of square footage, number of bathrooms, and average income for the neighborhood. The learning algorithm must decide when to stop splitting and begin applying linear regression (see Section 18.6) over the attributes.
 
 A decision-tree learning system for real-world applications must be able to handle all of these problems. Handling continuous-valued variables is especially important, because both physical and financial processes provide numerical data. Several commercial packages have been built that meet these criteria, and they have been used to develop thousands of fielded systems. In many areas of industry and commerce, decision trees are usually the first method tried when a classification method is to be extracted from a data set. One important property of decision trees is that it is possible for a human to understand the reason for the output of the learning algorithm. (Indeed, this is a _legal requirement_ for financial decisions that are subject to anti-discrimination laws.) This is a property not shared by some other representations, such as neural networks.  
 
-708 Chapter 18. Learning from Examples
+
 
 18.4 EVALUATING AND CHOOSING THE BEST HYPOTHESIS
 
@@ -755,7 +755,7 @@ for example). The wrapper enumerates models according to a parameter, size . For
 
 This approach requires that the learning algorithm accept a parameter, size , and deliver a hypothesis of that size. As we said, for decision tree learning, the size can be the number of nodes. We can modify DECISION-TREE-LEARNER so that it takes the number of nodes as an input, builds the tree breadth-first rather than depth-first (but at each level it still chooses the highest gain attribute first), and stops when it reaches the desired number of nodes.  
 
-710 Chapter 18. Learning from Examples
+
 
 **function** CROSS-VALIDATION-WRAPPER(Learner , k , examples) **returns** a hypothesis
 
@@ -773,7 +773,7 @@ training set , validation set← PARTITION(examples , fold , k ) h←Learner (si
 
 **return** fold errT /k , fold errV /k
 
-**Figure 18.8** An algorithm to select the model that has the lowest error rate on validation data by building models of increasing complexity, and choosing the one with best empir- ical error rate on validation data. Here errT means error rate on the training data, and errV means error rate on the validation data. Learner(size, examples) returns a hypoth- esis whose complexity is set by the parameter size , and which is trained on the examples . PARTITION(_examples_, _fold_, _k_) splits _examples_ into two subsets: a validation set of size N/k
+**Figure 18.8** An algorithm to select the model that has the lowest error rate on validation data by building models of increasing complexity, and choosing the one with best empirical error rate on validation data. Here errT means error rate on the training data, and errV means error rate on the validation data. Learner(size, examples) returns a hypothesis whose complexity is set by the parameter size , and which is trained on the examples . PARTITION(_examples_, _fold_, _k_) splits _examples_ into two subsets: a validation set of size N/k
 
 and a training set with all the other examples. The split is different for each value of _fold_.
 
@@ -815,13 +815,13 @@ Tree size
 
 Validation Set Error Training Set Error
 
-**Figure 18.9** Error rates on training data (lower, dashed line) and validation data (upper, solid line) for different size decision trees. We stop when the training set error rate asymp- totes, and then choose the tree with minimal error on the validation set; in this case the tree of size 7 nodes.
+**Figure 18.9** Error rates on training data (lower, dashed line) and validation data (upper, solid line) for different size decision trees. We stop when the training set error rate asymptotes, and then choose the tree with minimal error on the validation set; in this case the tree of size 7 nodes.
 
 This is the most general formulation of the loss function. Often a simplified version is used, L(y, ŷ), that is independent of x. We will use the simplified version for the rest of this chapter, which means we can’t say that it is worse to misclassify a letter from Mom than it is to misclassify a letter from our annoying cousin, but we can say it is 10 times worse to classify non-spam as spam than vice-versa:
 
 L(spam ,nospam) = 1, L(nospam , spam) = 10 .
 
-Note that L(y, y) is always zero; by definition there is no loss when you guess exactly right. For functions with discrete outputs, we can enumerate a loss value for each possible mis- classification, but we can’t enumerate all the possibilities for real-valued data. If f(x) is 137.035999, we would be fairly happy with h(x) = 137.036, but just how happy should we be? In general small errors are better than large ones; two functions that implement that idea are the absolute value of the difference (called the L1 loss), and the square of the difference (called the L2 loss). If we are content with the idea of minimizing error rate, we can use the L0/1 loss function, which has a loss of 1 for an incorrect answer and is appropriate for discrete-valued outputs:
+Note that L(y, y) is always zero; by definition there is no loss when you guess exactly right. For functions with discrete outputs, we can enumerate a loss value for each possible misclassification, but we can’t enumerate all the possibilities for real-valued data. If f(x) is 137.035999, we would be fairly happy with h(x) = 137.036, but just how happy should we be? In general small errors are better than large ones; two functions that implement that idea are the absolute value of the difference (called the L1 loss), and the square of the difference (called the L2 loss). If we are content with the idea of minimizing error rate, we can use the L0/1 loss function, which has a loss of 1 for an incorrect answer and is appropriate for discrete-valued outputs:
 
 Absolute value loss: L1(y, ŷ) = |y − ŷ|
 
@@ -829,11 +829,11 @@ Squared error loss: L2(y, ŷ) = (y − ŷ)2
 
 0/1 loss: L0/1(y, ŷ) = 0 if y = ŷ, else 1
 
-The learning agent can theoretically maximize its expected utility by choosing the hypoth- esis that minimizes expected loss over all input–output pairs it will see. It is meaningless to talk about this expectation without defining a prior probability distribution, **P**(X,Y ) over examples. Let E be the set of all possible input–output examples. Then the expected **gener- alization loss** for a hypothesis h (with respect to loss function L) isGENERALIZATION
+The learning agent can theoretically maximize its expected utility by choosing the hypothesis that minimizes expected loss over all input–output pairs it will see. It is meaningless to talk about this expectation without defining a prior probability distribution, **P**(X,Y ) over examples. Let E be the set of all possible input–output examples. Then the expected **generalization loss** for a hypothesis h (with respect to loss function L) isGENERALIZATION
 
 LOSS  
 
-712 Chapter 18. Learning from Examples
+
 
 GenLossL(h) =
 
@@ -873,7 +873,7 @@ EmpLossL,E(h) .
 
 There are four reasons why ĥ ∗ may differ from the true function, f : unrealizability, variance,
 
-noise, and computational complexity. First, f may not be realizable—may not be in H—or may be present in such a way that other hypotheses are preferred. Second, a learning algo- rithm will return different hypotheses for different sets of examples, even if those sets are drawn from the same true function f , and those hypotheses will make different predictions on new examples. The higher the variance among the predictions, the higher the probability of significant error. Note that even when the problem is realizable, there will still be random variance, but that variance decreases towards zero as the number of training examples in- creases. Third, f may be nondeterministic or **noisy**—it may return different values for f(x)NOISE
+noise, and computational complexity. First, f may not be realizable—may not be in H—or may be present in such a way that other hypotheses are preferred. Second, a learning algorithm will return different hypotheses for different sets of examples, even if those sets are drawn from the same true function f , and those hypotheses will make different predictions on new examples. The higher the variance among the predictions, the higher the probability of significant error. Note that even when the problem is realizable, there will still be random variance, but that variance decreases towards zero as the number of training examples increases. Third, f may be nondeterministic or **noisy**—it may return different values for f(x)NOISE
 
 each time x occurs. By definition, noise cannot be predicted; in many cases, it arises because the observed labels y are the result of attributes of the environment not listed in x. And finally, when H is complex, it can be computationally intractable to systematically search the whole hypothesis space. The best we can do is a local search (hill climbing or greedy search) that explores only part of the space. That gives us an approximation error. Combining the sources of error, we’re left with an estimation of an approximation of the true function f .
 
@@ -881,7 +881,7 @@ Traditional methods in statistics and the early years of machine learning concen
 
 LEARNING
 
-low thousands. Here the generalization error mostly comes from the approximation error of not having the true f in the hypothesis space, and from estimation error of not having enough training examples to limit variance. In recent years there has been more emphasis on **large- scale learning**, often with millions of examples. Here the generalization error is dominatedLARGE-SCALE
+low thousands. Here the generalization error mostly comes from the approximation error of not having the true f in the hypothesis space, and from estimation error of not having enough training examples to limit variance. In recent years there has been more emphasis on **largescale learning**, often with millions of examples. Here the generalization error is dominatedLARGE-SCALE
 
 LEARNING
 
@@ -907,7 +907,7 @@ Here λ is a parameter, a positive number that serves as a conversion rate betwe
 
 This process of explicitly penalizing complex hypotheses is called **regularization** (be-REGULARIZATION
 
-cause it looks for a function that is more regular, or less complex). Note that the cost function requires us to make two choices: the loss function and the complexity measure, which is called a regularization function. The choice of regularization function depends on the hy- pothesis space. For example, a good regularization function for polynomials is the sum of the squares of the coefficients—keeping the sum small would guide us away from the wiggly polynomials in Figure 18.1(b) and (c). We will show an example of this type of regularization in Section 18.6.
+cause it looks for a function that is more regular, or less complex). Note that the cost function requires us to make two choices: the loss function and the complexity measure, which is called a regularization function. The choice of regularization function depends on the hypothesis space. For example, a good regularization function for polynomials is the sum of the squares of the coefficients—keeping the sum small would guide us away from the wiggly polynomials in Figure 18.1(b) and (c). We will show an example of this type of regularization in Section 18.6.
 
 Another way to simplify models is to reduce the dimensions that the models work with. A process of **feature selection** can be performed to discard attributes that appear to be irrel-FEATURE SELECTION
 
@@ -923,15 +923,15 @@ required. This works well in the limit, but for smaller problems there is a diff
 
 The main unanswered question in learning is this: How can we be sure that our learning algorithm has produced a hypothesis that will predict the correct value for previously unseen inputs? In formal terms, how do we know that the hypothesis h is close to the target function f if we don’t know what f is? These questions have been pondered for several centuries. In more recent decades, other questions have emerged: how many examples do we need to get a good h? What hypothesis space should we use? If the hypothesis space is very complex, can we even find the best h, or do we have to settle for a local maximum in the  
 
-714 Chapter 18. Learning from Examples
+
 
 space of hypotheses? How complex should h be? How do we avoid overfitting? This section examines these questions.
 
-We’ll start with the question of how many examples are needed for learning. We saw from the learning curve for decision tree learning on the restaurant problem (Figure 18.7 on page 703) that improves with more training data. Learning curves are useful, but they are specific to a particular learning algorithm on a particular problem. Are there some more gen- eral principles governing the number of examples needed in general? Questions like this are addressed by **computational learning theory**, which lies at the intersection of AI, statistics,COMPUTATIONAL
+We’ll start with the question of how many examples are needed for learning. We saw from the learning curve for decision tree learning on the restaurant problem (Figure 18.7 on page 703) that improves with more training data. Learning curves are useful, but they are specific to a particular learning algorithm on a particular problem. Are there some more general principles governing the number of examples needed in general? Questions like this are addressed by **computational learning theory**, which lies at the intersection of AI, statistics,COMPUTATIONAL
 
 LEARNING THEORY
 
-and theoretical computer science. The underlying principle is that _any hypothesis that is seri- ously wrong will almost certainly be “found out” with high probability after a small number of examples, because it will make an incorrect prediction. Thus, any hypothesis that is consis- tent with a sufficiently large set of training examples is unlikely to be seriously wrong: that is, it must be **probably approximately correct**._ Any learning algorithm that returns hypotheses
+and theoretical computer science. The underlying principle is that _any hypothesis that is seriously wrong will almost certainly be “found out” with high probability after a small number of examples, because it will make an incorrect prediction. Thus, any hypothesis that is consistent with a sufficiently large set of training examples is unlikely to be seriously wrong: that is, it must be **probably approximately correct**._ Any learning algorithm that returns hypotheses
 
 PROBABLY APPROXIMATELY CORRECT
 
@@ -1015,7 +1015,7 @@ We now show how to apply PAC learning to a new hypothesis space: **decision list
 
 decision list consists of a series of tests, each of which is a conjunction of literals. If a test succeeds when applied to an example description, the decision list specifies the value to be returned. If the test fails, processing continues with the next test in the list. Decision lists resemble decision trees, but their overall structure is simpler: they branch only in one  
 
-716 Chapter 18. Learning from Examples
+
 
 _Patrons_(_x, Some_) No
 
@@ -1069,7 +1069,7 @@ Hence, after some work, we obtain
 
 .
 
-We can plug this into Equation (18.1) to show that the number of examples needed for PAC- learning a k-DL function is polynomial in n:
+We can plug this into Equation (18.1) to show that the number of examples needed for PAClearning a k-DL function is polynomial in n:
 
 N ≥ 1
 
@@ -1153,7 +1153,7 @@ This algorithm does not specify the method for selecting the next test to add to
 
 Now it is time to move on from decision trees and lists to a different hypothesis space, one that has been used for hundred of years: the class of **linear functions** of continuous-valuedLINEAR FUNCTION  
 
-718 Chapter 18. Learning from Examples
+
 
 300
 
@@ -1199,7 +1199,7 @@ Loss
 
 2 for various values of w0, w1. Note that the loss function is convex, with a single global minimum.
 
-inputs. We’ll start with the simplest case: regression with a univariate linear function, oth- erwise known as “fitting a straight line.” Section 18.6.2 covers the multivariate case. Sec- tions 18.6.3 and 18.6.4 show how to turn linear functions into classifiers by applying hard and soft thresholds.
+inputs. We’ll start with the simplest case: regression with a univariate linear function, otherwise known as “fitting a straight line.” Section 18.6.2 covers the multivariate case. Sections 18.6.3 and 18.6.4 show how to turn linear functions into classifiers by applying hard and soft thresholds.
 
 **18.6.1 Univariate linear regression**
 
@@ -1333,9 +1333,9 @@ x 2 = 2x and
 
 x= 1.) Let’s first work out the partial derivatives—the slopes—in the simplified case of
 
-4 With some caveats: the L2 loss function is appropriate when there is normally-distributed noise that is inde- pendent of x; all results rely on the stationarity assumption; etc.  
+4 With some caveats: the L2 loss function is appropriate when there is normally-distributed noise that is independent of x; all results rely on the stationarity assumption; etc.  
 
-720 Chapter 18. Learning from Examples
+
 
 only one training example, (x, y):
 
@@ -1403,7 +1403,7 @@ small enough) but may be very slow: we have to cycle through all the training da
 
 There is another possibility, called **stochastic gradient descent**, where we considerSTOCHASTIC GRADIENT DESCENT
 
-only a single training point at a time, taking a step after each one using Equation (18.5). Stochastic gradient descent can be used in an online setting, where new data are coming in one at a time, or offline, where we cycle through the same data as many times as is neces- sary, taking a step after considering each single example. It is often faster than batch gradient descent. With a fixed learning rate α, however, it does not guarantee convergence; it can os- cillate around the minimum without settling down. In some cases, as we see later, a schedule of decreasing learning rates (as in simulated annealing) does guarantee convergence.
+only a single training point at a time, taking a step after each one using Equation (18.5). Stochastic gradient descent can be used in an online setting, where new data are coming in one at a time, or offline, where we cycle through the same data as many times as is necessary, taking a step after considering each single example. It is often faster than batch gradient descent. With a fixed learning rate α, however, it does not guarantee convergence; it can oscillate around the minimum without settling down. In some cases, as we see later, a schedule of decreasing learning rates (as in simulated annealing) does guarantee convergence.
 
 **18.6.2 Multivariate linear regression**
 
@@ -1467,7 +1467,7 @@ minimizes the squared error.
 
 With univariate linear regression we didn’t have to worry about overfitting. But with multivariate linear regression in high-dimensional spaces it is possible that some dimension that is actually irrelevant appears by chance to be useful, resulting in **overfitting.**
 
-Thus, it is common to use **regularization** on multivariate linear functions to avoid over- fitting. Recall that with regularization we minimize the total cost of a hypothesis, counting both the empirical loss and the complexity of the hypothesis:
+Thus, it is common to use **regularization** on multivariate linear functions to avoid overfitting. Recall that with regularization we minimize the total cost of a hypothesis, counting both the empirical loss and the complexity of the hypothesis:
 
 Cost(h) = EmpLoss(h) + λComplexity(h) .
 
@@ -1483,13 +1483,13 @@ i
 
 .
 
-As with loss functions,6 with q =1 we have L1 regularization, which minimizes the sum of the absolute values; with q =2, L2 regularization minimizes the sum of squares. Which reg- ularization function should you pick? That depends on the specific problem, but L1 regular- ization has an important advantage: it tends to produce a **sparse model**. That is, it often setsSPARSE MODEL
+As with loss functions,6 with q =1 we have L1 regularization, which minimizes the sum of the absolute values; with q =2, L2 regularization minimizes the sum of squares. Which regularization function should you pick? That depends on the specific problem, but L1 regularization has an important advantage: it tends to produce a **sparse model**. That is, it often setsSPARSE MODEL
 
 many weights to zero, effectively declaring the corresponding attributes to be irrelevant—just as DECISION-TREE-LEARNING does (although by a different mechanism). Hypotheses that discard attributes can be easier for a human to understand, and may be less likely to overfit.
 
 6 It is perhaps confusing that L1 and L2 are used for both loss functions and regularization functions. They need not be used in pairs: you could use L2 loss with L1 regularization, or vice versa.  
 
-722 Chapter 18. Learning from Examples
+
 
 _w_ 1
 
@@ -1503,11 +1503,11 @@ _w_ 2
 
 _w_\*
 
-**Figure 18.14** Why L1 regularization tends to produce a sparse model. (a) With L1 regu- larization (box), the minimal achievable loss (concentric contours) often occurs on an axis, meaning a weight of zero. (b) With L2 regularization (circle), the minimal loss is likely to occur anywhere on the circle, giving no preference to zero weights.
+**Figure 18.14** Why L1 regularization tends to produce a sparse model. (a) With L1 regularization (box), the minimal achievable loss (concentric contours) often occurs on an axis, meaning a weight of zero. (b) With L2 regularization (circle), the minimal loss is likely to occur anywhere on the circle, giving no preference to zero weights.
 
 Figure 18.14 gives an intuitive explanation of why L1 regularization leads to weights of zero, while L2 regularization does not. Note that minimizing Loss(**w**) + λComplexity(**w**)
 
-is equivalent to minimizing Loss(**w**) subject to the constraint that Complexity(**w**) ≤ c, for some constant c that is related to λ. Now, in Figure 18.14(a) the diamond-shaped box repre- sents the set of points **w** in two-dimensional weight space that have L1 complexity less than c; our solution will have to be somewhere inside this box. The concentric ovals represent contours of the loss function, with the minimum loss at the center. We want to find the point in the box that is closest to the minimum; you can see from the diagram that, for an arbitrary position of the minimum and its contours, it will be common for the corner of the box to find its way closest to the minimum, just because the corners are pointy. And of course the corners are the points that have a value of zero in some dimension. In Figure 18.14(b), we’ve done the same for the L2 complexity measure, which represents a circle rather than a diamond. Here you can see that, in general, there is no reason for the intersection to appear on one of the axes; thus L2 regularization does not tend to produce zero weights. The result is that the number of examples required to find a good h is linear in the number of irrelevant features for L2 regularization, but only logarithmic with L1 regularization. Empirical evidence on many problems supports this analysis.
+is equivalent to minimizing Loss(**w**) subject to the constraint that Complexity(**w**) ≤ c, for some constant c that is related to λ. Now, in Figure 18.14(a) the diamond-shaped box represents the set of points **w** in two-dimensional weight space that have L1 complexity less than c; our solution will have to be somewhere inside this box. The concentric ovals represent contours of the loss function, with the minimum loss at the center. We want to find the point in the box that is closest to the minimum; you can see from the diagram that, for an arbitrary position of the minimum and its contours, it will be common for the corner of the box to find its way closest to the minimum, just because the corners are pointy. And of course the corners are the points that have a value of zero in some dimension. In Figure 18.14(b), we’ve done the same for the L2 complexity measure, which represents a circle rather than a diamond. Here you can see that, in general, there is no reason for the intersection to appear on one of the axes; thus L2 regularization does not tend to produce zero weights. The result is that the number of examples required to find a good h is linear in the number of irrelevant features for L2 regularization, but only logarithmic with L1 regularization. Empirical evidence on many problems supports this analysis.
 
 Another way to look at it is that L1 regularization takes the dimensional axes seriously, while L2 treats them as arbitrary. The L2 function is spherical, which makes it rotationally invariant: Imagine a set of points in a plane, measured by their x and y coordinates. Now imagine rotating the axes by 45o. You’d get a different set of (x′
 
@@ -1525,7 +1525,7 @@ south-east. With L1 regularization you’d get a different answer, because the L
 
 **18.6.3 Linear classifiers with a hard threshold**
 
-Linear functions can be used to do classification as well as regression. For example, Fig- ure 18.15(a) shows data points of two classes: earthquakes (which are of interest to seismolo- gists) and underground explosions (which are of interest to arms control experts). Each point is defined by two input values, x1 and x2, that refer to body and surface wave magnitudes computed from the seismic signal. Given these training data, the task of classification is to learn a hypothesis h that will take new (x1, x2) points and return either 0 for earthquakes or 1 for explosions.
+Linear functions can be used to do classification as well as regression. For example, Figure 18.15(a) shows data points of two classes: earthquakes (which are of interest to seismologists) and underground explosions (which are of interest to arms control experts). Each point is defined by two input values, x1 and x2, that refer to body and surface wave magnitudes computed from the seismic signal. Given these training data, the task of classification is to learn a hypothesis h that will take new (x1, x2) points and return either 0 for earthquakes or 1 for explosions.
 
 2.5 3
 
@@ -1565,7 +1565,7 @@ _x1_
 
 (a) (b)
 
-**Figure 18.15** (a) Plot of two seismic data parameters, body wave magnitude x1 and sur- face wave magnitude x2, for earthquakes (white circles) and nuclear explosions (black cir- cles) occurring between 1982 and 1990 in Asia and the Middle East (Kebeasy _et al._, 1998). Also shown is a decision boundary between the classes. (b) The same domain with more data points. The earthquakes and explosions are no longer linearly separable.
+**Figure 18.15** (a) Plot of two seismic data parameters, body wave magnitude x1 and surface wave magnitude x2, for earthquakes (white circles) and nuclear explosions (black circles) occurring between 1982 and 1990 in Asia and the Middle East (Kebeasy _et al._, 1998). Also shown is a decision boundary between the classes. (b) The same domain with more data points. The earthquakes and explosions are no longer linearly separable.
 
 A **decision boundary** is a line (or a surface, in higher dimensions) that separates theDECISION BOUNDARY
 
@@ -1579,7 +1579,7 @@ The explosions, which we want to classify with value 1, are to the right of this
 
 h**w**(**x**) = 1 if **w** · **x** ≥ 0 and 0 otherwise.  
 
-724 Chapter 18. Learning from Examples
+
 
 Alternatively, we can think of h as the result of passing the linear function **w** · **x** through a **threshold function**:THRESHOLD
 
@@ -1601,17 +1601,17 @@ LEARNING RULE
 
 Because we are considering a 0/1 classification problem, however, the behavior is somewhat different. Both the true value y and the hypothesis output h**w**(**x**) are either 0 or 1, so there are three possibilities:
 
-• If the output is correct, i.e., y = h**w**(**x**), then the weights are not changed.
+- If the output is correct, i.e., y = h**w**(**x**), then the weights are not changed.
 
-• If y is 1 but h**w**(**x**) is 0, then wi is _increased_ when the corresponding input xi is positive and _decreased_ when xi is negative. This makes sense, because we want to make **w** · **x** bigger so that h**w**(**x**) outputs a 1.
+- If y is 1 but h**w**(**x**) is 0, then wi is _increased_ when the corresponding input xi is positive and _decreased_ when xi is negative. This makes sense, because we want to make **w** · **x** bigger so that h**w**(**x**) outputs a 1.
 
-• If y is 0 but h**w**(**x**) is 1, then wi is _decreased_ when the corresponding input xi is positive and _increased_ when xi is negative. This makes sense, because we want to make **w** · **x** smaller so that h**w**(**x**) outputs a 0.
+- If y is 0 but h**w**(**x**) is 1, then wi is _decreased_ when the corresponding input xi is positive and _increased_ when xi is negative. This makes sense, because we want to make **w** · **x** smaller so that h**w**(**x**) outputs a 0.
 
 Typically the learning rule is applied one example at a time, choosing examples at random (as in stochastic gradient descent). Figure 18.16(a) shows a **training curve** for this learningTRAINING CURVE
 
 rule applied to the earthquake/explosion data shown in Figure 18.15(a). A training curve measures the classifier performance on a fixed training set as the learning process proceeds on that same training set. The curve shows the update rule converging to a zero-error linear separator. The “convergence” process isn’t exactly pretty, but it always works. This particular run takes 657 steps to converge, for a data set with 63 examples, so each example is presented roughly 10 times on average. Typically, the variation across runs is very large.
 
-We have said that the perceptron learning rule converges to a perfect linear separator when the data points are linearly separable, but what if they are not? This situation is all too common in the real world. For example, Figure 18.15(b) adds back in the data points left out by Kebeasy _et al._ (1998) when they plotted the data shown in Figure 18.15(a). In Figure 18.16(b), we show the perceptron learning rule failing to converge even after 10,000 steps: even though it hits the minimum-error solution (three errors) many times, the algo- rithm keeps changing the weights. In general, the perceptron rule may not converge to a  
+We have said that the perceptron learning rule converges to a perfect linear separator when the data points are linearly separable, but what if they are not? This situation is all too common in the real world. For example, Figure 18.15(b) adds back in the data points left out by Kebeasy _et al._ (1998) when they plotted the data shown in Figure 18.15(a). In Figure 18.16(b), we show the perceptron learning rule failing to converge even after 10,000 steps: even though it hits the minimum-error solution (three errors) many times, the algorithm keeps changing the weights. In general, the perceptron rule may not converge to a  
 
 Section 18.6. Regression and Classification with Linear Models 725
 
@@ -1701,13 +1701,13 @@ Number of weight updates
 
 (a) (b) (c)
 
-**Figure 18.16** (a) Plot of total training-set accuracy vs. number of iterations through the training set for the perceptron learning rule, given the earthquake/explosion data in Fig- ure 18.15(a). (b) The same plot for the noisy, non-separable data in Figure 18.15(b); note the change in scale of the x-axis. (c) The same plot as in (b), with a learning rate schedule α(t)= 1000/(1000 + t).
+**Figure 18.16** (a) Plot of total training-set accuracy vs. number of iterations through the training set for the perceptron learning rule, given the earthquake/explosion data in Figure 18.15(a). (b) The same plot for the noisy, non-separable data in Figure 18.15(b); note the change in scale of the x-axis. (c) The same plot as in (b), with a learning rate schedule α(t)= 1000/(1000 + t).
 
 stable solution for fixed learning rate α, but if α decays as O(1/t) where t is the iteration number, then the rule can be shown to converge to a minimum-error solution when examples are presented in a random sequence.7 It can also be shown that finding the minimum-error solution is NP-hard, so one expects that many presentations of the examples will be required for convergence to be achieved. Figure 18.16(b) shows the training process with a learning rate schedule α(t)= 1000/(1000 + t): convergence is not perfect after 100,000 iterations, but it is much better than the fixed-α case.
 
 **18.6.4 Linear classification with logistic regression**
 
-We have seen that passing the output of a linear function through the threshold function creates a linear classifier; yet the hard nature of the threshold causes some problems: the hypothesis h**w**(**x**) is not differentiable and is in fact a discontinuous function of its inputs and its weights; this makes learning with the perceptron rule a very unpredictable adventure. Fur- thermore, the linear classifier always announces a completely confident prediction of 1 or 0, even for examples that are very close to the boundary; in many situations, we really need more gradated predictions.
+We have seen that passing the output of a linear function through the threshold function creates a linear classifier; yet the hard nature of the threshold causes some problems: the hypothesis h**w**(**x**) is not differentiable and is in fact a discontinuous function of its inputs and its weights; this makes learning with the perceptron rule a very unpredictable adventure. Furthermore, the linear classifier always announces a completely confident prediction of 1 or 0, even for examples that are very close to the boundary; in many situations, we really need more gradated predictions.
 
 All of these issues can be resolved to a large extent by softening the threshold function— approximating the hard threshold with a continuous, differentiable function. In Chapter 14 (page 522), we saw two functions that look like soft thresholds: the integral of the standard normal distribution (used for the probit model) and the logistic function (used for the logit model). Although the two functions are very similar in shape, the logistic function
 
@@ -1729,7 +1729,7 @@ t = 1 α
 
 these conditions.  
 
-726 Chapter 18. Learning from Examples
+
 
 0
 
@@ -1927,17 +1927,17 @@ so the weight update for minimizing the loss is
 
 wi ← wi + α (y − h**w**(**x**))× h**w**(**x**)(1− h**w**(**x**))× xi . (18.8)
 
-Repeating the experiments of Figure 18.16 with logistic regression instead of the linear threshold classifier, we obtain the results shown in Figure 18.18. In (a), the linearly sep- arable case, logistic regression is somewhat slower to converge, but behaves much more predictably. In (b) and (c), where the data are noisy and nonseparable, logistic regression converges far more quickly and reliably. These advantages tend to carry over into real-world applications and logistic regression has become one of the most popular classification tech- niques for problems in medicine, marketing and survey analysis, credit scoring, public health, and other applications.
+Repeating the experiments of Figure 18.16 with logistic regression instead of the linear threshold classifier, we obtain the results shown in Figure 18.18. In (a), the linearly separable case, logistic regression is somewhat slower to converge, but behaves much more predictably. In (b) and (c), where the data are noisy and nonseparable, logistic regression converges far more quickly and reliably. These advantages tend to carry over into real-world applications and logistic regression has become one of the most popular classification techniques for problems in medicine, marketing and survey analysis, credit scoring, public health, and other applications.
 
 18.7 ARTIFICIAL NEURAL NETWORKS
 
 We turn now to what seems to be a somewhat unrelated topic: the brain. In fact, as we will see, the technical ideas we have discussed so far in this chapter turn out to be useful in building mathematical models of the brain’s activity; conversely, thinking about the brain has helped in extending the scope of the technical ideas.
 
-Chapter 1 touched briefly on the basic findings of neuroscience—in particular, the hy- pothesis that mental activity consists primarily of electrochemical activity in networks of brain cells called **neurons**. (Figure 1.2 on page 11 showed a schematic diagram of a typical neuron.) Inspired by this hypothesis, some of the earliest AI work aimed to create artificial **neural networks**. (Other names for the field include **connectionism**, **parallel distributed**NEURAL NETWORK
+Chapter 1 touched briefly on the basic findings of neuroscience—in particular, the hypothesis that mental activity consists primarily of electrochemical activity in networks of brain cells called **neurons**. (Figure 1.2 on page 11 showed a schematic diagram of a typical neuron.) Inspired by this hypothesis, some of the earliest AI work aimed to create artificial **neural networks**. (Other names for the field include **connectionism**, **parallel distributed**NEURAL NETWORK
 
 **processing**, and **neural computation**.) Figure 18.19 shows a simple mathematical model of the neuron devised by McCulloch and Pitts (1943). Roughly speaking, it “fires” when a linear combination of its inputs exceeds some (hard or soft) threshold—that is, it implements  
 
-728 Chapter 18. Learning from Examples
+
 
 Output
 
@@ -1975,7 +1975,7 @@ Since 1943, much more detailed and realistic models have been developed, both fo
 
 NEUROSCIENCE
 
-more abstract properties of neural networks, such as their ability to perform distributed com- putation, to tolerate noisy inputs, and to learn. Although we understand now that other kinds of systems—including Bayesian networks—have these properties, neural networks remain one of the most popular and effective forms of learning system and are worthy of study in their own right.
+more abstract properties of neural networks, such as their ability to perform distributed computation, to tolerate noisy inputs, and to learn. Although we understand now that other kinds of systems—including Bayesian networks—have these properties, neural networks remain one of the most popular and effective forms of learning system and are worthy of study in their own right.
 
 **18.7.1 Neural network structures**
 
@@ -2045,13 +2045,13 @@ perceptron network. With such a network, we might hope to learn the two-bit adde
 
 x1 x2 y3 (carry) y4 (sum) 0 0 0 0 0 1 0 1 1 0 0 1 1 1 1 0  
 
-730 Chapter 18. Learning from Examples
 
-The first thing to notice is that a perceptron network with m outputs is really m separate networks, because each weight affects only one of the outputs. Thus, there will be m sepa- rate training processes. Furthermore, depending on the type of activation function used, the training processes will be either the **perceptron learning rule** (Equation (18.7) on page 724) or gradient descent rule for the **logistic regression** (Equation (18.8) on page 727).
 
-If you try either method on the two-bit-adder data, something interesting happens. Unit 3 learns the carry function easily, but unit 4 completely fails to learn the sum function. No, unit 4 is not defective! The problem is with the sum function itself. We saw in Section 18.6 that linear classifiers (whether hard or soft) can represent linear decision boundaries in the in- put space. This works fine for the carry function, which is a logical AND (see Figure 18.21(a)). The sum function, however, is an XOR (exclusive OR) of the two inputs. As Figure 18.21(c) illustrates, this function is not linearly separable so the perceptron cannot learn it.
+The first thing to notice is that a perceptron network with m outputs is really m separate networks, because each weight affects only one of the outputs. Thus, there will be m separate training processes. Furthermore, depending on the type of activation function used, the training processes will be either the **perceptron learning rule** (Equation (18.7) on page 724) or gradient descent rule for the **logistic regression** (Equation (18.8) on page 727).
 
-The linearly separable functions constitute just a small fraction of all Boolean func- tions; Exercise 18.20 asks you to quantify this fraction. The inability of perceptrons to learn even such simple functions as XOR was a significant setback to the nascent neural network
+If you try either method on the two-bit-adder data, something interesting happens. Unit 3 learns the carry function easily, but unit 4 completely fails to learn the sum function. No, unit 4 is not defective! The problem is with the sum function itself. We saw in Section 18.6 that linear classifiers (whether hard or soft) can represent linear decision boundaries in the input space. This works fine for the carry function, which is a logical AND (see Figure 18.21(a)). The sum function, however, is an XOR (exclusive OR) of the two inputs. As Figure 18.21(c) illustrates, this function is not linearly separable so the perceptron cannot learn it.
+
+The linearly separable functions constitute just a small fraction of all Boolean functions; Exercise 18.20 asks you to quantify this fraction. The inability of perceptrons to learn even such simple functions as XOR was a significant setback to the nascent neural network
 
 _w_3,5
 
@@ -2211,9 +2211,9 @@ Perceptron Decision tree
 
 (a) (b)
 
-**Figure 18.22** Comparing the performance of perceptrons and decision trees. (a) Percep- trons are better at learning the majority function of 11 inputs. (b) Decision trees are better at learning the WillWait predicate in the restaurant example.
+**Figure 18.22** Comparing the performance of perceptrons and decision trees. (a) Perceptrons are better at learning the majority function of 11 inputs. (b) Decision trees are better at learning the WillWait predicate in the restaurant example.
 
-community in the 1960s. Perceptrons are far from useless, however. Section 18.6.4 noted that logistic regression (i.e., training a sigmoid perceptron) is even today a very popular and effective tool. Moreover, a perceptron can represent some quite “complex” Boolean func- tions very compactly. For example, the **majority function**, which outputs a 1 only if more than half of its n inputs are 1, can be represented by a perceptron with each wi = 1 and with w0 =−n/2. A decision tree would need exponentially many nodes to represent this function.
+community in the 1960s. Perceptrons are far from useless, however. Section 18.6.4 noted that logistic regression (i.e., training a sigmoid perceptron) is even today a very popular and effective tool. Moreover, a perceptron can represent some quite “complex” Boolean functions very compactly. For example, the **majority function**, which outputs a 1 only if more than half of its n inputs are 1, can be represented by a perceptron with each wi = 1 and with w0 =−n/2. A decision tree would need exponentially many nodes to represent this function.
 
 Figure 18.22 shows the learning curve for a perceptron on two different problems. On the left, we show the curve for learning the majority function with 11 Boolean inputs (i.e., the function outputs a 1 if 6 or more inputs are 1). As we would expect, the perceptron learns the function quite quickly, because the majority function is linearly separable. On the other hand, the decision-tree learner makes no progress, because the majority function is very hard (although not impossible) to represent as a decision tree. On the right, we have the restaurant example. The solution problem is easily represented as a decision tree, but is not linearly separable. The best plane through the data correctly classifies only 65%.
 
@@ -2221,9 +2221,9 @@ Figure 18.22 shows the learning curve for a perceptron on two different problems
 
 (McCulloch and Pitts, 1943) were well aware that a single threshold unit would not solve all their problems. In fact, their paper proves that such a unit can represent the basic Boolean functions AND, OR, and NOT and then goes on to argue that any desired functionality can be obtained by connecting large numbers of units into (possibly recurrent) networks of arbitrary depth. The problem was that nobody knew how to train such networks.
 
-This turns out to be an easy problem if we think of a network the right way: as a function h**w**(**x**) parameterized by the weights **w**. Consider the simple network shown in Fig- ure 18.20(b), which has two input units, two hidden units, and two output unit. (In addition, each unit has a dummy input fixed at 1.) Given an input vector **x** \= (x1, x2), the activations  
+This turns out to be an easy problem if we think of a network the right way: as a function h**w**(**x**) parameterized by the weights **w**. Consider the simple network shown in Figure 18.20(b), which has two input units, two hidden units, and two output unit. (In addition, each unit has a dummy input fixed at 1.) Given an input vector **x** \= (x1, x2), the activations  
 
-732 Chapter 18. Learning from Examples
+
 
 \-4 -2 0 2 4_x_1 -4
 
@@ -2271,7 +2271,7 @@ REGRESSION
 
 Before delving into learning rules, let us look at the ways in which networks generate complicated functions. First, remember that each unit in a sigmoid network represents a soft threshold in its input space, as shown in Figure 18.17(c) (page 726). With one hidden layer and one output layer, as in Figure 18.20(b), each output unit computes a soft-thresholded linear combination of several such functions. For example, by adding two opposite-facing soft threshold functions and thresholding the result, we can obtain a “ridge” function as shown in Figure 18.23(a). Combining two such ridges at right angles to each other (i.e., combining the outputs from four hidden units), we obtain a “bump” as shown in Figure 18.23(b).
 
-With more hidden units, we can produce more bumps of different sizes in more places. In fact, with a single, sufficiently large hidden layer, it is possible to represent any continuous function of the inputs with arbitrary accuracy; with two layers, even discontinuous functions can be represented.9 Unfortunately, for any _particular_ network structure, it is harder to char- acterize exactly which functions can be represented and which ones cannot.
+With more hidden units, we can produce more bumps of different sizes in more places. In fact, with a single, sufficiently large hidden layer, it is possible to represent any continuous function of the inputs with arbitrary accuracy; with two layers, even discontinuous functions can be represented.9 Unfortunately, for any _particular_ network structure, it is harder to characterize exactly which functions can be represented and which ones cannot.
 
 9 The proof is complex, but the main point is that the required number of hidden units grows exponentially with the number of inputs. For example, 2
 
@@ -2321,13 +2321,13 @@ hidden layers. The back-propagation process emerges directly from a derivation o
 
 At the output layer, the weight-update rule is identical to Equation (18.8). We have multiple output units, so let Errk be the kth component of the error vector **y** − **hw**. We will also find it convenient to define a modified error Δk =Errk × g
 
-′(ink), so that the weight- update rule becomes
+′(ink), so that the weightupdate rule becomes
 
 wj,k ← wj,k + α× aj ×Δk . (18.11)
 
-To update the connections between the input units and the hidden units, we need to define a quantity analogous to the error term for output nodes. Here is where we do the error back- propagation. The idea is that hidden node j is “responsible” for some fraction of the error Δk
+To update the connections between the input units and the hidden units, we need to define a quantity analogous to the error term for output nodes. Here is where we do the error backpropagation. The idea is that hidden node j is “responsible” for some fraction of the error Δk
 
-in each of the output nodes to which it connects. Thus, the Δk values are divided according to the strength of the connection between the hidden node and the output node and are prop- agated back to provide the Δj values for the hidden layer. The propagation rule for the Δ
+in each of the output nodes to which it connects. Thus, the Δk values are divided according to the strength of the connection between the hidden node and the output node and are propagated back to provide the Δj values for the hidden layer. The propagation rule for the Δ
 
 values is the following:
 
@@ -2341,7 +2341,7 @@ k
 
 wj,kΔk . (18.12)  
 
-734 Chapter 18. Learning from Examples
+
 
 **function** BACK-PROP-LEARNING(examples ,network ) **returns** a neural network **inputs**: examples , a set of examples, each with input vector **x** and output vector **y**
 
@@ -2383,15 +2383,15 @@ wi,j ←wi,j + α × ai × Δ\[j\]
 
 **Figure 18.24** The back-propagation algorithm for learning in multilayer networks.
 
-Now the weight-update rule for the weights between the inputs and the hidden layer is essen- tially identical to the update rule for the output layer:
+Now the weight-update rule for the weights between the inputs and the hidden layer is essentially identical to the update rule for the output layer:
 
 wi,j ← wi,j + α× ai ×Δj .
 
 The back-propagation process can be summarized as follows:
 
-• Compute the Δ values for the output units, using the observed error.
+- Compute the Δ values for the output units, using the observed error.
 
-• Starting with output layer, repeat the following for each layer in the network, until the earliest hidden layer is reached:
+- Starting with output layer, repeat the following for each layer in the network, until the earliest hidden layer is reached:
 
 **–** Propagate the Δ values back to the previous layer.
 
@@ -2525,9 +2525,9 @@ wi,jai
 
 where Δj is defined as before. Thus, we obtain the update rules obtained earlier from intuitive considerations. It is also clear that the process can be continued for networks with more than one hidden layer, which justifies the general algorithm given in Figure 18.24.
 
-Having made it through (or skipped over) all the mathematics, let’s see how a single- hidden-layer network performs on the restaurant problem. First, we need to determine the structure of the network. We have 10 attributes describing each example, so we will need 10 input units. Should we have one hidden layer or two? How many nodes in each layer? Should they be fully connected? There is no good theory that will tell us the answer. (See the next section.) As always, we can use cross-validation: try several different structures and see which one works best. It turns out that a network with one hidden layer containing four nodes is about right for this problem. In Figure 18.25, we show two curves. The first is a training curve showing the mean squared error on a given training set of 100 restaurant examples  
+Having made it through (or skipped over) all the mathematics, let’s see how a singlehidden-layer network performs on the restaurant problem. First, we need to determine the structure of the network. We have 10 attributes describing each example, so we will need 10 input units. Should we have one hidden layer or two? How many nodes in each layer? Should they be fully connected? There is no good theory that will tell us the answer. (See the next section.) As always, we can use cross-validation: try several different structures and see which one works best. It turns out that a network with one hidden layer containing four nodes is about right for this problem. In Figure 18.25, we show two curves. The first is a training curve showing the mean squared error on a given training set of 100 restaurant examples  
 
-736 Chapter 18. Learning from Examples
+
 
 0
 
@@ -2601,7 +2601,7 @@ Decision tree Multilayer network
 
 **Figure 18.25** (a) Training curve showing the gradual reduction in error as weights are modified over several epochs, for a given set of examples in the restaurant domain. (b) Comparative learning curves showing that decision-tree learning does slightly better on the restaurant problem than back-propagation in a multilayer network.
 
-during the weight-updating process. This demonstrates that the network does indeed converge to a perfect fit to the training data. The second curve is the standard learning curve for the restaurant data. The neural network does learn well, although not quite as fast as decision- tree learning; this is perhaps not surprising, because the data were generated from a simple decision tree in the first place.
+during the weight-updating process. This demonstrates that the network does indeed converge to a perfect fit to the training data. The second curve is the standard learning curve for the restaurant data. The neural network does learn well, although not quite as fast as decisiontree learning; this is perhaps not surprising, because the data were generated from a simple decision tree in the first place.
 
 Neural networks are capable of far more complex learning tasks of course, although it must be said that a certain amount of twiddling is needed to get the network structure right and to achieve convergence to something close to the global optimum in weight space. There are literally tens of thousands of published applications of neural networks. Section 18.11.1 looks at one such application in more depth.
 
@@ -2629,7 +2629,7 @@ unit that does its best to produce the correct output on as many of the training
 
 18.8 NONPARAMETRIC MODELS
 
-Linear regression and neural networks use the training data to estimate a fixed set of param- eters **w**. That defines our hypothesis h**w**(**x**), and at that point we can throw away the training data, because they are all summarized by **w**. A learning model that summarizes data with a set of parameters of fixed size (independent of the number of training examples) is called a **parametric model**.PARAMETRIC MODEL
+Linear regression and neural networks use the training data to estimate a fixed set of parameters **w**. That defines our hypothesis h**w**(**x**), and at that point we can throw away the training data, because they are all summarized by **w**. A learning model that summarizes data with a set of parameters of fixed size (independent of the number of training examples) is called a **parametric model**.PARAMETRIC MODEL
 
 No matter how much data you throw at a parametric model, it won’t change its mind about how many parameters it needs. When data sets are small, it makes sense to have a strong restriction on the allowable hypotheses, to avoid overfitting. But when there are thousands or millions or billions of examples to learn from, it seems like a better idea to let the data speak for themselves rather than forcing them to speak through a tiny vector of parameters. If the data say that the correct answer is a very wiggly function, we shouldn’t restrict ourselves to linear or slightly wiggly functions.
 
@@ -2643,7 +2643,7 @@ LEARNING
 
 all the training examples, put them in a lookup table, and then when asked for h(**x**), see if **x** is in the table; if it is, return the corresponding y. The problem with this method is that it does not generalize well: when **x** is not in the table all it can do is return some default value.  
 
-738 Chapter 18. Learning from Examples
+
 
 2.5 3
 
@@ -2713,7 +2713,7 @@ i
 
 .
 
-With p = 2 this is Euclidean distance and with p = 1 it is Manhattan distance. With Boolean attribute values, the number of attributes on which the two points differ is called the **Ham- ming distance**. Often p =2 is used if the dimensions are measuring similar properties, suchHAMMING DISTANCE
+With p = 2 this is Euclidean distance and with p = 1 it is Manhattan distance. With Boolean attribute values, the number of attributes on which the two points differ is called the **Hamming distance**. Often p =2 is used if the dimensions are measuring similar properties, suchHAMMING DISTANCE
 
 as the width, height and depth of parts on a conveyor belt, and Manhattan distance is used if they are dissimilar, such as age, weight, and gender of a patient. Note that if we use the raw numbers from each dimension then the total distance will be affected by a change in scale in any dimension. That is, if we change dimension i from measurements in centimeters to  
 
@@ -2725,7 +2725,7 @@ simple approach is to compute the mean μi and standard deviation σi of the val
 
 DISTANCE
 
-In low-dimensional spaces with plenty of data, nearest neighbors works very well: we are likely to have enough nearby data points to get a good answer. But as the number of dimensions rises we encounter a problem: the nearest neighbors in high-dimensional spaces are usually not very near! Consider k-nearest-neighbors on a data set of N points uniformly distributed throughout the interior of an n-dimensional unit hypercube. We’ll define the k- neighborhood of a point as the smallest hypercube that contains the k-nearest neighbors. Let  be the average side length of a neighborhood. Then the volume of the neighborhood (which contains k points) is 
+In low-dimensional spaces with plenty of data, nearest neighbors works very well: we are likely to have enough nearby data points to get a good answer. But as the number of dimensions rises we encounter a problem: the nearest neighbors in high-dimensional spaces are usually not very near! Consider k-nearest-neighbors on a data set of N points uniformly distributed throughout the interior of an n-dimensional unit hypercube. We’ll define the kneighborhood of a point as the smallest hypercube that contains the k-nearest neighbors. Let  be the average side length of a neighborhood. Then the volume of the neighborhood (which contains k points) is 
 
 n and the volume of the full cube (which contains N points) is 1. So, on average, 
 
@@ -2747,7 +2747,7 @@ A balanced binary tree over data with an arbitrary number of dimensions is calle
 
 for k-dimensional tree. (In our notation, the number of dimensions is n, so they would be n-d trees. The construction of a k-d tree is similar to the construction of a one-dimensional balanced binary tree. We start with a set of examples and at the root node we split them along the ith dimension by testing whether xi ≤ m. We chose the value m to be the median of the examples along the ith dimension; thus half the examples will be in the left branch of the tree  
 
-740 Chapter 18. Learning from Examples
+
 
 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
 
@@ -2815,7 +2815,7 @@ HASH
 
 Section 18.8. Nonparametric Models 741
 
-We can’t use hashes to solve NN (k, **x**q) exactly, but with a clever use of randomized algorithms, we can find an _approximate_ solution. First we define the **approximate near- neighbors** problem: given a data set of example points and a query point **x**q, find, with highAPPROXIMATE
+We can’t use hashes to solve NN (k, **x**q) exactly, but with a clever use of randomized algorithms, we can find an _approximate_ solution. First we define the **approximate nearneighbors** problem: given a data set of example points and a query point **x**q, find, with highAPPROXIMATE
 
 NEAR-NEIGHBORS
 
@@ -2823,17 +2823,17 @@ probability, an example point (or points) that is near **x**q. To be more precis
 
 To solve approximate near neighbors, we will need a hash function g(**x**) that has the property that, for any two points **x**j and **x**j′ , the probability that they have the same hash code is small if their distance is more than c r, and is high if their distance is less than r. For simplicity we will treat each point as a bit string. (Any features that are not Boolean can be encoded into a set of Boolean features.)
 
-The intuition we rely on is that if two points are close together in an n-dimensional space, then they will necessarily be close when projected down onto a one-dimensional space (a line). In fact, we can discretize the line into bins—hash buckets—so that, with high prob- ability, near points project down to exactly the same bin. Points that are far away from each other will tend to project down into different bins for most projections, but there will always be a few projections that coincidentally project far-apart points into the same bin. Thus, the bin for point **x**q contains many (but not all) points that are near to **x**q, as well as some points that are far away.
+The intuition we rely on is that if two points are close together in an n-dimensional space, then they will necessarily be close when projected down onto a one-dimensional space (a line). In fact, we can discretize the line into bins—hash buckets—so that, with high probability, near points project down to exactly the same bin. Points that are far away from each other will tend to project down into different bins for most projections, but there will always be a few projections that coincidentally project far-apart points into the same bin. Thus, the bin for point **x**q contains many (but not all) points that are near to **x**q, as well as some points that are far away.
 
 The trick of LSH is to create _multiple_ random projections and combine them. A random projection is just a random subset of the bit-string representation. We choose  different random projections and create  hash tables, g1(**x**), . . . , g(**x**). We then enter all the examples into each hash table. Then when given a query point **x**q, we fetch the set of points in bin gk(q)
 
-for each k, and union these sets together into a set of candidate points, C . Then we compute the actual distance to **x**q for each of the points in C and return the k closest points. With high probability, each of the points that are near to **x**q will show up in at least one of the bins, and although some far-away points will show up as well, we can ignore those. With large real- world problems, such as finding the near neighbors in a data set of 13 million Web images using 512 dimensions (Torralba _et al._, 2008), locality-sensitive hashing needs to examine only a few thousand images out of 13 million to find nearest neighbors; a thousand-fold speedup over exhaustive or k-d tree approaches.
+for each k, and union these sets together into a set of candidate points, C . Then we compute the actual distance to **x**q for each of the points in C and return the k closest points. With high probability, each of the points that are near to **x**q will show up in at least one of the bins, and although some far-away points will show up as well, we can ignore those. With large realworld problems, such as finding the near neighbors in a data set of 13 million Web images using 512 dimensions (Torralba _et al._, 2008), locality-sensitive hashing needs to examine only a few thousand images out of 13 million to find nearest neighbors; a thousand-fold speedup over exhaustive or k-d tree approaches.
 
 **18.8.4 Nonparametric regression**
 
-Now we’ll look at nonparametric approaches to _regression_ rather than classification. Fig- ure 18.28 shows an example of some different models. In (a), we have perhaps the simplest method of all, known informally as “connect-the-dots,” and superciliously as “piecewise- linear nonparametric regression.” This model creates a function h(x) that, when given a query xq, solves the ordinary linear regression problem with just two points: the training examples immediately to the left and right of xq. When noise is low, this trivial method is actually not too bad, which is why it is a standard feature of charting software in spreadsheets.  
+Now we’ll look at nonparametric approaches to _regression_ rather than classification. Figure 18.28 shows an example of some different models. In (a), we have perhaps the simplest method of all, known informally as “connect-the-dots,” and superciliously as “piecewiselinear nonparametric regression.” This model creates a function h(x) that, when given a query xq, solves the ordinary linear regression problem with just two points: the training examples immediately to the left and right of xq. When noise is low, this trivial method is actually not too bad, which is why it is a standard feature of charting software in spreadsheets.  
 
-742 Chapter 18. Learning from Examples
+
 
 0
 
@@ -2915,13 +2915,13 @@ Now we’ll look at nonparametric approaches to _regression_ rather than classif
 
 (c) (d)
 
-**Figure 18.28** Nonparametric regression models: (a) connect the dots, (b) 3-nearest neigh- bors average, (c) 3-nearest-neighbors linear regression, (d) locally weighted regression with a quadratic kernel of width k =10.
+**Figure 18.28** Nonparametric regression models: (a) connect the dots, (b) 3-nearest neighbors average, (c) 3-nearest-neighbors linear regression, (d) locally weighted regression with a quadratic kernel of width k =10.
 
 But when the data are noisy, the resulting function is spiky, and does not generalize well. k-**nearest-neighbors regression** (Figure 18.28(b)) improves on connect-the-dots. In-
 
-NEAREST- NEIGHBORS REGRESSION
+NEARESTNEIGHBORS REGRESSION
 
-stead of using just the two examples to the left and right of a query point xq, we use the k nearest neighbors (here 3). A larger value of k tends to smooth out the magnitude of the spikes, although the resulting function has discontinuities. In (b), we have the k-nearest- neighbors average: h(x) is the mean value of the k points,
+stead of using just the two examples to the left and right of a query point xq, we use the k nearest neighbors (here 3). A larger value of k tends to smooth out the magnitude of the spikes, although the resulting function has discontinuities. In (b), we have the k-nearestneighbors average: h(x) is the mean value of the k points,
 
 ∑ yj/k. Notice that at the outlying
 
@@ -2929,7 +2929,7 @@ points, near x= 0 and x= 14, the estimates are poor because all the evidence com
 
 **Locally weighted regression** (Figure 18.28(d)) gives us the advantages of nearest neigh-LOCALLY WEIGHTED REGRESSION
 
-bors, without the discontinuities. To avoid discontinuities in h(x), we need to avoid disconti-  
+bors, without the discontinuities. To avoid discontinuities in h(x), we need to avoid disconti 
 
 Section 18.8. Nonparametric Models 743
 
@@ -2967,11 +2967,11 @@ where Distance is any of the distance metrics discussed for nearest neighbors. T
 
 Note that we need to solve a new regression problem for _every_ query point—that’s what it means to be _local_. (In ordinary linear regression, we solved the regression problem once, globally, and then used the same h**w** for any query point.) Mitigating against this extra work  
 
-744 Chapter 18. Learning from Examples
+
 
 is the fact that each regression problem will be easier to solve, because it involves only the examples with nonzero weight—the examples whose kernels overlap the query point. When kernel widths are small, this may be just a few points.
 
-Most nonparametric models have the advantage that it is easy to do leave-one-out cross- validation without having to recompute everything. With a k-nearest-neighbors model, for instance, when given a test example (**x**, y) we retrieve the k nearest neighbors once, compute the per-example loss L(y, h(**x**)) from them, and record that as the leave-one-out result for every example that is not one of the neighbors. Then we retrieve the k + 1 nearest neighbors and record distinct results for leaving out each of the k neighbors. With N examples the whole process is O(k), not O(kN).
+Most nonparametric models have the advantage that it is easy to do leave-one-out crossvalidation without having to recompute everything. With a k-nearest-neighbors model, for instance, when given a test example (**x**, y) we retrieve the k nearest neighbors once, compute the per-example loss L(y, h(**x**)) from them, and record that as the leave-one-out result for every example that is not one of the neighbors. Then we retrieve the k + 1 nearest neighbors and record distinct results for leaving out each of the k neighbors. With N examples the whole process is O(k), not O(kN).
 
 18.9 SUPPORT VECTOR MACHINES
 
@@ -2981,7 +2981,7 @@ The **support vector machine** or SVM framework is currently the most popular ap
 
 1\. SVMs construct a **maximum margin separator**—a decision boundary with the largest possible distance to example points. This helps them generalize well.
 
-2\. SVMs create a linear separating hyperplane, but they have the ability to embed the data into a higher-dimensional space, using the so-called **kernel trick**. Often, data that are not linearly separable in the original input space are easily separable in the higher- dimensional space. The high-dimensional linear separator is actually nonlinear in the original space. This means the hypothesis space is greatly expanded over methods that use strictly linear representations.
+2\. SVMs create a linear separating hyperplane, but they have the ability to embed the data into a higher-dimensional space, using the so-called **kernel trick**. Often, data that are not linearly separable in the original input space are easily separable in the higherdimensional space. The high-dimensional linear separator is actually nonlinear in the original space. This means the hypothesis space is greatly expanded over methods that use strictly linear representations.
 
 3\. SVMs are a nonparametric method—they retain training examples and potentially need to store them all. On the other hand, in practice they often end up retaining only a small fraction of the number of examples—sometimes as few as a small constant times the number of dimensions. Thus SVMs combine the advantages of nonparametric and parametric models: they have the flexibility to represent complex functions, but they are resistant to overfitting.
 
@@ -3033,7 +3033,7 @@ Now, how do we find this separator? Before showing the equations, some notation:
 
 However, it turns out there is another approach to solving this problem. We won’t show the details, but will just say that there is an alternative representation called the dual  
 
-746 Chapter 18. Learning from Examples
+
 
 representation, in which the optimal solution is found by solving
 
@@ -3077,7 +3077,7 @@ j
 
 ⎠ . (18.14)
 
-A final important property is that the weights αj associated with each data point are _zero_ ex- cept for the **support vectors**—the points closest to the separator. (They are called “support”SUPPORT VECTOR
+A final important property is that the weights αj associated with each data point are _zero_ except for the **support vectors**—the points closest to the separator. (They are called “support”SUPPORT VECTOR
 
 vectors because they “hold up” the separating plane.) Because there are usually many fewer support vectors than examples, SVMs gain some of the advantages of parametric models.
 
@@ -3091,7 +3091,7 @@ f1 = x 2
 
 2x1x2 . (18.15)
 
-We will see shortly where these came from, but for now, just look at what happens. Fig- ure 18.31(b) shows the data in the new, three-dimensional space defined by the three features; the data are _linearly separable_ in this space! This phenomenon is actually fairly general: if data are mapped into a space of sufficiently high dimension, then they will almost always be linearly separable—if you look at a set of points from enough directions, you’ll find a way to make them line up. Here, we used only three dimensions;11 Exercise 18.16 asks you to show that four dimensions suffice for linearly separating a circle anywhere in the plane (not just at the origin), and five dimensions suffice to linearly separate any ellipse. In general (with some special cases excepted) if we have N data points then they will always be separable in spaces of N − 1 dimensions or more (Exercise 18.25).
+We will see shortly where these came from, but for now, just look at what happens. Figure 18.31(b) shows the data in the new, three-dimensional space defined by the three features; the data are _linearly separable_ in this space! This phenomenon is actually fairly general: if data are mapped into a space of sufficiently high dimension, then they will almost always be linearly separable—if you look at a set of points from enough directions, you’ll find a way to make them line up. Here, we used only three dimensions;11 Exercise 18.16 asks you to show that four dimensions suffice for linearly separating a circle anywhere in the plane (not just at the origin), and five dimensions suffice to linearly separate any ellipse. In general (with some special cases excepted) if we have N data points then they will always be separable in spaces of N − 1 dimensions or more (Exercise 18.25).
 
 Now, we would not usually expect to find a linear separator in the input space **x**, but we can find linear separators in the high-dimensional feature space F (**x**) simply by replacing **x**j ·**x**k in Equation (18.13) with F (**x**j)·F (**x**k). This by itself is not remarkable—replacing **x** by F (**x**) in _any_ learning algorithm has the required effect—but the dot product has some special properties. It turns out that F (**x**j) · F (**x**k) can often be computed without first computing F
 
@@ -3141,7 +3141,7 @@ _x_2 2
 
 (a) (b)
 
-**Figure 18.31** (a) A two-dimensional training set with positive examples as black cir- cles and negative examples as white circles. The true decision boundary, x
+**Figure 18.31** (a) A two-dimensional training set with positive examples as black circles and negative examples as white circles. The true decision boundary, x
 
 2
 
@@ -3177,9 +3177,9 @@ is usually written as K(**x**j, **x**k). The kernel function can be applied to p
 
 The next step is to see that there’s nothing special about the kernel K(**x**j, **x**k)= (**x**j ·**x**k) 2.
 
-It corresponds to a particular higher-dimensional feature space, but other kernel functions correspond to other feature spaces. A venerable result in mathematics, **Mercer’s theo- rem** (1909), tells us that any “reasonable”13 kernel function corresponds to _some_ featureMERCER’S THEOREM
+It corresponds to a particular higher-dimensional feature space, but other kernel functions correspond to other feature spaces. A venerable result in mathematics, **Mercer’s theorem** (1909), tells us that any “reasonable”13 kernel function corresponds to _some_ featureMERCER’S THEOREM
 
-space. These feature spaces can be very large, even for innocuous-looking kernels. For ex- ample, the **polynomial kernel**, K(**x**j , **x**k)= (1 + **x**j · **x**k)
+space. These feature spaces can be very large, even for innocuous-looking kernels. For example, the **polynomial kernel**, K(**x**j , **x**k)= (1 + **x**j · **x**k)
 
 d, corresponds to a feature spacePOLYNOMIAL KERNEL
 
@@ -3187,13 +3187,13 @@ whose dimension is exponential in d.
 
 12 This usage of “kernel function” is slightly different from the kernels in locally weighted regression. Some SVM kernels are distance metrics, but not all are. 13 Here, “reasonable” means that the matrix **K**jk = K(**x**j , **x**k) is positive definite.  
 
-748 Chapter 18. Learning from Examples
+
 
 This then is the clever **kernel trick**: Plugging these kernels into Equation (18.13),KERNEL TRICK
 
-_optimal linear separators can be found efficiently in feature spaces with billions of (or, in some cases, infinitely many) dimensions._ The resulting linear separators, when mapped back to the original input space, can correspond to arbitrarily wiggly, nonlinear decision bound- aries between the positive and negative examples.
+_optimal linear separators can be found efficiently in feature spaces with billions of (or, in some cases, infinitely many) dimensions._ The resulting linear separators, when mapped back to the original input space, can correspond to arbitrarily wiggly, nonlinear decision boundaries between the positive and negative examples.
 
-In the case of inherently noisy data, we may not want a linear separator in some high- dimensional space. Rather, we’d like a decision surface in a lower-dimensional space that does not cleanly separate the classes, but reflects the reality of the noisy data. That is pos- sible with the **soft margin** classifier, which allows examples to fall on the wrong side of theSOFT MARGIN
+In the case of inherently noisy data, we may not want a linear separator in some highdimensional space. Rather, we’d like a decision surface in a lower-dimensional space that does not cleanly separate the classes, but reflects the reality of the noisy data. That is possible with the **soft margin** classifier, which allows examples to fall on the wrong side of theSOFT MARGIN
 
 decision boundary, but assigns them a penalty proportional to the distance required to move them back on the correct side.
 
@@ -3209,7 +3209,7 @@ LEARNING
 
 to select a collection, or **ensemble**, of hypotheses from the hypothesis space and combine their predictions. For example, during cross-validation we might generate twenty different decision trees, and have them vote on the best classification for a new example.
 
-The motivation for ensemble learning is simple. Consider an ensemble of K =5 hy- potheses and suppose that we combine their predictions using simple majority voting. For the ensemble to misclassify a new example, _at least three of the five hypotheses have to misclas- sify it_. The hope is that this is much less likely than a misclassification by a single hypothesis. Suppose we assume that each hypothesis hk in the ensemble has an error of p—that is, the probability that a randomly chosen example is misclassified by hk is p. Furthermore, suppose we assume that the errors made by each hypothesis are _independent_. In that case, if p is small, then the probability of a large number of misclassifications occurring is minuscule. For ex- ample, a simple calculation (Exercise 18.18) shows that using an ensemble of five hypotheses reduces an error rate of 1 in 10 down to an error rate of less than 1 in 100. Now, obviously the assumption of independence is unreasonable, because hypotheses are likely to be misled in the same way by any misleading aspects of the training data. But if the hypotheses are at least a little bit different, thereby reducing the correlation between their errors, then ensemble learning can be very useful.
+The motivation for ensemble learning is simple. Consider an ensemble of K =5 hypotheses and suppose that we combine their predictions using simple majority voting. For the ensemble to misclassify a new example, _at least three of the five hypotheses have to misclassify it_. The hope is that this is much less likely than a misclassification by a single hypothesis. Suppose we assume that each hypothesis hk in the ensemble has an error of p—that is, the probability that a randomly chosen example is misclassified by hk is p. Furthermore, suppose we assume that the errors made by each hypothesis are _independent_. In that case, if p is small, then the probability of a large number of misclassifications occurring is minuscule. For example, a simple calculation (Exercise 18.18) shows that using an ensemble of five hypotheses reduces an error rate of 1 in 10 down to an error rate of less than 1 in 100. Now, obviously the assumption of independence is unreasonable, because hypotheses are likely to be misled in the same way by any misleading aspects of the training data. But if the hypotheses are at least a little bit different, thereby reducing the correlation between their errors, then ensemble learning can be very useful.
 
 Another way to think about the ensemble idea is as a generic way of enlarging the hypothesis space. That is, think of the ensemble itself as a hypothesis and the new hypothesis  
 
@@ -3265,7 +3265,7 @@ Section 18.10. Ensemble Learning 749
 
 –
 
-**Figure 18.32** Illustration of the increased expressive power obtained by ensemble learn- ing. We take three linear threshold hypotheses, each of which classifies positively on the unshaded side, and classify as positive any example classified positively by all three. The resulting triangular region is a hypothesis not expressible in the original hypothesis space.
+**Figure 18.32** Illustration of the increased expressive power obtained by ensemble learning. We take three linear threshold hypotheses, each of which classifies positively on the unshaded side, and classify as positive any example classified positively by all three. The resulting triangular region is a hypothesis not expressible in the original hypothesis space.
 
 space as the set of all possible ensembles constructable from hypotheses in the original space. Figure 18.32 shows how this can result in a more expressive hypothesis space. If the original hypothesis space allows for a simple and efficient learning algorithm, then the ensemble method provides a way to learn a much more expressive class of hypotheses without incurring much additional computational or algorithmic complexity.
 
@@ -3275,11 +3275,11 @@ we need first to explain the idea of a **weighted training set**. In such a trai
 
 example has an associated weight wj ≥ 0. The higher the weight of an example, the higher is the importance attached to it during the learning of a hypothesis. It is straightforward to modify the learning algorithms we have seen so far to operate with weighted training sets.14
 
-Boosting starts with wj = 1 for all the examples (i.e., a normal training set). From this set, it generates the first hypothesis, h1. This hypothesis will classify some of the training ex- amples correctly and some incorrectly. We would like the next hypothesis to do better on the misclassified examples, so we increase their weights while decreasing the weights of the cor- rectly classified examples. From this new weighted training set, we generate hypothesis h2. The process continues in this way until we have generated K hypotheses, where K is an input to the boosting algorithm. The final ensemble hypothesis is a weighted-majority combination of all the K hypotheses, each weighted according to how well it performed on the training set. Figure 18.33 shows how the algorithm works conceptually. There are many variants of the ba- sic boosting idea, with different ways of adjusting the weights and combining the hypotheses. One specific algorithm, called ADABOOST, is shown in Figure 18.34. ADABOOST has a very important property: if the input learning algorithm L is a **weak learning** algorithm—whichWEAK LEARNING
+Boosting starts with wj = 1 for all the examples (i.e., a normal training set). From this set, it generates the first hypothesis, h1. This hypothesis will classify some of the training examples correctly and some incorrectly. We would like the next hypothesis to do better on the misclassified examples, so we increase their weights while decreasing the weights of the correctly classified examples. From this new weighted training set, we generate hypothesis h2. The process continues in this way until we have generated K hypotheses, where K is an input to the boosting algorithm. The final ensemble hypothesis is a weighted-majority combination of all the K hypotheses, each weighted according to how well it performed on the training set. Figure 18.33 shows how the algorithm works conceptually. There are many variants of the basic boosting idea, with different ways of adjusting the weights and combining the hypotheses. One specific algorithm, called ADABOOST, is shown in Figure 18.34. ADABOOST has a very important property: if the input learning algorithm L is a **weak learning** algorithm—whichWEAK LEARNING
 
 14 For learning algorithms in which this is not possible, one can instead create a **replicated training set** where the jth example appears wj times, using randomization to handle fractional weights.  
 
-750 Chapter 18. Learning from Examples
+
 
 _h_
 
@@ -3317,7 +3317,7 @@ L, a learning algorithm K , the number of hypotheses in the ensemble
 
 **return** WEIGHTED-MAJORITY(**h**, **z**)
 
-**Figure 18.34** The ADABOOST variant of the boosting method for ensemble learning. The algorithm generates hypotheses by successively reweighting the training examples. The func- tion WEIGHTED-MAJORITY generates a hypothesis that returns the output value with the highest vote from the hypotheses in **h**, with votes weighted by **z**.
+**Figure 18.34** The ADABOOST variant of the boosting method for ensemble learning. The algorithm generates hypotheses by successively reweighting the training examples. The function WEIGHTED-MAJORITY generates a hypothesis that returns the output value with the highest vote from the hypotheses in **h**, with votes weighted by **z**.
 
 0.5 0.55
 
@@ -3391,7 +3391,7 @@ Training error Test error
 
 versus unboosted decision stumps on the restaurant data. (b) The proportion correct on the training set and the test set as a function of K , the number of hypotheses in the ensemble. Notice that the test set accuracy improves slightly even after the training accuracy reaches 1, i.e., after the ensemble fits the data exactly.  
 
-752 Chapter 18. Learning from Examples
+
 
 complex than necessary, but the graph tells us that the predictions _improve_ as the ensemble hypothesis gets more complex! Various explanations have been proposed for this. One view is that boosting approximates **Bayesian learning** (see Chapter 20), which can be shown to be an optimal learning algorithm, and the approximation improves as more hypotheses are added. Another possible explanation is that the addition of further hypotheses enables the ensemble to be _more definite_ in its distinction between positive and negative examples, which helps it when it comes to classifying new examples.
 
@@ -3459,7 +3459,7 @@ We have introduced a wide range of machine learning techniques, each illustrated
 
 Recognizing handwritten digits is an important problem with many applications, including automated sorting of mail by postal code, automated reading of checks and tax returns, and data entry for hand-held computers. It is an area where rapid progress has been made, in part because of better learning algorithms and in part because of the availability of better training sets. The United States National Institute of Science and Technology (**NIST**) has archived a database of 60,000 labeled digits, each 20× 20 =400 pixels with 8-bit grayscale values. It has become one of the standard benchmark problems for comparing new learning algorithms. Some example digits are shown in Figure 18.36.  
 
-754 Chapter 18. Learning from Examples
+
 
 **Figure 18.36** Examples from the NIST database of handwritten digits. Top row: examples of digits 0–9 that are easy to identify. Bottom row: more difficult examples of the same digits.
 
@@ -3471,7 +3471,7 @@ A series of **specialized neural networks** called LeNet were devised to take ad
 
 A **boosted neural network** combined three copies of the LeNet architecture, with the second one trained on a mix of patterns that the first one got 50% wrong, and the third one trained on patterns for which the first two disagreed. During testing, the three nets voted with the majority ruling. The test error rate was 0.7%.
 
-A **support vector machine** (see Section 18.9) with 25,000 support vectors achieved an error rate of 1.1%. This is remarkable because the SVM technique, like the simple nearest- neighbor approach, required almost no thought or iterated experimentation on the part of the developer, yet it still came close to the performance of LeNet, which had had years of devel- opment. Indeed, the support vector machine makes no use of the structure of the problem, and would perform just as well if the pixels were presented in a permuted order.  
+A **support vector machine** (see Section 18.9) with 25,000 support vectors achieved an error rate of 1.1%. This is remarkable because the SVM technique, like the simple nearestneighbor approach, required almost no thought or iterated experimentation on the part of the developer, yet it still came close to the performance of LeNet, which had had years of development. Indeed, the support vector machine makes no use of the structure of the problem, and would perform just as well if the pixels were presented in a permuted order.  
 
 Section 18.11. Practical Machine Learning 755
 
@@ -3483,7 +3483,7 @@ with a technique that is designed to take advantage of the structure of the prob
 
 **Humans** are estimated to have an error rate of about 0.2% on this problem. This figure is somewhat suspect because humans have not been tested as extensively as have machine learning algorithms. On a similar data set of digits from the United States Postal Service, human errors were at 2.5%.
 
-The following figure summarizes the error rates, run time performance, memory re- quirements, and amount of training time for the seven algorithms we have discussed. It also adds another measure, the percentage of digits that must be rejected to achieve 0.5% error. For example, if the SVM is allowed to reject 1.8% of the inputs—that is, pass them on for someone else to make the final judgment—then its error rate on the remaining 98.2% of the inputs is reduced from 1.1% to 0.5%.
+The following figure summarizes the error rates, run time performance, memory requirements, and amount of training time for the seven algorithms we have discussed. It also adds another measure, the percentage of digits that must be rejected to achieve 0.5% error. For example, if the SVM is allowed to reject 1.8% of the inputs—that is, pass them on for someone else to make the final judgment—then its error rate on the remaining 98.2% of the inputs is reduced from 1.1% to 0.5%.
 
 The following table summarizes the error rate and some of the other characteristics of the seven techniques we have discussed.
 
@@ -3495,7 +3495,7 @@ Error rate (pct.) 2.4 1.6 0.9 0.7 1.1 0.56 0.63 Run time (millisec/digit) 1000 1
 
 In a textbook we need to deal with simple, toy data to get the ideas across: a small data set, usually in two dimensions. But in practical applications of machine learning, the data set is usually large, multidimensional, and messy. The data are not handed to the analyst in a prepackaged set of (**x**, y) values; rather the analyst needs to go out and acquire the right data. There is a task to be accomplished, and most of the engineering problem is deciding what data are necessary to accomplish the task; a smaller part is choosing and implementing an  
 
-756 Chapter 18. Learning from Examples
+
 
 0.75
 
@@ -3527,7 +3527,7 @@ et Training set size (millions of words)
 
 **Figure 18.37** Learning curves for five learning algorithms on a common task. Note that there appears to be more room for improvement in the horizontal direction (more training data) than in the vertical direction (different machine learning algorithm). Adapted from Banko and Brill (2001).
 
-appropriate machine learning method to process the data. Figure 18.37 shows a typical real- world example, comparing five learning algorithms on the task of word-sense classification (given a sentence such as “The bank folded,” classify the word “bank” as “money-bank” or “river-bank”). The point is that machine learning researchers have focused mainly on the vertical direction: Can I invent a new learning algorithm that performs better than previously published algorithms on a standard training set of 1 million words? But the graph shows there is more room for improvement in the horizontal direction: instead of inventing a new algorithm, all I need to do is gather 10 million words of training data; even the _worst_ algorithm at 10 million words is performing better than the _best_ algorithm at 1 million. As we gather even more data, the curves continue to rise, dwarfing the differences between algorithms.
+appropriate machine learning method to process the data. Figure 18.37 shows a typical realworld example, comparing five learning algorithms on the task of word-sense classification (given a sentence such as “The bank folded,” classify the word “bank” as “money-bank” or “river-bank”). The point is that machine learning researchers have focused mainly on the vertical direction: Can I invent a new learning algorithm that performs better than previously published algorithms on a standard training set of 1 million words? But the graph shows there is more room for improvement in the horizontal direction: instead of inventing a new algorithm, all I need to do is gather 10 million words of training data; even the _worst_ algorithm at 10 million words is performing better than the _best_ algorithm at 1 million. As we gather even more data, the curves continue to rise, dwarfing the differences between algorithms.
 
 Consider another problem: the task of estimating the true value of houses that are for sale. In Figure 18.13 we showed a toy version of this problem, doing linear regression of house size to asking price. You probably noticed many limitations of this model. First, it is measuring the wrong thing: we want to estimate the selling price of a house, not the asking price. To solve this task we’ll need data on actual sales. But that doesn’t mean we should throw away the data about asking price—we can use it as one of the input features. Besides the size of the house, we’ll need more information: the number of rooms, bedrooms and bathrooms; whether the kitchen and bathrooms have been recently remodeled; the age of the house; we’ll also need information about the lot, and the neighborhood. But how do we define neighborhood? By zip code? What if part of one zip code is on the “wrong” side of the highway or train tracks, and the other part is desirable? What about the school district? Should the _name_ of the school district be a feature, or the _average test scores_? In addition to deciding what features to include, we will have to deal with missing data; different areas have different customs on what data are reported, and individual cases will always be missing some data. If the data you want are not available, perhaps you can set up a social networking site to encourage people to share and correct data. In the end, this process of  
 
@@ -3541,43 +3541,43 @@ That said, one _does_ have to pick a method (or methods) for a problem. There is
 
 This chapter has concentrated on inductive learning of functions from examples. The main points were as follows:
 
-• Learning takes many forms, depending on the nature of the agent, the component to be improved, and the available feedback.
+- Learning takes many forms, depending on the nature of the agent, the component to be improved, and the available feedback.
 
-• If the available feedback provides the correct answer for example inputs, then the learn- ing problem is called **supervised learning**. The task is to learn a function y = h(x). Learning a discrete-valued function is called **classification;** learning a continuous func- tion is called **regression**.
+- If the available feedback provides the correct answer for example inputs, then the learning problem is called **supervised learning**. The task is to learn a function y = h(x). Learning a discrete-valued function is called **classification;** learning a continuous function is called **regression**.
 
-• Inductive learning involves finding a hypothesis that agrees well with the examples. **Ockham’s razor** suggests choosing the simplest consistent hypothesis. The difficulty of this task depends on the chosen representation.
+- Inductive learning involves finding a hypothesis that agrees well with the examples. **Ockham’s razor** suggests choosing the simplest consistent hypothesis. The difficulty of this task depends on the chosen representation.
 
-• **Decision trees** can represent all Boolean functions. The **information-gain** heuristic provides an efficient method for finding a simple, consistent decision tree.
+- **Decision trees** can represent all Boolean functions. The **information-gain** heuristic provides an efficient method for finding a simple, consistent decision tree.
 
-• The performance of a learning algorithm is measured by the **learning curve**, which shows the prediction accuracy on the **test set** as a function of the **training-set** size.
+- The performance of a learning algorithm is measured by the **learning curve**, which shows the prediction accuracy on the **test set** as a function of the **training-set** size.
 
-• When there are multiple models to choose from, **cross-validation** can be used to select a model that will generalize well.
+- When there are multiple models to choose from, **cross-validation** can be used to select a model that will generalize well.
 
-• Sometimes not all errors are equal. A **loss function** tells us how bad each error is; the goal is then to minimize loss over a validation set.
+- Sometimes not all errors are equal. A **loss function** tells us how bad each error is; the goal is then to minimize loss over a validation set.
 
-• **Computational learning theory** analyzes the sample complexity and computational complexity of inductive learning. There is a tradeoff between the expressiveness of the hypothesis language and the ease of learning.
+- **Computational learning theory** analyzes the sample complexity and computational complexity of inductive learning. There is a tradeoff between the expressiveness of the hypothesis language and the ease of learning.
 
-• **Linear regression** is a widely used model. The optimal parameters of a linear regres- sion model can be found by gradient descent search, or computed exactly.
+- **Linear regression** is a widely used model. The optimal parameters of a linear regression model can be found by gradient descent search, or computed exactly.
 
-• A linear classifier with a hard threshold—also known as a **perceptron**—can be trained by a simple weight update rule to fit data that are **linearly separable**. In other cases, the rule fails to converge.  
+- A linear classifier with a hard threshold—also known as a **perceptron**—can be trained by a simple weight update rule to fit data that are **linearly separable**. In other cases, the rule fails to converge.  
 
-758 Chapter 18. Learning from Examples
 
-• **Logistic regression** replaces the perceptron’s hard threshold with a soft threshold de- fined by a logistic function. Gradient descent works well even for noisy data that are not linearly separable.
 
-• **Neural networks** represent complex nonlinear functions with a network of linear- threshold units. termMultilayer feed-forward neural networks can represent any func- tion, given enough units. The **back-propagation** algorithm implements a gradient de- scent in parameter space to minimize the output error.
+- **Logistic regression** replaces the perceptron’s hard threshold with a soft threshold defined by a logistic function. Gradient descent works well even for noisy data that are not linearly separable.
 
-• **Nonparametric models** use all the data to make each prediction, rather than trying to summarize the data first with a few parameters. Examples include **nearest neighbors** and **locally weighted regression**.
+- **Neural networks** represent complex nonlinear functions with a network of linearthreshold units. termMultilayer feed-forward neural networks can represent any function, given enough units. The **back-propagation** algorithm implements a gradient descent in parameter space to minimize the output error.
 
-• **Support vector machines** find linear separators with **maximum margin** to improve the generalization performance of the classifier. **Kernel methods** implicitly transform the input data into a high-dimensional space where a linear separator may exist, even if the original data are non-separable.
+- **Nonparametric models** use all the data to make each prediction, rather than trying to summarize the data first with a few parameters. Examples include **nearest neighbors** and **locally weighted regression**.
 
-• Ensemble methods such as **boosting** often perform better than individual methods. In **online learning** we can aggregate the opinions of experts to come arbitrarily close to the best expert’s performance, even when the distribution of the data is constantly shifting.
+- **Support vector machines** find linear separators with **maximum margin** to improve the generalization performance of the classifier. **Kernel methods** implicitly transform the input data into a high-dimensional space where a linear separator may exist, even if the original data are non-separable.
+
+- Ensemble methods such as **boosting** often perform better than individual methods. In **online learning** we can aggregate the opinions of experts to come arbitrarily close to the best expert’s performance, even when the distribution of the data is constantly shifting.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Chapter 1 outlined the history of philosophical investigations into inductive learning. William of Ockham16 (1280–1349), the most influential philosopher of his century and a major con- tributor to medieval epistemology, logic, and metaphysics, is credited with a statement called “Ockham’s Razor”—in Latin, _Entia non sunt multiplicanda praeter necessitatem_, and in En- glish, “Entities are not to be multiplied beyond necessity.” Unfortunately, this laudable piece of advice is nowhere to be found in his writings in precisely these words (although he did say “Pluralitas non est ponenda sine necessitate,” or “plurality shouldn’t be posited without necessity”). A similar sentiment was expressed by Aristotle in 350 B.C. in _Physics_ book I, chapter VI: “For the more limited, if adequate, is always preferable.”
+Chapter 1 outlined the history of philosophical investigations into inductive learning. William of Ockham16 (1280–1349), the most influential philosopher of his century and a major contributor to medieval epistemology, logic, and metaphysics, is credited with a statement called “Ockham’s Razor”—in Latin, _Entia non sunt multiplicanda praeter necessitatem_, and in English, “Entities are not to be multiplied beyond necessity.” Unfortunately, this laudable piece of advice is nowhere to be found in his writings in precisely these words (although he did say “Pluralitas non est ponenda sine necessitate,” or “plurality shouldn’t be posited without necessity”). A similar sentiment was expressed by Aristotle in 350 B.C. in _Physics_ book I, chapter VI: “For the more limited, if adequate, is always preferable.”
 
-The first notable use of decision trees was in EPAM, the “Elementary Perceiver And Memorizer” (Feigenbaum, 1961), which was a simulation of human concept learning. ID3 (Quinlan, 1979) added the crucial idea of choosing the attribute with maximum entropy; it is the basis for the decision tree algorithm in this chapter. Information theory was developed by Claude Shannon to aid in the study of communication (Shannon and Weaver, 1949). (Shan- non also contributed one of the earliest examples of machine learning, a mechanical mouse named Theseus that learned to navigate through a maze by trial and error.) The χ
+The first notable use of decision trees was in EPAM, the “Elementary Perceiver And Memorizer” (Feigenbaum, 1961), which was a simulation of human concept learning. ID3 (Quinlan, 1979) added the crucial idea of choosing the attribute with maximum entropy; it is the basis for the decision tree algorithm in this chapter. Information theory was developed by Claude Shannon to aid in the study of communication (Shannon and Weaver, 1949). (Shannon also contributed one of the earliest examples of machine learning, a mechanical mouse named Theseus that learned to navigate through a maze by trial and error.) The χ
 
 2 method of tree pruning was described by Quinlan (1986). C4.5, an industrial-strength decision tree package, can be found in Quinlan (1993). An independent tradition of decision tree learning exists in the statistical literature. _Classification and Regression Trees_ (Breiman _et al._, 1984), known as the “CART book,” is the principal reference.
 
@@ -3585,7 +3585,7 @@ The first notable use of decision trees was in EPAM, the “Elementary Perceiver
 
 Bibliographical and Historical Notes 759
 
-**Cross-validation** was first introduced by Larson (1931), and in a form close to what we show by Stone (1974) and Golub _et al._ (1979). The regularization procedure is due to Tikhonov (1963). Guyon and Elisseeff (2003) introduce a journal issue devoted to the prob- lem of feature selection. Banko and Brill (2001) and Halevy _et al._ (2009) discuss the advan- tages of using large amounts of data. It was Robert Mercer, a speech researcher who said in 1985 “There is no data like more data.” (Lyman and Varian, 2003) estimate that about 5 exabytes (5 × 1018 bytes) of data was produced in 2002, and that the rate of production is doubling every 3 years.
+**Cross-validation** was first introduced by Larson (1931), and in a form close to what we show by Stone (1974) and Golub _et al._ (1979). The regularization procedure is due to Tikhonov (1963). Guyon and Elisseeff (2003) introduce a journal issue devoted to the problem of feature selection. Banko and Brill (2001) and Halevy _et al._ (2009) discuss the advantages of using large amounts of data. It was Robert Mercer, a speech researcher who said in 1985 “There is no data like more data.” (Lyman and Varian, 2003) estimate that about 5 exabytes (5 × 1018 bytes) of data was produced in 2002, and that the rate of production is doubling every 3 years.
 
 Theoretical analysis of learning algorithms began with the work of Gold (1967) on **identification in the limit**. This approach was motivated in part by models of scientific discovery from the philosophy of science (Popper, 1962), but has been applied mainly to the problem of learning grammars from example sentences (Osherson _et al._, 1986).
 
@@ -3593,15 +3593,15 @@ Whereas the identification-in-the-limit approach concentrates on eventual conver
 
 COMPLEXITY
 
-by Solomonoff (1964, 2009) and Kolmogorov (1965), attempts to provide a formal definition for the notion of simplicity used in Ockham’s razor. To escape the problem that simplicity depends on the way in which information is represented, it is proposed that simplicity be measured by the length of the shortest program for a universal Turing machine that correctly reproduces the observed data. Although there are many possible universal Turing machines, and hence many possible “shortest” programs, these programs differ in length by at most a constant that is independent of the amount of data. This beautiful insight, which essentially shows that _any_ initial representation bias will eventually be overcome by the data itself, is marred only by the undecidability of computing the length of the shortest program. Approx- imate measures such as the **minimum description length**, or MDL (Rissanen, 1984, 2007)
+by Solomonoff (1964, 2009) and Kolmogorov (1965), attempts to provide a formal definition for the notion of simplicity used in Ockham’s razor. To escape the problem that simplicity depends on the way in which information is represented, it is proposed that simplicity be measured by the length of the shortest program for a universal Turing machine that correctly reproduces the observed data. Although there are many possible universal Turing machines, and hence many possible “shortest” programs, these programs differ in length by at most a constant that is independent of the amount of data. This beautiful insight, which essentially shows that _any_ initial representation bias will eventually be overcome by the data itself, is marred only by the undecidability of computing the length of the shortest program. Approximate measures such as the **minimum description length**, or MDL (Rissanen, 1984, 2007)
 
 MINIMUM DESCRIPTION LENGTH
 
-can be used instead and have produced excellent results in practice. The text by Li and Vi- tanyi (1993) is the best source for Kolmogorov complexity.
+can be used instead and have produced excellent results in practice. The text by Li and Vitanyi (1993) is the best source for Kolmogorov complexity.
 
 The theory of PAC-learning was inaugurated by Leslie Valiant (1984). His work stressed the importance of computational and sample complexity. With Michael Kearns (1990), Valiant showed that several concept classes cannot be PAC-learned tractably, even though sufficient information is available in the examples. Some positive results were obtained for classes such as decision lists (Rivest, 1987).
 
-An independent tradition of sample-complexity analysis has existed in statistics, begin- ning with the work on **uniform convergence theory** (Vapnik and Chervonenkis, 1971). The
+An independent tradition of sample-complexity analysis has existed in statistics, beginning with the work on **uniform convergence theory** (Vapnik and Chervonenkis, 1971). The
 
 UNIFORM CONVERGENCE THEORY
 
@@ -3611,37 +3611,37 @@ ln |H|measure obtained from PAC analysis. The VC dimension can be applied to con
 
 Linear regression with squared error loss goes back to Legendre (1805) and Gauss (1809), who were both working on predicting orbits around the sun. The modern use of multivariate regression for machine learning is covered in texts such as Bishop (2007). Ng (2004) analyzed the differences between L1 and L2 regularization.  
 
-760 Chapter 18. Learning from Examples
 
-The term **logistic function** comes from Pierre-François Verhulst (1804–1849), a statis- tician who used the curve to model population growth with limited resources, a more realis- tic model than the unconstrained geometric growth proposed by Thomas Malthus. Verhulst called it the _courbe logistique_, because of its relation to the logarithmic curve. The term **re- gression** is due to Francis Galton, nineteenth century statistician, cousin of Charles Darwin, and initiator of the fields of meteorology, fingerprint analysis, and statistical correlation, who used it in the sense of regression to the mean. The term **curse of dimensionality** comes from Richard Bellman (1961).
+
+The term **logistic function** comes from Pierre-François Verhulst (1804–1849), a statistician who used the curve to model population growth with limited resources, a more realistic model than the unconstrained geometric growth proposed by Thomas Malthus. Verhulst called it the _courbe logistique_, because of its relation to the logarithmic curve. The term **regression** is due to Francis Galton, nineteenth century statistician, cousin of Charles Darwin, and initiator of the fields of meteorology, fingerprint analysis, and statistical correlation, who used it in the sense of regression to the mean. The term **curse of dimensionality** comes from Richard Bellman (1961).
 
 Logistic regression can be solved with gradient descent, or with the Newton-Raphson method (Newton, 1671; Raphson, 1690). A variant of the Newton method called L-BFGS is sometimes used for large-dimensional problems; the L stands for “limited memory,” meaning that it avoids creating the full matrices all at once, and instead creates parts of them on the fly. BFGS are authors’ initials (Byrd _et al._, 1995).
 
-Nearest-neighbors models date back at least to Fix and Hodges (1951) and have been a standard tool in statistics and pattern recognition ever since. Within AI, they were popularized by Stanfill and Waltz (1986), who investigated methods for adapting the distance metric to the data. Hastie and Tibshirani (1996) developed a way to localize the metric to each point in the space, depending on the distribution of data around that point. Gionis _et al._ (1999) introduced locality-sensitive hashing, which has revolutionized the retrieval of similar objects in high- dimensional spaces, particularly in computer vision. Andoni and Indyk (2006) provide a recent survey of LSH and related methods.
+Nearest-neighbors models date back at least to Fix and Hodges (1951) and have been a standard tool in statistics and pattern recognition ever since. Within AI, they were popularized by Stanfill and Waltz (1986), who investigated methods for adapting the distance metric to the data. Hastie and Tibshirani (1996) developed a way to localize the metric to each point in the space, depending on the distribution of data around that point. Gionis _et al._ (1999) introduced locality-sensitive hashing, which has revolutionized the retrieval of similar objects in highdimensional spaces, particularly in computer vision. Andoni and Indyk (2006) provide a recent survey of LSH and related methods.
 
-The ideas behind kernel machines come from Aizerman _et al._ (1964) (who also in- troduced the kernel trick), but the full development of the theory is due to Vapnik and his colleagues (Boser _et al._, 1992). SVMs were made practical with the introduction of the soft-margin classifier for handling noisy data in a paper that won the 2008 ACM Theory and Practice Award (Cortes and Vapnik, 1995), and of the Sequential Minimal Optimization (SMO) algorithm for efficiently solving SVM problems using quadratic programming (Platt, 1999). SVMs have proven to be very popular and effective for tasks such as text categoriza- tion (Joachims, 2001), computational genomics (Cristianini and Hahn, 2007), and natural lan- guage processing, such as the handwritten digit recognition of DeCoste and Schölkopf (2002). As part of this process, many new kernels have been designed that work with strings, trees, and other nonnumerical data types. A related technique that also uses the kernel trick to im- plicitly represent an exponential feature space is the voted perceptron (Freund and Schapire, 1999; Collins and Duffy, 2002). Textbooks on SVMs include Cristianini and Shawe-Taylor (2000) and Schölkopf and Smola (2002). A friendlier exposition appears in the _AI Magazine_ article by Cristianini and Schölkopf (2002). Bengio and LeCun (2007) show some of the limitations of SVMs and other local, nonparametric methods for learning functions that have a global structure but do not have local smoothness.
+The ideas behind kernel machines come from Aizerman _et al._ (1964) (who also introduced the kernel trick), but the full development of the theory is due to Vapnik and his colleagues (Boser _et al._, 1992). SVMs were made practical with the introduction of the soft-margin classifier for handling noisy data in a paper that won the 2008 ACM Theory and Practice Award (Cortes and Vapnik, 1995), and of the Sequential Minimal Optimization (SMO) algorithm for efficiently solving SVM problems using quadratic programming (Platt, 1999). SVMs have proven to be very popular and effective for tasks such as text categorization (Joachims, 2001), computational genomics (Cristianini and Hahn, 2007), and natural language processing, such as the handwritten digit recognition of DeCoste and Schölkopf (2002). As part of this process, many new kernels have been designed that work with strings, trees, and other nonnumerical data types. A related technique that also uses the kernel trick to implicitly represent an exponential feature space is the voted perceptron (Freund and Schapire, 1999; Collins and Duffy, 2002). Textbooks on SVMs include Cristianini and Shawe-Taylor (2000) and Schölkopf and Smola (2002). A friendlier exposition appears in the _AI Magazine_ article by Cristianini and Schölkopf (2002). Bengio and LeCun (2007) show some of the limitations of SVMs and other local, nonparametric methods for learning functions that have a global structure but do not have local smoothness.
 
 Ensemble learning is an increasingly popular technique for improving the performance of learning algorithms. **Bagging** (Breiman, 1996), the first effective method, combines hy-BAGGING
 
-potheses learned from multiple **bootstrap** data sets, each generated by subsampling the orig- inal data set. The **boosting** method described in this chapter originated with theoretical work by Schapire (1990). The ADABOOST algorithm was developed by Freund and Schapire  
+potheses learned from multiple **bootstrap** data sets, each generated by subsampling the original data set. The **boosting** method described in this chapter originated with theoretical work by Schapire (1990). The ADABOOST algorithm was developed by Freund and Schapire  
 
 Bibliographical and Historical Notes 761
 
-(1996) and analyzed theoretically by Schapire (2003). Friedman _et al._ (2000) explain boost- ing from a statistician’s viewpoint. Online learning is covered in a survey by Blum (1996) and a book by Cesa-Bianchi and Lugosi (2006). Dredze _et al._ (2008) introduce the idea of confidence-weighted online learning for classification: in addition to keeping a weight for each parameter, they also maintain a measure of confidence, so that a new example can have a large effect on features that were rarely seen before (and thus had low confidence) and a small effect on common features that have already been well-estimated.
+(1996) and analyzed theoretically by Schapire (2003). Friedman _et al._ (2000) explain boosting from a statistician’s viewpoint. Online learning is covered in a survey by Blum (1996) and a book by Cesa-Bianchi and Lugosi (2006). Dredze _et al._ (2008) introduce the idea of confidence-weighted online learning for classification: in addition to keeping a weight for each parameter, they also maintain a measure of confidence, so that a new example can have a large effect on features that were rarely seen before (and thus had low confidence) and a small effect on common features that have already been well-estimated.
 
-The literature on neural networks is rather too large (approximately 150,000 papers to date) to cover in detail. Cowan and Sharp (1988b, 1988a) survey the early history, beginning with the work of McCulloch and Pitts (1943). (As mentioned in Chapter 1, John McCarthy has pointed to the work of Nicolas Rashevsky (1936, 1938) as the earliest mathematical model of neural learning.) Norbert Wiener, a pioneer of cybernetics and control theory (Wiener, 1948), worked with McCulloch and Pitts and influenced a number of young researchers in- cluding Marvin Minsky, who may have been the first to develop a working neural network in hardware in 1951 (see Minsky and Papert, 1988, pp. ix–x). Turing (1948) wrote a research report titled _Intelligent Machinery_ that begins with the sentence “I propose to investigate the question as to whether it is possible for machinery to show intelligent behaviour” and goes on to describe a recurrent neural network architecture he called “B-type unorganized machines” and an approach to training them. Unfortunately, the report went unpublished until 1969, and was all but ignored until recently.
+The literature on neural networks is rather too large (approximately 150,000 papers to date) to cover in detail. Cowan and Sharp (1988b, 1988a) survey the early history, beginning with the work of McCulloch and Pitts (1943). (As mentioned in Chapter 1, John McCarthy has pointed to the work of Nicolas Rashevsky (1936, 1938) as the earliest mathematical model of neural learning.) Norbert Wiener, a pioneer of cybernetics and control theory (Wiener, 1948), worked with McCulloch and Pitts and influenced a number of young researchers including Marvin Minsky, who may have been the first to develop a working neural network in hardware in 1951 (see Minsky and Papert, 1988, pp. ix–x). Turing (1948) wrote a research report titled _Intelligent Machinery_ that begins with the sentence “I propose to investigate the question as to whether it is possible for machinery to show intelligent behaviour” and goes on to describe a recurrent neural network architecture he called “B-type unorganized machines” and an approach to training them. Unfortunately, the report went unpublished until 1969, and was all but ignored until recently.
 
-Frank Rosenblatt (1957) invented the modern “perceptron” and proved the percep- tron convergence theorem (1960), although it had been foreshadowed by purely mathemat- ical work outside the context of neural networks (Agmon, 1954; Motzkin and Schoenberg, 1954). Some early work was also done on multilayer networks, including **Gamba percep- trons** (Gamba _et al._, 1961) and **madalines** (Widrow, 1962). _Learning Machines_ (Nilsson, 1965) covers much of this early work and more. The subsequent demise of early perceptron research efforts was hastened (or, the authors later claimed, merely explained) by the book _Perceptrons_ (Minsky and Papert, 1969), which lamented the field’s lack of mathematical rigor. The book pointed out that single-layer perceptrons could represent only linearly sepa- rable concepts and noted the lack of effective learning algorithms for multilayer networks.
+Frank Rosenblatt (1957) invented the modern “perceptron” and proved the perceptron convergence theorem (1960), although it had been foreshadowed by purely mathematical work outside the context of neural networks (Agmon, 1954; Motzkin and Schoenberg, 1954). Some early work was also done on multilayer networks, including **Gamba perceptrons** (Gamba _et al._, 1961) and **madalines** (Widrow, 1962). _Learning Machines_ (Nilsson, 1965) covers much of this early work and more. The subsequent demise of early perceptron research efforts was hastened (or, the authors later claimed, merely explained) by the book _Perceptrons_ (Minsky and Papert, 1969), which lamented the field’s lack of mathematical rigor. The book pointed out that single-layer perceptrons could represent only linearly separable concepts and noted the lack of effective learning algorithms for multilayer networks.
 
 The papers in (Hinton and Anderson, 1981), based on a conference in San Diego in 1979, can be regarded as marking a renaissance of connectionism. The two-volume “PDP” (Parallel Distributed Processing) anthology (Rumelhart _et al._, 1986a) and a short article in _Nature_ (Rumelhart _et al._, 1986b) attracted a great deal of attention—indeed, the number of papers on “neural networks” multiplied by a factor of 200 between 1980–84 and 1990–94. The analysis of neural networks using the physical theory of magnetic spin glasses (Amit _et al._, 1985) tightened the links between statistical mechanics and neural network theory— providing not only useful mathematical insights but also _respectability_. The back-propagation technique had been invented quite early (Bryson and Ho, 1969) but it was rediscovered several times (Werbos, 1974; Parker, 1985).
 
 The probabilistic interpretation of neural networks has several sources, including Baum and Wilczek (1988) and Bridle (1990). The role of the sigmoid function is discussed by Jordan (1995). Bayesian parameter learning for neural networks was proposed by MacKay  
 
-762 Chapter 18. Learning from Examples
+
 
 (1992) and is explored further by Neal (1996). The capacity of neural networks to represent functions was investigated by Cybenko (1988, 1989), who showed that two hidden layers are enough to represent any function and a single layer is enough to represent any _continuous_ function. The “optimal brain damage” method for removing useless connections is by LeCun et al. (1989), and Sietsma and Dow (1988) show how to remove useless units. The tiling algorithm for growing larger structures is due to Mézard and Nadal (1989). LeCun _et al._ (1995) survey a number of algorithms for handwritten digit recognition. Improved error rates since then were reported by Belongie _et al._ (2002) for shape matching and DeCoste and Schölkopf (2002) for virtual support vectors. At the time of writing, the best test error rate reported is 0.39% by Ranzato _et al._ (2007) using a convolutional neural network.
 
-The complexity of neural network learning has been investigated by researchers in com- putational learning theory. Early computational results were obtained by Judd (1990), who showed that the general problem of finding a set of weights consistent with a set of examples is NP-complete, even under very restrictive assumptions. Some of the first sample complexity results were obtained by Baum and Haussler (1989), who showed that the number of exam- ples required for effective learning grows as roughly W log W , where W is the number of weights.17 Since then, a much more sophisticated theory has been developed (Anthony and Bartlett, 1999), including the important result that the representational capacity of a network depends on the _size_ of the weights as well as on their number, a result that should not be surprising in the light of our discussion of regularization.
+The complexity of neural network learning has been investigated by researchers in computational learning theory. Early computational results were obtained by Judd (1990), who showed that the general problem of finding a set of weights consistent with a set of examples is NP-complete, even under very restrictive assumptions. Some of the first sample complexity results were obtained by Baum and Haussler (1989), who showed that the number of examples required for effective learning grows as roughly W log W , where W is the number of weights.17 Since then, a much more sophisticated theory has been developed (Anthony and Bartlett, 1999), including the important result that the representational capacity of a network depends on the _size_ of the weights as well as on their number, a result that should not be surprising in the light of our discussion of regularization.
 
 The most popular kind of neural network that we did not cover is the **radial basis function**, or RBF, network. A radial basis function combines a weighted collection of kernelsRADIAL BASIS
 
@@ -3649,15 +3649,15 @@ FUNCTION
 
 (usually Gaussians, of course) to do function approximation. RBF networks can be trained in two phases: first, an unsupervised clustering approach is used to train the parameters of the Gaussians—the means and variances—are trained, as in Section 20.3.1. In the second phase, the relative weights of the Gaussians are determined. This is a system of linear equations, which we know how to solve directly. Thus, both phases of RBF training have a nice benefit: the first phase is unsupervised, and thus does not require labeled training data, and the second phase, although supervised, is efficient. See Bishop (1995) for more details.
 
-**Recurrent networks**, in which units are linked in cycles, were mentioned in the chap- ter but not explored in depth. **Hopfield networks** (Hopfield, 1982) are probably the best-HOPFIELD NETWORK
+**Recurrent networks**, in which units are linked in cycles, were mentioned in the chapter but not explored in depth. **Hopfield networks** (Hopfield, 1982) are probably the best-HOPFIELD NETWORK
 
 understood class of recurrent networks. They use _bidirectional_ connections with _symmetric_ weights (i.e., wi,j = wj,i), all of the units are both input and output units, the activation function g is the sign function, and the activation levels can only be ±1. A Hopfield network functions as an **associative memory**: after the network trains on a set of examples, a newASSOCIATIVE
 
 MEMORY
 
-stimulus will cause it to settle into an activation pattern corresponding to the example in the training set that _most closely resembles_ the new stimulus. For example, if the training set con- sists of a set of photographs, and the new stimulus is a small piece of one of the photographs, then the network activation levels will reproduce the photograph from which the piece was taken. Notice that the original photographs are not stored separately in the network; each
+stimulus will cause it to settle into an activation pattern corresponding to the example in the training set that _most closely resembles_ the new stimulus. For example, if the training set consists of a set of photographs, and the new stimulus is a small piece of one of the photographs, then the network activation levels will reproduce the photograph from which the piece was taken. Notice that the original photographs are not stored separately in the network; each
 
-17 This approximately confirmed “Uncle Bernie’s rule.” The rule was named after Bernie Widrow, who recom- mended using roughly ten times as many examples as weights.  
+17 This approximately confirmed “Uncle Bernie’s rule.” The rule was named after Bernie Widrow, who recommended using roughly ten times as many examples as weights.  
 
 Exercises 763
 
@@ -3667,7 +3667,7 @@ is the number of units in the network. **Boltzmann machines** (Hinton and Sejnow
 
 MACHINE
 
-but include hidden units. In addition, they use a _stochastic_ activation function, such that the probability of the output being 1 is some function of the total weighted input. Boltz- mann machines therefore undergo state transitions that resemble a simulated annealing search (see Chapter 4) for the configuration that best approximates the training set. It turns out that Boltzmann machines are very closely related to a special case of Bayesian networks evaluated with a stochastic simulation algorithm. (See Section 14.5.)
+but include hidden units. In addition, they use a _stochastic_ activation function, such that the probability of the output being 1 is some function of the total weighted input. Boltzmann machines therefore undergo state transitions that resemble a simulated annealing search (see Chapter 4) for the configuration that best approximates the training set. It turns out that Boltzmann machines are very closely related to a special case of Bayesian networks evaluated with a stochastic simulation algorithm. (See Section 14.5.)
 
 For neural nets, Bishop (1995), Ripley (1996), and Haykin (2008) are the leading texts. The field of computational neuroscience is covered by Dayan and Abbott (2001).
 
@@ -3683,7 +3683,7 @@ EXERCISES
 
 **18.4** In the recursive construction of decision trees, it sometimes happens that a mixed set of positive and negative examples remains at a leaf node, even after all the attributes have been used. Suppose that we have p positive examples and n negative examples.  
 
-764 Chapter 18. Learning from Examples
+
 
 **a**. Show that the solution used by DECISION-TREE-LEARNING, which picks the majority classification, minimizes the absolute error over the set of examples at the leaf.
 
@@ -3723,11 +3723,11 @@ Exercises 765
 
 the weights along each path. Write a modified classification algorithm for decision trees that has this behavior.
 
-**b**. Now modify the information-gain calculation so that in any given collection of exam- ples C at a given node in the tree during the construction process, the examples with missing values for any of the remaining attributes are given “as-if” values according to the frequencies of those values in the set C .
+**b**. Now modify the information-gain calculation so that in any given collection of examples C at a given node in the tree during the construction process, the examples with missing values for any of the remaining attributes are given “as-if” values according to the frequencies of those values in the set C .
 
-**18.10** In Section 18.3.6, we noted that attributes with many different possible values can cause problems with the gain measure. Such attributes tend to split the examples into numer- ous small classes or even singleton classes, thereby appearing to be highly relevant according to the gain measure. The **gain-ratio** criterion selects attributes according to the ratio between their gain and their intrinsic information content—that is, the amount of information con- tained in the answer to the question, “What is the value of this attribute?” The gain-ratio crite- rion therefore tries to measure how efficiently an attribute provides information on the correct classification of an example. Write a mathematical expression for the information content of an attribute, and implement the gain ratio criterion in DECISION-TREE-LEARNING.
+**18.10** In Section 18.3.6, we noted that attributes with many different possible values can cause problems with the gain measure. Such attributes tend to split the examples into numerous small classes or even singleton classes, thereby appearing to be highly relevant according to the gain measure. The **gain-ratio** criterion selects attributes according to the ratio between their gain and their intrinsic information content—that is, the amount of information contained in the answer to the question, “What is the value of this attribute?” The gain-ratio criterion therefore tries to measure how efficiently an attribute provides information on the correct classification of an example. Write a mathematical expression for the information content of an attribute, and implement the gain ratio criterion in DECISION-TREE-LEARNING.
 
-**18.11** Suppose you are running a learning experiment on a new algorithm for Boolean clas- sification. You have a data set consisting of 100 positive and 100 negative examples. You plan to use leave-one-out cross-validation and compare your algorithm to a baseline function, a simple majority classifier. (A majority classifier is given a set of training data and then always outputs the class that is in the majority in the training set, regardless of the input.) You expect the majority classifier to score about 50% on leave-one-out cross-validation, but to your surprise, it scores zero every time. Can you explain why?
+**18.11** Suppose you are running a learning experiment on a new algorithm for Boolean classification. You have a data set consisting of 100 positive and 100 negative examples. You plan to use leave-one-out cross-validation and compare your algorithm to a baseline function, a simple majority classifier. (A majority classifier is given a set of training data and then always outputs the class that is in the majority in the training set, regardless of the input.) You expect the majority classifier to score about 50% on leave-one-out cross-validation, but to your surprise, it scores zero every time. Can you explain why?
 
 **18.12** Construct a _decision list_ to classify the data below. Select tests to be as small as possible (in terms of attributes), breaking ties among tests with the same number of attributes by selecting the one that classifies the greatest number of examples correctly. If multiple tests have the same number of attributes and classify the same number of examples, then break the tie using attributes with lower index numbers (e.g., select A1 over A2).
 
@@ -3737,7 +3737,7 @@ the weights along each path. Write a modified classification algorithm for decis
 
 **18.13** Prove that a decision list can represent the same function as a decision tree while using at most as many rules as there are leaves in the decision tree for that function. Give an example of a function represented by a decision list using strictly fewer rules than the number of leaves in a minimal-sized decision tree for that same function.  
 
-766 Chapter 18. Learning from Examples
+
 
 **18.14** This exercise concerns the expressiveness of decision lists (Section 18.5).
 
@@ -3779,7 +3779,7 @@ this means that any circle is linearly separable in this space.
 
 distinct Boolean functions of n inputs. How many of these are representable by a threshold perceptron?
 
-**18.21** Section 18.6.4 (page 725) noted that the output of the logistic function could be in- terpreted as a _probability_ p assigned by the model to the proposition that f(**x**)= 1; the prob- ability that f(**x**)= 0 is therefore 1 − p. Write down the probability p as a function of **x** and calculate the derivative of log p with respect to each weight wi. Repeat the process for log(1−p). These calculations give a learning rule for minimizing the negative-log-likelihood  
+**18.21** Section 18.6.4 (page 725) noted that the output of the logistic function could be interpreted as a _probability_ p assigned by the model to the proposition that f(**x**)= 1; the probability that f(**x**)= 0 is therefore 1 − p. Write down the probability p as a function of **x** and calculate the derivative of log p with respect to each weight wi. Repeat the process for log(1−p). These calculations give a learning rule for minimizing the negative-log-likelihood  
 
 Exercises 767
 
@@ -3793,7 +3793,7 @@ loss function for a probabilistic hypothesis. Comment on any resemblance to othe
 
 **c**. Suppose a network with one hidden layer and linear activation functions has n input and output nodes and h hidden nodes. What effect does the transformation in part (a) to a network with no hidden layers have on the total number of weights? Discuss in particular the case h\* n.
 
-**18.23** Suppose that a training set contains only a single example, repeated 100 times. In 80 of the 100 cases, the single output value is 1; in the other 20, it is 0. What will a back- propagation network predict for this example, assuming that it has been trained and reaches a global optimum? (_Hint:_ to find the global optimum, differentiate the error function and set it to zero.)
+**18.23** Suppose that a training set contains only a single example, repeated 100 times. In 80 of the 100 cases, the single output value is 1; in the other 20, it is 0. What will a backpropagation network predict for this example, assuming that it has been trained and reaches a global optimum? (_Hint:_ to find the global optimum, differentiate the error function and set it to zero.)
 
 **18.24** The neural network whose learning performance is measured in Figure 18.25 has four hidden nodes. This number was chosen somewhat arbitrarily. Use a cross-validation method to find the best number of hidden nodes.
 
@@ -3819,7 +3819,7 @@ as general first-order logical theories; thus for the first time we bring togeth
 
 19.1 A LOGICAL FORMULATION OF LEARNING
 
-Chapter 18 defined pure inductive learning as a process of finding a hypothesis that agrees with the observed examples. Here, we specialize this definition to the case where the hypoth- esis is represented by a set of logical sentences. Example descriptions and classifications will also be logical sentences, and a new example can be classified by inferring a classification sentence from the hypothesis and the example description. This approach allows for incre- mental construction of hypotheses, one sentence at a time. It also allows for prior knowledge, because sentences that are already known can assist in the classification of new examples. The logical formulation of learning may seem like a lot of extra work at first, but it turns out to clarify many of the issues in learning. It enables us to go well beyond the simple learning methods of Chapter 18 by using the full power of logical inference in the service of learning.
+Chapter 18 defined pure inductive learning as a process of finding a hypothesis that agrees with the observed examples. Here, we specialize this definition to the case where the hypothesis is represented by a set of logical sentences. Example descriptions and classifications will also be logical sentences, and a new example can be classified by inferring a classification sentence from the hypothesis and the example description. This approach allows for incremental construction of hypotheses, one sentence at a time. It also allows for prior knowledge, because sentences that are already known can assist in the classification of new examples. The logical formulation of learning may seem like a lot of extra work at first, but it turns out to clarify many of the issues in learning. It enables us to go well beyond the simple learning methods of Chapter 18 by using the full power of logical inference in the service of learning.
 
 **19.1.1 Examples and hypotheses**
 
@@ -3837,9 +3837,9 @@ We will use the notation Di(Xi) to refer to the description of Xi, where Di can 
 
 WillWait(X1) or ¬WillWait(X1) .
 
-The complete training set can thus be expressed as the conjunction of all the example descrip- tions and goal literals.
+The complete training set can thus be expressed as the conjunction of all the example descriptions and goal literals.
 
-The aim of inductive learning in general is to find a hypothesis that classifies the ex- amples well and generalizes well to new examples. Here we are concerned with hypotheses expressed in logic; each hypothesis hj will have the form
+The aim of inductive learning in general is to find a hypothesis that classifies the examples well and generalizes well to new examples. Here we are concerned with hypotheses expressed in logic; each hypothesis hj will have the form
 
 ∀x Goal (x) ⇔ Cj(x) ,
 
@@ -3857,35 +3857,35 @@ where Cj(x) is a candidate definition—some expression involving the attribute 
 
 (19.1)
 
-Each hypothesis predicts that a certain set of examples—namely, those that satisfy its candi- date definition—will be examples of the goal predicate. This set is called the **extension** ofEXTENSION
+Each hypothesis predicts that a certain set of examples—namely, those that satisfy its candidate definition—will be examples of the goal predicate. This set is called the **extension** ofEXTENSION
 
 the predicate. Two hypotheses with different extensions are therefore logically inconsistent with each other, because they disagree on their predictions for at least one example. If they have the same extension, they are logically equivalent.
 
-The hypothesis spaceH is the set of all hypotheses {h1, . . . , hn} that the learning algo- rithm is designed to entertain. For example, the DECISION-TREE-LEARNING algorithm can entertain any decision tree hypothesis defined in terms of the attributes provided; its hypoth- esis space therefore consists of all these decision trees. Presumably, the learning algorithm believes that one of the hypotheses is correct; that is, it believes the sentence
+The hypothesis spaceH is the set of all hypotheses {h1, . . . , hn} that the learning algorithm is designed to entertain. For example, the DECISION-TREE-LEARNING algorithm can entertain any decision tree hypothesis defined in terms of the attributes provided; its hypothesis space therefore consists of all these decision trees. Presumably, the learning algorithm believes that one of the hypotheses is correct; that is, it believes the sentence
 
 h1 ∨ h2 ∨ h3 ∨ . . . ∨ hn . (19.2)
 
 As the examples arrive, hypotheses that are not **consistent** with the examples can be ruled out. Let us examine this notion of consistency more carefully. Obviously, if hypothesis hj is consistent with the entire training set, it has to be consistent with each example in the training set. What would it mean for it to be inconsistent with an example? There are two possible ways that this can happen:  
 
-770 Chapter 19. Knowledge in Learning
 
-• An example can be a **false negative** for the hypothesis, if the hypothesis says it shouldFALSE NEGATIVE
+
+- An example can be a **false negative** for the hypothesis, if the hypothesis says it shouldFALSE NEGATIVE
 
 be negative but in fact it is positive. For instance, the new example X13 described by Patrons(X13,Full) ∧ ¬Hungry(X13) ∧ . . . ∧WillWait(X13)
 
 would be a false negative for the hypothesis hr given earlier. From hr and the example description, we can deduce both WillWait(X13), which is what the example says, and ¬WillWait(X13), which is what the hypothesis predicts. The hypothesis and the example are therefore logically inconsistent.
 
-• An example can be a **false positive** for the hypothesis, if the hypothesis says it shouldFALSE POSITIVE
+- An example can be a **false positive** for the hypothesis, if the hypothesis says it shouldFALSE POSITIVE
 
 be positive but in fact it is negative.1
 
-If an example is a false positive or false negative for a hypothesis, then the example and the hypothesis are logically inconsistent with each other. Assuming that the example is a correct observation of fact, then the hypothesis can be ruled out. Logically, this is exactly analogous to the resolution rule of inference (see Chapter 9), where the disjunction of hypotheses cor- responds to a clause and the example corresponds to a literal that resolves against one of the literals in the clause. An ordinary logical inference system therefore could, in principle, learn from the example by eliminating one or more hypotheses. Suppose, for example, that the example is denoted by the sentence I1, and the hypothesis space is h1 ∨h2∨h3 ∨h4. Then if I1 is inconsistent with h2 and h3, the logical inference system can deduce the new hypothesis space h1 ∨ h4.
+If an example is a false positive or false negative for a hypothesis, then the example and the hypothesis are logically inconsistent with each other. Assuming that the example is a correct observation of fact, then the hypothesis can be ruled out. Logically, this is exactly analogous to the resolution rule of inference (see Chapter 9), where the disjunction of hypotheses corresponds to a clause and the example corresponds to a literal that resolves against one of the literals in the clause. An ordinary logical inference system therefore could, in principle, learn from the example by eliminating one or more hypotheses. Suppose, for example, that the example is denoted by the sentence I1, and the hypothesis space is h1 ∨h2∨h3 ∨h4. Then if I1 is inconsistent with h2 and h3, the logical inference system can deduce the new hypothesis space h1 ∨ h4.
 
-We therefore can characterize inductive learning in a logical setting as a process of gradually eliminating hypotheses that are inconsistent with the examples, narrowing down the possibilities. Because the hypothesis space is usually vast (or even infinite in the case of first-order logic), we do not recommend trying to build a learning system using resolution- based theorem proving and a complete enumeration of the hypothesis space. Instead, we will describe two approaches that find logically consistent hypotheses with much less effort.
+We therefore can characterize inductive learning in a logical setting as a process of gradually eliminating hypotheses that are inconsistent with the examples, narrowing down the possibilities. Because the hypothesis space is usually vast (or even infinite in the case of first-order logic), we do not recommend trying to build a learning system using resolutionbased theorem proving and a complete enumeration of the hypothesis space. Instead, we will describe two approaches that find logically consistent hypotheses with much less effort.
 
 **19.1.2 Current-best-hypothesis search**
 
-The idea behind **current-best-hypothesis** search is to maintain a single hypothesis, and toCURRENT-BEST- HYPOTHESIS
+The idea behind **current-best-hypothesis** search is to maintain a single hypothesis, and toCURRENT-BESTHYPOTHESIS
 
 adjust it as new examples arrive in order to maintain consistency. The basic algorithm was described by John Stuart Mill (1843), and may well have appeared even earlier.
 
@@ -4021,7 +4021,7 @@ Section 19.1. A Logical Formulation of Learning 771
 
 **–**
 
-**Figure 19.1** (a) A consistent hypothesis. (b) A false negative. (c) The hypothesis is gen- eralized. (d) A false positive. (e) The hypothesis is specialized.
+**Figure 19.1** (a) A consistent hypothesis. (b) A false negative. (c) The hypothesis is generalized. (d) A false positive. (e) The hypothesis is specialized.
 
 **function** CURRENT-BEST-LEARNING(examples ,h) **returns** a hypothesis or fail
 
@@ -4039,39 +4039,39 @@ h′′←CURRENT-BEST-LEARNING(REST(examples), h′) **if** h′′ = fail **t
 
 **return** _fail_
 
-**Figure 19.2** The current-best-hypothesis learning algorithm. It searches for a consis- tent hypothesis that fits all the examples and backtracks when no consistent specializa- tion/generalization can be found. To start the algorithm, any hypothesis can be passed in; it will be specialized or gneralized as needed.
+**Figure 19.2** The current-best-hypothesis learning algorithm. It searches for a consistent hypothesis that fits all the examples and backtracks when no consistent specialization/generalization can be found. To start the algorithm, any hypothesis can be passed in; it will be specialized or gneralized as needed.
 
 negative. The extension of the hypothesis must be decreased to exclude the example. This is called **specialization**; in Figure 19.1(e) we see one possible specialization of the hypothesis.SPECIALIZATION
 
 The “more general than” and “more specific than” relations between hypotheses provide the logical structure on the hypothesis space that makes efficient search possible.
 
-We can now specify the CURRENT-BEST-LEARNING algorithm, shown in Figure 19.2. Notice that each time we consider generalizing or specializing the hypothesis, we must check for consistency with the other examples, because an arbitrary increase/decrease in the exten- sion might include/exclude previously seen negative/positive examples.  
+We can now specify the CURRENT-BEST-LEARNING algorithm, shown in Figure 19.2. Notice that each time we consider generalizing or specializing the hypothesis, we must check for consistency with the other examples, because an arbitrary increase/decrease in the extension might include/exclude previously seen negative/positive examples.  
 
-772 Chapter 19. Knowledge in Learning
 
-We have defined generalization and specialization as operations that change the _exten- sion_ of a hypothesis. Now we need to determine exactly how they can be implemented as syntactic operations that change the candidate definition associated with the hypothesis, so that a program can carry them out. This is done by first noting that generalization and special- ization are also _logical_ relationships between hypotheses. If hypothesis h1, with definition C1, is a generalization of hypothesis h2 with definition C2, then we must have
+
+We have defined generalization and specialization as operations that change the _extension_ of a hypothesis. Now we need to determine exactly how they can be implemented as syntactic operations that change the candidate definition associated with the hypothesis, so that a program can carry them out. This is done by first noting that generalization and specialization are also _logical_ relationships between hypotheses. If hypothesis h1, with definition C1, is a generalization of hypothesis h2 with definition C2, then we must have
 
 ∀x C2(x) ⇒ C1(x) .
 
-Therefore in order to construct a generalization of h2, we simply need to find a defini- tion C1 that is logically implied by C2. This is easily done. For example, if C2(x) is Alternate(x) ∧ Patrons(x,Some), then one possible generalization is given by C1(x) ≡
+Therefore in order to construct a generalization of h2, we simply need to find a definition C1 that is logically implied by C2. This is easily done. For example, if C2(x) is Alternate(x) ∧ Patrons(x,Some), then one possible generalization is given by C1(x) ≡
 
 Patrons(x,Some). This is called **dropping conditions**. Intuitively, it generates a weakerDROPPING CONDITIONS
 
 definition and therefore allows a larger set of positive examples. There are a number of other generalization operations, depending on the language being operated on. Similarly, we can specialize a hypothesis by adding extra conditions to its candidate definition or by removing disjuncts from a disjunctive definition. Let us see how this works on the restaurant example, using the data in Figure 18.3.
 
-• The first example, X1, is positive. The attribute Alternate(X1) is true, so let the initial hypothesis be
+- The first example, X1, is positive. The attribute Alternate(X1) is true, so let the initial hypothesis be
 
 h1 : ∀x WillWait(x) ⇔ Alternate(x) .
 
-• The second example, X2, is negative. h1 predicts it to be positive, so it is a false positive. Therefore, we need to specialize h1. This can be done by adding an extra condition that will rule out X2, while continuing to classify X1 as positive. One possibility is
+- The second example, X2, is negative. h1 predicts it to be positive, so it is a false positive. Therefore, we need to specialize h1. This can be done by adding an extra condition that will rule out X2, while continuing to classify X1 as positive. One possibility is
 
 h2 : ∀x WillWait(x) ⇔ Alternate(x) ∧ Patrons(x,Some) .
 
-• The third example, X3, is positive. h2 predicts it to be negative, so it is a false negative. Therefore, we need to generalize h2. We drop the Alternate condition, yielding
+- The third example, X3, is positive. h2 predicts it to be negative, so it is a false negative. Therefore, we need to generalize h2. We drop the Alternate condition, yielding
 
 h3 : ∀x WillWait(x) ⇔ Patrons(x,Some) .
 
-• The fourth example, X4, is positive. h3 predicts it to be negative, so it is a false negative. We therefore need to generalize h3. We cannot drop the Patrons condition, because that would yield an all-inclusive hypothesis that would be inconsistent with X2. One possibility is to add a disjunct:
+- The fourth example, X4, is positive. h3 predicts it to be negative, so it is a false negative. We therefore need to generalize h3. We cannot drop the Patrons condition, because that would yield an all-inclusive hypothesis that would be inconsistent with X2. One possibility is to add a disjunct:
 
 h4 : ∀x WillWait(x) ⇔ Patrons(x,Some)
 
@@ -4119,13 +4119,13 @@ Backtracking arises because the current-best-hypothesis approach has to _choose_
 
 h1 ∨ h2 ∨ h3 . . . ∨ hn .
 
-As various hypotheses are found to be inconsistent with the examples, this disjunction shrinks, retaining only those hypotheses not ruled out. Assuming that the original hypothesis space does in fact contain the right answer, the reduced disjunction must still contain the right an- swer because only incorrect hypotheses have been removed. The set of hypotheses remaining is called the **version space**, and the learning algorithm (sketched in Figure 19.3) is called theVERSION SPACE
+As various hypotheses are found to be inconsistent with the examples, this disjunction shrinks, retaining only those hypotheses not ruled out. Assuming that the original hypothesis space does in fact contain the right answer, the reduced disjunction must still contain the right answer because only incorrect hypotheses have been removed. The set of hypotheses remaining is called the **version space**, and the learning algorithm (sketched in Figure 19.3) is called theVERSION SPACE
 
 version space learning algorithm (also the **candidate elimination** algorithm).CANDIDATE ELIMINATION
 
 One important property of this approach is that it is _incremental_: one never has to go back and reexamine the old examples. All remaining hypotheses are guaranteed to be consistent with them already. But there is an obvious problem. We already said that the  
 
-774 Chapter 19. Knowledge in Learning
+
 
 **This region all inconsistent**
 
@@ -4159,13 +4159,13 @@ specific boundary (the **S-set**). _Everything in between is guaranteed to be co
 
 _examples_. Before we prove this, let us recap:
 
-• The current version space is the set of hypotheses consistent with all the examples so far. It is represented by the S-set and G-set, each of which is a set of hypotheses.
+- The current version space is the set of hypotheses consistent with all the examples so far. It is represented by the S-set and G-set, each of which is a set of hypotheses.
 
-• Every member of the S-set is consistent with all observations so far, and there are no consistent hypotheses that are more specific.
+- Every member of the S-set is consistent with all observations so far, and there are no consistent hypotheses that are more specific.
 
-• Every member of the G-set is consistent with all observations so far, and there are no consistent hypotheses that are more general.
+- Every member of the G-set is consistent with all observations so far, and there are no consistent hypotheses that are more general.
 
-We want the initial version space (before any examples have been seen) to represent all possi- ble hypotheses. We do this by setting the G-set to contain True (the hypothesis that contains everything), and the S-set to contain False (the hypothesis whose extension is empty).
+We want the initial version space (before any examples have been seen) to represent all possible hypotheses. We do this by setting the G-set to contain True (the hypothesis that contains everything), and the S-set to contain False (the hypothesis whose extension is empty).
 
 Figure 19.4 shows the general structure of the boundary-set representation of the version space. To show that the representation is sufficient, we need the following two properties:  
 
@@ -4175,7 +4175,7 @@ Section 19.1. A Logical Formulation of Learning 775
 
 and G. If there were a straggler h, then it would have to be no more specific than any member of G, in which case it belongs in G; or no more general than any member of S, in which case it belongs in S.
 
-2\. Every hypothesis more specific than some member of the G-set and more general than some member of the S-set is a consistent hypothesis. (That is, there are no “holes” be- tween the boundaries.) Any h between S and G must reject all the negative examples rejected by each member of G (because it is more specific), and must accept all the pos- itive examples accepted by any member of S (because it is more general). Thus, h must agree with all the examples, and therefore cannot be inconsistent. Figure 19.5 shows the situation: there are no known examples outside S but inside G, so any hypothesis in the gap must be consistent.
+2\. Every hypothesis more specific than some member of the G-set and more general than some member of the S-set is a consistent hypothesis. (That is, there are no “holes” between the boundaries.) Any h between S and G must reject all the negative examples rejected by each member of G (because it is more specific), and must accept all the positive examples accepted by any member of S (because it is more general). Thus, h must agree with all the examples, and therefore cannot be inconsistent. Figure 19.5 shows the situation: there are no known examples outside S but inside G, so any hypothesis in the gap must be consistent.
 
 We have therefore shown that _if_ S and G are maintained according to their definitions, then they provide a satisfactory representation of the version space. The only remaining problem is how to _update_ S and G for a new example (the job of the VERSION-SPACE-UPDATE
 
@@ -4215,17 +4215,17 @@ function). This may appear rather complicated at first, but from the definitions
 
 **Figure 19.5** The extensions of the members of G and S. No known examples lie in between the two sets of boundaries.
 
-We need to worry about the members Si and Gi of the S- and G-sets. For each one, the new example may be a false positive or a false negative.
+We need to worry about the members Si and Gi of the Sand G-sets. For each one, the new example may be a false positive or a false negative.
 
-1\. False positive for Si: This means Si is too general, but there are no consistent special- izations of Si (by definition), so we throw it out of the S-set.
+1\. False positive for Si: This means Si is too general, but there are no consistent specializations of Si (by definition), so we throw it out of the S-set.
 
 2\. False negative for Si: This means Si is too specific, so we replace it by all its immediate generalizations, provided they are more specific than some member of G.
 
 3\. False positive for Gi: This means Gi is too general, so we replace it by all its immediate specializations, provided they are more general than some member of S.  
 
-776 Chapter 19. Knowledge in Learning
 
-4\. False negative for Gi: This means Gi is too specific, but there are no consistent gener- alizations of Gi (by definition) so we throw it out of the G-set.
+
+4\. False negative for Gi: This means Gi is too specific, but there are no consistent generalizations of Gi (by definition) so we throw it out of the G-set.
 
 We continue these operations for each new example until one of three things happens:
 
@@ -4239,11 +4239,11 @@ We leave as an exercise the application of the VERSION-SPACE-LEARNING algorithm 
 
 There are two principal drawbacks to the version-space approach:
 
-• If the domain contains noise or insufficient attributes for exact classification, the version space will always collapse.
+- If the domain contains noise or insufficient attributes for exact classification, the version space will always collapse.
 
-• If we allow unlimited disjunction in the hypothesis space, the S-set will always contain a single most-specific hypothesis, namely, the disjunction of the descriptions of the positive examples seen to date. Similarly, the G-set will contain just the negation of the disjunction of the descriptions of the negative examples.
+- If we allow unlimited disjunction in the hypothesis space, the S-set will always contain a single most-specific hypothesis, namely, the disjunction of the descriptions of the positive examples seen to date. Similarly, the G-set will contain just the negation of the disjunction of the descriptions of the negative examples.
 
-• For some hypothesis spaces, the number of elements in the S-set or G-set may grow exponentially in the number of attributes, even though efficient learning algorithms exist for those hypothesis spaces.
+- For some hypothesis spaces, the number of elements in the S-set or G-set may grow exponentially in the number of attributes, even though efficient learning algorithms exist for those hypothesis spaces.
 
 To date, no completely successful solution has been found for the problem of noise. The problem of disjunction can be addressed by allowing only limited forms of disjunction or by including a **generalization hierarchy** of more general predicates. For example, instead ofGENERALIZATION
 
@@ -4251,7 +4251,7 @@ HIERARCHY
 
 using the disjunction WaitEstimate(x, _30-60_) ∨WaitEstimate(x,>60), we might use the single literal LongWait(x). The set of generalization and specialization operations can be easily extended to handle this.
 
-The pure version space algorithm was first applied in the Meta-DENDRAL system, which was designed to learn rules for predicting how molecules would break into pieces in a mass spectrometer (Buchanan and Mitchell, 1978). Meta-DENDRAL was able to generate rules that were sufficiently novel to warrant publication in a journal of analytical chemistry— the first real scientific knowledge generated by a computer program. It was also used in the elegant LEX system (Mitchell _et al._, 1983), which was able to learn to solve symbolic integra- tion problems by studying its own successes and failures. Although version space methods are probably not practical in most real-world learning problems, mainly because of noise, they provide a good deal of insight into the logical structure of hypothesis space.  
+The pure version space algorithm was first applied in the Meta-DENDRAL system, which was designed to learn rules for predicting how molecules would break into pieces in a mass spectrometer (Buchanan and Mitchell, 1978). Meta-DENDRAL was able to generate rules that were sufficiently novel to warrant publication in a journal of analytical chemistry— the first real scientific knowledge generated by a computer program. It was also used in the elegant LEX system (Mitchell _et al._, 1983), which was able to learn to solve symbolic integration problems by studying its own successes and failures. Although version space methods are probably not practical in most real-world learning problems, mainly because of noise, they provide a good deal of insight into the logical structure of hypothesis space.  
 
 Section 19.2. Knowledge in Learning 777
 
@@ -4275,29 +4275,29 @@ known.” Pure inductive learning means solving this constraint, where Hypothesi
 
 This simple knowledge-free picture of inductive learning persisted until the early 1980s. The modern approach is to design agents that _already know something_ and are trying to learn some more. This may not sound like a terrifically deep insight, but it makes quite a difference to the way we design agents. It might also have some relevance to our theories about how science itself works. The general idea is shown schematically in Figure 19.6.
 
-An autonomous learning agent that uses background knowledge must somehow obtain the background knowledge in the first place, in order for it to be used in the new learning episodes. This method must itself be a learning process. The agent’s life history will there- fore be characterized by _cumulative_, or _incremental_, development. Presumably, the agent could start out with nothing, performing inductions _in vacuo_ like a good little pure induc- tion program. But once it has eaten from the Tree of Knowledge, it can no longer pursue such naive speculations and should use its background knowledge to learn more and more effectively. The question is then how to actually do this.  
+An autonomous learning agent that uses background knowledge must somehow obtain the background knowledge in the first place, in order for it to be used in the new learning episodes. This method must itself be a learning process. The agent’s life history will therefore be characterized by _cumulative_, or _incremental_, development. Presumably, the agent could start out with nothing, performing inductions _in vacuo_ like a good little pure induction program. But once it has eaten from the Tree of Knowledge, it can no longer pursue such naive speculations and should use its background knowledge to learn more and more effectively. The question is then how to actually do this.  
 
-778 Chapter 19. Knowledge in Learning
+
 
 **19.2.1 Some simple examples**
 
 Let us consider some commonsense examples of learning with background knowledge. Many apparently rational cases of inferential behavior in the face of observations clearly do not follow the simple principles of pure induction.
 
-• Sometimes one leaps to general conclusions after only one observation. Gary Larson once drew a cartoon in which a bespectacled caveman, Zog, is roasting his lizard on the end of a pointed stick. He is watched by an amazed crowd of his less intellectual contemporaries, who have been using their bare hands to hold their victuals over the fire. This enlightening experience is enough to convince the watchers of a general principle of painless cooking.
+- Sometimes one leaps to general conclusions after only one observation. Gary Larson once drew a cartoon in which a bespectacled caveman, Zog, is roasting his lizard on the end of a pointed stick. He is watched by an amazed crowd of his less intellectual contemporaries, who have been using their bare hands to hold their victuals over the fire. This enlightening experience is enough to convince the watchers of a general principle of painless cooking.
 
-• Or consider the case of the traveler to Brazil meeting her first Brazilian. On hearing him speak Portuguese, she immediately concludes that Brazilians speak Portuguese, yet on discovering that his name is Fernando, she does not conclude that all Brazilians are called Fernando. Similar examples appear in science. For example, when a freshman physics student measures the density and conductance of a sample of copper at a par- ticular temperature, she is quite confident in generalizing those values to all pieces of copper. Yet when she measures its mass, she does not even consider the hypothesis that all pieces of copper have that mass. On the other hand, it would be quite reasonable to make such a generalization over all pennies.
+- Or consider the case of the traveler to Brazil meeting her first Brazilian. On hearing him speak Portuguese, she immediately concludes that Brazilians speak Portuguese, yet on discovering that his name is Fernando, she does not conclude that all Brazilians are called Fernando. Similar examples appear in science. For example, when a freshman physics student measures the density and conductance of a sample of copper at a particular temperature, she is quite confident in generalizing those values to all pieces of copper. Yet when she measures its mass, she does not even consider the hypothesis that all pieces of copper have that mass. On the other hand, it would be quite reasonable to make such a generalization over all pennies.
 
-• Finally, consider the case of a pharmacologically ignorant but diagnostically sophisti- cated medical student observing a consulting session between a patient and an expert internist. After a series of questions and answers, the expert tells the patient to take a course of a particular antibiotic. The medical student infers the general rule that that particular antibiotic is effective for a particular type of infection.
+- Finally, consider the case of a pharmacologically ignorant but diagnostically sophisticated medical student observing a consulting session between a patient and an expert internist. After a series of questions and answers, the expert tells the patient to take a course of a particular antibiotic. The medical student infers the general rule that that particular antibiotic is effective for a particular type of infection.
 
 These are all cases in which _the use of background knowledge allows much faster learning than one might expect from a pure induction program._
 
 **19.2.2 Some general schemes**
 
-In each of the preceding examples, one can appeal to prior knowledge to try to justify the generalizations chosen. We will now look at what kinds of entailment constraints are operat- ing in each case. The constraints will involve the Background knowledge, in addition to the Hypothesis and the observed Descriptions and Classifications .
+In each of the preceding examples, one can appeal to prior knowledge to try to justify the generalizations chosen. We will now look at what kinds of entailment constraints are operating in each case. The constraints will involve the Background knowledge, in addition to the Hypothesis and the observed Descriptions and Classifications .
 
-In the case of lizard toasting, the cavemen generalize by _explaining_ the success of the pointed stick: it supports the lizard while keeping the hand away from the fire. From this explanation, they can infer a general rule: that any long, rigid, sharp object can be used to toast small, soft-bodied edibles. This kind of generalization process has been called **explanation- based learning**, or **EBL**. Notice that the general rule _follows logically_ from the background
+In the case of lizard toasting, the cavemen generalize by _explaining_ the success of the pointed stick: it supports the lizard while keeping the hand away from the fire. From this explanation, they can infer a general rule: that any long, rigid, sharp object can be used to toast small, soft-bodied edibles. This kind of generalization process has been called **explanationbased learning**, or **EBL**. Notice that the general rule _follows logically_ from the background
 
-EXPLANATION- BASED LEARNING
+EXPLANATIONBASED LEARNING
 
 knowledge possessed by the cavemen. Hence, the entailment constraints satisfied by EBL are the following:
 
@@ -4307,9 +4307,9 @@ Background |= Hypothesis .
 
 Section 19.2. Knowledge in Learning 779
 
-Because EBL uses Equation (19.3), it was initially thought to be a way to learn from ex- amples. But because it requires that the background knowledge be sufficient to explain the Hypothesis , which in turn explains the observations, _the agent does not actually learn any- thing factually new from the example._ The agent _could have_ derived the example from what it already knew, although that might have required an unreasonable amount of computation. EBL is now viewed as a method for converting first-principles theories into useful, special- purpose knowledge. We describe algorithms for EBL in Section 19.3.
+Because EBL uses Equation (19.3), it was initially thought to be a way to learn from examples. But because it requires that the background knowledge be sufficient to explain the Hypothesis , which in turn explains the observations, _the agent does not actually learn anything factually new from the example._ The agent _could have_ derived the example from what it already knew, although that might have required an unreasonable amount of computation. EBL is now viewed as a method for converting first-principles theories into useful, specialpurpose knowledge. We describe algorithms for EBL in Section 19.3.
 
-The situation of our traveler in Brazil is quite different, for she cannot necessarily ex- plain why Fernando speaks the way he does, unless she knows her papal bulls. Moreover, the same generalization would be forthcoming from a traveler entirely ignorant of colonial history. The relevant prior knowledge in this case is that, within any given country, most people tend to speak the same language; on the other hand, Fernando is not assumed to be the name of all Brazilians because this kind of regularity does not hold for names. Similarly, the freshman physics student also would be hard put to explain the particular values that she discovers for the conductance and density of copper. She does know, however, that the mate- rial of which an object is composed and its temperature together determine its conductance. In each case, the prior knowledge Background concerns the **relevance** of a set of features toRELEVANCE
+The situation of our traveler in Brazil is quite different, for she cannot necessarily explain why Fernando speaks the way he does, unless she knows her papal bulls. Moreover, the same generalization would be forthcoming from a traveler entirely ignorant of colonial history. The relevant prior knowledge in this case is that, within any given country, most people tend to speak the same language; on the other hand, Fernando is not assumed to be the name of all Brazilians because this kind of regularity does not hold for names. Similarly, the freshman physics student also would be hard put to explain the particular values that she discovers for the conductance and density of copper. She does know, however, that the material of which an object is composed and its temperature together determine its conductance. In each case, the prior knowledge Background concerns the **relevance** of a set of features toRELEVANCE
 
 the goal predicate. This knowledge, _together with the observations_, allows the agent to infer a new, general rule that explains the observations:
 
@@ -4337,7 +4337,7 @@ PROGRAMMING
 
 edge plays two key roles in reducing the complexity of learning:  
 
-780 Chapter 19. Knowledge in Learning
+
 
 1\. Because any hypothesis generated must be consistent with the prior knowledge as well as with the new observations, the effective hypothesis space size is reduced to include only those theories that are consistent with what is already known.
 
@@ -4347,7 +4347,7 @@ In addition to allowing the use of prior knowledge in induction, ILP systems can
 
 19.3 EXPLANATION-BASED LEARNING
 
-Explanation-based learning is a method for extracting general rules from individual obser- vations. As an example, consider the problem of differentiating and simplifying algebraic expressions (Exercise 9.17). If we differentiate an expression such as X
+Explanation-based learning is a method for extracting general rules from individual observations. As an example, consider the problem of differentiating and simplifying algebraic expressions (Exercise 9.17). If we differentiate an expression such as X
 
 2 with respect to X, we obtain 2X. (We use a capital letter for the arithmetic unknown X, to distinguish it from the logical variable x.) In a logical reasoning system, the goal might be expressed as ASK(Derivative(X2
 
@@ -4373,11 +4373,11 @@ Section 19.3. Explanation-Based Learning 781
 
 If the knowledge base contains such a rule, then any new case that is an instance of this rule can be solved immediately.
 
-This is, of course, merely a trivial example of a very general phenomenon. Once some- thing is understood, it can be generalized and reused in other circumstances. It becomes an “obvious” step and can then be used as a building block in solving problems still more com- plex. Alfred North Whitehead (1911), co-author with Bertrand Russell of _Principia Mathe- matica_, wrote _“Civilization advances by extending the number of important operations that we can do without thinking about them,”_ perhaps himself applying EBL to his understanding of events such as Zog’s discovery. If you have understood the basic idea of the differenti- ation example, then your brain is already busily trying to extract the general principles of explanation-based learning from it. Notice that you hadn’t _already_ invented EBL before you saw the example. Like the cavemen watching Zog, you (and we) needed an example before we could generate the basic principles. This is because _explaining why_ something is a good idea is much easier than coming up with the idea in the first place.
+This is, of course, merely a trivial example of a very general phenomenon. Once something is understood, it can be generalized and reused in other circumstances. It becomes an “obvious” step and can then be used as a building block in solving problems still more complex. Alfred North Whitehead (1911), co-author with Bertrand Russell of _Principia Mathematica_, wrote _“Civilization advances by extending the number of important operations that we can do without thinking about them,”_ perhaps himself applying EBL to his understanding of events such as Zog’s discovery. If you have understood the basic idea of the differentiation example, then your brain is already busily trying to extract the general principles of explanation-based learning from it. Notice that you hadn’t _already_ invented EBL before you saw the example. Like the cavemen watching Zog, you (and we) needed an example before we could generate the basic principles. This is because _explaining why_ something is a good idea is much easier than coming up with the idea in the first place.
 
 **19.3.1 Extracting general rules from examples**
 
-The basic idea behind EBL is first to construct an explanation of the observation using prior knowledge, and then to establish a definition of the class of cases for which the same expla- nation structure can be used. This definition provides the basis for a rule covering all of the cases in the class. The “explanation” can be a logical proof, but more generally it can be any reasoning or problem-solving process whose steps are well defined. The key is to be able to identify the necessary conditions for those same steps to apply to another case.
+The basic idea behind EBL is first to construct an explanation of the observation using prior knowledge, and then to establish a definition of the class of cases for which the same explanation structure can be used. This definition provides the basis for a rule covering all of the cases in the class. The “explanation” can be a logical proof, but more generally it can be any reasoning or problem-solving process whose steps are well defined. The key is to be able to identify the necessary conditions for those same steps to apply to another case.
 
 We will use for our reasoning system the simple backward-chaining theorem prover described in Chapter 9. The proof tree for Derivative(X2
 
@@ -4397,11 +4397,11 @@ Rewrite(0 + u, u) .
 
 ...
 
-The proof that the answer is X is shown in the top half of Figure 19.7. The EBL method actually constructs two proof trees simultaneously. The second proof tree uses a _variabilized_ goal in which the constants from the original goal are replaced by variables. As the original proof proceeds, the variabilized proof proceeds in step, using _exactly the same rule applica- tions_. This could cause some of the variables to become instantiated. For example, in order to use the rule Rewrite(1×u, u), the variable x in the subgoal Rewrite(x× (y + z), v) must be bound to 1. Similarly, y must be bound to 0 in the subgoal Rewrite(y + z, v
+The proof that the answer is X is shown in the top half of Figure 19.7. The EBL method actually constructs two proof trees simultaneously. The second proof tree uses a _variabilized_ goal in which the constants from the original goal are replaced by variables. As the original proof proceeds, the variabilized proof proceeds in step, using _exactly the same rule applications_. This could cause some of the variables to become instantiated. For example, in order to use the rule Rewrite(1×u, u), the variable x in the subgoal Rewrite(x× (y + z), v) must be bound to 1. Similarly, y must be bound to 0 in the subgoal Rewrite(y + z, v
 
 ′) in order to use the rule Rewrite(0 + u, u). Once we have the generalized proof tree, we take the leaves  
 
-782 Chapter 19. Knowledge in Learning
+
 
 _Primitive_(_X_)
 
@@ -4449,7 +4449,7 @@ _Rewrite_(0_+X,v'_)
 
 ArithmeticUnknown(z) ⇒ Simplify(1 × (0 + z), z) .
 
-The second tree shows the proof for a problem instance with all constants replaced by vari- ables, from which we can derive a variety of other rules.
+The second tree shows the proof for a problem instance with all constants replaced by variables, from which we can derive a variety of other rules.
 
 (with the necessary bindings) and form a general rule for the goal predicate:
 
@@ -4489,27 +4489,27 @@ In general, a rule can be extracted from _any partial subtree_ of the generalize
 
 The choice of which rule to generate comes down to the question of efficiency. There are three factors involved in the analysis of efficiency gains from EBL:
 
-1\. Adding large numbers of rules can slow down the reasoning process, because the in- ference mechanism must still check those rules even in cases where they do not yield a solution. In other words, it increases the **branching factor** in the search space.
+1\. Adding large numbers of rules can slow down the reasoning process, because the inference mechanism must still check those rules even in cases where they do not yield a solution. In other words, it increases the **branching factor** in the search space.
 
-2\. To compensate for the slowdown in reasoning, the derived rules must offer significant increases in speed for the cases that they do cover. These increases come about mainly because the derived rules avoid dead ends that would otherwise be taken, but also be- cause they shorten the proof itself.
+2\. To compensate for the slowdown in reasoning, the derived rules must offer significant increases in speed for the cases that they do cover. These increases come about mainly because the derived rules avoid dead ends that would otherwise be taken, but also because they shorten the proof itself.
 
 3\. Derived rules should be as general as possible, so that they apply to the largest possible set of cases.
 
-A common approach to ensuring that derived rules are efficient is to insist on the **operational- ity** of each subgoal in the rule. A subgoal is operational if it is “easy” to solve. For example,OPERATIONALITY
+A common approach to ensuring that derived rules are efficient is to insist on the **operationality** of each subgoal in the rule. A subgoal is operational if it is “easy” to solve. For example,OPERATIONALITY
 
 the subgoal Primitive(z) is easy to solve, requiring at most two steps, whereas the subgoal Simplify(y + z,w) could lead to an arbitrary amount of inference, depending on the values of y and z. If a test for operationality is carried out at each step in the construction of the generalized proof, then we can prune the rest of a branch as soon as an operational subgoal is found, keeping just the operational subgoal as a conjunct of the new rule.
 
 Unfortunately, there is usually a tradeoff between operationality and generality. More specific subgoals are generally easier to solve but cover fewer cases. Also, operationality is a matter of degree: one or two steps is definitely operational, but what about 10 or 100?  
 
-784 Chapter 19. Knowledge in Learning
+
 
 Finally, the cost of solving a given subgoal depends on what other rules are available in the knowledge base. It can go up or down as more rules are added. Thus, EBL systems really face a very complex optimization problem in trying to maximize the efficiency of a given initial knowledge base. It is sometimes possible to derive a mathematical model of the effect on overall efficiency of adding a given rule and to use this model to select the best rule to add. The analysis can become very complicated, however, especially when recursive rules are involved. One promising approach is to address the problem of efficiency empirically, simply by adding several rules and seeing which ones are useful and actually speed things up.
 
-Empirical analysis of efficiency is actually at the heart of EBL. What we have been calling loosely the “efficiency of a given knowledge base” is actually the average-case com- plexity on a distribution of problems. _By generalizing from past example problems, EBL makes the knowledge base more efficient for the kind of problems that it is reasonable to expect._ This works as long as the distribution of past examples is roughly the same as for future examples—the same assumption used for PAC-learning in Section 18.5. If the EBL system is carefully engineered, it is possible to obtain significant speedups. For example, a very large Prolog-based natural language system designed for speech-to-speech translation between Swedish and English was able to achieve real-time performance only by the appli- cation of EBL to the parsing process (Samuelsson and Rayner, 1991).
+Empirical analysis of efficiency is actually at the heart of EBL. What we have been calling loosely the “efficiency of a given knowledge base” is actually the average-case complexity on a distribution of problems. _By generalizing from past example problems, EBL makes the knowledge base more efficient for the kind of problems that it is reasonable to expect._ This works as long as the distribution of past examples is roughly the same as for future examples—the same assumption used for PAC-learning in Section 18.5. If the EBL system is carefully engineered, it is possible to obtain significant speedups. For example, a very large Prolog-based natural language system designed for speech-to-speech translation between Swedish and English was able to achieve real-time performance only by the application of EBL to the parsing process (Samuelsson and Rayner, 1991).
 
 19.4 LEARNING USING RELEVANCE INFORMATION
 
-Our traveler in Brazil seems to be able to make a confident generalization concerning the lan- guage spoken by other Brazilians. The inference is sanctioned by her background knowledge, namely, that people in a given country (usually) speak the same language. We can express this in first-order logic as follows:2
+Our traveler in Brazil seems to be able to make a confident generalization concerning the language spoken by other Brazilians. The inference is sanctioned by her background knowledge, namely, that people in a given country (usually) speak the same language. We can express this in first-order logic as follows:2
 
 Nationality(x, n) ∧ Nationality(y, n) ∧ Language(x, l) ⇒ Language(y, l) . (19.6)
 
@@ -4545,19 +4545,19 @@ The corresponding generalizations follow logically from the determinations and o
 
 **19.4.1 Determining the hypothesis space**
 
-Although the determinations sanction general conclusions concerning all Brazilians, or all pieces of copper at a given temperature, they cannot, of course, yield a general predictive theory for _all_ nationalities, or for _all_ temperatures and materials, from a single example. Their main effect can be seen as limiting the space of hypotheses that the learning agent need consider. In predicting conductance, for example, one need consider only material and tem- perature and can ignore mass, ownership, day of the week, the current president, and so on. Hypotheses can certainly include terms that are in turn determined by material and temper- ature, such as molecular structure, thermal energy, or free-electron density. _Determinations specify a sufficient basis vocabulary from which to construct hypotheses concerning the target predicate._ This statement can be proven by showing that a given determination is logically equivalent to a statement that the correct definition of the target predicate is one of the set of all definitions expressible using the predicates on the left-hand side of the determination.
+Although the determinations sanction general conclusions concerning all Brazilians, or all pieces of copper at a given temperature, they cannot, of course, yield a general predictive theory for _all_ nationalities, or for _all_ temperatures and materials, from a single example. Their main effect can be seen as limiting the space of hypotheses that the learning agent need consider. In predicting conductance, for example, one need consider only material and temperature and can ignore mass, ownership, day of the week, the current president, and so on. Hypotheses can certainly include terms that are in turn determined by material and temperature, such as molecular structure, thermal energy, or free-electron density. _Determinations specify a sufficient basis vocabulary from which to construct hypotheses concerning the target predicate._ This statement can be proven by showing that a given determination is logically equivalent to a statement that the correct definition of the target predicate is one of the set of all definitions expressible using the predicates on the left-hand side of the determination.
 
-Intuitively, it is clear that a reduction in the hypothesis space size should make it eas- ier to learn the target predicate. Using the basic results of computational learning theory (Section 18.5), we can quantify the possible gains. First, recall that for Boolean functions, log(|H|) examples are required to converge to a reasonable hypothesis, where |H| is the size of the hypothesis space. If the learner has n Boolean features with which to construct hypotheses, then, in the absence of further restrictions, |H| = O(22
+Intuitively, it is clear that a reduction in the hypothesis space size should make it easier to learn the target predicate. Using the basic results of computational learning theory (Section 18.5), we can quantify the possible gains. First, recall that for Boolean functions, log(|H|) examples are required to converge to a reasonable hypothesis, where |H| is the size of the hypothesis space. If the learner has n Boolean features with which to construct hypotheses, then, in the absence of further restrictions, |H| = O(22
 
 n
 
-), so the number of ex- amples is O(2n). If the determination contains d predicates in the left-hand side, the learner will require only O(2d) examples, a reduction of O(2n−d).
+), so the number of examples is O(2n). If the determination contains d predicates in the left-hand side, the learner will require only O(2d) examples, a reduction of O(2n−d).
 
 **19.4.2 Learning and using relevance information**
 
-As we stated in the introduction to this chapter, prior knowledge is useful in learning; but it too has to be learned. In order to provide a complete story of relevance-based learning, we must therefore provide a learning algorithm for determinations. The learning algorithm we now present is based on a straightforward attempt to find the simplest determination con- sistent with the observations. A determination P ' Q says that if any examples match on P , then they must also match on Q. A determination is therefore consistent with a set of examples if every pair that matches on the predicates on the left-hand side also matches on the goal predicate. For example, suppose we have the following examples of conductance measurements on material samples:  
+As we stated in the introduction to this chapter, prior knowledge is useful in learning; but it too has to be learned. In order to provide a complete story of relevance-based learning, we must therefore provide a learning algorithm for determinations. The learning algorithm we now present is based on a straightforward attempt to find the simplest determination consistent with the observations. A determination P ' Q says that if any examples match on P , then they must also match on Q. A determination is therefore consistent with a set of examples if every pair that matches on the predicates on the left-hand side also matches on the goal predicate. For example, suppose we have the following examples of conductance measurements on material samples:  
 
-786 Chapter 19. Knowledge in Learning
+
 
 **function** MINIMAL-CONSISTENT-DET(E ,A) **returns** a set of attributes **inputs**: E , a set of examples
 
@@ -4589,7 +4589,7 @@ The minimal consistent determination is Material ∧ Temperature ' Conductance .
 
 Conductance . This is consistent with the examples because mass and size determine density and, in our data set, we do not have two different materials with the same density. As usual, we would need a larger sample set in order to eliminate a nearly correct hypothesis.
 
-There are several possible algorithms for finding minimal consistent determinations. The most obvious approach is to conduct a search through the space of determinations, check- ing all determinations with one predicate, two predicates, and so on, until a consistent deter- mination is found. We will assume a simple attribute-based representation, like that used for decision tree learning in Chapter 18. A determination d will be represented by the set of attributes on the left-hand side, because the target predicate is assumed to be fixed. The basic algorithm is outlined in Figure 19.8.
+There are several possible algorithms for finding minimal consistent determinations. The most obvious approach is to conduct a search through the space of determinations, checking all determinations with one predicate, two predicates, and so on, until a consistent determination is found. We will assume a simple attribute-based representation, like that used for decision tree learning in Chapter 18. A determination d will be represented by the set of attributes on the left-hand side, because the target predicate is assumed to be fixed. The basic algorithm is outlined in Figure 19.8.
 
 The time complexity of this algorithm depends on the size of the smallest consistent determination. Suppose this determination has p attributes out of the n total attributes. Then the algorithm will not find it until searching the subsets of A of size p. There are
 
@@ -4637,27 +4637,27 @@ RBDTL DTL
 
 such subsets; hence the algorithm is exponential in the size of the minimal determination. It turns out that the problem is NP-complete, so we cannot expect to do better in the general case. In most domains, however, there will be sufficient local structure (see Chapter 14 for a definition of locally structured domains) that p will be small.
 
-Given an algorithm for learning determinations, a learning agent has a way to construct a minimal hypothesis within which to learn the target predicate. For example, we can combine MINIMAL-CONSISTENT-DET with the DECISION-TREE-LEARNING algorithm. This yields a relevance-based decision-tree learning algorithm RBDTL that first identifies a minimal set of relevant attributes and then passes this set to the decision tree algorithm for learning. Unlike DECISION-TREE-LEARNING, RBDTL simultaneously learns and uses relevance in- formation in order to minimize its hypothesis space. We expect that RBDTL will learn faster than DECISION-TREE-LEARNING, and this is in fact the case. Figure 19.9 shows the learning performance for the two algorithms on randomly generated data for a function that depends on only 5 of 16 attributes. Obviously, in cases where all the available attributes are relevant, RBDTL will show no advantage.
+Given an algorithm for learning determinations, a learning agent has a way to construct a minimal hypothesis within which to learn the target predicate. For example, we can combine MINIMAL-CONSISTENT-DET with the DECISION-TREE-LEARNING algorithm. This yields a relevance-based decision-tree learning algorithm RBDTL that first identifies a minimal set of relevant attributes and then passes this set to the decision tree algorithm for learning. Unlike DECISION-TREE-LEARNING, RBDTL simultaneously learns and uses relevance information in order to minimize its hypothesis space. We expect that RBDTL will learn faster than DECISION-TREE-LEARNING, and this is in fact the case. Figure 19.9 shows the learning performance for the two algorithms on randomly generated data for a function that depends on only 5 of 16 attributes. Obviously, in cases where all the available attributes are relevant, RBDTL will show no advantage.
 
 This section has only scratched the surface of the field of **declarative bias**, which aimsDECLARATIVE BIAS
 
 to understand how prior knowledge can be used to identify the appropriate hypothesis space within which to search for the correct target definition. There are many unanswered questions:
 
-• How can the algorithms be extended to handle noise?
+- How can the algorithms be extended to handle noise?
 
-• Can we handle continuous-valued variables?
+- Can we handle continuous-valued variables?
 
-• How can other kinds of prior knowledge be used, besides determinations?
+- How can other kinds of prior knowledge be used, besides determinations?
 
-• How can the algorithms be generalized to cover any first-order theory, rather than just an attribute-based representation?
+- How can the algorithms be generalized to cover any first-order theory, rather than just an attribute-based representation?
 
 Some of these questions are addressed in the next section.  
 
-788 Chapter 19. Knowledge in Learning
+
 
 19.5 INDUCTIVE LOGIC PROGRAMMING
 
-Inductive logic programming (ILP) combines inductive methods with the power of first-order representations, concentrating in particular on the representation of hypotheses as logic pro- grams.3 It has gained popularity for three reasons. First, ILP offers a rigorous approach to the general knowledge-based inductive learning problem. Second, it offers complete algo- rithms for inducing general, first-order theories from examples, which can therefore learn successfully in domains where attribute-based algorithms are hard to apply. An example is in learning how protein structures fold (Figure 19.10). The three-dimensional configuration of a protein molecule cannot be represented reasonably by a set of attributes, because the configuration inherently refers to _relationships_ between objects, not to attributes of a single object. First-order logic is an appropriate language for describing the relationships. Third, inductive logic programming produces hypotheses that are (relatively) easy for humans to read. For example, the English translation in Figure 19.10 can be scrutinized and criticized by working biologists. This means that inductive logic programming systems can participate in the scientific cycle of experimentation, hypothesis generation, debate, and refutation. Such participation would not be possible for systems that generate “black-box” classifiers, such as neural networks.
+Inductive logic programming (ILP) combines inductive methods with the power of first-order representations, concentrating in particular on the representation of hypotheses as logic programs.3 It has gained popularity for three reasons. First, ILP offers a rigorous approach to the general knowledge-based inductive learning problem. Second, it offers complete algorithms for inducing general, first-order theories from examples, which can therefore learn successfully in domains where attribute-based algorithms are hard to apply. An example is in learning how protein structures fold (Figure 19.10). The three-dimensional configuration of a protein molecule cannot be represented reasonably by a set of attributes, because the configuration inherently refers to _relationships_ between objects, not to attributes of a single object. First-order logic is an appropriate language for describing the relationships. Third, inductive logic programming produces hypotheses that are (relatively) easy for humans to read. For example, the English translation in Figure 19.10 can be scrutinized and criticized by working biologists. This means that inductive logic programming systems can participate in the scientific cycle of experimentation, hypothesis generation, debate, and refutation. Such participation would not be possible for systems that generate “black-box” classifiers, such as neural networks.
 
 **19.5.1 An example**
 
@@ -4695,7 +4695,7 @@ We could of course learn from a subset of this complete set. The object of an in
 
 the Hypothesis such that the entailment constraint is satisfied. Suppose, for the moment, that the agent has no background knowledge: Background is empty. Then one possible solution
 
-2mhr - Four-helical up-and-down bundle
+2mhr Four-helical up-and-down bundle
 
 H:1\[19-37\]
 
@@ -4723,7 +4723,7 @@ H:7\[99-106\]
 
 E:1\[57-59\] E:2\[96-98\]
 
-1omd - EF-Hand
+1omd EF-Hand
 
 (a) (b)
 
@@ -4739,7 +4739,7 @@ This kind of rule could not be learned, or even represented, by an attribute-bas
 
 has fold class “Four-helical up-and-down-bundle” if it contains a long helix h1 at a secondary structure position between 1 and 3 and h1 is next to a second helix.”  
 
-790 Chapter 19. Knowledge in Learning
+
 
 for Hypothesis is the following:
 
@@ -4759,9 +4759,9 @@ Then we get stuck in trying to represent the example descriptions. The only poss
 
 FirstElementIsMotherOfElizabeth(〈Mum,Charles〉) .
 
-The definition of Grandparent in terms of these attributes simply becomes a large disjunc- tion of specific cases that does not generalize to new examples at all. _Attribute-based learning algorithms are incapable of learning relational predicates._ Thus, one of the principal advan- tages of ILP algorithms is their applicability to a much wider range of problems, including relational problems.
+The definition of Grandparent in terms of these attributes simply becomes a large disjunction of specific cases that does not generalize to new examples at all. _Attribute-based learning algorithms are incapable of learning relational predicates._ Thus, one of the principal advantages of ILP algorithms is their applicability to a much wider range of problems, including relational problems.
 
-The reader will certainly have noticed that a little bit of background knowledge would help in the representation of the Grandparent definition. For example, if Background in- cluded the sentence
+The reader will certainly have noticed that a little bit of background knowledge would help in the representation of the Grandparent definition. For example, if Background included the sentence
 
 Parent(x, y) ⇔ \[Mother (x, y) ∨ Father (x, y)\] ,
 
@@ -4769,7 +4769,7 @@ then the definition of Grandparent would be reduced to
 
 Grandparent (x, y) ⇔ \[∃ z Parent(x, z) ∧ Parent(z, y)\] .
 
-This shows how background knowledge can dramatically reduce the size of hypotheses re- quired to explain the observations.
+This shows how background knowledge can dramatically reduce the size of hypotheses required to explain the observations.
 
 It is also possible for ILP algorithms to _create_ new predicates in order to facilitate the expression of explanatory hypotheses. Given the example data shown earlier, it is entirely reasonable for the ILP program to propose an additional predicate, which we would call
 
@@ -4833,9 +4833,9 @@ Parent(x, z) ⇒ Grandfather (x, y) .
 
 Father (x, z) ⇒ Grandfather (x, y) .
 
-(Notice that we are assuming that a clause defining Parent is already part of the background knowledge.) The first of these three clauses incorrectly classifies all of the 12 positive exam- ples as negative and can thus be ignored. The second and third agree with all of the positive examples, but the second is incorrect on a larger fraction of the negative examples—twice as many, because it allows mothers as well as fathers. Hence, we prefer the third clause.  
+(Notice that we are assuming that a clause defining Parent is already part of the background knowledge.) The first of these three clauses incorrectly classifies all of the 12 positive examples as negative and can thus be ignored. The second and third agree with all of the positive examples, but the second is incorrect on a larger fraction of the negative examples—twice as many, because it allows mothers as well as fathers. Hence, we prefer the third clause.  
 
-792 Chapter 19. Knowledge in Learning
+
 
 Now we need to specialize this clause further, to rule out the cases in which x is the father of some z, but z is not a parent of y. Adding the single literal Parent(z, y) gives
 
@@ -4849,7 +4849,7 @@ Father (x, z) ∧Mother (z, y) ⇒ Grandfather (x, y) .
 
 Note that each of these clauses covers some of the positive examples, that together they cover all the positive examples, and that NEW-CLAUSE is designed in such a way that no clause will incorrectly cover a negative example. In general FOIL will have to search through many unsuccessful clauses before finding a correct solution.
 
-This example is a very simple illustration of how FOIL operates. A sketch of the com- plete algorithm is shown in Figure 19.12. Essentially, the algorithm repeatedly constructs a clause, literal by literal, until it agrees with some subset of the positive examples and none of the negative examples. Then the positive examples covered by the clause are removed from the training set, and the process continues until no positive examples remain. The two main subroutines to be explained are NEW-LITERALS, which constructs all possible new literals to add to the clause, and CHOOSE-LITERAL, which selects a literal to add.
+This example is a very simple illustration of how FOIL operates. A sketch of the complete algorithm is shown in Figure 19.12. Essentially, the algorithm repeatedly constructs a clause, literal by literal, until it agrees with some subset of the positive examples and none of the negative examples. Then the positive examples covered by the clause are removed from the training set, and the process continues until no positive examples remain. The two main subroutines to be explained are NEW-LITERALS, which constructs all possible new literals to add to the clause, and CHOOSE-LITERAL, which selects a literal to add.
 
 NEW-LITERALS takes a clause and constructs all possible “useful” literals that could be added to the clause. Let us use as an example the clause
 
@@ -4859,7 +4859,7 @@ There are three kinds of literals that can be added:
 
 1\. _Literals using predicates_: the literal can be negated or unnegated, any existing predicate (including the goal predicate) can be used, and the arguments must all be variables. Any variable can be used for any argument of the predicate, with one restriction: each literal must include _at least one_ variable from an earlier literal or from the head of the clause. Literals such as Mother(z, u), Married(z, z), ¬Male(y), and Grandfather (v, x) are allowed, whereas Married(u, v) is not. Notice that the use of the predicate from the head of the clause allows FOIL to learn _recursive_ definitions.
 
-2\. _Equality and inequality literals_: these relate variables already appearing in the clause. For example, we might add z = x. These literals can also include user-specified con- stants. For learning arithmetic we might use 0 and 1, and for learning list functions we might use the empty list \[ \].
+2\. _Equality and inequality literals_: these relate variables already appearing in the clause. For example, we might add z = x. These literals can also include user-specified constants. For learning arithmetic we might use 0 and 1, and for learning list functions we might use the empty list \[ \].
 
 3\. _Arithmetic comparisons_: when dealing with functions of continuous variables, literals such as x > y and y ≤ z can be added. As in decision-tree learning, a constant threshold value can be chosen to maximize the discriminatory power of the test.
 
@@ -4907,7 +4907,7 @@ CHOOSE-LITERAL uses a heuristic somewhat similar to information gain (see page 7
 
 FOIL and its relatives have been used to learn a wide variety of definitions. One of the most impressive demonstrations (Quinlan and Cameron-Jones, 1993) involved solving a long sequence of exercises on list-processing functions from Bratko’s (1986) Prolog textbook. In  
 
-794 Chapter 19. Knowledge in Learning
+
 
 each case, the program was able to learn a correct definition of the function from a small set of examples, using the previously learned functions as background knowledge.
 
@@ -4925,7 +4925,7 @@ and produces two clauses C1 and C2, such that C is the result of resolving C1 an
 
 is the result of resolving C1 and C2. The early steps in an inverse resolution process are shown in Figure 19.13, where we
 
-focus on the positive example Grandparent (George ,Anne). The process begins at the end of the proof (shown at the bottom of the figure). We take the resolvent C to be empty clause (i.e. a contradiction) and C2 to be ¬Grandparent (George ,Anne), which is the nega- tion of the goal example. The first inverse step takes C and C2 and generates the clause Grandparent (George ,Anne) for C1. The next step takes this clause as C and the clause Parent(Elizabeth,Anne) as C2, and generates the clause
+focus on the positive example Grandparent (George ,Anne). The process begins at the end of the proof (shown at the bottom of the figure). We take the resolvent C to be empty clause (i.e. a contradiction) and C2 to be ¬Grandparent (George ,Anne), which is the negation of the goal example. The first inverse step takes C and C2 and generates the clause Grandparent (George ,Anne) for C1. The next step takes this clause as C and the clause Parent(Elizabeth,Anne) as C2, and generates the clause
 
 ¬Parent(Elizabeth , y) ∨Grandparent (George , y)
 
@@ -4935,7 +4935,7 @@ Parent(x, z) ∧ Parent(z, y) ⇒ Grandparent (x, y) .
 
 Now we have a resolution proof that the hypothesis, descriptions, and background knowledge entail the classification Grandparent (George ,Anne).
 
-Clearly, inverse resolution involves a search. Each inverse resolution step is nonde- terministic, because for any C , there can be many or even an infinite number of clauses C1 and C2 that resolve to C . For example, instead of choosing ¬Parent(Elizabeth , y) ∨
+Clearly, inverse resolution involves a search. Each inverse resolution step is nondeterministic, because for any C , there can be many or even an infinite number of clauses C1 and C2 that resolve to C . For example, instead of choosing ¬Parent(Elizabeth , y) ∨
 
 Grandparent (George , y) for C1 in the last step of Figure 19.13, the inverse resolution step might have chosen any of the following sentences:
 
@@ -4951,13 +4951,13 @@ Grandparent (George , y) for C1 in the last step of Figure 19.13, the inverse re
 
 Section 19.5. Inductive Logic Programming 795
 
-Classifications , or from hypothesized clauses that have already been generated in the inverse resolution tree. The large number of possibilities means a large branching factor (and there- fore an inefficient search) without additional controls. A number of approaches to taming the search have been tried in implemented ILP systems:
+Classifications , or from hypothesized clauses that have already been generated in the inverse resolution tree. The large number of possibilities means a large branching factor (and therefore an inefficient search) without additional controls. A number of approaches to taming the search have been tried in implemented ILP systems:
 
-1\. Redundant choices can be eliminated—for example, by generating only the most spe- cific hypotheses possible and by requiring that all the hypothesized clauses be consistent with each other, and with the observations. This last criterion would rule out the clause ¬Parent(z, y) ∨Grandparent (George , y), listed before.
+1\. Redundant choices can be eliminated—for example, by generating only the most specific hypotheses possible and by requiring that all the hypothesized clauses be consistent with each other, and with the observations. This last criterion would rule out the clause ¬Parent(z, y) ∨Grandparent (George , y), listed before.
 
 2\. The proof strategy can be restricted. For example, we saw in Chapter 9 that **linear resolution** is a complete, restricted strategy. Linear resolution produces proof trees that have a linear branching structure—the whole tree follows one line, with only single clauses branching off that line (as in Figure 19.13).
 
-3\. The representation language can be restricted, for example by eliminating function sym- bols or by allowing only Horn clauses. For instance, PROGOL operates with Horn clauses using **inverse entailment**. The idea is to change the entailment constraintINVERSE
+3\. The representation language can be restricted, for example by eliminating function symbols or by allowing only Horn clauses. For instance, PROGOL operates with Horn clauses using **inverse entailment**. The idea is to change the entailment constraintINVERSE
 
 ENTAILMENT
 
@@ -5001,11 +5001,11 @@ _Parent_(_x,z_)¬ ¬
 
 **Figure 19.13** Early steps in an inverse resolution process. The shaded clauses are generated by inverse resolution steps from the clause to the right and the clause below. The unshaded clauses are from the Descriptions and Classifications (including negated Classifications).  
 
-796 Chapter 19. Knowledge in Learning
+
 
 is, like answer set programming, it generates possible values for logical variables, and checks for consistency.
 
-5\. Inference can be done with ground propositional clauses rather than in first-order logic. The LINUS system (Lavra**u**c and D**u**zeroski, 1994) works by translating first-order the- ories into propositional logic, solving them with a propositional learning system, and then translating back. Working with propositional formulas can be more efficient on some problems, as we saw with SATPLAN in Chapter 10.
+5\. Inference can be done with ground propositional clauses rather than in first-order logic. The LINUS system (Lavra**u**c and D**u**zeroski, 1994) works by translating first-order theories into propositional logic, solving them with a propositional learning system, and then translating back. Working with propositional formulas can be more efficient on some problems, as we saw with SATPLAN in Chapter 10.
 
 **19.5.4 Making discoveries with inductive logic programming**
 
@@ -5013,13 +5013,13 @@ An inverse resolution procedure that inverts a complete resolution strategy is, 
 
 generates a set of examples, then an inverse resolution procedure can generate Hypothesis
 
-from the examples. This observation suggests an interesting possibility: Suppose that the available examples include a variety of trajectories of falling bodies. Would an inverse reso- lution program be theoretically capable of inferring the law of gravity? The answer is clearly yes, because the law of gravity allows one to explain the examples, given suitable background mathematics. Similarly, one can imagine that electromagnetism, quantum mechanics, and the theory of relativity are also within the scope of ILP programs. Of course, they are also within the scope of a monkey with a typewriter; we still need better heuristics and new ways to structure the search space.
+from the examples. This observation suggests an interesting possibility: Suppose that the available examples include a variety of trajectories of falling bodies. Would an inverse resolution program be theoretically capable of inferring the law of gravity? The answer is clearly yes, because the law of gravity allows one to explain the examples, given suitable background mathematics. Similarly, one can imagine that electromagnetism, quantum mechanics, and the theory of relativity are also within the scope of ILP programs. Of course, they are also within the scope of a monkey with a typewriter; we still need better heuristics and new ways to structure the search space.
 
 One thing that inverse resolution systems _will_ do for you is invent new predicates. This ability is often seen as somewhat magical, because computers are often thought of as “merely working with what they are given.” In fact, new predicates fall directly out of the inverse resolution step. The simplest case arises in hypothesizing two new clauses C1 and C2, given a clause C . The resolution of C1 and C2 eliminates a literal that the two clauses share; hence, it is quite possible that the eliminated literal contained a predicate that does not appear in C . Thus, when working backward, one possibility is to generate a new predicate from which to reconstruct the missing literal.
 
-Figure 19.14 shows an example in which the new predicate P is generated in the process of learning a definition for Ancestor . Once generated, P can be used in later inverse resolu- tion steps. For example, a later step might hypothesize that Mother(x, y) ⇒ P (x, y). Thus, the new predicate P has its meaning constrained by the generation of hypotheses that involve it. Another example might lead to the constraint Father (x, y) ⇒ P (x, y). In other words, the predicate P is what we usually think of as the Parent relationship. As we mentioned earlier, the invention of new predicates can significantly reduce the size of the definition of the goal predicate. Hence, by including the ability to invent new predicates, inverse resolution systems can often solve learning problems that are infeasible with other techniques.
+Figure 19.14 shows an example in which the new predicate P is generated in the process of learning a definition for Ancestor . Once generated, P can be used in later inverse resolution steps. For example, a later step might hypothesize that Mother(x, y) ⇒ P (x, y). Thus, the new predicate P has its meaning constrained by the generation of hypotheses that involve it. Another example might lead to the constraint Father (x, y) ⇒ P (x, y). In other words, the predicate P is what we usually think of as the Parent relationship. As we mentioned earlier, the invention of new predicates can significantly reduce the size of the definition of the goal predicate. Hence, by including the ability to invent new predicates, inverse resolution systems can often solve learning problems that are infeasible with other techniques.
 
-Some of the deepest revolutions in science come from the invention of new predicates and functions—for example, Galileo’s invention of acceleration or Joule’s invention of ther- mal energy. Once these terms are available, the discovery of new laws becomes (relatively) easy. The difficult part lies in realizing that some new entity, with a specific relationship to existing entities, will allow an entire body of observations to be explained with a much  
+Some of the deepest revolutions in science come from the invention of new predicates and functions—for example, Galileo’s invention of acceleration or Joule’s invention of thermal energy. Once these terms are available, the discovery of new laws becomes (relatively) easy. The difficult part lies in realizing that some new entity, with a specific relationship to existing entities, will allow an entire body of observations to be explained with a much  
 
 Section 19.6. Summary 797
 
@@ -5043,39 +5043,39 @@ simpler and more elegant theory than previously existed. As yet, ILP systems hav
 
 discoveries have been deemed publishable in the scientific literature. For example, in the _Journal of Molecular Biology_, Turcotte _et al._ (2001) describe the automated discovery of rules for protein folding by the ILP program PROGOL. Many of the rules discovered by PROGOL
 
-could have been derived from known principles, but most had not been previously published as part of a standard biological database. (See Figure 19.10 for an example.). In related work, Srinivasan _et al._ (1994) dealt with the problem of discovering molecular-structure- based rules for the mutagenicity of nitroaromatic compounds. These compounds are found in automobile exhaust fumes. For 80% of the compounds in a standard database, it is possible to identify four important features, and linear regression on these features outperforms ILP. For the remaining 20%, the features alone are not predictive, and ILP identifies relationships that allow it to outperform linear regression, neural nets, and decision trees. Most impressively, King _et al._ (2009) endowed a robot with the ability to perform molecular biology experiments and extended ILP techniques to include experiment design, thereby creating an autonomous scientist that actually discovered new knowledge about the functional genomics of yeast. For all these examples it appears that the ability both to represent relations and to use background knowledge contribute to ILP’s high performance. The fact that the rules found by ILP can be interpreted by humans contributes to the acceptance of these techniques in biology journals rather than just computer science journals.
+could have been derived from known principles, but most had not been previously published as part of a standard biological database. (See Figure 19.10 for an example.). In related work, Srinivasan _et al._ (1994) dealt with the problem of discovering molecular-structurebased rules for the mutagenicity of nitroaromatic compounds. These compounds are found in automobile exhaust fumes. For 80% of the compounds in a standard database, it is possible to identify four important features, and linear regression on these features outperforms ILP. For the remaining 20%, the features alone are not predictive, and ILP identifies relationships that allow it to outperform linear regression, neural nets, and decision trees. Most impressively, King _et al._ (2009) endowed a robot with the ability to perform molecular biology experiments and extended ILP techniques to include experiment design, thereby creating an autonomous scientist that actually discovered new knowledge about the functional genomics of yeast. For all these examples it appears that the ability both to represent relations and to use background knowledge contribute to ILP’s high performance. The fact that the rules found by ILP can be interpreted by humans contributes to the acceptance of these techniques in biology journals rather than just computer science journals.
 
-ILP has made contributions to other sciences besides biology. One of the most impor- tant is natural language processing, where ILP has been used to extract complex relational information from text. These results are summarized in Chapter 23.
+ILP has made contributions to other sciences besides biology. One of the most important is natural language processing, where ILP has been used to extract complex relational information from text. These results are summarized in Chapter 23.
 
 19.6 SUMMARY
 
-This chapter has investigated various ways in which prior knowledge can help an agent to learn from new experiences. Because much prior knowledge is expressed in terms of rela- tional models rather than attribute-based models, we have also covered systems that allow learning of relational models. The important points are:
+This chapter has investigated various ways in which prior knowledge can help an agent to learn from new experiences. Because much prior knowledge is expressed in terms of relational models rather than attribute-based models, we have also covered systems that allow learning of relational models. The important points are:
 
-• The use of prior knowledge in learning leads to a picture of **cumulative learning**, in which learning agents improve their learning ability as they acquire more knowledge.
+- The use of prior knowledge in learning leads to a picture of **cumulative learning**, in which learning agents improve their learning ability as they acquire more knowledge.
 
-• Prior knowledge helps learning by eliminating otherwise consistent hypotheses and by  
+- Prior knowledge helps learning by eliminating otherwise consistent hypotheses and by  
 
-798 Chapter 19. Knowledge in Learning
+
 
 “filling in” the explanation of examples, thereby allowing for shorter hypotheses. These contributions often result in faster learning from fewer examples.
 
-• Understanding the different logical roles played by prior knowledge, as expressed by **entailment constraints**, helps to define a variety of learning techniques.
+- Understanding the different logical roles played by prior knowledge, as expressed by **entailment constraints**, helps to define a variety of learning techniques.
 
-• **Explanation-based learning** (EBL) extracts general rules from single examples by _ex- plaining_ the examples and generalizing the explanation. It provides a deductive method for turning first-principles knowledge into useful, efficient, special-purpose expertise.
+- **Explanation-based learning** (EBL) extracts general rules from single examples by _explaining_ the examples and generalizing the explanation. It provides a deductive method for turning first-principles knowledge into useful, efficient, special-purpose expertise.
 
-• **Relevance-based learning** (RBL) uses prior knowledge in the form of determinations to identify the relevant attributes, thereby generating a reduced hypothesis space and speeding up learning. RBL also allows deductive generalizations from single examples.
+- **Relevance-based learning** (RBL) uses prior knowledge in the form of determinations to identify the relevant attributes, thereby generating a reduced hypothesis space and speeding up learning. RBL also allows deductive generalizations from single examples.
 
-• **Knowledge-based inductive learning** (KBIL) finds inductive hypotheses that explain sets of observations with the help of background knowledge.
+- **Knowledge-based inductive learning** (KBIL) finds inductive hypotheses that explain sets of observations with the help of background knowledge.
 
-• **Inductive logic programming** (ILP) techniques perform KBIL on knowledge that is expressed in first-order logic. ILP methods can learn relational knowledge that is not expressible in attribute-based systems.
+- **Inductive logic programming** (ILP) techniques perform KBIL on knowledge that is expressed in first-order logic. ILP methods can learn relational knowledge that is not expressible in attribute-based systems.
 
-• ILP can be done with a top-down approach of refining a very general rule or through a bottom-up approach of inverting the deductive process.
+- ILP can be done with a top-down approach of refining a very general rule or through a bottom-up approach of inverting the deductive process.
 
-• ILP methods naturally generate new predicates with which concise new theories can be expressed and show promise as general-purpose scientific theory formation systems.
+- ILP methods naturally generate new predicates with which concise new theories can be expressed and show promise as general-purpose scientific theory formation systems.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Although the use of prior knowledge in learning would seem to be a natural topic for philoso- phers of science, little formal work was done until quite recently. _Fact, Fiction, and Forecast_, by the philosopher Nelson Goodman (1954), refuted the earlier supposition that induction was simply a matter of seeing enough examples of some universally quantified proposition and then adopting it as a hypothesis. Consider, for example, the hypothesis “All emeralds are grue,” where _grue_ means “green if observed before time t, but blue if observed thereafter.” At any time up to t, we might have observed millions of instances confirming the rule that emeralds are grue, and no disconfirming instances, and yet we are unwilling to adopt the rule. This can be explained only by appeal to the role of relevant prior knowledge in the induction process. Goodman proposes a variety of different kinds of prior knowledge that might be use- ful, including a version of determinations called **overhypotheses**. Unfortunately, Goodman’s ideas were never pursued in machine learning.
+Although the use of prior knowledge in learning would seem to be a natural topic for philosophers of science, little formal work was done until quite recently. _Fact, Fiction, and Forecast_, by the philosopher Nelson Goodman (1954), refuted the earlier supposition that induction was simply a matter of seeing enough examples of some universally quantified proposition and then adopting it as a hypothesis. Consider, for example, the hypothesis “All emeralds are grue,” where _grue_ means “green if observed before time t, but blue if observed thereafter.” At any time up to t, we might have observed millions of instances confirming the rule that emeralds are grue, and no disconfirming instances, and yet we are unwilling to adopt the rule. This can be explained only by appeal to the role of relevant prior knowledge in the induction process. Goodman proposes a variety of different kinds of prior knowledge that might be useful, including a version of determinations called **overhypotheses**. Unfortunately, Goodman’s ideas were never pursued in machine learning.
 
 The **current-best-hypothesis** approach is an old idea in philosophy (Mill, 1843). Early work in cognitive psychology also suggested that it is a natural form of concept learning in humans (Bruner _et al._, 1957). In AI, the approach is most closely associated with the work of Patrick Winston, whose Ph.D. thesis (Winston, 1970) addressed the problem of learning descriptions of complex objects. The **version space** method (Mitchell, 1977, 1982) takes a different approach, maintaining the set of _all_ consistent hypotheses and eliminating those found to be inconsistent with new examples. The approach was used in the Meta-DENDRAL  
 
@@ -5085,7 +5085,7 @@ expert system for chemistry (Buchanan and Mitchell, 1978), and later in Mitchell
 
 EBL had its roots in the techniques used by the STRIPS planner (Fikes _et al._, 1972). When a plan was constructed, a generalized version of it was saved in a plan library and used in later planning as a **macro-operator**. Similar ideas appeared in Anderson’s ACT\* architecture, under the heading of **knowledge compilation** (Anderson, 1983), and in the SOAR architecture, as **chunking** (Laird _et al._, 1986). **Schema acquisition** (DeJong, 1981), **analytical generalization** (Mitchell, 1982), and **constraint-based generalization** (Minton, 1984) were immediate precursors of the rapid growth of interest in EBL stimulated by the papers of Mitchell _et al._ (1986) and DeJong and Mooney (1986). Hirsh (1987) introduced the EBL algorithm described in the text, showing how it could be incorporated directly into a logic programming system. Van Harmelen and Bundy (1988) explain EBL as a variant of the **partial evaluation** method used in program analysis systems (Jones _et al._, 1993).
 
-Initial enthusiasm for EBL was tempered by Minton’s finding (1988) that, without ex- tensive extra work, EBL could easily slow down a program significantly. Formal probabilistic analysis of the expected payoff of EBL can be found in Greiner (1989) and Subramanian and Feldman (1990). An excellent survey of early work on EBL appears in Dietterich (1990).
+Initial enthusiasm for EBL was tempered by Minton’s finding (1988) that, without extensive extra work, EBL could easily slow down a program significantly. Formal probabilistic analysis of the expected payoff of EBL can be found in Greiner (1989) and Subramanian and Feldman (1990). An excellent survey of early work on EBL appears in Dietterich (1990).
 
 Instead of using examples as foci for generalization, one can use them directly to solve new problems, in a process known as **analogical reasoning**. This form of reasoning rangesANALOGICAL
 
@@ -5093,21 +5093,21 @@ REASONING
 
 from a form of plausible reasoning based on degree of similarity (Gentner, 1983), through a form of deductive inference based on determinations but requiring the participation of the example (Davies and Russell, 1987), to a form of “lazy” EBL that tailors the direction of generalization of the old example to fit the needs of the new problem. This latter form of analogical reasoning is found most commonly in **case-based reasoning** (Kolodner, 1993) and **derivational analogy** (Veloso and Carbonell, 1993).
 
-Relevance information in the form of functional dependencies was first developed in the database community, where it is used to structure large sets of attributes into manage- able subsets. Functional dependencies were used for analogical reasoning by Carbonell and Collins (1973) and rediscovered and given a full logical analysis by Davies and Rus- sell (Davies, 1985; Davies and Russell, 1987). Their role as prior knowledge in inductive learning was explored by Russell and Grosof (1987). The equivalence of determinations to a restricted-vocabulary hypothesis space was proved in Russell (1988). Learning algorithms for determinations and the improved performance obtained by RBDTL were first shown in the FOCUS algorithm, due to Almuallim and Dietterich (1991). Tadepalli (1993) describes a very ingenious algorithm for learning with determinations that shows large improvements in learning speed.
+Relevance information in the form of functional dependencies was first developed in the database community, where it is used to structure large sets of attributes into manageable subsets. Functional dependencies were used for analogical reasoning by Carbonell and Collins (1973) and rediscovered and given a full logical analysis by Davies and Russell (Davies, 1985; Davies and Russell, 1987). Their role as prior knowledge in inductive learning was explored by Russell and Grosof (1987). The equivalence of determinations to a restricted-vocabulary hypothesis space was proved in Russell (1988). Learning algorithms for determinations and the improved performance obtained by RBDTL were first shown in the FOCUS algorithm, due to Almuallim and Dietterich (1991). Tadepalli (1993) describes a very ingenious algorithm for learning with determinations that shows large improvements in learning speed.
 
-The idea that inductive learning can be performed by inverse deduction can be traced to W. S. Jevons (1874), who wrote, “The study both of Formal Logic and of the Theory of Probabilities has led me to adopt the opinion that there is no such thing as a distinct method of induction as contrasted with deduction, but that induction is simply an inverse employ- ment of deduction.” Computational investigations began with the remarkable Ph.D. thesis by  
+The idea that inductive learning can be performed by inverse deduction can be traced to W. S. Jevons (1874), who wrote, “The study both of Formal Logic and of the Theory of Probabilities has led me to adopt the opinion that there is no such thing as a distinct method of induction as contrasted with deduction, but that induction is simply an inverse employment of deduction.” Computational investigations began with the remarkable Ph.D. thesis by  
 
-800 Chapter 19. Knowledge in Learning
 
-Gordon Plotkin (1971) at Edinburgh. Although Plotkin developed many of the theorems and methods that are in current use in ILP, he was discouraged by some undecidability results for certain subproblems in induction. MIS (Shapiro, 1981) reintroduced the problem of learning logic programs, but was seen mainly as a contribution to the theory of automated debug- ging. Work on rule induction, such as the ID3 (Quinlan, 1986) and CN2 (Clark and Niblett, 1989) systems, led to FOIL (Quinlan, 1990), which for the first time allowed practical induc- tion of relational rules. The field of relational learning was reinvigorated by Muggleton and Buntine (1988), whose CIGOL program incorporated a slightly incomplete version of inverse resolution and was capable of generating new predicates. The inverse resolution method also appears in (Russell, 1986), with a simple algorithm given in a footnote. The next major sys- tem was GOLEM (Muggleton and Feng, 1990), which uses a covering algorithm based on Plotkin’s concept of relative least general generalization. ITOU (Rouveirol and Puget, 1989) and CLINT (De Raedt, 1992) were other systems of that era. More recently, PROGOL (Mug- gleton, 1995) has taken a hybrid (top-down and bottom-up) approach to inverse entailment and has been applied to a number of practical problems, particularly in biology and natural language processing. Muggleton (2000) describes an extension of PROGOL to handle uncer- tainty in the form of stochastic logic programs.
 
-A formal analysis of ILP methods appears in Muggleton (1991), a large collection of papers in Muggleton (1992), and a collection of techniques and applications in the book by Lavra**u**c and D**u**zeroski (1994). Page and Srinivasan (2002) give a more recent overview of the field’s history and challenges for the future. Early complexity results by Haussler (1989) suggested that learning first-order sentences was intractible. However, with better understand- ing of the importance of syntactic restrictions on clauses, positive results have been obtained even for clauses with recursion (D**u**zeroski _et al._, 1992). Learnability results for ILP are surveyed by Kietz and D**u**zeroski (1994) and Cohen and Page (1995).
+Gordon Plotkin (1971) at Edinburgh. Although Plotkin developed many of the theorems and methods that are in current use in ILP, he was discouraged by some undecidability results for certain subproblems in induction. MIS (Shapiro, 1981) reintroduced the problem of learning logic programs, but was seen mainly as a contribution to the theory of automated debugging. Work on rule induction, such as the ID3 (Quinlan, 1986) and CN2 (Clark and Niblett, 1989) systems, led to FOIL (Quinlan, 1990), which for the first time allowed practical induction of relational rules. The field of relational learning was reinvigorated by Muggleton and Buntine (1988), whose CIGOL program incorporated a slightly incomplete version of inverse resolution and was capable of generating new predicates. The inverse resolution method also appears in (Russell, 1986), with a simple algorithm given in a footnote. The next major system was GOLEM (Muggleton and Feng, 1990), which uses a covering algorithm based on Plotkin’s concept of relative least general generalization. ITOU (Rouveirol and Puget, 1989) and CLINT (De Raedt, 1992) were other systems of that era. More recently, PROGOL (Muggleton, 1995) has taken a hybrid (top-down and bottom-up) approach to inverse entailment and has been applied to a number of practical problems, particularly in biology and natural language processing. Muggleton (2000) describes an extension of PROGOL to handle uncertainty in the form of stochastic logic programs.
+
+A formal analysis of ILP methods appears in Muggleton (1991), a large collection of papers in Muggleton (1992), and a collection of techniques and applications in the book by Lavra**u**c and D**u**zeroski (1994). Page and Srinivasan (2002) give a more recent overview of the field’s history and challenges for the future. Early complexity results by Haussler (1989) suggested that learning first-order sentences was intractible. However, with better understanding of the importance of syntactic restrictions on clauses, positive results have been obtained even for clauses with recursion (D**u**zeroski _et al._, 1992). Learnability results for ILP are surveyed by Kietz and D**u**zeroski (1994) and Cohen and Page (1995).
 
 Although ILP now seems to be the dominant approach to constructive induction, it has not been the only approach taken. So-called **discovery systems** aim to model the processDISCOVERY SYSTEM
 
-of scientific discovery of new concepts, usually by a direct search in the space of concept definitions. Doug Lenat’s Automated Mathematician, or AM (Davis and Lenat, 1982), used discovery heuristics expressed as expert system rules to guide its search for concepts and conjectures in elementary number theory. Unlike most systems designed for mathematical reasoning, AM lacked a concept of proof and could only make conjectures. It rediscovered Goldbach’s conjecture and the Unique Prime Factorization theorem. AM’s architecture was generalized in the EURISKO system (Lenat, 1983) by adding a mechanism capable of rewrit- ing the system’s own discovery heuristics. EURISKO was applied in a number of areas other than mathematical discovery, although with less success than AM. The methodology of AM and EURISKO has been controversial (Ritchie and Hanna, 1984; Lenat and Brown, 1984).
+of scientific discovery of new concepts, usually by a direct search in the space of concept definitions. Doug Lenat’s Automated Mathematician, or AM (Davis and Lenat, 1982), used discovery heuristics expressed as expert system rules to guide its search for concepts and conjectures in elementary number theory. Unlike most systems designed for mathematical reasoning, AM lacked a concept of proof and could only make conjectures. It rediscovered Goldbach’s conjecture and the Unique Prime Factorization theorem. AM’s architecture was generalized in the EURISKO system (Lenat, 1983) by adding a mechanism capable of rewriting the system’s own discovery heuristics. EURISKO was applied in a number of areas other than mathematical discovery, although with less success than AM. The methodology of AM and EURISKO has been controversial (Ritchie and Hanna, 1984; Lenat and Brown, 1984).
 
-Another class of discovery systems aims to operate with real scientific data to find new laws. The systems DALTON, GLAUBER, and STAHL (Langley _et al._, 1987) are rule-based systems that look for quantitative relationships in experimental data from physical systems; in each case, the system has been able to recapitulate a well-known discovery from the his- tory of science. Discovery systems based on probabilistic techniques—especially clustering algorithms that discover new categories—are discussed in Chapter 20.  
+Another class of discovery systems aims to operate with real scientific data to find new laws. The systems DALTON, GLAUBER, and STAHL (Langley _et al._, 1987) are rule-based systems that look for quantitative relationships in experimental data from physical systems; in each case, the system has been able to recapitulate a well-known discovery from the history of science. Discovery systems based on probabilistic techniques—especially clustering algorithms that discover new categories—are discussed in Chapter 20.  
 
 Exercises 801
 
@@ -5139,7 +5139,7 @@ If there is more than one possible solution, provide one example of each differe
 
 **19.5** Suppose one writes a logic program that carries out a resolution inference step. That is, let Resolve(c1, c2, c) succeed if c is the result of resolving c1 and c2. Normally, Resolve
 
-would be used as part of a theorem prover by calling it with c1 and c2 instantiated to par- ticular clauses, thereby generating the resolvent c. Now suppose instead that we call it with c instantiated and c1 and c2 uninstantiated. Will this succeed in generating the appropriate results of an inverse resolution step? Would you need any special modifications to the logic programming system for this to work?
+would be used as part of a theorem prover by calling it with c1 and c2 instantiated to particular clauses, thereby generating the resolvent c. Now suppose instead that we call it with c instantiated and c1 and c2 uninstantiated. Will this succeed in generating the appropriate results of an inverse resolution step? Would you need any special modifications to the logic programming system for this to work?
 
 **19.6** Suppose that FOIL is considering adding a literal to a clause using a binary predicate P and that previous literals (including the head of the clause) contain five different variables.
 
@@ -5159,7 +5159,7 @@ _In which we view learning as a form of uncertain reasoning from observations._
 
 Chapter 13 pointed out the prevalence of uncertainty in real environments. Agents can handle uncertainty by using the methods of probability and decision theory, but first they must learn their probabilistic theories of the world from experience. This chapter explains how they can do that, by formulating the learning task itself as a process of probabilistic inference (Section 20.1). We will see that a Bayesian view of learning is extremely powerful, providing general solutions to the problems of noise, overfitting, and optimal prediction. It also takes into account the fact that a less-than-omniscient agent can never be certain about which theory of the world is correct, yet must still make decisions by using some theory of the world.
 
-We describe methods for learning probability models—primarily Bayesian networks— in Sections 20.2 and 20.3. Some of the material in this chapter is fairly mathematical, al- though the general lessons can be understood without plunging into the details. It may benefit the reader to review Chapters 13 and 14 and peek at Appendix A.
+We describe methods for learning probability models—primarily Bayesian networks— in Sections 20.2 and 20.3. Some of the material in this chapter is fairly mathematical, although the general lessons can be understood without plunging into the details. It may benefit the reader to review Chapters 13 and 14 and peek at Appendix A.
 
 20.1 STATISTICAL LEARNING
 
@@ -5177,7 +5177,7 @@ Given a new bag of candy, the random variable H (for _hypothesis_) denotes the t
 
 **Bayesian learning** simply calculates the probability of each hypothesis, given the data,BAYESIAN LEARNING
 
-and makes predictions on that basis. That is, the predictions are made by using _all_ the hy- potheses, weighted by their probabilities, rather than by using just a single “best” hypothesis. In this way, learning is reduced to probabilistic inference. Let **D** represent all the data, with observed value **d**; then the probability of each hypothesis is obtained by Bayes’ rule:
+and makes predictions on that basis. That is, the predictions are made by using _all_ the hypotheses, weighted by their probabilities, rather than by using just a single “best” hypothesis. In this way, learning is reduced to probabilistic inference. Let **D** represent all the data, with observed value **d**; then the probability of each hypothesis is obtained by Bayes’ rule:
 
 P (hi | **d**) = αP (**d** | hi)P (hi) . (20.1)
 
@@ -5197,7 +5197,7 @@ i
 
 **P**(X |hi)P (hi |**d**) , (20.2)
 
-where we have assumed that each hypothesis determines a probability distribution over X. This equation shows that predictions are weighted averages over the predictions of the indi- vidual hypotheses. The hypotheses themselves are essentially “intermediaries” between the raw data and the predictions. The key quantities in the Bayesian approach are the **hypothesis prior**, P (hi), and the **likelihood** of the data under each hypothesis, P (**d** | hi).HYPOTHESIS PRIOR
+where we have assumed that each hypothesis determines a probability distribution over X. This equation shows that predictions are weighted averages over the predictions of the individual hypotheses. The hypotheses themselves are essentially “intermediaries” between the raw data and the predictions. The key quantities in the Bayesian approach are the **hypothesis prior**, P (hi), and the **likelihood** of the data under each hypothesis, P (**d** | hi).HYPOTHESIS PRIOR
 
 LIKELIHOOD For our candy example, we will assume for the time being that the prior distribution over h1, . . . , h5 is given by 〈0.1, 0.2, 0.4, 0.2, 0.1〉, as advertised by the manufacturer. The likelihood of the data is calculated under the assumption that the observations are **i.i.d.** (see page 708), so that
 
@@ -5215,7 +5215,7 @@ is initially the most likely choice and remains so after 1 lime candy is unwrapp
 
 1 Statistically sophisticated readers will recognize this scenario as a variant of the **urn-and-ball** setup. We find urns and balls less compelling than candy; furthermore, candy lends itself to other tasks, such as deciding whether to trade the bag with a friend—see Exercise 20.2. 2 We stated earlier that the bags of candy are very large; otherwise, the i.i.d. assumption fails to hold. Technically, it is more correct (but less hygienic) to rewrap each candy after inspection and return it to the bag.  
 
-804 Chapter 20. Learning Probabilistic Models
+
 
 0
 
@@ -5291,21 +5291,21 @@ Number of observations in **d**
 
 **Figure 20.1** (a) Posterior probabilities P (hi | d1, . . . , dN ) from Equation (20.1). The number of observations N ranges from 1 to 10, and each observation is of a lime candy. (b) Bayesian prediction P (dN+1 = lime | d1, . . . , dN ) from Equation (20.2).
 
-The example shows that _the Bayesian prediction eventually agrees with the true hy- pothesis._ This is characteristic of Bayesian learning. For any fixed prior that does not rule out the true hypothesis, the posterior probability of any false hypothesis will, under certain technical conditions, eventually vanish. This happens simply because the probability of gen- erating “uncharacteristic” data indefinitely is vanishingly small. (This point is analogous to one made in the discussion of PAC learning in Chapter 18.) More important, the Bayesian prediction is _optimal_, whether the data set be small or large. Given the hypothesis prior, any other prediction is expected to be correct less often.
+The example shows that _the Bayesian prediction eventually agrees with the true hypothesis._ This is characteristic of Bayesian learning. For any fixed prior that does not rule out the true hypothesis, the posterior probability of any false hypothesis will, under certain technical conditions, eventually vanish. This happens simply because the probability of generating “uncharacteristic” data indefinitely is vanishingly small. (This point is analogous to one made in the discussion of PAC learning in Chapter 18.) More important, the Bayesian prediction is _optimal_, whether the data set be small or large. Given the hypothesis prior, any other prediction is expected to be correct less often.
 
 The optimality of Bayesian learning comes at a price, of course. For real learning problems, the hypothesis space is usually very large or infinite, as we saw in Chapter 18. In some cases, the summation in Equation (20.2) (or integration, in the continuous case) can be carried out tractably, but in most cases we must resort to approximate or simplified methods.
 
-A very common approximation—one that is usually adopted in science—is to make pre- dictions based on a single _most probable_ hypothesis—that is, an hi that maximizes P (hi |**d**). This is often called a **maximum a posteriori** or MAP (pronounced “em-ay-pee”) hypothesis.MAXIMUM A
+A very common approximation—one that is usually adopted in science—is to make predictions based on a single _most probable_ hypothesis—that is, an hi that maximizes P (hi |**d**). This is often called a **maximum a posteriori** or MAP (pronounced “em-ay-pee”) hypothesis.MAXIMUM A
 
 POSTERIORI
 
-Predictions made according to an MAP hypothesis hMAP are approximately Bayesian to the extent that **P**(X |**d**) ≈ **P**(X |hMAP). In our candy example, hMAP = h5 after three lime can- dies in a row, so the MAP learner then predicts that the fourth candy is lime with probability 1.0—a much more dangerous prediction than the Bayesian prediction of 0.8 shown in Fig- ure 20.1(b). As more data arrive, the MAP and Bayesian predictions become closer, because the competitors to the MAP hypothesis become less and less probable.
+Predictions made according to an MAP hypothesis hMAP are approximately Bayesian to the extent that **P**(X |**d**) ≈ **P**(X |hMAP). In our candy example, hMAP = h5 after three lime candies in a row, so the MAP learner then predicts that the fourth candy is lime with probability 1.0—a much more dangerous prediction than the Bayesian prediction of 0.8 shown in Figure 20.1(b). As more data arrive, the MAP and Bayesian predictions become closer, because the competitors to the MAP hypothesis become less and less probable.
 
 Although our example doesn’t show it, finding MAP hypotheses is often much easier than Bayesian learning, because it requires solving an optimization problem instead of a large summation (or integration) problem. We will see examples of this later in the chapter.  
 
 Section 20.1. Statistical Learning 805
 
-In both Bayesian learning and MAP learning, the hypothesis prior P (hi) plays an im- portant role. We saw in Chapter 18 that **overfitting** can occur when the hypothesis space is too expressive, so that it contains many hypotheses that fit the data set well. Rather than placing an arbitrary limit on the hypotheses to be considered, Bayesian and MAP learning methods use the prior to _penalize complexity_. Typically, more complex hypotheses have a lower prior probability—in part because there are usually many more complex hypotheses than simple hypotheses. On the other hand, more complex hypotheses have a greater capac- ity to fit the data. (In the extreme case, a lookup table can reproduce the data exactly with probability 1.) Hence, the hypothesis prior embodies a tradeoff between the complexity of a hypothesis and its degree of fit to the data.
+In both Bayesian learning and MAP learning, the hypothesis prior P (hi) plays an important role. We saw in Chapter 18 that **overfitting** can occur when the hypothesis space is too expressive, so that it contains many hypotheses that fit the data set well. Rather than placing an arbitrary limit on the hypotheses to be considered, Bayesian and MAP learning methods use the prior to _penalize complexity_. Typically, more complex hypotheses have a lower prior probability—in part because there are usually many more complex hypotheses than simple hypotheses. On the other hand, more complex hypotheses have a greater capacity to fit the data. (In the extreme case, a lookup table can reproduce the data exactly with probability 1.) Hence, the hypothesis prior embodies a tradeoff between the complexity of a hypothesis and its degree of fit to the data.
 
 We can see the effect of this tradeoff most clearly in the logical case, where H contains only _deterministic_ hypotheses. In that case, P (**d** | hi) is 1 if hi is consistent and 0 otherwise. Looking at Equation (20.1), we see that hMAP will then be the _simplest logical theory that is consistent with the data._ Therefore, maximum _a posteriori_ learning provides a natural embodiment of Ockham’s razor.
 
@@ -5313,15 +5313,15 @@ Another insight into the tradeoff between complexity and degree of fit is obtain
 
 − log2 P (**d** | hi)− log2 P (hi) .
 
-Using the connection between information encoding and probability that we introduced in Chapter 18.3.4, we see that the − log2 P (hi) term equals the number of bits required to spec- ify the hypothesis hi. Furthermore, − log2 P (**d** |hi) is the additional number of bits required to specify the data, given the hypothesis. (To see this, consider that no bits are required if the hypothesis predicts the data exactly—as with h5 and the string of lime candies—and log2 1= 0.) Hence, MAP learning is choosing the hypothesis that provides maximum _com- pression_ of the data. The same task is addressed more directly by the **minimum description length**, or MDL, learning method. Whereas MAP learning expresses simplicity by assigning higher probabilities to simpler hypotheses, MDL expresses it directly by counting the bits in a binary encoding of the hypotheses and data.
+Using the connection between information encoding and probability that we introduced in Chapter 18.3.4, we see that the − log2 P (hi) term equals the number of bits required to specify the hypothesis hi. Furthermore, − log2 P (**d** |hi) is the additional number of bits required to specify the data, given the hypothesis. (To see this, consider that no bits are required if the hypothesis predicts the data exactly—as with h5 and the string of lime candies—and log2 1= 0.) Hence, MAP learning is choosing the hypothesis that provides maximum _compression_ of the data. The same task is addressed more directly by the **minimum description length**, or MDL, learning method. Whereas MAP learning expresses simplicity by assigning higher probabilities to simpler hypotheses, MDL expresses it directly by counting the bits in a binary encoding of the hypotheses and data.
 
-A final simplification is provided by assuming a **uniform** prior over the space of hy- potheses. In that case, MAP learning reduces to choosing an hi that maximizes P (**d** |hi). This is called a **maximum-likelihood** (ML) hypothesis, hML. Maximum-likelihood learningMAXIMUM-
+A final simplification is provided by assuming a **uniform** prior over the space of hypotheses. In that case, MAP learning reduces to choosing an hi that maximizes P (**d** |hi). This is called a **maximum-likelihood** (ML) hypothesis, hML. Maximum-likelihood learningMAXIMUM-
 
 LIKELIHOOD
 
 is very common in statistics, a discipline in which many researchers distrust the subjective nature of hypothesis priors. It is a reasonable approach when there is no reason to prefer one hypothesis over another _a priori_—for example, when all hypotheses are equally complex. It provides a good approximation to Bayesian and MAP learning when the data set is large, because the data swamps the prior distribution over hypotheses, but it has problems (as we shall see) with small data sets.  
 
-806 Chapter 20. Learning Probabilistic Models
+
 
 20.2 LEARNING WITH COMPLETE DATA
 
@@ -5337,7 +5337,7 @@ bility model whose structure is fixed. For example, we might be interested in le
 
 **20.2.1 Maximum-likelihood parameter learning: Discrete models**
 
-Suppose we buy a bag of lime and cherry candy from a new manufacturer whose lime–cherry proportions are completely unknown; the fraction could be anywhere between 0 and 1. In that case, we have a continuum of hypotheses. The **parameter** in this case, which we call θ, is the proportion of cherry candies, and the hypothesis is hθ . (The proportion of limes is just 1 − θ.) If we assume that all proportions are equally likely _a priori_, then a maximum- likelihood approach is reasonable. If we model the situation with a Bayesian network, we need just one random variable, Flavor (the flavor of a randomly chosen candy from the bag). It has values cherry and lime , where the probability of cherry is θ (see Figure 20.2(a)). Now suppose we unwrap N candies, of which c are cherries and = N − c are limes. According to Equation (20.3), the likelihood of this particular data set is
+Suppose we buy a bag of lime and cherry candy from a new manufacturer whose lime–cherry proportions are completely unknown; the fraction could be anywhere between 0 and 1. In that case, we have a continuum of hypotheses. The **parameter** in this case, which we call θ, is the proportion of cherry candies, and the hypothesis is hθ . (The proportion of limes is just 1 − θ.) If we assume that all proportions are equally likely _a priori_, then a maximumlikelihood approach is reasonable. If we model the situation with a Bayesian network, we need just one random variable, Flavor (the flavor of a randomly chosen candy from the bag). It has values cherry and lime , where the probability of cherry is θ (see Figure 20.2(a)). Now suppose we unwrap N candies, of which c are cherries and = N − c are limes. According to Equation (20.3), the likelihood of this particular data set is
 
 P (**d** | hθ) =
 
@@ -5349,7 +5349,7 @@ P (dj | hθ) = θ c · (1− θ)
 
  .
 
-The maximum-likelihood hypothesis is given by the value of θ that maximizes this expres- sion. The same value is obtained by maximizing the **log likelihood**,LOG LIKELIHOOD
+The maximum-likelihood hypothesis is given by the value of θ that maximizes this expression. The same value is obtained by maximizing the **log likelihood**,LOG LIKELIHOOD
 
 L(**d** | hθ) = log P (**d** | hθ) =
 
@@ -5419,7 +5419,7 @@ _P_(_W=red_ | _F_)
 
 θ2
 
-**Figure 20.2** (a) Bayesian network model for the case of candies with an unknown propor- tion of cherries and limes. (b) Model for the case where the wrapper color depends (proba- bilistically) on the candy flavor.
+**Figure 20.2** (a) Bayesian network model for the case of candies with an unknown proportion of cherries and limes. (b) Model for the case where the wrapper color depends (probabilistically) on the candy flavor.
 
 1\. Write down an expression for the likelihood of the data as a function of the parameter(s).
 
@@ -5455,7 +5455,7 @@ gc · θ r
 
 g .  
 
-808 Chapter 20. Learning Probabilistic Models
+
 
 This looks pretty horrible, but taking logarithms helps:
 
@@ -5499,7 +5499,7 @@ r+g
 
 The solution for θ is the same as before. The solution for θ1, the probability that a cherry candy has a red wrapper, is the observed fraction of cherry candies with red wrappers, and similarly for θ2.
 
-These results are very comforting, and it is easy to see that they can be extended to any Bayesian network whose conditional probabilities are represented as tables. The most impor- tant point is that, _with complete data, the maximum-likelihood parameter learning problem for a Bayesian network decomposes into separate learning problems, one for each parameter._ (See Exercise 20.6 for the nontabulated case, where each parameter affects several conditional probabilities.) The second point is that the parameter values for a variable, given its parents, are just the observed frequencies of the variable values for each setting of the parent values. As before, we must be careful to avoid zeroes when the data set is small.
+These results are very comforting, and it is easy to see that they can be extended to any Bayesian network whose conditional probabilities are represented as tables. The most important point is that, _with complete data, the maximum-likelihood parameter learning problem for a Bayesian network decomposes into separate learning problems, one for each parameter._ (See Exercise 20.6 for the nontabulated case, where each parameter affects several conditional probabilities.) The second point is that the parameter values for a variable, given its parents, are just the observed frequencies of the variable values for each setting of the parent values. As before, we must be careful to avoid zeroes when the data set is small.
 
 **20.2.2 Naive Bayes models**
 
@@ -5507,7 +5507,7 @@ Probably the most common Bayesian network model used in machine learning is the 
 
 θ =P (C = true), θi1 = P (Xi = true |C = true), θi2 = P (Xi = true |C = false).
 
-The maximum-likelihood parameter values are found in exactly the same way as for Fig- ure 20.2(b). Once the model has been trained in this way, it can be used to classify new exam- ples for which the class variable C is unobserved. With observed attribute values x1, . . . , xn, the probability of each class is given by
+The maximum-likelihood parameter values are found in exactly the same way as for Figure 20.2(b). Once the model has been trained in this way, it can be used to classify new examples for which the class variable C is unobserved. With observed attribute values x1, . . . , xn, the probability of each class is given by
 
 **P**(C |x1, . . . , xn) = α **P**(C)
 
@@ -5517,7 +5517,7 @@ i
 
 **P**(xi |C) .
 
-A deterministic prediction can be obtained by choosing the most likely class. Figure 20.3 shows the learning curve for this method when it is applied to the restaurant problem from Chapter 18. The method learns fairly well but not as well as decision-tree learning; this is presumably because the true hypothesis—which is a decision tree—is not representable ex- actly using a naive Bayes model. Naive Bayes learning turns out to do surprisingly well in a wide range of applications; the boosted version (Exercise 20.4) is one of the most effective  
+A deterministic prediction can be obtained by choosing the most likely class. Figure 20.3 shows the learning curve for this method when it is applied to the restaurant problem from Chapter 18. The method learns fairly well but not as well as decision-tree learning; this is presumably because the true hypothesis—which is a decision tree—is not representable exactly using a naive Bayes model. Naive Bayes learning turns out to do surprisingly well in a wide range of applications; the boosted version (Exercise 20.4) is one of the most effective  
 
 Section 20.2. Learning with Complete Data 809
 
@@ -5557,11 +5557,11 @@ Decision tree Naive Bayes
 
 **Figure 20.3** The learning curve for naive Bayes learning applied to the restaurant problem from Chapter 18; the learning curve for decision-tree learning is shown for comparison.
 
-general-purpose learning algorithms. Naive Bayes learning scales well to very large prob- lems: with n Boolean attributes, there are just 2n + 1 parameters, and _no search is required to find_ hML_, the maximum-likelihood naive Bayes hypothesis._ Finally, naive Bayes learning systems have no difficulty with noisy or missing data and can give probabilistic predictions when appropriate.
+general-purpose learning algorithms. Naive Bayes learning scales well to very large problems: with n Boolean attributes, there are just 2n + 1 parameters, and _no search is required to find_ hML_, the maximum-likelihood naive Bayes hypothesis._ Finally, naive Bayes learning systems have no difficulty with noisy or missing data and can give probabilistic predictions when appropriate.
 
 **20.2.3 Maximum-likelihood parameter learning: Continuous models**
 
-Continuous probability models such as the **linear Gaussian** model were introduced in Sec- tion 14.3. Because continuous variables are ubiquitous in real-world applications, it is impor- tant to know how to learn the parameters of continuous models from data. The principles for maximum-likelihood learning are identical in the continuous and discrete cases.
+Continuous probability models such as the **linear Gaussian** model were introduced in Section 14.3. Because continuous variables are ubiquitous in real-world applications, it is important to know how to learn the parameters of continuous models from data. The principles for maximum-likelihood learning are identical in the continuous and discrete cases.
 
 Let us begin with a very simple case: learning the parameters of a Gaussian density function on a single variable. That is, the data are generated as follows:
 
@@ -5639,9 +5639,9 @@ N .
 
 (20.4)
 
-That is, the maximum-likelihood value of the mean is the sample average and the maximum- likelihood value of the standard deviation is the square root of the sample variance. Again, these are comforting results that confirm “commonsense” practice.  
+That is, the maximum-likelihood value of the mean is the sample average and the maximumlikelihood value of the standard deviation is the square root of the sample variance. Again, these are comforting results that confirm “commonsense” practice.  
 
-810 Chapter 20. Learning Probabilistic Models
+
 
 0 0.2 0.4 0.6 0.8 1_x_ 0 0.2
 
@@ -5697,7 +5697,7 @@ Here, the parameters are θ1, θ2, and σ. The data are a collection of (xj, yj)
 
 and θ2 that define the linear relationship between x and y, it becomes clear that maximizing the log likelihood with respect to these parameters is the same as _minimizing_ the numerator (y − (θ1x + θ2))
 
-2 in the exponent of Equation (20.5). This is the L2 loss, the squared er- ror between the actual value y and the prediction θ1x + θ2. This is the quantity minimized by the standard **linear regression** procedure described in Section 18.6. Now we can under- stand why: minimizing the sum of squared errors gives the maximum-likelihood straight-line model, _provided that the data are generated with Gaussian noise of fixed variance_.
+2 in the exponent of Equation (20.5). This is the L2 loss, the squared error between the actual value y and the prediction θ1x + θ2. This is the quantity minimized by the standard **linear regression** procedure described in Section 18.6. Now we can understand why: minimizing the sum of squared errors gives the maximum-likelihood straight-line model, _provided that the data are generated with Gaussian noise of fixed variance_.
 
 **20.2.4 Bayesian parameter learning**
 
@@ -5769,7 +5769,7 @@ Parameter θ
 
 **Figure 20.5** Examples of the beta\[a, b\] distribution for different values of \[a, b\].
 
-The candy example in Figure 20.2(a) has one parameter, θ: the probability that a ran- domly selected piece of candy is cherry-flavored. In the Bayesian view, θ is the (unknown) value of a random variable Θ that defines the hypothesis space; the hypothesis prior is just the prior distribution **P**(Θ). Thus, P (Θ = θ) is the prior probability that the bag has a fraction θ of cherry candies.
+The candy example in Figure 20.2(a) has one parameter, θ: the probability that a randomly selected piece of candy is cherry-flavored. In the Bayesian view, θ is the (unknown) value of a random variable Θ that defines the hypothesis space; the hypothesis prior is just the prior distribution **P**(Θ). Thus, P (Θ = θ) is the prior probability that the bag has a fraction θ of cherry candies.
 
 If the parameter θ can be any value between 0 and 1, then **P**(Θ) must be a continuous distribution that is nonzero only between 0 and 1 and that integrates to 1. The uniform density P (θ) = Uniform \[0, 1\](θ) is one candidate. (See Chapter 13.) It turns out that the uniform density is a member of the family of **beta distributions**. Each beta distribution is defined byBETA DISTRIBUTION
 
@@ -5789,7 +5789,7 @@ works. Suppose we observe a cherry candy; then we have
 
 3 They are called hyperparameters because they parameterize a distribution over θ, which is itself a parameter. 4 Other conjugate priors include the **Dirichlet** family for the parameters of a discrete multivalued distribution and the **Normal–Wishart** family for the parameters of a Gaussian distribution. See Bernardo and Smith (1994).  
 
-812 Chapter 20. Learning Probabilistic Models
+
 
 _Flavor_1
 
@@ -5807,7 +5807,7 @@ _Wrapper_3
 
 Θ1 Θ2
 
-**Figure 20.6** A Bayesian network that corresponds to a Bayesian learning process. Poste- rior distributions for the parameter variables Θ, Θ1, and Θ2 can be inferred from their prior distributions and the evidence in the Flavor i and Wrapper i variables.
+**Figure 20.6** A Bayesian network that corresponds to a Bayesian learning process. Posterior distributions for the parameter variables Θ, Θ1, and Θ2 can be inferred from their prior distributions and the evidence in the Flavor i and Wrapper i variables.
 
 P (θ |D1 = cherry) = α P (D1 = cherry | θ)P (θ)
 
@@ -5831,7 +5831,7 @@ and b hyperparameters as **virtual counts**, in the sense that a prior beta\[a, 
 
 as if we had started out with a uniform prior beta\[1, 1\] and seen a− 1 actual cherry candies and b− 1 actual lime candies.
 
-By examining a sequence of beta distributions for increasing values of a and b, keeping the proportions fixed, we can see vividly how the posterior distribution over the parameter Θ changes as data arrive. For example, suppose the actual bag of candy is 75% cherry. Fig- ure 20.5(b) shows the sequence beta\[3, 1\], beta\[6, 2\], beta\[30, 10\]. Clearly, the distribution is converging to a narrow peak around the true value of Θ. For large data sets, then, Bayesian learning (at least in this case) converges to the same answer as maximum-likelihood learning.
+By examining a sequence of beta distributions for increasing values of a and b, keeping the proportions fixed, we can see vividly how the posterior distribution over the parameter Θ changes as data arrive. For example, suppose the actual bag of candy is 75% cherry. Figure 20.5(b) shows the sequence beta\[3, 1\], beta\[6, 2\], beta\[30, 10\]. Clearly, the distribution is converging to a narrow peak around the true value of Θ. For large data sets, then, Bayesian learning (at least in this case) converges to the same answer as maximum-likelihood learning.
 
 Now let us consider a more complicated case. The network in Figure 20.2(b) has three parameters, θ, θ1, and θ2, where θ1 is the probability of a red wrapper on a cherry candy and θ2 is the probability of a red wrapper on a lime candy. The Bayesian hypothesis prior must cover all three parameters—that is, we need to specify **P**(Θ,Θ1,Θ2). Usually, we assume **parameter independence**:PARAMETER
 
@@ -5841,7 +5841,7 @@ INDEPENDENCE
 
 Section 20.2. Learning with Complete Data 813
 
-With this assumption, each parameter can have its own beta distribution that is updated sep- arately as data arrive. Figure 20.6 shows how we can incorporate the hypothesis prior and any data into one Bayesian network. The nodes Θ,Θ1,Θ2 have no parents. But each time we make an observation of a wrapper and corresponding flavor of a piece of candy, we add a node Flavor i, which is dependent on the flavor parameter Θ:
+With this assumption, each parameter can have its own beta distribution that is updated separately as data arrive. Figure 20.6 shows how we can incorporate the hypothesis prior and any data into one Bayesian network. The nodes Θ,Θ1,Θ2 have no parents. But each time we make an observation of a wrapper and corresponding flavor of a piece of candy, we add a node Flavor i, which is dependent on the flavor parameter Θ:
 
 P (Flavor i = cherry |Θ = θ) = θ .
 
@@ -5851,25 +5851,25 @@ P (Wrapper i = red |Flavor i = cherry ,Θ1 = θ1) = θ1
 
 P (Wrapper i = red |Flavor i = lime,Θ2 = θ2) = θ2 .
 
-Now, the entire Bayesian learning process can be formulated as an _inference_ problem. We add new evidence nodes, then query the unknown nodes (in this case, Θ,Θ1,Θ2). This for- mulation of learning and prediction makes it clear that Bayesian learning requires no extra “principles of learning.” Furthermore, _there is, in essence, just one learning algorithm_ —the inference algorithm for Bayesian networks. Of course, the nature of these networks is some- what different from those of Chapter 14 because of the potentially huge number of evidence variables representing the training set and the prevalence of continuous-valued parameter variables.
+Now, the entire Bayesian learning process can be formulated as an _inference_ problem. We add new evidence nodes, then query the unknown nodes (in this case, Θ,Θ1,Θ2). This formulation of learning and prediction makes it clear that Bayesian learning requires no extra “principles of learning.” Furthermore, _there is, in essence, just one learning algorithm_ —the inference algorithm for Bayesian networks. Of course, the nature of these networks is somewhat different from those of Chapter 14 because of the potentially huge number of evidence variables representing the training set and the prevalence of continuous-valued parameter variables.
 
 **20.2.5 Learning Bayes net structures**
 
 So far, we have assumed that the structure of the Bayes net is given and we are just trying to learn the parameters. The structure of the network represents basic causal knowledge about the domain that is often easy for an expert, or even a naive user, to supply. In some cases, however, the causal model may be unavailable or subject to dispute—for example, certain corporations have long claimed that smoking does not cause cancer—so it is important to understand how the structure of a Bayes net can be learned from data. This section gives a brief sketch of the main ideas.
 
-The most obvious approach is to _search_ for a good model. We can start with a model containing no links and begin adding parents for each node, fitting the parameters with the methods we have just covered and measuring the accuracy of the resulting model. Alterna- tively, we can start with an initial guess at the structure and use hill-climbing or simulated annealing search to make modifications, retuning the parameters after each change in the structure. Modifications can include reversing, adding, or deleting links. We must not in- troduce cycles in the process, so many algorithms assume that an ordering is given for the variables, and that a node can have parents only among those nodes that come earlier in the ordering (just as in the construction process in Chapter 14). For full generality, we also need to search over possible orderings.
+The most obvious approach is to _search_ for a good model. We can start with a model containing no links and begin adding parents for each node, fitting the parameters with the methods we have just covered and measuring the accuracy of the resulting model. Alternatively, we can start with an initial guess at the structure and use hill-climbing or simulated annealing search to make modifications, retuning the parameters after each change in the structure. Modifications can include reversing, adding, or deleting links. We must not introduce cycles in the process, so many algorithms assume that an ordering is given for the variables, and that a node can have parents only among those nodes that come earlier in the ordering (just as in the construction process in Chapter 14). For full generality, we also need to search over possible orderings.
 
 There are two alternative methods for deciding when a good structure has been found. The first is to test whether the conditional independence assertions implicit in the structure are actually satisfied in the data. For example, the use of a naive Bayes model for the restaurant problem assumes that
 
 **P**(Fri/Sat ,Bar |WillWait) = **P**(Fri/Sat |WillWait)**P**(Bar |WillWait)  
 
-814 Chapter 20. Learning Probabilistic Models
 
-and we can check in the data that the same equation holds between the corresponding condi- tional frequencies. But even if the structure describes the true causal nature of the domain, statistical fluctuations in the data set mean that the equation will never be satisfied _exactly_, so we need to perform a suitable statistical test to see if there is sufficient evidence that the independence hypothesis is violated. The complexity of the resulting network will depend on the threshold used for this test—the stricter the independence test, the more links will be added and the greater the danger of overfitting.
 
-An approach more consistent with the ideas in this chapter is to assess the degree to which the proposed model explains the data (in a probabilistic sense). We must be careful how we measure this, however. If we just try to find the maximum-likelihood hypothesis, we will end up with a fully connected network, because adding more parents to a node can- not decrease the likelihood (Exercise 20.8). We are forced to penalize model complexity in some way. The MAP (or MDL) approach simply subtracts a penalty from the likelihood of each structure (after parameter tuning) before comparing different structures. The Bayesian approach places a joint prior over structures and parameters. There are usually far too many structures to sum over (superexponential in the number of variables), so most practitioners use MCMC to sample over structures.
+and we can check in the data that the same equation holds between the corresponding conditional frequencies. But even if the structure describes the true causal nature of the domain, statistical fluctuations in the data set mean that the equation will never be satisfied _exactly_, so we need to perform a suitable statistical test to see if there is sufficient evidence that the independence hypothesis is violated. The complexity of the resulting network will depend on the threshold used for this test—the stricter the independence test, the more links will be added and the greater the danger of overfitting.
 
-Penalizing complexity (whether by MAP or Bayesian methods) introduces an important connection between the optimal structure and the nature of the representation for the condi- tional distributions in the network. With tabular distributions, the complexity penalty for a node’s distribution grows exponentially with the number of parents, but with, say, noisy-OR distributions, it grows only linearly. This means that learning with noisy-OR (or other com- pactly parameterized) models tends to produce learned structures with more parents than does learning with tabular distributions.
+An approach more consistent with the ideas in this chapter is to assess the degree to which the proposed model explains the data (in a probabilistic sense). We must be careful how we measure this, however. If we just try to find the maximum-likelihood hypothesis, we will end up with a fully connected network, because adding more parents to a node cannot decrease the likelihood (Exercise 20.8). We are forced to penalize model complexity in some way. The MAP (or MDL) approach simply subtracts a penalty from the likelihood of each structure (after parameter tuning) before comparing different structures. The Bayesian approach places a joint prior over structures and parameters. There are usually far too many structures to sum over (superexponential in the number of variables), so most practitioners use MCMC to sample over structures.
+
+Penalizing complexity (whether by MAP or Bayesian methods) introduces an important connection between the optimal structure and the nature of the representation for the conditional distributions in the network. With tabular distributions, the complexity penalty for a node’s distribution grows exponentially with the number of parents, but with, say, noisy-OR distributions, it grows only linearly. This means that learning with noisy-OR (or other compactly parameterized) models tends to produce learned structures with more parents than does learning with tabular distributions.
 
 **20.2.6 Density estimation with nonparametric models**
 
@@ -5879,7 +5879,7 @@ DENSITY ESTIMATION
 
 shown in Figure 20.7(a). The figure shows a probability density function on a space defined by two continuous variables. In Figure 20.7(b) we see a sample of data points from this density function. The question is, can we recover the model from the samples?
 
-First we will consider k-**nearest-neighbors** models. (In Chapter 18 we saw nearest- neighbor models for classification and regression; here we see them for density estimation.) Given a sample of data points, to estimate the unknown probability density at a query point **x** we can simply measure the density of the data points in the neighborhood of **x**. Figure 20.7(b) shows two query points (small squares). For each query point we have drawn the smallest circle that encloses 10 neighbors—the 10-nearest-neighborhood. We can see that the central circle is large, meaning there is a low density there, and the circle on the right is small, meaning there is a high density there. In Figure 20.8 we show three plots of density estimation using k-nearest-neighbors, for different values of k. It seems clear that (b) is about right, while (a) is too spiky (k is too small) and (c) is too smooth (k is too big).  
+First we will consider k-**nearest-neighbors** models. (In Chapter 18 we saw nearestneighbor models for classification and regression; here we see them for density estimation.) Given a sample of data points, to estimate the unknown probability density at a query point **x** we can simply measure the density of the data points in the neighborhood of **x**. Figure 20.7(b) shows two query points (small squares). For each query point we have drawn the smallest circle that encloses 10 neighbors—the 10-nearest-neighborhood. We can see that the central circle is large, meaning there is a low density there, and the circle on the right is small, meaning there is a high density there. In Figure 20.8 we show three plots of density estimation using k-nearest-neighbors, for different values of k. It seems clear that (b) is about right, while (a) is too spiky (k is too small) and (c) is too smooth (k is too big).  
 
 Section 20.2. Learning with Complete Data 815
 
@@ -5919,7 +5919,7 @@ Density
 
 0 0.2 0.4 0.6 0.8 1 (a) (b)
 
-**Figure 20.7** (a) A 3D plot of the mixture of Gaussians from Figure 20.11(a). (b) A 128- point sample of points from the mixture, together with two query points (small squares) and their 10-nearest-neighborhoods (medium and large circles).
+**Figure 20.7** (a) A 3D plot of the mixture of Gaussians from Figure 20.11(a). (b) A 128point sample of points from the mixture, together with two query points (small squares) and their 10-nearest-neighborhoods (medium and large circles).
 
 0 0.20.40.60.8 0 0.2
 
@@ -5947,7 +5947,7 @@ Density
 
 (a) (b) (c)
 
-**Figure 20.8** Density estimation using k-nearest-neighbors, applied to the data in Fig- ure 20.7(b), for k =3, 10, and 40 respectively. k = 3 is too spiky, 40 is too smooth, and 10 is just about right. The best value for k can be chosen by cross-validation.
+**Figure 20.8** Density estimation using k-nearest-neighbors, applied to the data in Figure 20.7(b), for k =3, 10, and 40 respectively. k = 3 is too spiky, 40 is too smooth, and 10 is just about right. The best value for k can be chosen by cross-validation.
 
 0 0.20.40.60.8 0 0.2
 
@@ -5975,11 +5975,11 @@ Density
 
 (a) (b) (c)
 
-**Figure 20.9** Kernel density estimation for the data in Figure 20.7(b), using Gaussian ker- nels with w = 0.02, 0.07, and 0.20 respectively. w = 0.07 is about right.  
+**Figure 20.9** Kernel density estimation for the data in Figure 20.7(b), using Gaussian kernels with w = 0.02, 0.07, and 0.20 respectively. w = 0.07 is about right.  
 
-816 Chapter 20. Learning Probabilistic Models
 
-Another possibility is to use **kernel functions**, as we did for locally weighted regres- sion. To apply a kernel model to density estimation, assume that each data point generates its own little density function, using a Gaussian kernel. The estimated density at a query point **x** is then the average density as given by each kernel function:
+
+Another possibility is to use **kernel functions**, as we did for locally weighted regression. To apply a kernel model to density estimation, assume that each data point generates its own little density function, using a Gaussian kernel. The estimated density at a query point **x** is then the average density as given by each kernel function:
 
 P (**x**) = 1
 
@@ -6011,7 +6011,7 @@ The preceding section dealt with the fully observable case. Many real-world prob
 
 that are available for learning. For example, medical records often include the observed symptoms, the physician’s diagnosis, the treatment applied, and perhaps the outcome of the treatment, but they seldom contain a direct observation of the disease itself! (Note that the _diagnosis_ is not the _disease_; it is a causal consequence of the observed symptoms, which are in turn caused by the disease.) One might ask, “If the disease is not observed, why not construct a model without it?” The answer appears in Figure 20.10, which shows a small, fictitious diagnostic model for heart disease. There are three observable predisposing factors and three observable symptoms (which are too depressing to name). Assume that each variable has three possible values (e.g., none , moderate , and severe). Removing the hidden variable from the network in (a) yields the network in (b); the total number of parameters increases from 78 to 708. Thus, _latent variables can dramatically reduce the number of parameters required to specify a Bayesian network._ This, in turn, can dramatically reduce the amount of data needed to learn the parameters.
 
-Hidden variables are important, but they do complicate the learning problem. In Fig- ure 20.10(a), for example, it is not obvious how to learn the conditional distribution for HeartDisease , given its parents, because we do not know the value of HeartDisease in each case; the same problem arises in learning the distributions for the symptoms. This section describes an algorithm called **expectation–maximization**, or EM, that solves this problemEXPECTATION–
+Hidden variables are important, but they do complicate the learning problem. In Figure 20.10(a), for example, it is not obvious how to learn the conditional distribution for HeartDisease , given its parents, because we do not know the value of HeartDisease in each case; the same problem arises in learning the distributions for the symptoms. This section describes an algorithm called **expectation–maximization**, or EM, that solves this problemEXPECTATION–
 
 MAXIMIZATION
 
@@ -6049,7 +6049,7 @@ _Symptom_1 _Symptom_2 _Symptom_3
 
 objects. The problem is unsupervised because the category labels are not given. For example, suppose we record the spectra of a hundred thousand stars; are there different _types_ of stars revealed by the spectra, and, if so, how many types and what are their characteristics? We are all familiar with terms such as “red giant” and “white dwarf,” but the stars do not carry these labels on their hats—astronomers had to perform unsupervised clustering to identify these categories. Other examples include the identification of species, genera, orders, and so on in the Linnæan taxonomy and the creation of natural kinds for ordinary objects (see Chapter 12).
 
-Unsupervised clustering begins with data. Figure 20.11(b) shows 500 data points, each of which specifies the values of two continuous attributes. The data points might correspond to stars, and the attributes might correspond to spectral intensities at two particular frequen- cies. Next, we need to understand what kind of probability distribution might have generated the data. Clustering presumes that the data are generated from a **mixture distribution**, P .MIXTURE
+Unsupervised clustering begins with data. Figure 20.11(b) shows 500 data points, each of which specifies the values of two continuous attributes. The data points might correspond to stars, and the attributes might correspond to spectral intensities at two particular frequencies. Next, we need to understand what kind of probability distribution might have generated the data. Clustering presumes that the data are generated from a **mixture distribution**, P .MIXTURE
 
 DISTRIBUTION
 
@@ -6069,7 +6069,7 @@ where **x** refers to the values of the attributes for a data point. For continu
 
 GAUSSIANS  
 
-818 Chapter 20. Learning Probabilistic Models
+
 
 0
 
@@ -6109,15 +6109,15 @@ GAUSSIANS
 
 0 0.2 0.4 0.6 0.8 1 (a) (b) (c)
 
-**Figure 20.11** (a) A Gaussian mixture model with three components; the weights (left-to- right) are 0.2, 0.3, and 0.5. (b) 500 data points sampled from the model in (a). (c) The model reconstructed by EM from the data in (b).
+**Figure 20.11** (a) A Gaussian mixture model with three components; the weights (left-toright) are 0.2, 0.3, and 0.5. (b) 500 data points sampled from the model in (a). (c) The model reconstructed by EM from the data in (b).
 
 wi = P (C = i) (the weight of each component), **μ**i (the mean of each component), and **Σ**i
 
 (the covariance of each component). Figure 20.11(a) shows a mixture of three Gaussians; this mixture is in fact the source of the data in (b) as well as being the model shown in Figure 20.7(a) on page 815.
 
-The unsupervised clustering problem, then, is to recover a mixture model like the one in Figure 20.11(a) from raw data like that in Figure 20.11(b). Clearly, if we _knew_ which com- ponent generated each data point, then it would be easy to recover the component Gaussians: we could just select all the data points from a given component and then apply (a multivariate version of) Equation (20.4) (page 809) for fitting the parameters of a Gaussian to a set of data. On the other hand, if we _knew_ the parameters of each component, then we could, at least in a probabilistic sense, assign each data point to a component. The problem is that we know neither the assignments nor the parameters.
+The unsupervised clustering problem, then, is to recover a mixture model like the one in Figure 20.11(a) from raw data like that in Figure 20.11(b). Clearly, if we _knew_ which component generated each data point, then it would be easy to recover the component Gaussians: we could just select all the data points from a given component and then apply (a multivariate version of) Equation (20.4) (page 809) for fitting the parameters of a Gaussian to a set of data. On the other hand, if we _knew_ the parameters of each component, then we could, at least in a probabilistic sense, assign each data point to a component. The problem is that we know neither the assignments nor the parameters.
 
-The basic idea of EM in this context is to _pretend_ that we know the parameters of the model and then to infer the probability that each data point belongs to each component. After that, we refit the components to the data, where each component is fitted to the entire data set with each point weighted by the probability that it belongs to that component. The process iterates until convergence. Essentially, we are “completing” the data by inferring probability distributions over the hidden variables—which component each data point belongs to—based on the current model. For the mixture of Gaussians, we initialize the mixture-model parame- ters arbitrarily and then iterate the following two steps:
+The basic idea of EM in this context is to _pretend_ that we know the parameters of the model and then to infer the probability that each data point belongs to each component. After that, we refit the components to the data, where each component is fitted to the entire data set with each point weighted by the probability that it belongs to that component. The process iterates until convergence. Essentially, we are “completing” the data by inferring probability distributions over the hidden variables—which component each data point belongs to—based on the current model. For the mixture of Gaussians, we initialize the mixture-model parameters arbitrarily and then iterate the following two steps:
 
 1\. **E-step**: Compute the probabilities pij = P (C = i | **x**j), the probability that datum **x**j
 
@@ -6217,7 +6217,7 @@ Iteration number
 
 **Figure 20.12** Graphs showing the log likelihood of the data, L, as a function of the EM iteration. The horizontal line shows the log likelihood according to the true model. (a) Graph for the Gaussian mixture model in Figure 20.11. (b) Graph for the Bayesian network in Figure 20.13(a).  
 
-820 Chapter 20. Learning Probabilistic Models
+
 
 (a) (b)
 
@@ -6245,7 +6245,7 @@ _P_(_F=cherry_ | _B_)
 
 θ_F_1
 
-**Figure 20.13** (a) A mixture model for candy. The proportions of different flavors, wrap- pers, presence of holes depend on the bag, which is not observed. (b) Bayesian network for a Gaussian mixture. The mean and covariance of the observable variables **X** depend on the component C.
+**Figure 20.13** (a) A mixture model for candy. The proportions of different flavors, wrappers, presence of holes depend on the bag, which is not observed. (b) Bayesian network for a Gaussian mixture. The mean and covariance of the observable variables **X** depend on the component C.
 
 Things do not always go as well as Figure 20.12(a) might suggest. It can happen, for example, that one Gaussian component shrinks so that it covers just a single data point. Then its variance will go to zero and its likelihood will go to infinity! Another problem is that two components can “merge,” acquiring identical means and variances and sharing their data points. These kinds of degenerate local maxima are serious problems, especially in high dimensions. One solution is to place priors on the model parameters and to apply the MAP version of EM. Another is to restart a component with new random parameters if it gets too small or too close to another component. Sensible initialization also helps.
 
@@ -6323,7 +6323,7 @@ P (flavor j |Bag = 1)P (wrapper j |Bag =1)P (holesj |Bag = 1)P (Bag = 1) ∑
 
 i P (flavor j |Bag = i)P (wrapper j |Bag = i)P (holesj |Bag = i)P (Bag = i) .
 
-Applying this formula to, say, the 273 red-wrapped cherry candies with holes, we get a con- tribution of
+Applying this formula to, say, the 273 red-wrapped cherry candies with holes, we get a contribution of
 
 273
 
@@ -6369,7 +6369,7 @@ P (Bag = 1 |Flavor j = cherry ,wrapper j , holes j) .
 
 5 It is better in practice to choose them randomly, to avoid local maxima due to symmetry.  
 
-822 Chapter 20. Learning Probabilistic Models
+
 
 Again, these probabilities can be calculated by any Bayes net algorithm. Completing this process, we obtain the new values of all the parameters:
 
@@ -6405,7 +6405,7 @@ The log likelihood of the data increases from about −2044 initially to about �
 
 23 ≈ 1010. By the tenth iteration, the learned model is a better fit than the original model (L= − 1982.214). Thereafter, progress becomes very slow. This is not uncommon with EM, and many practical systems combine EM with a gradient-based algorithm such as Newton–Raphson (see Chapter 4) for the last phase of learning.
 
-The general lesson from this example is that _the parameter updates for Bayesian net- work learning with hidden variables are directly available from the results of inference on each example. Moreover, only_ local _posterior probabilities are needed for each parame- ter._ Here, “local” means that the CPT for each variable Xi can be learned from posterior probabilities involving just Xi and its parents **U**i. Defining θijk to be the CPT parameter P (Xi = xij |**U**i = **u**ik), the update is given by the normalized expected counts as follows:
+The general lesson from this example is that _the parameter updates for Bayesian network learning with hidden variables are directly available from the results of inference on each example. Moreover, only_ local _posterior probabilities are needed for each parameter._ Here, “local” means that the CPT for each variable Xi can be learned from posterior probabilities involving just Xi and its parents **U**i. Defining θijk to be the CPT parameter P (Xi = xij |**U**i = **u**ik), the update is given by the normalized expected counts as follows:
 
 θijk ← N̂(Xi = xij , **U**i = **uik)/N̂** (**U**i = **u**ik) .
 
@@ -6429,7 +6429,7 @@ t
 
 N̂(Xt = i) .
 
-The expected counts are computed by an HMM inference algorithm. The **forward–backward** algorithm shown in Figure 15.4 can be modified very easily to compute the necessary prob- abilities. One important point is that the probabilities required are obtained by **smoothing**  
+The expected counts are computed by an HMM inference algorithm. The **forward–backward** algorithm shown in Figure 15.4 can be modified very easily to compute the necessary probabilities. One important point is that the probabilities required are obtained by **smoothing**  
 
 Section 20.3. Learning with Hidden Variables: The EM Algorithm 823
 
@@ -6519,47 +6519,47 @@ P (**Z** \= **z** | **x**,**θ** (i)
 
 )L(**x**, **Z** \= **z** | **θ**) .
 
-This equation is the EM algorithm in a nutshell. The E-step is the computation of the summa- tion, which is the expectation of the log likelihood of the “completed” data with respect to the distribution P (**Z** \= **z** | **x**,**θ**
+This equation is the EM algorithm in a nutshell. The E-step is the computation of the summation, which is the expectation of the log likelihood of the “completed” data with respect to the distribution P (**Z** \= **z** | **x**,**θ**
 
 (i) ), which is the posterior over the hidden variables, given the data.
 
-The M-step is the maximization of this expected log likelihood with respect to the parame- ters. For mixtures of Gaussians, the hidden variables are the Zijs, where Zij is 1 if example j
+The M-step is the maximization of this expected log likelihood with respect to the parameters. For mixtures of Gaussians, the hidden variables are the Zijs, where Zij is 1 if example j
 
 was generated by component i. For Bayes nets, Zij is the value of unobserved variable Xi in example j. For HMMs, Zjt is the state of the sequence in example j at time t. Starting from the general form, it is possible to derive an EM algorithm for a specific application once the appropriate hidden variables have been identified.
 
-As soon as we understand the general idea of EM, it becomes easy to derive all sorts of variants and improvements. For example, in many cases the E-step—the computation of posteriors over the hidden variables—is intractable, as in large Bayes nets. It turns out that one can use an _approximate_ E-step and still obtain an effective learning algorithm. With a sampling algorithm such as MCMC (see Section 14.5), the learning process is very intuitive: each state (configuration of hidden and observed variables) visited by MCMC is treated ex- actly as if it were a complete observation. Thus, the parameters can be updated directly after each MCMC transition. Other forms of approximate inference, such as variational and loopy methods, have also proved effective for learning very large networks.  
+As soon as we understand the general idea of EM, it becomes easy to derive all sorts of variants and improvements. For example, in many cases the E-step—the computation of posteriors over the hidden variables—is intractable, as in large Bayes nets. It turns out that one can use an _approximate_ E-step and still obtain an effective learning algorithm. With a sampling algorithm such as MCMC (see Section 14.5), the learning process is very intuitive: each state (configuration of hidden and observed variables) visited by MCMC is treated exactly as if it were a complete observation. Thus, the parameters can be updated directly after each MCMC transition. Other forms of approximate inference, such as variational and loopy methods, have also proved effective for learning very large networks.  
 
-824 Chapter 20. Learning Probabilistic Models
+
 
 **20.3.5 Learning Bayes net structures with hidden variables**
 
-In Section 20.2.5, we discussed the problem of learning Bayes net structures with complete data. When unobserved variables may be influencing the data that are observed, things get more difficult. In the simplest case, a human expert might tell the learning algorithm that cer- tain hidden variables exist, leaving it to the algorithm to find a place for them in the network structure. For example, an algorithm might try to learn the structure shown in Figure 20.10(a) on page 817, given the information that HeartDisease (a three-valued variable) should be in- cluded in the model. As in the complete-data case, the overall algorithm has an outer loop that searches over structures and an inner loop that fits the network parameters given the structure.
+In Section 20.2.5, we discussed the problem of learning Bayes net structures with complete data. When unobserved variables may be influencing the data that are observed, things get more difficult. In the simplest case, a human expert might tell the learning algorithm that certain hidden variables exist, leaving it to the algorithm to find a place for them in the network structure. For example, an algorithm might try to learn the structure shown in Figure 20.10(a) on page 817, given the information that HeartDisease (a three-valued variable) should be included in the model. As in the complete-data case, the overall algorithm has an outer loop that searches over structures and an inner loop that fits the network parameters given the structure.
 
 If the learning algorithm is not told which hidden variables exist, then there are two choices: either pretend that the data is really complete—which may force the algorithm to learn a parameter-intensive model such as the one in Figure 20.10(b)—or _invent_ new hidden variables in order to simplify the model. The latter approach can be implemented by including new modification choices in the structure search: in addition to modifying links, the algorithm can add or delete a hidden variable or change its arity. Of course, the algorithm will not know that the new variable it has invented is called HeartDisease ; nor will it have meaningful names for the values. Fortunately, newly invented hidden variables will usually be connected to preexisting variables, so a human expert can often inspect the local conditional distributions involving the new variable and ascertain its meaning.
 
-As in the complete-data case, pure maximum-likelihood structure learning will result in a completely connected network (moreover, one with no hidden variables), so some form of complexity penalty is required. We can also apply MCMC to sample many possible network structures, thereby approximating Bayesian learning. For example, we can learn mixtures of Gaussians with an unknown number of components by sampling over the number; the approx- imate posterior distribution for the number of Gaussians is given by the sampling frequencies of the MCMC process.
+As in the complete-data case, pure maximum-likelihood structure learning will result in a completely connected network (moreover, one with no hidden variables), so some form of complexity penalty is required. We can also apply MCMC to sample many possible network structures, thereby approximating Bayesian learning. For example, we can learn mixtures of Gaussians with an unknown number of components by sampling over the number; the approximate posterior distribution for the number of Gaussians is given by the sampling frequencies of the MCMC process.
 
-For the complete-data case, the inner loop to learn the parameters is very fast—just a matter of extracting conditional frequencies from the data set. When there are hidden vari- ables, the inner loop may involve many iterations of EM or a gradient-based algorithm, and each iteration involves the calculation of posteriors in a Bayes net, which is itself an NP-hard problem. To date, this approach has proved impractical for learning complex models. One possible improvement is the so-called **structural EM** algorithm, which operates in much theSTRUCTURAL EM
+For the complete-data case, the inner loop to learn the parameters is very fast—just a matter of extracting conditional frequencies from the data set. When there are hidden variables, the inner loop may involve many iterations of EM or a gradient-based algorithm, and each iteration involves the calculation of posteriors in a Bayes net, which is itself an NP-hard problem. To date, this approach has proved impractical for learning complex models. One possible improvement is the so-called **structural EM** algorithm, which operates in much theSTRUCTURAL EM
 
-same way as ordinary (parametric) EM except that the algorithm can update the structure as well as the parameters. Just as ordinary EM uses the current parameters to compute the expected counts in the E-step and then applies those counts in the M-step to choose new parameters, structural EM uses the current structure to compute expected counts and then ap- plies those counts in the M-step to evaluate the likelihood for potential new structures. (This contrasts with the outer-loop/inner-loop method, which computes new expected counts for each potential structure.) In this way, structural EM may make several structural alterations to the network without once recomputing the expected counts, and is capable of learning non- trivial Bayes net structures. Nonetheless, much work remains to be done before we can say that the structure-learning problem is solved.  
+same way as ordinary (parametric) EM except that the algorithm can update the structure as well as the parameters. Just as ordinary EM uses the current parameters to compute the expected counts in the E-step and then applies those counts in the M-step to choose new parameters, structural EM uses the current structure to compute expected counts and then applies those counts in the M-step to evaluate the likelihood for potential new structures. (This contrasts with the outer-loop/inner-loop method, which computes new expected counts for each potential structure.) In this way, structural EM may make several structural alterations to the network without once recomputing the expected counts, and is capable of learning nontrivial Bayes net structures. Nonetheless, much work remains to be done before we can say that the structure-learning problem is solved.  
 
 Section 20.4. Summary 825
 
 20.4 SUMMARY
 
-Statistical learning methods range from simple calculation of averages to the construction of complex models such as Bayesian networks. They have applications throughout computer science, engineering, computational biology, neuroscience, psychology, and physics. This chapter has presented some of the basic ideas and given a flavor of the mathematical under- pinnings. The main points are as follows:
+Statistical learning methods range from simple calculation of averages to the construction of complex models such as Bayesian networks. They have applications throughout computer science, engineering, computational biology, neuroscience, psychology, and physics. This chapter has presented some of the basic ideas and given a flavor of the mathematical underpinnings. The main points are as follows:
 
-• **Bayesian learning** methods formulate learning as a form of probabilistic inference, using the observations to update a prior distribution over hypotheses. This approach provides a good way to implement Ockham’s razor, but quickly becomes intractable for complex hypothesis spaces.
+- **Bayesian learning** methods formulate learning as a form of probabilistic inference, using the observations to update a prior distribution over hypotheses. This approach provides a good way to implement Ockham’s razor, but quickly becomes intractable for complex hypothesis spaces.
 
-• **Maximum a posteriori** (MAP) learning selects a single most likely hypothesis given the data. The hypothesis prior is still used and the method is often more tractable than full Bayesian learning.
+- **Maximum a posteriori** (MAP) learning selects a single most likely hypothesis given the data. The hypothesis prior is still used and the method is often more tractable than full Bayesian learning.
 
-• **Maximum-likelihood** learning simply selects the hypothesis that maximizes the likeli- hood of the data; it is equivalent to MAP learning with a uniform prior. In simple cases such as linear regression and fully observable Bayesian networks, maximum-likelihood solutions can be found easily in closed form. **Naive Bayes** learning is a particularly effective technique that scales well.
+- **Maximum-likelihood** learning simply selects the hypothesis that maximizes the likelihood of the data; it is equivalent to MAP learning with a uniform prior. In simple cases such as linear regression and fully observable Bayesian networks, maximum-likelihood solutions can be found easily in closed form. **Naive Bayes** learning is a particularly effective technique that scales well.
 
-• When some variables are hidden, local maximum likelihood solutions can be found using the EM algorithm. Applications include clustering using mixtures of Gaussians, learning Bayesian networks, and learning hidden Markov models.
+- When some variables are hidden, local maximum likelihood solutions can be found using the EM algorithm. Applications include clustering using mixtures of Gaussians, learning Bayesian networks, and learning hidden Markov models.
 
-• Learning the structure of Bayesian networks is an example of **model selection**. This usually involves a discrete search in the space of structures. Some method is required for trading off model complexity against degree of fit.
+- Learning the structure of Bayesian networks is an example of **model selection**. This usually involves a discrete search in the space of structures. Some method is required for trading off model complexity against degree of fit.
 
-• **Nonparametric models** represent a distribution using the collection of data points. Thus, the number of parameters grows with the training set. Nearest-neighbors methods look at the examples nearest to the point in question, whereas **kernel** methods form a distance-weighted combination of all the examples.
+- **Nonparametric models** represent a distribution using the collection of data points. Thus, the number of parameters grows with the training set. Nearest-neighbors methods look at the examples nearest to the point in question, whereas **kernel** methods form a distance-weighted combination of all the examples.
 
 Statistical learning continues to be a very active area of research. Enormous strides have been made in both theory and practice, to the point where it is possible to learn almost any model for which exact or approximate inference is feasible.
 
@@ -6567,15 +6567,15 @@ BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
 The application of statistical learning techniques in AI was an active area of research in the early years (see Duda and Hart, 1973) but became separated from mainstream AI as the latter field concentrated on symbolic methods. A resurgence of interest occurred shortly after the introduction of Bayesian network models in the late 1980s; at roughly the same time,  
 
-826 Chapter 20. Learning Probabilistic Models
+
 
 a statistical view of neural network learning began to emerge. In the late 1990s, there was a noticeable convergence of interests in machine learning, statistics, and neural networks, centered on methods for creating large probabilistic models from data.
 
-The naive Bayes model is one of the oldest and simplest forms of Bayesian network, dating back to the 1950s. Its origins were mentioned in Chapter 13. Its surprising success is partially explained by Domingos and Pazzani (1997). A boosted form of naive Bayes learn- ing won the first KDD Cup data mining competition (Elkan, 1997). Heckerman (1998) gives an excellent introduction to the general problem of Bayes net learning. Bayesian parame- ter learning with Dirichlet priors for Bayesian networks was discussed by Spiegelhalter _et al._ (1993). The BUGS software package (Gilks _et al._, 1994) incorporates many of these ideas and provides a very powerful tool for formulating and learning complex probability models. The first algorithms for learning Bayes net structures used conditional independence tests (Pearl, 1988; Pearl and Verma, 1991). Spirtes _et al._ (1993) developed a comprehensive approach embodied in the TETRAD package for Bayes net learning. Algorithmic improvements since then led to a clear victory in the 2001 KDD Cup data mining competition for a Bayes net learning method (Cheng _et al._, 2002). (The specific task here was a bioinformatics prob- lem with 139,351 features!) A structure-learning approach based on maximizing likelihood was developed by Cooper and Herskovits (1992) and improved by Heckerman _et al._ (1994). Several algorithmic advances since that time have led to quite respectable performance in the complete-data case (Moore and Wong, 2003; Teyssier and Koller, 2005). One important component is an efficient data structure, the AD-tree, for caching counts over all possible combinations of variables and values (Moore and Lee, 1997). Friedman and Goldszmidt (1996) pointed out the influence of the representation of local conditional distributions on the learned structure.
+The naive Bayes model is one of the oldest and simplest forms of Bayesian network, dating back to the 1950s. Its origins were mentioned in Chapter 13. Its surprising success is partially explained by Domingos and Pazzani (1997). A boosted form of naive Bayes learning won the first KDD Cup data mining competition (Elkan, 1997). Heckerman (1998) gives an excellent introduction to the general problem of Bayes net learning. Bayesian parameter learning with Dirichlet priors for Bayesian networks was discussed by Spiegelhalter _et al._ (1993). The BUGS software package (Gilks _et al._, 1994) incorporates many of these ideas and provides a very powerful tool for formulating and learning complex probability models. The first algorithms for learning Bayes net structures used conditional independence tests (Pearl, 1988; Pearl and Verma, 1991). Spirtes _et al._ (1993) developed a comprehensive approach embodied in the TETRAD package for Bayes net learning. Algorithmic improvements since then led to a clear victory in the 2001 KDD Cup data mining competition for a Bayes net learning method (Cheng _et al._, 2002). (The specific task here was a bioinformatics problem with 139,351 features!) A structure-learning approach based on maximizing likelihood was developed by Cooper and Herskovits (1992) and improved by Heckerman _et al._ (1994). Several algorithmic advances since that time have led to quite respectable performance in the complete-data case (Moore and Wong, 2003; Teyssier and Koller, 2005). One important component is an efficient data structure, the AD-tree, for caching counts over all possible combinations of variables and values (Moore and Lee, 1997). Friedman and Goldszmidt (1996) pointed out the influence of the representation of local conditional distributions on the learned structure.
 
-The general problem of learning probability models with hidden variables and miss- ing data was addressed by Hartley (1958), who described the general idea of what was later called EM and gave several examples. Further impetus came from the Baum–Welch algo- rithm for HMM learning (Baum and Petrie, 1966), which is a special case of EM. The paper by Dempster, Laird, and Rubin (1977), which presented the EM algorithm in general form and analyzed its convergence, is one of the most cited papers in both computer science and statistics. (Dempster himself views EM as a schema rather than an algorithm, since a good deal of mathematical work may be required before it can be applied to a new family of dis- tributions.) McLachlan and Krishnan (1997) devote an entire book to the algorithm and its properties. The specific problem of learning mixture models, including mixtures of Gaus- sians, is covered by Titterington _et al._ (1985). Within AI, the first successful system that used EM for mixture modeling was AUTOCLASS (Cheeseman _et al._, 1988; Cheeseman and Stutz, 1996). AUTOCLASS has been applied to a number of real-world scientific classification tasks, including the discovery of new types of stars from spectral data (Goebel _et al._, 1989) and new classes of proteins and introns in DNA/protein sequence databases (Hunter and States, 1992).
+The general problem of learning probability models with hidden variables and missing data was addressed by Hartley (1958), who described the general idea of what was later called EM and gave several examples. Further impetus came from the Baum–Welch algorithm for HMM learning (Baum and Petrie, 1966), which is a special case of EM. The paper by Dempster, Laird, and Rubin (1977), which presented the EM algorithm in general form and analyzed its convergence, is one of the most cited papers in both computer science and statistics. (Dempster himself views EM as a schema rather than an algorithm, since a good deal of mathematical work may be required before it can be applied to a new family of distributions.) McLachlan and Krishnan (1997) devote an entire book to the algorithm and its properties. The specific problem of learning mixture models, including mixtures of Gaussians, is covered by Titterington _et al._ (1985). Within AI, the first successful system that used EM for mixture modeling was AUTOCLASS (Cheeseman _et al._, 1988; Cheeseman and Stutz, 1996). AUTOCLASS has been applied to a number of real-world scientific classification tasks, including the discovery of new types of stars from spectral data (Goebel _et al._, 1989) and new classes of proteins and introns in DNA/protein sequence databases (Hunter and States, 1992).
 
-For maximum-likelihood parameter learning in Bayes nets with hidden variables, EM and gradient-based methods were introduced around the same time by Lauritzen (1995), Rus- sell _et al._ (1995), and Binder _et al._ (1997a). The structural EM algorithm was developed by Friedman (1998) and applied to maximum-likelihood learning of Bayes net structures with  
+For maximum-likelihood parameter learning in Bayes nets with hidden variables, EM and gradient-based methods were introduced around the same time by Lauritzen (1995), Russell _et al._ (1995), and Binder _et al._ (1997a). The structural EM algorithm was developed by Friedman (1998) and applied to maximum-likelihood learning of Bayes net structures with  
 
 Exercises 827
 
@@ -6585,19 +6585,19 @@ of recovering _causal_ information from data. That is, is it possible to learn B
 
 of intervention as well as ordinary conditional probabilities. Nonparametric density estimation, also called **Parzen window** density estimation, was
 
-investigated initially by Rosenblatt (1956) and Parzen (1962). Since that time, a huge litera- ture has developed investigating the properties of various estimators. Devroye (1987) gives a thorough introduction. There is also a rapidly growing literature on nonparametric Bayesian methods, originating with the seminal work of Ferguson (1973) on the **Dirichlet process**,DIRICHLET PROCESS
+investigated initially by Rosenblatt (1956) and Parzen (1962). Since that time, a huge literature has developed investigating the properties of various estimators. Devroye (1987) gives a thorough introduction. There is also a rapidly growing literature on nonparametric Bayesian methods, originating with the seminal work of Ferguson (1973) on the **Dirichlet process**,DIRICHLET PROCESS
 
-which can be thought of as a distribution over Dirichlet distributions. These methods are par- ticularly useful for mixtures with unknown numbers of components. Ghahramani (2005) and Jordan (2005) provide useful tutorials on the many applications of these ideas to statistical learning. The text by Rasmussen and Williams (2006) covers the **Gaussian process**, whichGAUSSIAN PROCESS
+which can be thought of as a distribution over Dirichlet distributions. These methods are particularly useful for mixtures with unknown numbers of components. Ghahramani (2005) and Jordan (2005) provide useful tutorials on the many applications of these ideas to statistical learning. The text by Rasmussen and Williams (2006) covers the **Gaussian process**, whichGAUSSIAN PROCESS
 
 gives a way of defining prior distributions over the space of continuous functions.
 
-The material in this chapter brings together work from the fields of statistics and pattern recognition, so the story has been told many times in many ways. Good texts on Bayesian statistics include those by DeGroot (1970), Berger (1985), and Gelman _et al._ (1995). Bishop (2007) and Hastie _et al._ (2009) provide an excellent introduction to statistical machine learn- ing. For pattern classification, the classic text for many years has been Duda and Hart (1973), now updated (Duda _et al._, 2001). The annual NIPS (Neural Information Processing Confer- ence) conference, whose proceedings are published as the series _Advances in Neural Informa- tion Processing Systems_, is now dominated by Bayesian papers. Papers on learning Bayesian networks also appear in the _Uncertainty in AI_ and _Machine Learning_ conferences and in sev- eral statistics conferences. Journals specific to neural networks include _Neural Computation_, _Neural Networks_, and the _IEEE Transactions on Neural Networks_. Specifically Bayesian venues include the Valencia International Meetings on Bayesian Statistics and the journal _Bayesian Analysis_.
+The material in this chapter brings together work from the fields of statistics and pattern recognition, so the story has been told many times in many ways. Good texts on Bayesian statistics include those by DeGroot (1970), Berger (1985), and Gelman _et al._ (1995). Bishop (2007) and Hastie _et al._ (2009) provide an excellent introduction to statistical machine learning. For pattern classification, the classic text for many years has been Duda and Hart (1973), now updated (Duda _et al._, 2001). The annual NIPS (Neural Information Processing Conference) conference, whose proceedings are published as the series _Advances in Neural Information Processing Systems_, is now dominated by Bayesian papers. Papers on learning Bayesian networks also appear in the _Uncertainty in AI_ and _Machine Learning_ conferences and in several statistics conferences. Journals specific to neural networks include _Neural Computation_, _Neural Networks_, and the _IEEE Transactions on Neural Networks_. Specifically Bayesian venues include the Valencia International Meetings on Bayesian Statistics and the journal _Bayesian Analysis_.
 
 EXERCISES
 
-**20.1** The data used for Figure 20.1 on page 804 can be viewed as being generated by h5. For each of the other four hypotheses, generate a data set of length 100 and plot the cor- responding graphs for P (hi | d1, . . . , dN ) and P (DN+1 = lime | d1, . . . , dN ). Comment on your results.  
+**20.1** The data used for Figure 20.1 on page 804 can be viewed as being generated by h5. For each of the other four hypotheses, generate a data set of length 100 and plot the corresponding graphs for P (hi | d1, . . . , dN ) and P (DN+1 = lime | d1, . . . , dN ). Comment on your results.  
 
-828 Chapter 20. Learning Probabilistic Models
+
 
 **20.2** Suppose that Ann’s utilities for cherry and lime candies are cA and A, whereas Bob’s utilities are cB and B. (But once Ann has unwrapped a piece of candy, Bob won’t buy it.) Presumably, if Bob likes lime candies much more than Ann, it would be wise for Ann to sell her bag of candies once she is sufficiently sure of its lime content. On the other hand, if Ann unwraps too many candies in the process, the bag will be worth less. Discuss the problem of determining the optimal point at which to sell the bag. Determine the expected utility of the optimal procedure, given the prior distribution from Section 20.1.
 
@@ -6613,13 +6613,13 @@ The doctor does some research and discovers that disease B actually comes in two
 
 **20.7** This exercise investigates properties of the Beta distribution defined in Equation (20.6).
 
-**a**. By integrating over the range \[0, 1\], show that the normalization constant for the dis- tribution beta\[a, b\] is given by α = Γ(a + b)/Γ(a)Γ(b) where Γ(x) is the **Gamma function**, defined by Γ(x + 1)= x · Γ(x) and Γ(1)= 1. (For integer x, Γ(x + 1)= x!.)GAMMA FUNCTION
+**a**. By integrating over the range \[0, 1\], show that the normalization constant for the distribution beta\[a, b\] is given by α = Γ(a + b)/Γ(a)Γ(b) where Γ(x) is the **Gamma function**, defined by Γ(x + 1)= x · Γ(x) and Γ(1)= 1. (For integer x, Γ(x + 1)= x!.)GAMMA FUNCTION
 
 **b**. Show that the mean is a/(a + b). **c**. Find the mode(s) (the most likely value(s) of θ). **d**. Describe the distribution beta\[ε, ε\] for very small ε. What happens as such a distribution
 
 is updated?
 
-**20.8** Consider an arbitrary Bayesian network, a complete data set for that network, and the likelihood for the data set according to the network. Give a simple proof that the likelihood of the data cannot decrease if we add a new link to the network and recompute the maximum- likelihood parameter values.
+**20.8** Consider an arbitrary Bayesian network, a complete data set for that network, and the likelihood for the data set according to the network. Give a simple proof that the likelihood of the data cannot decrease if we add a new link to the network and recompute the maximumlikelihood parameter values.
 
 **20.9** Consider a single Boolean random variable Y (the “classification”). Let the prior probability P (Y = true) be π. Let’s try to find π, given a training set D = (y1, . . . , yN ) with N independent samples of Y . Furthermore, suppose p of the N are positive and n of the N
 
@@ -6635,19 +6635,19 @@ Exercises 829
 
 **d**. Write down the likelihood for the data including the attributes, using the following additional notation:
 
-• αi is P (Xi = true|Y = true). • βi is P (Xi = true|Y = false). • p
+- αi is P (Xi = true|Y = true). - βi is P (Xi = true|Y = false). - p
 
 +
 
-i is the count of samples for which Xi = true and Y = true. • n
+i is the count of samples for which Xi = true and Y = true. - n
 
 +
 
-i is the count of samples for which Xi = false and Y = true. • p
+i is the count of samples for which Xi = false and Y = true. - p
 
 −
 
-i is the count of samples for which Xi = true and Y = false. • n
+i is the count of samples for which Xi = true and Y = false. - n
 
 −
 
@@ -6655,13 +6655,13 @@ i is the count of samples for which Xi = false and Y = false.
 
 \[_Hint_: consider first the probability of seeing a single example with specified values for X1,X2, . . . ,Xk and Y .\]
 
-**e**. By differentiating the log likelihood L, find the values of αi and βi (in terms of the var- ious counts) that maximize the likelihood and say in words what these values represent.
+**e**. By differentiating the log likelihood L, find the values of αi and βi (in terms of the various counts) that maximize the likelihood and say in words what these values represent.
 
 **f**. Let k = 2, and consider a data set with 4 all four possible examples of theXOR function. Compute the maximum likelihood estimates of π, α1, α2, β1, and β2.
 
 **g**. Given these estimates of π, α1, α2, β1, and β2, what are the posterior probabilities P (Y = true|x1, x2) for each example?
 
-**20.10** Consider the application of EM to learn the parameters for the network in Fig- ure 20.13(a), given the true parameters in Equation (20.7).
+**20.10** Consider the application of EM to learn the parameters for the network in Figure 20.13(a), given the true parameters in Equation (20.7).
 
 **a**. Explain why the EM algorithm would not work if there were just two attributes in the model rather than three.
 
@@ -6673,13 +6673,13 @@ i is the count of samples for which Xi = false and Y = false.
 
 21 REINFORCEMENT LEARNING
 
-_In which we examine how an agent can learn from success and failure, from re- ward and punishment._
+_In which we examine how an agent can learn from success and failure, from reward and punishment._
 
 21.1 INTRODUCTION
 
 Chapters 18, 19, and 20 covered methods that learn functions, logical theories, and probability models from examples. In this chapter, we will study how agents can learn _what to do_ in the absence of labeled examples of what to do.
 
-Consider, for example, the problem of learning to play chess. A supervised learning agent needs to be told the correct move for each position it encounters, but such feedback is seldom available. In the absence of feedback from a teacher, an agent can learn a transition model for its own moves and can perhaps learn to predict the opponent’s moves, but _without some feedback about what is good and what is bad, the agent will have no grounds for decid- ing which move to make._ The agent needs to know that something good has happened when it (accidentally) checkmates the opponent, and that something bad has happened when it is checkmated—or vice versa, if the game is suicide chess. This kind of feedback is called a **reward**, or **reinforcement**. In games like chess, the reinforcement is received only at the endREINFORCEMENT
+Consider, for example, the problem of learning to play chess. A supervised learning agent needs to be told the correct move for each position it encounters, but such feedback is seldom available. In the absence of feedback from a teacher, an agent can learn a transition model for its own moves and can perhaps learn to predict the opponent’s moves, but _without some feedback about what is good and what is bad, the agent will have no grounds for deciding which move to make._ The agent needs to know that something good has happened when it (accidentally) checkmates the opponent, and that something bad has happened when it is checkmated—or vice versa, if the game is suicide chess. This kind of feedback is called a **reward**, or **reinforcement**. In games like chess, the reinforcement is received only at the endREINFORCEMENT
 
 of the game. In other environments, the rewards come more frequently. In ping-pong, each point scored can be considered a reward; when learning to crawl, any forward motion is an achievement. Our framework for agents regards the reward as _part_ of the input percept, but the agent must be “hardwired” to recognize that part as a reward rather than as just another sensory input. Thus, animals seem to be hardwired to recognize pain and hunger as negative rewards and pleasure and food intake as positive rewards. Reinforcement has been carefully studied by animal psychologists for over 60 years.
 
@@ -6693,15 +6693,15 @@ prior knowledge of either. Imagine playing a new game whose rules you don’t kn
 
 In many complex domains, reinforcement learning is the only feasible way to train a program to perform at high levels. For example, in game playing, it is very hard for a human to provide accurate and consistent evaluations of large numbers of positions, which would be needed to train an evaluation function directly from examples. Instead, the program can be told when it has won or lost, and it can use this information to learn an evaluation function that gives reasonably accurate estimates of the probability of winning from any given position. Similarly, it is extremely difficult to program an agent to fly a helicopter; yet given appropriate negative rewards for crashing, wobbling, or deviating from a set course, an agent can learn to fly by itself.
 
-Reinforcement learning might be considered to encompass all of AI: an agent is placed in an environment and must learn to behave successfully therein. To keep the chapter man- ageable, we will concentrate on simple environments and simple agent designs. For the most part, we will assume a fully observable environment, so that the current state is supplied by each percept. On the other hand, we will assume that the agent does not know how the en- vironment works or what its actions do, and we will allow for probabilistic action outcomes. Thus, the agent faces an unknown Markov decision process. We will consider three of the agent designs first introduced in Chapter 2:
+Reinforcement learning might be considered to encompass all of AI: an agent is placed in an environment and must learn to behave successfully therein. To keep the chapter manageable, we will concentrate on simple environments and simple agent designs. For the most part, we will assume a fully observable environment, so that the current state is supplied by each percept. On the other hand, we will assume that the agent does not know how the environment works or what its actions do, and we will allow for probabilistic action outcomes. Thus, the agent faces an unknown Markov decision process. We will consider three of the agent designs first introduced in Chapter 2:
 
-• A **utility-based agent** learns a utility function on states and uses it to select actions that maximize the expected outcome utility.
+- A **utility-based agent** learns a utility function on states and uses it to select actions that maximize the expected outcome utility.
 
-• A **Q-learning** agent learns an **action-utility function**, or **Q-function**, giving the ex-Q-LEARNING
+- A **Q-learning** agent learns an **action-utility function**, or **Q-function**, giving the ex-Q-LEARNING
 
 Q-FUNCTION pected utility of taking a given action in a given state.
 
-• A **reflex agent** learns a policy that maps directly from states to actions.
+- A **reflex agent** learns a policy that maps directly from states to actions.
 
 A utility-based agent must also have a model of the environment in order to make decisions, because it must know the states to which its actions will lead. For example, in order to make use of a backgammon evaluation function, a backgammon program must know what its legal moves are _and how they affect the board position_. Only in this way can it apply the utility function to the outcome states. A Q-learning agent, on the other hand, can compare the expected utilities for its available choices without needing to know their outcomes, so it does not need a model of the environment. On the other hand, because they do not know where their actions lead, Q-learning agents cannot look ahead; this can seriously restrict their ability to learn, as we shall see.
 
@@ -6713,7 +6713,7 @@ learn what to do. The principal issue is **exploration**: an agent must experien
 
 possible of its environment in order to learn how to behave in it. Section 21.4 discusses how an agent can use inductive learning to learn much faster from its experiences. Section 21.5 covers methods for learning direct policy representations in reflex agents. An understanding of Markov decision processes (Chapter 17) is essential for this chapter.  
 
-832 Chapter 21. Reinforcement Learning
+
 
 21.2 PASSIVE REINFORCEMENT LEARNING
 
@@ -6783,7 +6783,7 @@ agent starts in state (1,1) and experiences a sequence of state transitions unti
 
 Note that each state percept is subscripted with the reward received. The object is to use the information about rewards to learn the expected utility U
 
-π(s) associated with each nontermi- nal state s. The utility is defined to be the expected sum of (discounted) rewards obtained if  
+π(s) associated with each nonterminal state s. The utility is defined to be the expected sum of (discounted) rewards obtained if  
 
 Section 21.2. Passive Reinforcement Learning 833
 
@@ -6813,9 +6813,9 @@ is the expected total reward from that state onward (called the expected **rewar
 
 each trial provides a _sample_ of this quantity for each state visited. For example, the first trial in the set of three given earlier provides a sample total reward of 0.72 for state (1,1), two samples of 0.76 and 0.84 for (1,2), two samples of 0.80 and 0.88 for (1,3), and so on. Thus, at the end of each sequence, the algorithm calculates the observed reward-to-go for each state and updates the estimated utility for that state accordingly, just by keeping a running average for each state in a table. In the limit of infinitely many trials, the sample average will converge to the true expectation in Equation (21.1).
 
-It is clear that direct utility estimation is just an instance of supervised learning where each example has the state as input and the observed reward-to-go as output. This means that we have reduced reinforcement learning to a standard inductive learning problem, as discussed in Chapter 18. Section 21.4 discusses the use of more powerful kinds of represen- tations for the utility function. Learning techniques for those representations can be applied directly to the observed data.
+It is clear that direct utility estimation is just an instance of supervised learning where each example has the state as input and the observed reward-to-go as output. This means that we have reduced reinforcement learning to a standard inductive learning problem, as discussed in Chapter 18. Section 21.4 discusses the use of more powerful kinds of representations for the utility function. Learning techniques for those representations can be applied directly to the observed data.
 
-Direct utility estimation succeeds in reducing the reinforcement learning problem to an inductive learning problem, about which much is known. Unfortunately, it misses a very important source of information, namely, the fact that the utilities of states are not indepen- dent! _The utility of each state equals its own reward plus the expected utility of its successor states._ That is, the utility values obey the Bellman equations for a fixed policy (see also Equation (17.10)):
+Direct utility estimation succeeds in reducing the reinforcement learning problem to an inductive learning problem, about which much is known. Unfortunately, it misses a very important source of information, namely, the fact that the utilities of states are not independent! _The utility of each state equals its own reward plus the expected utility of its successor states._ That is, the utility values obey the Bellman equations for a fixed policy (see also Equation (17.10)):
 
 U π (s) = R(s) + γ
 
@@ -6833,7 +6833,7 @@ P (s ′ | s, π(s))U
 
 By ignoring the connections between states, direct utility estimation misses opportunities for learning. For example, the second of the three trials given earlier reaches the state (3,2), which has not previously been visited. The next transition reaches (3,3), which is known from the first trial to have a high utility. The Bellman equation suggests immediately that (3,2) is also likely to have a high utility, because it leads to (3,3), but direct utility estimation learns nothing until the end of the trial. More broadly, we can view direct utility estimation as searching for U in a hypothesis space that is much larger than it needs to be, in that it includes many functions that violate the Bellman equations. For this reason, the algorithm often converges very slowly.  
 
-834 Chapter 21. Reinforcement Learning
+
 
 **function** PASSIVE-ADP-AGENT(percept ) **returns** an action **inputs**: percept , a percept indicating the current state s ′ and reward signal r ′
 
@@ -6849,15 +6849,15 @@ P (t | s , a)←Ns′|sa \[t , s ,a\] / Nsa \[s ,a\] U ← POLICY-EVALUATION(π,
 
 **return** a
 
-**Figure 21.2** A passive reinforcement learning agent based on adaptive dynamic program- ming. The POLICY-EVALUATION function solves the fixed-policy Bellman equations, as described on page 657.
+**Figure 21.2** A passive reinforcement learning agent based on adaptive dynamic programming. The POLICY-EVALUATION function solves the fixed-policy Bellman equations, as described on page 657.
 
 **21.2.2 Adaptive dynamic programming**
 
 An **adaptive dynamic programming** (or ADP) agent takes advantage of the constraintsADAPTIVE DYNAMIC PROGRAMMING
 
-among the utilities of states by learning the transition model that connects them and solv- ing the corresponding Markov decision process using a dynamic programming method. For a passive learning agent, this means plugging the learned transition model P (s′ | s, π(s)) and the observed rewards R(s) into the Bellman equations (21.2) to calculate the utilities of the states. As we remarked in our discussion of policy iteration in Chapter 17, these equations are linear (no maximization involved) so they can be solved using any linear algebra pack- age. Alternatively, we can adopt the approach of **modified policy iteration** (see page 657), using a simplified value iteration process to update the utility estimates after each change to the learned model. Because the model usually changes only slightly with each observation, the value iteration process can use the previous utility estimates as initial values and should converge quite quickly.
+among the utilities of states by learning the transition model that connects them and solving the corresponding Markov decision process using a dynamic programming method. For a passive learning agent, this means plugging the learned transition model P (s′ | s, π(s)) and the observed rewards R(s) into the Bellman equations (21.2) to calculate the utilities of the states. As we remarked in our discussion of policy iteration in Chapter 17, these equations are linear (no maximization involved) so they can be solved using any linear algebra package. Alternatively, we can adopt the approach of **modified policy iteration** (see page 657), using a simplified value iteration process to update the utility estimates after each change to the learned model. Because the model usually changes only slightly with each observation, the value iteration process can use the previous utility estimates as initial values and should converge quite quickly.
 
-The process of learning the model itself is easy, because the environment is fully ob- servable. This means that we have a supervised learning task where the input is a state–action pair and the output is the resulting state. In the simplest case, we can represent the tran- sition model as a table of probabilities. We keep track of how often each action outcome occurs and estimate the transition probability P (s′ | s, a) from the frequency with which s
+The process of learning the model itself is easy, because the environment is fully observable. This means that we have a supervised learning task where the input is a state–action pair and the output is the resulting state. In the simplest case, we can represent the transition model as a table of probabilities. We keep track of how often each action outcome occurs and estimate the transition probability P (s′ | s, a) from the frequency with which s
 
 ′
 
@@ -6929,9 +6929,9 @@ Number of trials
 
 **Figure 21.3** The passive ADP learning curves for the 4×3 world, given the optimal policy shown in Figure 21.1. (a) The utility estimates for a selected subset of states, as a function of the number of trials. Notice the large changes occurring around the 78th trial—this is the first time that the agent falls into the −1 terminal state at (4,2). (b) The root-mean-square error (see Appendix A) in the estimate for U(1, 1), averaged over 20 runs of 100 trials each.
 
-The full agent program for a passive ADP agent is shown in Figure 21.2. Its perfor- mance on the 4× 3 world is shown in Figure 21.3. In terms of how quickly its value es- timates improve, the ADP agent is limited only by its ability to learn the transition model. In this sense, it provides a standard against which to measure other reinforcement learning algorithms. It is, however, intractable for large state spaces. In backgammon, for example, it would involve solving roughly 1050 equations in 1050 unknowns.
+The full agent program for a passive ADP agent is shown in Figure 21.2. Its performance on the 4× 3 world is shown in Figure 21.3. In terms of how quickly its value estimates improve, the ADP agent is limited only by its ability to learn the transition model. In this sense, it provides a standard against which to measure other reinforcement learning algorithms. It is, however, intractable for large state spaces. In backgammon, for example, it would involve solving roughly 1050 equations in 1050 unknowns.
 
-A reader familiar with the Bayesian learning ideas of Chapter 20 will have noticed that the algorithm in Figure 21.2 is using maximum-likelihood estimation to learn the transition model; moreover, by choosing a policy based solely on the _estimated_ model it is acting _as if_ the model were correct. This is not necessarily a good idea! For example, a taxi agent that didn’t know about how traffic lights might ignore a red light once or twice without no ill effects and then formulate a policy to ignore red lights from then on. Instead, it might be a good idea to choose a policy that, while not optimal for the model estimated by maxi- mum likelihood, works reasonably well for the whole range of models that have a reasonable chance of being the true model. There are two mathematical approaches that have this flavor.
+A reader familiar with the Bayesian learning ideas of Chapter 20 will have noticed that the algorithm in Figure 21.2 is using maximum-likelihood estimation to learn the transition model; moreover, by choosing a policy based solely on the _estimated_ model it is acting _as if_ the model were correct. This is not necessarily a good idea! For example, a taxi agent that didn’t know about how traffic lights might ignore a red light once or twice without no ill effects and then formulate a policy to ignore red lights from then on. Instead, it might be a good idea to choose a policy that, while not optimal for the model estimated by maximum likelihood, works reasonably well for the whole range of models that have a reasonable chance of being the true model. There are two mathematical approaches that have this flavor.
 
 The first approach, **Bayesian reinforcement learning**, assumes a prior probability BAYESIAN REINFORCEMENT LEARNING
 
@@ -6951,7 +6951,7 @@ h
 
 P (h | **e**)uπ h .  
 
-836 Chapter 21. Reinforcement Learning
+
 
 In some special cases, this policy can even be computed! If the agent will continue learning in the future, however, then finding an optimal policy becomes considerably more difficult, because the agent must consider the effects of future observations on its beliefs about the transition model. The problem becomes a POMDP whose belief states are distributions over models. This concept provides an analytical foundation for understanding the exploration problem described in Section 21.3.
 
@@ -7003,7 +7003,7 @@ Here, α is the **learning rate** parameter. Because this update rule uses the d
 
 DIFFERENCE
 
-All temporal-difference methods work by adjusting the utility estimates towards the ideal equilibrium that holds locally when the utility estimates are correct. In the case of pas- sive learning, the equilibrium is given by Equation (21.2). Now Equation (21.3) does in fact cause the agent to reach the equilibrium given by Equation (21.2), but there is some subtlety involved. First, notice that the update involves only the observed successor s
+All temporal-difference methods work by adjusting the utility estimates towards the ideal equilibrium that holds locally when the utility estimates are correct. In the case of passive learning, the equilibrium is given by Equation (21.2). Now Equation (21.3) does in fact cause the agent to reach the equilibrium given by Equation (21.2), but there is some subtlety involved. First, notice that the update involves only the observed successor s
 
 ′, whereas the actual equilibrium conditions involve all possible next states. One might think that this causes an improperly large change in U
 
@@ -7027,17 +7027,17 @@ Section 21.2. Passive Reinforcement Learning 837
 
 **return** a
 
-**Figure 21.4** A passive reinforcement learning agent that learns utility estimates using tem- poral differences. The step-size function α(n) is chosen to ensure convergence, as described in the text.
+**Figure 21.4** A passive reinforcement learning agent that learns utility estimates using temporal differences. The step-size function α(n) is chosen to ensure convergence, as described in the text.
 
 correct value.1 This gives us the agent program shown in Figure 21.4. Figure 21.5 illustrates the performance of the passive TD agent on the 4× 3 world. It does not learn quite as fast as the ADP agent and shows much higher variability, but it is much simpler and requires much less computation per observation. Notice that _TD does not need a transition model to perform its updates._ The environment supplies the connection between neighboring states in the form of observed transitions.
 
-The ADP approach and the TD approach are actually closely related. Both try to make local adjustments to the utility estimates in order to make each state “agree” with its succes- sors. One difference is that TD adjusts a state to agree with its _observed_ successor (Equa- tion (21.3)), whereas ADP adjusts the state to agree with _all_ of the successors that might occur, weighted by their probabilities (Equation (21.2)). This difference disappears when the effects of TD adjustments are averaged over a large number of transitions, because the frequency of each successor in the set of transitions is approximately proportional to its prob- ability. A more important difference is that whereas TD makes a single adjustment per ob- served transition, ADP makes as many as it needs to restore consistency between the utility estimates U and the environment model P . Although the observed transition makes only a local change in P , its effects might need to be propagated throughout U . Thus, TD can be viewed as a crude but efficient first approximation to ADP.
+The ADP approach and the TD approach are actually closely related. Both try to make local adjustments to the utility estimates in order to make each state “agree” with its successors. One difference is that TD adjusts a state to agree with its _observed_ successor (Equation (21.3)), whereas ADP adjusts the state to agree with _all_ of the successors that might occur, weighted by their probabilities (Equation (21.2)). This difference disappears when the effects of TD adjustments are averaged over a large number of transitions, because the frequency of each successor in the set of transitions is approximately proportional to its probability. A more important difference is that whereas TD makes a single adjustment per observed transition, ADP makes as many as it needs to restore consistency between the utility estimates U and the environment model P . Although the observed transition makes only a local change in P , its effects might need to be propagated throughout U . Thus, TD can be viewed as a crude but efficient first approximation to ADP.
 
-Each adjustment made by ADP could be seen, from the TD point of view, as a re- sult of a “pseudoexperience” generated by simulating the current environment model. It is possible to extend the TD approach to use an environment model to generate several pseudoexperiences—transitions that the TD agent can imagine _might_ happen, given its current model. For each observed transition, the TD agent can generate a large number of imaginary
+Each adjustment made by ADP could be seen, from the TD point of view, as a result of a “pseudoexperience” generated by simulating the current environment model. It is possible to extend the TD approach to use an environment model to generate several pseudoexperiences—transitions that the TD agent can imagine _might_ happen, given its current model. For each observed transition, the TD agent can generate a large number of imaginary
 
 1 The technical conditions are given on page 725. In Figure 21.5 we have used α(n) = 60/(59 + n), which satisfies the conditions.  
 
-838 Chapter 21. Reinforcement Learning
+
 
 0
 
@@ -7103,11 +7103,11 @@ Number of trials
 
 transitions. In this way, the resulting utility estimates will approximate more and more closely those of ADP—of course, at the expense of increased computation time.
 
-In a similar vein, we can generate more efficient versions of ADP by directly approxi- mating the algorithms for value iteration or policy iteration. Even though the value iteration algorithm is efficient, it is intractable if we have, say, 10100 states. However, many of the necessary adjustments to the state values on each iteration will be extremely tiny. One pos- sible approach to generating reasonably good answers quickly is to bound the number of adjustments made after each observed transition. One can also use a heuristic to rank the pos- sible adjustments so as to carry out only the most significant ones. The **prioritized sweeping**PRIORITIZED
+In a similar vein, we can generate more efficient versions of ADP by directly approximating the algorithms for value iteration or policy iteration. Even though the value iteration algorithm is efficient, it is intractable if we have, say, 10100 states. However, many of the necessary adjustments to the state values on each iteration will be extremely tiny. One possible approach to generating reasonably good answers quickly is to bound the number of adjustments made after each observed transition. One can also use a heuristic to rank the possible adjustments so as to carry out only the most significant ones. The **prioritized sweeping**PRIORITIZED
 
 SWEEPING
 
-heuristic prefers to make adjustments to states whose _likely_ successors have just undergone a _large_ adjustment in their own utility estimates. Using heuristics like this, approximate ADP algorithms usually can learn roughly as fast as full ADP, in terms of the number of training se- quences, but can be several orders of magnitude more efficient in terms of computation. (See Exercise 21.3.) This enables them to handle state spaces that are far too large for full ADP. Approximate ADP algorithms have an additional advantage: in the early stages of learning a new environment, the environment model P often will be far from correct, so there is little point in calculating an exact utility function to match it. An approximation algorithm can use a minimum adjustment size that decreases as the environment model becomes more accurate. This eliminates the very long value iterations that can occur early in learning due to large changes in the model.  
+heuristic prefers to make adjustments to states whose _likely_ successors have just undergone a _large_ adjustment in their own utility estimates. Using heuristics like this, approximate ADP algorithms usually can learn roughly as fast as full ADP, in terms of the number of training sequences, but can be several orders of magnitude more efficient in terms of computation. (See Exercise 21.3.) This enables them to handle state spaces that are far too large for full ADP. Approximate ADP algorithms have an additional advantage: in the early stages of learning a new environment, the environment model P often will be far from correct, so there is little point in calculating an exact utility function to match it. An approximation algorithm can use a minimum adjustment size that decreases as the environment model becomes more accurate. This eliminates the very long value iterations that can occur early in learning due to large changes in the model.  
 
 Section 21.3. Active Reinforcement Learning 839
 
@@ -7139,13 +7139,13 @@ Repeated experiments show that the greedy agent _very seldom_ converges to the o
 
 How can it be that choosing the optimal action leads to suboptimal results? The answer is that the learned model is not the same as the true environment; what is optimal in the learned model can therefore be suboptimal in the true environment. Unfortunately, the agent does not know what the true environment is, so it cannot compute the optimal action for the true environment. What, then, is to be done?
 
-What the greedy agent has overlooked is that actions do more than provide rewards according to the current learned model; they also contribute to learning the true model by af- fecting the percepts that are received. By improving the model, the agent will receive greater rewards in the future.2 An agent therefore must make a tradeoff between **exploitation** toEXPLOITATION
+What the greedy agent has overlooked is that actions do more than provide rewards according to the current learned model; they also contribute to learning the true model by affecting the percepts that are received. By improving the model, the agent will receive greater rewards in the future.2 An agent therefore must make a tradeoff between **exploitation** toEXPLOITATION
 
 maximize its reward—as reflected in its current utility estimates—and **exploration** to maxi-EXPLORATION
 
 2 Notice the direct analogy to the theory of information value in Chapter 16.  
 
-840 Chapter 21. Reinforcement Learning
+
 
 0
 
@@ -7201,7 +7201,7 @@ Although bandit problems are extremely difficult to solve exactly to obtain an _
 
 action in each state an unbounded number of times to avoid having a finite probability that an optimal action is missed because of an unusually bad series of outcomes. An ADP agent using such a scheme will eventually learn the true environment model. A GLIE scheme must also eventually become greedy, so that the agent’s actions become optimal with respect to the learned (and hence the true) model.
 
-There are several GLIE schemes; one of the simplest is to have the agent choose a ran- dom action a fraction 1/t of the time and to follow the greedy policy otherwise. While this does eventually converge to an optimal policy, it can be extremely slow. A more sensible approach would give some weight to actions that the agent has not tried very often, while tending to avoid actions that are believed to be of low utility. This can be implemented by altering the constraint equation (21.4) so that it assigns a higher utility estimate to relatively  
+There are several GLIE schemes; one of the simplest is to have the agent choose a random action a fraction 1/t of the time and to follow the greedy policy otherwise. While this does eventually converge to an optimal policy, it can be extremely slow. A more sensible approach would give some weight to actions that the agent has not tried very often, while tending to avoid actions that are believed to be of low utility. This can be implemented by altering the constraint equation (21.4) so that it assigns a higher utility estimate to relatively  
 
 Section 21.3. Active Reinforcement Learning 841
 
@@ -7209,17 +7209,17 @@ EXPLORATION AND BANDITS
 
 In Las Vegas, a _one-armed bandit_ is a slot machine. A gambler can insert a coin, pull the lever, and collect the winnings (if any). An n**\-armed bandit** has n levers. The gambler must choose which lever to play on each successive coin—the one that has paid off best, or maybe one that has not been tried?
 
-The n-armed bandit problem is a formal model for real problems in many vi- tally important areas, such as deciding on the annual budget for AI research and development. Each arm corresponds to an action (such as allocating $20 million for the development of new AI textbooks), and the payoff from pulling the arm cor- responds to the benefits obtained from taking the action (immense). Exploration, whether it is exploration of a new research field or exploration of a new shopping mall, is risky, is expensive, and has uncertain payoffs; on the other hand, failure to explore at all means that one never discovers _any_ actions that are worthwhile.
+The n-armed bandit problem is a formal model for real problems in many vitally important areas, such as deciding on the annual budget for AI research and development. Each arm corresponds to an action (such as allocating $20 million for the development of new AI textbooks), and the payoff from pulling the arm corresponds to the benefits obtained from taking the action (immense). Exploration, whether it is exploration of a new research field or exploration of a new shopping mall, is risky, is expensive, and has uncertain payoffs; on the other hand, failure to explore at all means that one never discovers _any_ actions that are worthwhile.
 
-To formulate a bandit problem properly, one must define exactly what is meant by optimal behavior. Most definitions in the literature assume that the aim is to maximize the expected total reward obtained over the agent’s lifetime. These defi- nitions require that the expectation be taken over the possible worlds that the agent could be in, as well as over the possible results of each action sequence in any given world. Here, a “world” is defined by the transition model P (s′ | s, a). Thus, in or- der to act optimally, the agent needs a prior distribution over the possible models. The resulting optimization problems are usually wildly intractable.
+To formulate a bandit problem properly, one must define exactly what is meant by optimal behavior. Most definitions in the literature assume that the aim is to maximize the expected total reward obtained over the agent’s lifetime. These definitions require that the expectation be taken over the possible worlds that the agent could be in, as well as over the possible results of each action sequence in any given world. Here, a “world” is defined by the transition model P (s′ | s, a). Thus, in order to act optimally, the agent needs a prior distribution over the possible models. The resulting optimization problems are usually wildly intractable.
 
 In some cases—for example, when the payoff of each machine is independent and discounted rewards are used—it is possible to calculate a **Gittins index** for each slot machine (Gittins, 1989). The index is a function only of the number of times the slot machine has been played and how much it has paid off. The index for each machine indicates how worthwhile it is to invest more; generally speaking, the higher the expected return and the higher the uncertainty in the utility of a given choice, the better. Choosing the machine with the highest index value gives an optimal exploration policy. Unfortunately, no way has been found to extend Gittins indices to sequential decision problems.
 
 One can use the theory of n-armed bandits to argue for the reasonableness of the selection strategy in genetic algorithms. (See Chapter 4.) If you consider each arm in an _n_\-armed bandit problem to be a possible string of genes, and the investment of a coin in one arm to be the reproduction of those genes, then it can be proven that genetic algorithms allocate coins optimally, given an appropriate set of independence assumptions.  
 
-842 Chapter 21. Reinforcement Learning
 
-unexplored state–action pairs. Essentially, this amounts to an optimistic prior over the possi- ble environments and causes the agent to behave initially as if there were wonderful rewards scattered all over the place. Let us use U
+
+unexplored state–action pairs. Essentially, this amounts to an optimistic prior over the possible environments and causes the agent to behave initially as if there were wonderful rewards scattered all over the place. Let us use U
 
 +(s) to denote the optimistic estimate of the utility (i.e., the expected reward-to-go) of the state s, and let N(s, a) be the number of times action a has been tried in state s. Suppose we are using value iteration in an ADP learning agent; then we need to rewrite the update equation (Equation (17.6) on page 652) to incorporate the optimistic estimate. The following equation does this:
 
@@ -7259,7 +7259,7 @@ very important. As exploration proceeds, the states and actions near the start s
 
 **21.3.2 Learning an action-utility function**
 
-Now that we have an active ADP agent, let us consider how to construct an active temporal- difference learning agent. The most obvious change from the passive case is that the agent is no longer equipped with a fixed policy, so, if it learns a utility function U , it will need to learn a model in order to be able to choose an action based on U via one-step look-ahead. The model acquisition problem for the TD agent is identical to that for the ADP agent. What of the TD update rule itself? Perhaps surprisingly, the update rule (21.3) remains unchanged. This might seem odd, for the following reason: Suppose the agent takes a step that normally  
+Now that we have an active ADP agent, let us consider how to construct an active temporaldifference learning agent. The most obvious change from the passive case is that the agent is no longer equipped with a fixed policy, so, if it learns a utility function U , it will need to learn a model in order to be able to choose an action based on U via one-step look-ahead. The model acquisition problem for the TD agent is identical to that for the ADP agent. What of the TD update rule itself? Perhaps surprisingly, the update rule (21.3) remains unchanged. This might seem odd, for the following reason: Suppose the agent takes a step that normally  
 
 Section 21.3. Active Reinforcement Learning 843
 
@@ -7365,7 +7365,7 @@ Q(s ′
 
 As in the ADP learning agent, we can use this equation directly as an update equation for an iteration process that calculates exact Q-values, given an estimated model. This does, however, require that a model also be learned, because the equation uses P (s′ | s, a). The temporal-difference approach, on the other hand, requires no model of state transitions—all  
 
-844 Chapter 21. Reinforcement Learning
+
 
 **function** Q-LEARNING-AGENT(percept) **returns** an action **inputs**: percept , a percept indicating the current state s ′ and reward signal r ′
 
@@ -7379,7 +7379,7 @@ s ,a, r ← s ′, argmaxa′ f(Q \[s ′, a′\],Nsa \[s ′, a′\]), r ′
 
 **return** a
 
-**Figure 21.8** An exploratory Q-learning agent. It is an active learner that learns the value Q(s, a) of each action in each situation. It uses the same exploration function f as the ex- ploratory ADP agent, but avoids having to learn the transition model because the Q-value of a state can be related directly to those of its neighbors.
+**Figure 21.8** An exploratory Q-learning agent. It is an active learner that learns the value Q(s, a) of each action in each situation. It uses the same exploration function f as the exploratory ADP agent, but avoids having to learn the transition model because the Q-value of a state can be related directly to those of its neighbors.
 
 it needs are the Q values. The update equation for TD Q-learning is
 
@@ -7413,7 +7413,7 @@ where a ′ is the action _actually taken_ in state s
 
 , a ′ quintuplet—hence the name. The difference from Q-learning is quite subtle:
 
-whereas Q-learning backs up the _best_ Q-value from the state reached in the observed transi- tion, SARSA waits until an action is actually taken and backs up the Q-value for that action. Now, for a greedy agent that always takes the action with best Q-value, the two algorithms are identical. When exploration is happening, however, they differ significantly. Because Q-learning uses the best Q-value, it pays no attention to the actual policy being followed—it is an **off-policy** learning algorithm, whereas SARSA is an **on-policy** algorithm. Q-learning isOFF-POLICY
+whereas Q-learning backs up the _best_ Q-value from the state reached in the observed transition, SARSA waits until an action is actually taken and backs up the Q-value for that action. Now, for a greedy agent that always takes the action with best Q-value, the two algorithms are identical. When exploration is happening, however, they differ significantly. Because Q-learning uses the best Q-value, it pays no attention to the actual policy being followed—it is an **off-policy** learning algorithm, whereas SARSA is an **on-policy** algorithm. Q-learning isOFF-POLICY
 
 ON-POLICY more flexible than SARSA, in the sense that a Q-learning agent can learn how to behave well even when guided by a random or adversarial exploration policy. On the other hand, SARSA is more realistic: for example, if the overall policy is even partly controlled by other agents, it is better to learn a Q-function for what will actually happen rather than what the agent would like to happen.  
 
@@ -7421,11 +7421,11 @@ Section 21.4. Generalization in Reinforcement Learning 845
 
 Both Q-learning and SARSA learn the optimal policy for the 4× 3 world, but do so at a much slower rate than the ADP agent. This is because the local updates do not enforce consistency among all the Q-values via the model. The comparison raises a general question: is it better to learn a model and a utility function or to learn an action-utility function with no model? In other words, what is the best way to represent the agent function? This is an issue at the foundations of artificial intelligence. As we stated in Chapter 1, one of the key historical characteristics of much of AI research is its (often unstated) adherence to the **knowledge-based** approach. This amounts to an assumption that the best way to represent the agent function is to build a representation of some aspects of the environment in which the agent is situated.
 
-Some researchers, both inside and outside AI, have claimed that the availability of model-free methods such as Q-learning means that the knowledge-based approach is unnec- essary. There is, however, little to go on but intuition. Our intuition, for what it’s worth, is that as the environment becomes more complex, the advantages of a knowledge-based approach become more apparent. This is borne out even in games such as chess, checkers (draughts), and backgammon (see next section), where efforts to learn an evaluation function by means of a model have met with more success than Q-learning methods.
+Some researchers, both inside and outside AI, have claimed that the availability of model-free methods such as Q-learning means that the knowledge-based approach is unnecessary. There is, however, little to go on but intuition. Our intuition, for what it’s worth, is that as the environment becomes more complex, the advantages of a knowledge-based approach become more apparent. This is borne out even in games such as chess, checkers (draughts), and backgammon (see next section), where efforts to learn an evaluation function by means of a model have met with more success than Q-learning methods.
 
 21.4 GENERALIZATION IN REINFORCEMENT LEARNING
 
-So far, we have assumed that the utility functions and Q-functions learned by the agents are represented in tabular form with one output value for each input tuple. Such an approach works reasonably well for small state spaces, but the time to convergence and (for ADP) the time per iteration increase rapidly as the space gets larger. With carefully controlled, approx- imate ADP methods, it might be possible to handle 10,000 states or more. This suffices for two-dimensional maze-like environments, but more realistic worlds are out of the question. Backgammon and chess are tiny subsets of the real world, yet their state spaces contain on the order of 1020 and 1040 states, respectively. It would be absurd to suppose that one must visit all these states many times in order to learn how to play the game!
+So far, we have assumed that the utility functions and Q-functions learned by the agents are represented in tabular form with one output value for each input tuple. Such an approach works reasonably well for small state spaces, but the time to convergence and (for ADP) the time per iteration increase rapidly as the space gets larger. With carefully controlled, approximate ADP methods, it might be possible to handle 10,000 states or more. This suffices for two-dimensional maze-like environments, but more realistic worlds are out of the question. Backgammon and chess are tiny subsets of the real world, yet their state spaces contain on the order of 1020 and 1040 states, respectively. It would be absurd to suppose that one must visit all these states many times in order to learn how to play the game!
 
 One way to handle such problems is to use **function approximation**, which simplyFUNCTION APPROXIMATION
 
@@ -7437,19 +7437,19 @@ A reinforcement learning algorithm can learn values for the parameters θ = θ1,
 
 values in a table, this function approximator is characterized by, say, n = 20 parameters— an _enormous_ compression. Although no one knows the true utility function for chess, no one believes that it can be represented exactly in 20 numbers. If the approximation is good  
 
-846 Chapter 21. Reinforcement Learning
 
-enough, however, the agent might still play excellent chess.3 Function approximation makes it practical to represent utility functions for very large state spaces, but that is not its principal benefit. _The compression achieved by a function approximator allows the learning agent to generalize from states it has visited to states it has not visited._ That is, the most important aspect of function approximation is not that it requires less space, but that it allows for induc- tive generalization over input states. To give you some idea of the power of this effect: by examining only one in every 1012 of the possible backgammon states, it is possible to learn a utility function that allows a program to play as well as any human (Tesauro, 1992).
+
+enough, however, the agent might still play excellent chess.3 Function approximation makes it practical to represent utility functions for very large state spaces, but that is not its principal benefit. _The compression achieved by a function approximator allows the learning agent to generalize from states it has visited to states it has not visited._ That is, the most important aspect of function approximation is not that it requires less space, but that it allows for inductive generalization over input states. To give you some idea of the power of this effect: by examining only one in every 1012 of the possible backgammon states, it is possible to learn a utility function that allows a program to play as well as any human (Tesauro, 1992).
 
 On the flip side, of course, there is the problem that there could fail to be any function in the chosen hypothesis space that approximates the true utility function sufficiently well. As in all inductive learning, there is a tradeoff between the size of the hypothesis space and the time it takes to learn the function. A larger hypothesis space increases the likelihood that a good approximation can be found, but also means that convergence is likely to be delayed.
 
-Let us begin with the simplest case, which is direct utility estimation. (See Section 21.2.) With function approximation, this is an instance of **supervised learning**. For example, sup- pose we represent the utilities for the 4× 3 world using a simple linear function. The features of the squares are just their x and y coordinates, so we have
+Let us begin with the simplest case, which is direct utility estimation. (See Section 21.2.) With function approximation, this is an instance of **supervised learning**. For example, suppose we represent the utilities for the 4× 3 world using a simple linear function. The features of the squares are just their x and y coordinates, so we have
 
 Ûθ(x, y) = θ0 + θ1x + θ2y . (21.10)
 
-Thus, if (θ0, θ1, θ2)= (0.5, 0.2, 0.1), then Ûθ(1, 1)= 0.8. Given a collection of trials, we ob- tain a set of sample values of Ûθ(x, y), and we can find the best fit, in the sense of minimizing the squared error, using standard linear regression. (See Chapter 18.)
+Thus, if (θ0, θ1, θ2)= (0.5, 0.2, 0.1), then Ûθ(1, 1)= 0.8. Given a collection of trials, we obtain a set of sample values of Ûθ(x, y), and we can find the best fit, in the sense of minimizing the squared error, using standard linear regression. (See Chapter 18.)
 
-For reinforcement learning, it makes more sense to use an _online_ learning algorithm that updates the parameters after each trial. Suppose we run a trial and the total reward obtained starting at (1,1) is 0.4. This suggests that Ûθ(1, 1), currently 0.8, is too large and must be reduced. How should the parameters be adjusted to achieve this? As with neural- network learning, we write an error function and compute its gradient with respect to the parameters. If uj(s) is the observed total reward from state s onward in the jth trial, then the error is defined as (half) the squared difference of the predicted total and the actual total: Ej(s) = (Ûθ(s)− uj(s))
+For reinforcement learning, it makes more sense to use an _online_ learning algorithm that updates the parameters after each trial. Suppose we run a trial and the total reward obtained starting at (1,1) is 0.4. This suggests that Ûθ(1, 1), currently 0.8, is too large and must be reduced. How should the parameters be adjusted to achieve this? As with neuralnetwork learning, we write an error function and compute its gradient with respect to the parameters. If uj(s) is the observed total reward from state s onward in the jth trial, then the error is defined as (half) the squared difference of the predicted total and the actual total: Ej(s) = (Ûθ(s)− uj(s))
 
 2 /2. The rate of change of the error with respect to each parameter
 
@@ -7517,11 +7517,11 @@ Q̂θ(s ′
 
 for Q-values. For passive TD learning, the update rule can be shown to converge to the closest possible4 approximation to the true function when the function approximator is _linear_ in the parameters. With active learning and _nonlinear_ functions such as neural networks, all bets are off: There are some very simple cases in which the parameters can go off to infinity even though there are good solutions in the hypothesis space. There are more sophisticated algorithms that can avoid these problems, but at present reinforcement learning with general function approximators remains a delicate art.
 
-Function approximation can also be very helpful for learning a model of the environ- ment. Remember that learning a model for an _observable_ environment is a _supervised_ learn- ing problem, because the next percept gives the outcome state. Any of the supervised learning methods in Chapter 18 can be used, with suitable adjustments for the fact that we need to pre- dict a complete state description rather than just a Boolean classification or a single real value. For a _partially observable_ environment, the learning problem is much more difficult. If we know what the hidden variables are and how they are causally related to each other and to the
+Function approximation can also be very helpful for learning a model of the environment. Remember that learning a model for an _observable_ environment is a _supervised_ learning problem, because the next percept gives the outcome state. Any of the supervised learning methods in Chapter 18 can be used, with suitable adjustments for the fact that we need to predict a complete state description rather than just a Boolean classification or a single real value. For a _partially observable_ environment, the learning problem is much more difficult. If we know what the hidden variables are and how they are causally related to each other and to the
 
 4 The definition of distance between utility functions is rather technical; see Tsitsiklis and Van Roy (1997).  
 
-848 Chapter 21. Reinforcement Learning
+
 
 observable variables, then we can fix the structure of a dynamic Bayesian network and use the EM algorithm to learn the parameters, as was described in Chapter 20. Inventing the hidden variables and learning the model structure are still open problems. Some practical examples are described in Section 21.6.
 
@@ -7537,7 +7537,7 @@ maps states to actions. We are interested primarily in _parameterized_ represent
 
 Q̂θ(s, a) . (21.14)
 
-Each Q-function could be a linear function of the parameters θ, as in Equation (21.10), or it could be a nonlinear function such as a neural network. Policy search will then ad- just the parameters θ to improve the policy. Notice that if the policy is represented by Q- functions, then policy search results in a process that learns Q-functions. _This process is not the same as Q-learning!_ In Q-learning with function approximation, the algorithm finds a value of θ such that Q̂θ is “close” to Q
+Each Q-function could be a linear function of the parameters θ, as in Equation (21.10), or it could be a nonlinear function such as a neural network. Policy search will then adjust the parameters θ to improve the policy. Notice that if the policy is represented by Qfunctions, then policy search results in a process that learns Q-functions. _This process is not the same as Q-learning!_ In Q-learning with function approximation, the algorithm finds a value of θ such that Q̂θ is “close” to Q
 
 ∗, the optimal Q-function. Policy search, on the other hand, finds a value of θ that results in good performance; the values found by the two methods may differ very substantially. (For example, the approximate Q-function defined by Q̂θ(s, a)= Q
 
@@ -7633,13 +7633,13 @@ j = 1
 
 for each state s visited, where aj is executed in s on the jth trial and Rj(s) is the total reward received from state s onwards in the jth trial. The resulting algorithm is called REINFORCE (Williams, 1992); it is usually much more effective than hill climbing using lots of trials at each value of θ. It is still much slower than necessary, however.  
 
-850 Chapter 21. Reinforcement Learning
+
 
 Consider the following task: given two blackjack5 programs, determine which is best. One way to do this is to have each play against a standard “dealer” for a certain number of hands and then to measure their respective winnings. The problem with this, as we have seen, is that the winnings of each program fluctuate widely depending on whether it receives good or bad cards. An obvious solution is to generate a certain number of hands in advance and _have each program play the same set of hands._ In this way, we eliminate the measurement error due to differences in the cards received. This idea, called **correlated sampling**, un-CORRELATED
 
 SAMPLING
 
-derlies a policy-search algorithm called PEGASUS (Ng and Jordan, 2000). The algorithm is applicable to domains for which a simulator is available so that the “random” outcomes of actions can be repeated. The algorithm works by generating in advance N sequences of ran- dom numbers, each of which can be used to run a trial of any policy. Policy search is carried out by evaluating each candidate policy using the _same_ set of random sequences to determine the action outcomes. It can be shown that the number of random sequences required to ensure that the value of _every_ policy is well estimated depends only on the complexity of the policy space, and not at all on the complexity of the underlying domain.
+derlies a policy-search algorithm called PEGASUS (Ng and Jordan, 2000). The algorithm is applicable to domains for which a simulator is available so that the “random” outcomes of actions can be repeated. The algorithm works by generating in advance N sequences of random numbers, each of which can be used to run a trial of any policy. Policy search is carried out by evaluating each candidate policy using the _same_ set of random sequences to determine the action outcomes. It can be shown that the number of random sequences required to ensure that the value of _every_ policy is well estimated depends only on the complexity of the policy space, and not at all on the complexity of the underlying domain.
 
 21.6 APPLICATIONS OF REINFORCEMENT LEARNING
 
@@ -7647,7 +7647,7 @@ We now turn to examples of large-scale applications of reinforcement learning. W
 
 **21.6.1 Applications to game playing**
 
-The first significant application of reinforcement learning was also the first significant learn- ing program of any kind—the checkers program written by Arthur Samuel (1959, 1967). Samuel first used a weighted linear function for the evaluation of positions, using up to 16 terms at any one time. He applied a version of Equation (21.12) to update the weights. There were some significant differences, however, between his program and current methods. First, he updated the weights using the difference between the current state and the backed-up value generated by full look-ahead in the search tree. This works fine, because it amounts to view- ing the state space at a different granularity. A second difference was that the program did _not_ use any observed rewards! That is, the values of terminal states reached in self-play were ignored. This means that it is theoretically possible for Samuel’s program not to converge, or to converge on a strategy designed to lose rather than to win. He managed to avoid this fate by insisting that the weight for material advantage should always be positive. Remarkably, this was sufficient to direct the program into areas of weight space corresponding to good checkers play.
+The first significant application of reinforcement learning was also the first significant learning program of any kind—the checkers program written by Arthur Samuel (1959, 1967). Samuel first used a weighted linear function for the evaluation of positions, using up to 16 terms at any one time. He applied a version of Equation (21.12) to update the weights. There were some significant differences, however, between his program and current methods. First, he updated the weights using the difference between the current state and the backed-up value generated by full look-ahead in the search tree. This works fine, because it amounts to viewing the state space at a different granularity. A second difference was that the program did _not_ use any observed rewards! That is, the values of terminal states reached in self-play were ignored. This means that it is theoretically possible for Samuel’s program not to converge, or to converge on a strategy designed to lose rather than to win. He managed to avoid this fate by insisting that the weight for material advantage should always be positive. Remarkably, this was sufficient to direct the program into areas of weight space corresponding to good checkers play.
 
 Gerry Tesauro’s backgammon program TD-GAMMON (1992) forcefully illustrates the potential of reinforcement learning techniques. In earlier work (Tesauro and Sejnowski, 1989), Tesauro tried learning a neural network representation of Q(s, a) directly from ex-
 
@@ -7671,57 +7671,57 @@ The setup for the famous **cart–pole** balancing problem, also known as the **
 
 **lum**, is shown in Figure 21.9. The problem is to control the position x of the cart so thatINVERTED PENDULUM
 
-the pole stays roughly upright (θ ≈ π/2), while staying within the limits of the cart track as shown. Several thousand papers in reinforcement learning and control theory have been published on this seemingly simple problem. The cart–pole problem differs from the prob- lems described earlier in that the state variables x, θ, ẋ, and θ̇ are continuous. The actions are usually discrete: jerk left or jerk right, the so-called **bang-bang control** regime.BANG-BANG
+the pole stays roughly upright (θ ≈ π/2), while staying within the limits of the cart track as shown. Several thousand papers in reinforcement learning and control theory have been published on this seemingly simple problem. The cart–pole problem differs from the problems described earlier in that the state variables x, θ, ẋ, and θ̇ are continuous. The actions are usually discrete: jerk left or jerk right, the so-called **bang-bang control** regime.BANG-BANG
 
 CONTROL
 
-The earliest work on learning for this problem was carried out by Michie and Cham- bers (1968). Their BOXES algorithm was able to balance the pole for over an hour after only about 30 trials. Moreover, unlike many subsequent systems, BOXES was implemented with a  
+The earliest work on learning for this problem was carried out by Michie and Chambers (1968). Their BOXES algorithm was able to balance the pole for over an hour after only about 30 trials. Moreover, unlike many subsequent systems, BOXES was implemented with a  
 
-852 Chapter 21. Reinforcement Learning
 
-real cart and pole, not a simulation. The algorithm first discretized the four-dimensional state space into boxes—hence the name. It then ran trials until the pole fell over or the cart hit the end of the track. Negative reinforcement was associated with the final action in the final box and then propagated back through the sequence. It was found that the discretization caused some problems when the apparatus was initialized in a position different from those used in training, suggesting that generalization was not perfect. Improved generalization and faster learning can be obtained using an algorithm that _adaptively_ partitions the state space accord- ing to the observed variation in the reward, or by using a continuous-state, nonlinear function approximator such as a neural network. Nowadays, balancing a _triple_ inverted pendulum is a common exercise—a feat far beyond the capabilities of most humans.
+
+real cart and pole, not a simulation. The algorithm first discretized the four-dimensional state space into boxes—hence the name. It then ran trials until the pole fell over or the cart hit the end of the track. Negative reinforcement was associated with the final action in the final box and then propagated back through the sequence. It was found that the discretization caused some problems when the apparatus was initialized in a position different from those used in training, suggesting that generalization was not perfect. Improved generalization and faster learning can be obtained using an algorithm that _adaptively_ partitions the state space according to the observed variation in the reward, or by using a continuous-state, nonlinear function approximator such as a neural network. Nowadays, balancing a _triple_ inverted pendulum is a common exercise—a feat far beyond the capabilities of most humans.
 
 Still more impressive is the application of reinforcement learning to helicopter flight (Figure 21.10). This work has generally used policy search (Bagnell and Schneider, 2001) as well as the PEGASUS algorithm with simulation based on a learned transition model (Ng _et al._, 2004). Further details are given in Chapter 25.
 
-**Figure 21.10** Superimposed time-lapse images of an autonomous helicopter performing a very difficult “nose-in circle” maneuver. The helicopter is under the control of a policy developed by the PEGASUS policy-search algorithm. A simulator model was developed by observing the effects of various control manipulations on the real helicopter; then the algo- rithm was run on the simulator model overnight. A variety of controllers were developed for different maneuvers. In all cases, performance far exceeded that of an expert human pilot using remote control. (Image courtesy of Andrew Ng.)  
+**Figure 21.10** Superimposed time-lapse images of an autonomous helicopter performing a very difficult “nose-in circle” maneuver. The helicopter is under the control of a policy developed by the PEGASUS policy-search algorithm. A simulator model was developed by observing the effects of various control manipulations on the real helicopter; then the algorithm was run on the simulator model overnight. A variety of controllers were developed for different maneuvers. In all cases, performance far exceeded that of an expert human pilot using remote control. (Image courtesy of Andrew Ng.)  
 
 Section 21.7. Summary 853
 
 21.7 SUMMARY
 
-This chapter has examined the reinforcement learning problem: how an agent can become proficient in an unknown environment, given only its percepts and occasional rewards. Rein- forcement learning can be viewed as a microcosm for the entire AI problem, but it is studied in a number of simplified settings to facilitate progress. The major points are:
+This chapter has examined the reinforcement learning problem: how an agent can become proficient in an unknown environment, given only its percepts and occasional rewards. Reinforcement learning can be viewed as a microcosm for the entire AI problem, but it is studied in a number of simplified settings to facilitate progress. The major points are:
 
-• The overall agent design dictates the kind of information that must be learned. The three main designs we covered were the model-based design, using a model P and a utility function U ; the model-free design, using an action-utility function Q ; and the reflex design, using a policy π.
+- The overall agent design dictates the kind of information that must be learned. The three main designs we covered were the model-based design, using a model P and a utility function U ; the model-free design, using an action-utility function Q ; and the reflex design, using a policy π.
 
-• Utilities can be learned using three approaches:
+- Utilities can be learned using three approaches:
 
 1\. **Direct utility estimation** uses the total observed reward-to-go for a given state as direct evidence for learning its utility.
 
 2\. **Adaptive dynamic programming** (ADP) learns a model and a reward function from observations and then uses value or policy iteration to obtain the utilities or an optimal policy. ADP makes optimal use of the local constraints on utilities of states imposed through the neighborhood structure of the environment.
 
-3\. **Temporal-difference** (TD) methods update utility estimates to match those of suc- cessor states. They can be viewed as simple approximations to the ADP approach that can learn without requiring a transition model. Using a learned model to gen- erate pseudoexperiences can, however, result in faster learning.
+3\. **Temporal-difference** (TD) methods update utility estimates to match those of successor states. They can be viewed as simple approximations to the ADP approach that can learn without requiring a transition model. Using a learned model to generate pseudoexperiences can, however, result in faster learning.
 
-• Action-utility functions, or Q-functions, can be learned by an ADP approach or a TD approach. With TD, Q-learning requires no model in either the learning or action- selection phase. This simplifies the learning problem but potentially restricts the ability to learn in complex environments, because the agent cannot simulate the results of possible courses of action.
+- Action-utility functions, or Q-functions, can be learned by an ADP approach or a TD approach. With TD, Q-learning requires no model in either the learning or actionselection phase. This simplifies the learning problem but potentially restricts the ability to learn in complex environments, because the agent cannot simulate the results of possible courses of action.
 
-• When the learning agent is responsible for selecting actions while it learns, it must trade off the estimated value of those actions against the potential for learning useful new information. An exact solution of the exploration problem is infeasible, but some simple heuristics do a reasonable job.
+- When the learning agent is responsible for selecting actions while it learns, it must trade off the estimated value of those actions against the potential for learning useful new information. An exact solution of the exploration problem is infeasible, but some simple heuristics do a reasonable job.
 
-• In large state spaces, reinforcement learning algorithms must use an approximate func- tional representation in order to generalize over states. The temporal-difference signal can be used directly to update parameters in representations such as neural networks.
+- In large state spaces, reinforcement learning algorithms must use an approximate functional representation in order to generalize over states. The temporal-difference signal can be used directly to update parameters in representations such as neural networks.
 
-• Policy-search methods operate directly on a representation of the policy, attempting to improve it based on observed performance. The variation in the performance in a stochastic domain is a serious problem; for simulated domains this can be overcome by fixing the randomness in advance.
+- Policy-search methods operate directly on a representation of the policy, attempting to improve it based on observed performance. The variation in the performance in a stochastic domain is a serious problem; for simulated domains this can be overcome by fixing the randomness in advance.
 
-Because of its potential for eliminating hand coding of control strategies, reinforcement learn- ing continues to be one of the most active areas of machine learning research. Applications in robotics promise to be particularly valuable; these will require methods for handling con-  
+Because of its potential for eliminating hand coding of control strategies, reinforcement learning continues to be one of the most active areas of machine learning research. Applications in robotics promise to be particularly valuable; these will require methods for handling con 
 
-854 Chapter 21. Reinforcement Learning
+
 
 tinuous, high-dimensional, partially observable environments in which successful behaviors may consist of thousands or even millions of primitive actions.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Turing (1948, 1950) proposed the reinforcement-learning approach, although he was not con- vinced of its effectiveness, writing, “the use of punishments and rewards can at best be a part of the teaching process.” Arthur Samuel’s work (1959) was probably the earliest successful machine learning research. Although this work was informal and had a number of flaws, it contained most of the modern ideas in reinforcement learning, including temporal differ- encing and function approximation. Around the same time, researchers in adaptive control theory (Widrow and Hoff, 1960), building on work by Hebb (1949), were training simple net- works using the delta rule. (This early connection between neural networks and reinforcement learning may have led to the persistent misperception that the latter is a subfield of the for- mer.) The cart–pole work of Michie and Chambers (1968) can also be seen as a reinforcement learning method with a function approximator. The psychological literature on reinforcement learning is much older; Hilgard and Bower (1975) provide a good survey. Direct evidence for the operation of reinforcement learning in animals has been provided by investigations into the foraging behavior of bees; there is a clear neural correlate of the reward signal in the form of a large neuron mapping from the nectar intake sensors directly to the motor cortex (Mon- tague _et al._, 1995). Research using single-cell recording suggests that the dopamine system in primate brains implements something resembling value function learning (Schultz _et al._, 1997). The neuroscience text by Dayan and Abbott (2001) describes possible neural imple- mentations of temporal-difference learning, while Dayan and Niv (2008) survey the latest evidence from neuroscientific and behavioral experiments.
+Turing (1948, 1950) proposed the reinforcement-learning approach, although he was not convinced of its effectiveness, writing, “the use of punishments and rewards can at best be a part of the teaching process.” Arthur Samuel’s work (1959) was probably the earliest successful machine learning research. Although this work was informal and had a number of flaws, it contained most of the modern ideas in reinforcement learning, including temporal differencing and function approximation. Around the same time, researchers in adaptive control theory (Widrow and Hoff, 1960), building on work by Hebb (1949), were training simple networks using the delta rule. (This early connection between neural networks and reinforcement learning may have led to the persistent misperception that the latter is a subfield of the former.) The cart–pole work of Michie and Chambers (1968) can also be seen as a reinforcement learning method with a function approximator. The psychological literature on reinforcement learning is much older; Hilgard and Bower (1975) provide a good survey. Direct evidence for the operation of reinforcement learning in animals has been provided by investigations into the foraging behavior of bees; there is a clear neural correlate of the reward signal in the form of a large neuron mapping from the nectar intake sensors directly to the motor cortex (Montague _et al._, 1995). Research using single-cell recording suggests that the dopamine system in primate brains implements something resembling value function learning (Schultz _et al._, 1997). The neuroscience text by Dayan and Abbott (2001) describes possible neural implementations of temporal-difference learning, while Dayan and Niv (2008) survey the latest evidence from neuroscientific and behavioral experiments.
 
 The connection between reinforcement learning and Markov decision processes was first made by Werbos (1977), but the development of reinforcement learning in AI stems from work at the University of Massachusetts in the early 1980s (Barto _et al._, 1981). The paper by Sutton (1988) provides a good historical overview. Equation (21.3) in this chapter is a special case for λ= 0 of Sutton’s general TD(λ) algorithm. TD(λ) updates the utility values of all states in a sequence leading up to each transition by an amount that drops off as λ
 
-t for states t steps in the past. TD(1) is identical to the Widrow–Hoff or delta rule. Boyan (2002), building on work by Bradtke and Barto (1996), argues that TD(λ) and related algo- rithms make inefficient use of experiences; essentially, they are online regression algorithms that converge much more slowly than offline regression. His LSTD (least-squares temporal differencing) algorithm is an online algorithm for passive reinforcement learning that gives the same results as offline regression. Least-squares policy iteration, or LSPI (Lagoudakis and Parr, 2003), combines this idea with the policy iteration algorithm, yielding a robust, statistically efficient, model-free algorithm for learning policies.
+t for states t steps in the past. TD(1) is identical to the Widrow–Hoff or delta rule. Boyan (2002), building on work by Bradtke and Barto (1996), argues that TD(λ) and related algorithms make inefficient use of experiences; essentially, they are online regression algorithms that converge much more slowly than offline regression. His LSTD (least-squares temporal differencing) algorithm is an online algorithm for passive reinforcement learning that gives the same results as offline regression. Least-squares policy iteration, or LSPI (Lagoudakis and Parr, 2003), combines this idea with the policy iteration algorithm, yielding a robust, statistically efficient, model-free algorithm for learning policies.
 
 The combination of temporal-difference learning with the model-based generation of simulated experiences was proposed in Sutton’s DYNA architecture (Sutton, 1990). The idea of prioritized sweeping was introduced independently by Moore and Atkeson (1993) and  
 
@@ -7729,19 +7729,19 @@ Bibliographical and Historical Notes 855
 
 Peng and Williams (1993). Q-learning was developed in Watkins’s Ph.D. thesis (1989), while SARSA appeared in a technical report by Rummery and Niranjan (1994).
 
-Bandit problems, which model the problem of exploration for nonsequential decisions, are analyzed in depth by Berry and Fristedt (1985). Optimal exploration strategies for several settings are obtainable using the technique called **Gittins indices** (Gittins, 1989). A vari- ety of exploration methods for sequential decision problems are discussed by Barto _et al._ (1995). Kearns and Singh (1998) and Brafman and Tennenholtz (2000) describe algorithms that explore unknown environments and are guaranteed to converge on near-optimal policies in polynomial time. Bayesian reinforcement learning (Dearden _et al._, 1998, 1999) provides another angle on both model uncertainty and exploration.
+Bandit problems, which model the problem of exploration for nonsequential decisions, are analyzed in depth by Berry and Fristedt (1985). Optimal exploration strategies for several settings are obtainable using the technique called **Gittins indices** (Gittins, 1989). A variety of exploration methods for sequential decision problems are discussed by Barto _et al._ (1995). Kearns and Singh (1998) and Brafman and Tennenholtz (2000) describe algorithms that explore unknown environments and are guaranteed to converge on near-optimal policies in polynomial time. Bayesian reinforcement learning (Dearden _et al._, 1998, 1999) provides another angle on both model uncertainty and exploration.
 
-Function approximation in reinforcement learning goes back to the work of Samuel, who used both linear and nonlinear evaluation functions and also used feature-selection meth- ods to reduce the feature space. Later methods include the **CMAC** (Cerebellar Model Artic-CMAC
+Function approximation in reinforcement learning goes back to the work of Samuel, who used both linear and nonlinear evaluation functions and also used feature-selection methods to reduce the feature space. Later methods include the **CMAC** (Cerebellar Model Artic-CMAC
 
-ulation Controller) (Albus, 1975), which is essentially a sum of overlapping local kernel functions, and the associative neural networks of Barto _et al._ (1983). Neural networks are currently the most popular form of function approximator. The best-known application is TD-Gammon (Tesauro, 1992, 1995), which was discussed in the chapter. One significant problem exhibited by neural-network-based TD learners is that they tend to forget earlier ex- periences, especially those in parts of the state space that are avoided once competence is achieved. This can result in catastrophic failure if such circumstances reappear. Function ap- proximation based on **instance-based learning** can avoid this problem (Ormoneit and Sen, 2002; Forbes, 2002).
+ulation Controller) (Albus, 1975), which is essentially a sum of overlapping local kernel functions, and the associative neural networks of Barto _et al._ (1983). Neural networks are currently the most popular form of function approximator. The best-known application is TD-Gammon (Tesauro, 1992, 1995), which was discussed in the chapter. One significant problem exhibited by neural-network-based TD learners is that they tend to forget earlier experiences, especially those in parts of the state space that are avoided once competence is achieved. This can result in catastrophic failure if such circumstances reappear. Function approximation based on **instance-based learning** can avoid this problem (Ormoneit and Sen, 2002; Forbes, 2002).
 
-The convergence of reinforcement learning algorithms using function approximation is an extremely technical subject. Results for TD learning have been progressively strength- ened for the case of linear function approximators (Sutton, 1988; Dayan, 1992; Tsitsiklis and Van Roy, 1997), but several examples of divergence have been presented for nonlinear func- tions (see Tsitsiklis and Van Roy, 1997, for a discussion). Papavassiliou and Russell (1999) describe a new type of reinforcement learning that converges with any form of function ap- proximator, provided that a best-fit approximation can be found for the observed data.
+The convergence of reinforcement learning algorithms using function approximation is an extremely technical subject. Results for TD learning have been progressively strengthened for the case of linear function approximators (Sutton, 1988; Dayan, 1992; Tsitsiklis and Van Roy, 1997), but several examples of divergence have been presented for nonlinear functions (see Tsitsiklis and Van Roy, 1997, for a discussion). Papavassiliou and Russell (1999) describe a new type of reinforcement learning that converges with any form of function approximator, provided that a best-fit approximation can be found for the observed data.
 
 Policy search methods were brought to the fore by Williams (1992), who developed the REINFORCE family of algorithms. Later work by Marbach and Tsitsiklis (1998), Sutton _et al._ (2000), and Baxter and Bartlett (2000) strengthened and generalized the convergence results for policy search. The method of correlated sampling for comparing different configurations of a system was described formally by Kahn and Marshall (1953), but seems to have been known long before that. Its use in reinforcement learning is due to Van Roy (1998) and Ng and Jordan (2000); the latter paper also introduced the PEGASUS algorithm and proved its formal properties.
 
-As we mentioned in the chapter, the performance of a _stochastic_ policy is a continu- ous function of its parameters, which helps with gradient-based search methods. This is not the only benefit: Jaakkola _et al._ (1995) argue that stochastic policies actually work better than deterministic policies in partially observable environments, if both are limited to act- ing based on the current percept. (One reason is that the stochastic policy is less likely to get “stuck” because of some unseen hindrance.) Now, in Chapter 17 we pointed out that  
+As we mentioned in the chapter, the performance of a _stochastic_ policy is a continuous function of its parameters, which helps with gradient-based search methods. This is not the only benefit: Jaakkola _et al._ (1995) argue that stochastic policies actually work better than deterministic policies in partially observable environments, if both are limited to acting based on the current percept. (One reason is that the stochastic policy is less likely to get “stuck” because of some unseen hindrance.) Now, in Chapter 17 we pointed out that  
 
-856 Chapter 21. Reinforcement Learning
+
 
 optimal policies in partially observable MDPs are deterministic functions of the _belief state_ rather than the current percept, so we would expect still better results by keeping track of the belief state using the **filtering** methods of Chapter 15. Unfortunately, belief-state space is high-dimensional and continuous, and effective algorithms have not yet been developed for reinforcement learning with belief states.
 
@@ -7757,13 +7757,13 @@ satisfies F (s, a, s ′)= γΦ(s′) − Φ(s), where Φ is an arbitrary functi
 
 constructed to reflect any desirable aspects of the state, such as achievement of subgoals or distance to a goal state.
 
-The generation of complex behaviors can also be facilitated by **hierarchical reinforce- ment learning** methods, which attempt to solve problems at multiple levels of abstraction—
+The generation of complex behaviors can also be facilitated by **hierarchical reinforcement learning** methods, which attempt to solve problems at multiple levels of abstraction—
 
 HIERARCHICAL REINFORCEMENT LEARNING
 
 much like the **HTN planning** methods of Chapter 11. For example, “scoring a goal” can be broken down into “obtain possession,” “dribble towards the goal,” and “shoot;” and each of these can be broken down further into lower-level motor behaviors. The fundamental result in this area is due to Forestier and Varaiya (1978), who proved that lower-level behaviors of arbitrary complexity can be treated just like primitive actions (albeit ones that can take varying amounts of time) from the point of view of the higher-level behavior that invokes them. Current approaches (Parr and Russell, 1998; Dietterich, 2000; Sutton _et al._, 2000; Andre and Russell, 2002) build on this result to develop methods for supplying an agent with a **partial program** that constrains the agent’s behavior to have a particular hierarchicalPARTIAL PROGRAM
 
-structure. The partial-programming language for agent programs extends an ordinary pro- gramming language by adding primitives for unspecified choices that must be filled in by learning. Reinforcement learning is then applied to learn the best behavior consistent with the partial program. The combination of function approximation, shaping, and hierarchical reinforcement learning has been shown to solve large-scale problems—for example, policies that execute for 104 steps in state spaces of 10100 states with branching factors of 1030 (Marthi _et al._, 2005). One key result (Dietterich, 2000) is that the hierarchical structure provides a natural _additive decomposition_ of the overall utility function into terms that depend on small subsets of the variables defining the state space. This is somewhat analogous to the represen- tation theorems underlying the conciseness of Bayes nets (Chapter 14).
+structure. The partial-programming language for agent programs extends an ordinary programming language by adding primitives for unspecified choices that must be filled in by learning. Reinforcement learning is then applied to learn the best behavior consistent with the partial program. The combination of function approximation, shaping, and hierarchical reinforcement learning has been shown to solve large-scale problems—for example, policies that execute for 104 steps in state spaces of 10100 states with branching factors of 1030 (Marthi _et al._, 2005). One key result (Dietterich, 2000) is that the hierarchical structure provides a natural _additive decomposition_ of the overall utility function into terms that depend on small subsets of the variables defining the state space. This is somewhat analogous to the representation theorems underlying the conciseness of Bayes nets (Chapter 14).
 
 The topic of distributed and multiagent reinforcement learning was not touched upon in the chapter but is of great current interest. In distributed RL, the aim is to devise methods by which multiple, coordinated agents learn to optimize a common utility function. For example,  
 
@@ -7773,7 +7773,7 @@ can we devise methods whereby separate **subagents** for robot navigation and ro
 
 avoidance could cooperatively achieve a combined control system that is globally optimal? Some basic results in this direction have been obtained (Guestrin _et al._, 2002; Russell and Zimdars, 2003). The basic idea is that each subagent learns its own Q-function from its own stream of rewards. For example, a robot-navigation component can receive rewards for making progress towards the goal, while the obstacle-avoidance component receives negative rewards for every collision. Each global decision maximizes the sum of Q-functions and the whole process converges to globally optimal solutions.
 
-Multiagent RL is distinguished from distributed RL by the presence of agents who cannot coordinate their actions (except by explicit communicative acts) and who may not share the same utility function. Thus, multiagent RL deals with sequential game-theoretic problems or **Markov games**, as defined in Chapter 17. The consequent requirement for ran- domized policies is not a significant complication, as we saw on page 848. What _does_ cause problems is the fact that, while an agent is learning to defeat its opponent’s policy, the op- ponent is changing its policy to defeat the agent. Thus, the environment is **nonstationary** (see page 568). Littman (1994) noted this difficulty when introducing the first RL algorithms for zero-sum Markov games. Hu and Wellman (2003) present a Q-learning algorithm for general-sum games that converges when the Nash equilibrium is unique; when there are mul- tiple equilibria, the notion of convergence is not so easy to define (Shoham _et al._, 2004).
+Multiagent RL is distinguished from distributed RL by the presence of agents who cannot coordinate their actions (except by explicit communicative acts) and who may not share the same utility function. Thus, multiagent RL deals with sequential game-theoretic problems or **Markov games**, as defined in Chapter 17. The consequent requirement for randomized policies is not a significant complication, as we saw on page 848. What _does_ cause problems is the fact that, while an agent is learning to defeat its opponent’s policy, the opponent is changing its policy to defeat the agent. Thus, the environment is **nonstationary** (see page 568). Littman (1994) noted this difficulty when introducing the first RL algorithms for zero-sum Markov games. Hu and Wellman (2003) present a Q-learning algorithm for general-sum games that converges when the Nash equilibrium is unique; when there are multiple equilibria, the notion of convergence is not so easy to define (Shoham _et al._, 2004).
 
 Sometimes the reward function is not easy to define. Consider the task of driving a car. There are extreme states (such as crashing the car) that clearly should have a large penalty. But beyond that, it is difficult to be precise about the reward function. However, it is easy enough for a human to drive for a while and then tell a robot “do it like that.” The robot then has the task of **apprenticeship learning**; learning from an example of the task done right,APPRENTICESHIP
 
@@ -7789,9 +7789,9 @@ This chapter has dealt only with atomic states—all the agent knows about a sta
 
 RELATIONAL REINFORCEMENT LEARNING
 
-The survey by Kaelbling _et al._ (1996) provides a good entry point to the literature. The text by Sutton and Barto (1998), two of the field’s pioneers, focuses on architectures and algo- rithms, showing how reinforcement learning weaves together the ideas of learning, planning, and acting. The somewhat more technical work by Bertsekas and Tsitsiklis (1996) gives a rigorous grounding in the theory of dynamic programming and stochastic convergence. Re- inforcement learning papers are published frequently in _Machine Learning_, in the _Journal of Machine Learning Research_, and in the International Conferences on Machine Learning and the Neural Information Processing Systems meetings.  
+The survey by Kaelbling _et al._ (1996) provides a good entry point to the literature. The text by Sutton and Barto (1998), two of the field’s pioneers, focuses on architectures and algorithms, showing how reinforcement learning weaves together the ideas of learning, planning, and acting. The somewhat more technical work by Bertsekas and Tsitsiklis (1996) gives a rigorous grounding in the theory of dynamic programming and stochastic convergence. Reinforcement learning papers are published frequently in _Machine Learning_, in the _Journal of Machine Learning Research_, and in the International Conferences on Machine Learning and the Neural Information Processing Systems meetings.  
 
-858 Chapter 21. Reinforcement Learning
+
 
 EXERCISES
 
@@ -7803,7 +7803,7 @@ EXERCISES
 
 **a**. Implement a priority queue for adjustments to the utility estimates. Whenever a state is adjusted, all of its predecessors also become candidates for adjustment and should be added to the queue. The queue is initialized with the state from which the most recent transition took place. Allow only a fixed number of adjustments.
 
-**b**. Experiment with various heuristics for ordering the priority queue, examining their ef- fect on learning rates and computation time.
+**b**. Experiment with various heuristics for ordering the priority queue, examining their effect on learning rates and computation time.
 
 **21.4** Write out the parameter update equations for TD learning with
 
@@ -7815,13 +7815,13 @@ Û(x, y) = θ0 + θ1x + θ2y + θ3
 
 .
 
-**21.5** Implement an exploring reinforcement learning agent that uses direct utility estima- tion. Make two versions—one with a tabular representation and one using the function ap- proximator in Equation (21.10). Compare their performance in three environments:
+**21.5** Implement an exploring reinforcement learning agent that uses direct utility estimation. Make two versions—one with a tabular representation and one using the function approximator in Equation (21.10). Compare their performance in three environments:
 
 **a**. The 4× 3 world described in the chapter. **b**. A 10× 10 world with no obstacles and a +1 reward at (10,10).
 
 **c**. A 10× 10 world with no obstacles and a +1 reward at (5,5).
 
-**21.6** Devise suitable features for reinforcement learning in stochastic grid worlds (general- izations of the 4× 3 world) that contain multiple obstacles and multiple terminal states with rewards of +1 or −1.
+**21.6** Devise suitable features for reinforcement learning in stochastic grid worlds (generalizations of the 4× 3 world) that contain multiple obstacles and multiple terminal states with rewards of +1 or −1.
 
 **21.7** Extend the standard game-playing environment (Chapter 5) to incorporate a reward signal. Put two reinforcement learning agents into the environment (they may, of course, share the agent program) and have them play against each other. Apply the generalized TD update rule (Equation (21.12)) to update the evaluation function. You might wish to start with a simple linear weighted evaluation function and a simple game, such as tic-tac-toe.  
 
@@ -7847,4 +7847,4 @@ and y) that would improve the approximation and show the results.
 
 world, using a policy family of your own choosing. Comment on the results.
 
-**21.10** Is reinforcement learning an appropriate abstract model for evolution? What connec- tion exists, if any, between hardwired reward signals and evolutionary fitness?
+**21.10** Is reinforcement learning an appropriate abstract model for evolution? What connection exists, if any, between hardwired reward signals and evolutionary fitness?

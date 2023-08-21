@@ -73,7 +73,7 @@ For a trigram character model in a language with 100 characters, **P**(Ci|Ci−2
 
 Latin word for _body_.  
 
-862 Chapter 22. Natural Language Processing
+
 
 What can we do with n-gram character models? One task for which they are well suited is **language identification:** given a text, determine what natural language it is written in. ThisLANGUAGE
 
@@ -135,7 +135,7 @@ With so many possible n-gram models—unigram, bigram, trigram, interpolated smo
 
 The evaluation can be a task-specific metric, such as measuring accuracy on language identification. Alternatively we can have a task-independent model of language quality: cal- culate the probability assigned to the validation corpus by the model; the higher the proba- bility the better. This metric is inconvenient because the probability of a large corpus will be a very small number, and floating-point underflow becomes an issue. A different way of describing the probability of a sequence is with a measure called **perplexity**, defined asPERPLEXITY  
 
-864 Chapter 22. Natural Language Processing
+
 
 Perplexity(c1:N ) = P (c1:N ) −
 
@@ -199,7 +199,7 @@ P (message | c)P (c) .
 
 where P (c) is estimated just by counting the total number of spam and ham messages. This approach works well for spam detection, just as it did for language identification.  
 
-866 Chapter 22. Natural Language Processing
+
 
 In the machine-learning approach we represent the message as a set of feature/value pairs and apply a classification algorithm h to the feature vector **X**. We can make the language-modeling and machine-learning approaches compatible by thinking of the n-grams as features. This is easiest to see with a unigram model. The features are the words in the vocabulary: “a,” “aardvark,” . . ., and the values are the number of times each word appears in the message. That makes the feature vector large and sparse. If there are 100,000 words in the language model, then the feature vector has length 100,000, but for a short email message almost all the features will have count zero. This unigram representation has been called the **bag of words** model. You can think of the model as putting the words of the training corpusBAG OF WORDS
 
@@ -253,7 +253,7 @@ collection is treated as a Boolean feature that is true of a document if the wor
 
 2 We denote a search query as \[_query_\]. Square brackets are used rather than quotation marks so that we can distinguish the query \[“two words”\] from \[two words\].  
 
-868 Chapter 22. Natural Language Processing
+
 
 features. A document is relevant only if the expression evaluates to true. For example, the query \[information AND retrieval\] is true for the current chapter and false for Chapter 15.
 
@@ -327,7 +327,7 @@ It is possible to trade off precision against recall by varying the size of the 
 
 There are many possible refinements to the system described here, and indeed Web search engines are continually updating their algorithms as they discover new approaches and as the Web grows and changes.  
 
-870 Chapter 22. Natural Language Processing
+
 
 One common refinement is a better model of the effect of document length on relevance. Singhal _et al._ (1996) observed that simple document length normalization schemes tend to favor short documents too much and long documents not enough. They propose a _pivoted_ document length normalization scheme; the idea is that the pivot is the document length at which the old-style normalization is correct; documents shorter than that get a boost and longer ones get a penalty.
 
@@ -399,7 +399,7 @@ MODEL
 
 With probability d (we’ll assume d= 0.85) the surfer clicks on one of the links on the page (choosing uniformly among them), and with probability 1 − d she gets bored with the page and restarts on a random page anywhere on the Web. The PageRank of page p is then the probability that the random surfer will be at page p at any point in time. PageRank can be computed by an iterative procedure: start with all pages having PR(p)= 1, and iterate the algorithm, updating ranks until they converge.  
 
-872 Chapter 22. Natural Language Processing
+
 
 **22.3.5 The HITS algorithm**
 
@@ -443,7 +443,7 @@ At the Text Retrieval Evaluation Conference (TREC), ASKMSR was rated as one of t
 
 ing for occurrences of a particular class of object and for relationships among objects. A typical task is to extract instances of addresses from Web pages, with database fields for street, city, state, and zip code; or instances of storms from weather reports, with fields for temperature, wind speed, and precipitation. In a limited domain, this can be done with high accuracy. As the domain gets more general, more complex linguistic models and more com- plex learning techniques are necessary. We will see in Chapter 23 how to define complex language models of the phrase structure (noun phrases and verb phrases) of English. But so far there are no complete models of this kind, so for the limited needs of information ex- traction, we define limited models that approximate the full English model, and concentrate on just the parts that are needed for the task at hand. The models we describe in this sec-  
 
-874 Chapter 22. Natural Language Processing
+
 
 tion are approximations in the same way that the simple 1-CNF logical model in Figure 7.21 (page 271) is an approximations of the full, wiggly, logical model.
 
@@ -503,7 +503,7 @@ The third stage handles **basic groups**, meaning noun groups and verb groups. T
 
 Here NG means noun group, VG is verb group, PR is preposition, and CJ is conjunction.  
 
-876 Chapter 22. Natural Language Processing
+
 
 The fourth stage combines the basic groups into **complex phrases**. Again, the aim is to have rules that are finite-state and thus can be processed quickly, and that result in unambiguous (or nearly unambiguous) output phrases. One type of combination rule deals with domain-specific events. For example, the rule
 
@@ -567,7 +567,7 @@ With sufficient training data, the HMM automatically learns a structure of dates
 
 Once the HMMs have been learned, we can apply them to a text, using the Viterbi algorithm to find the most likely path through the HMM states. One approach is to apply each attribute HMM separately; in this case you would expect most of the HMMs to spend most of their time in background states. This is appropriate when the extraction is sparse— when the number of extracted words is small compared to the length of the text.  
 
-878 Chapter 22. Natural Language Processing
+
 
 The other approach is to combine all the individual attributes into one big HMM, which would then find a path that wanders through different target attributes, first finding a speaker target, then a date target, etc. Separate HMMs are better when we expect just one of each attribute in a text and one big HMM is better when the texts are more free-form and dense with attributes. With either approach, in the end we have a collection of target attribute observations, and have to decide what to do with them. If every expected attribute has one target filler then the decision is easy: we have an instance of the desired relation. If there are multiple fillers, we need to decide which to choose, as we discussed with template-based systems. HMMs have the advantage of supplying probability numbers that can help make the choice. If some targets are missing, we need to decide if this is an instance of the desired relation at all, or if the targets found are false positives. A machine learning algorithm can be trained to make this choice.
 
@@ -633,7 +633,7 @@ So far we have thought of information extraction as finding a specific set of re
 
 For example, Hearst (1992) looked at the problem of learning an ontology of concept categories and subcategories from a large corpus. (In 1992, a large corpus was a 1000-page encyclopedia; today it would be a 100-million-page Web corpus.) The work concentrated on templates that are very general (not tied to a specific domain) and have high precision (are  
 
-880 Chapter 22. Natural Language Processing
+
 
 almost always correct when they match) but low recall (do not always match). Here is one of the most productive templates:
 
@@ -673,7 +673,7 @@ Automated template construction is a big step up from handcrafted template const
 
 A representative machine-reading system is TEXTRUNNER (Banko and Etzioni, 2008). TEXTRUNNER uses cotraining to boost its performance, but it needs something to bootstrap from. In the case of Hearst (1992), specific patterns (e.g., _such as_) provided the bootstrap, and for Brin (1998), it was a set of five author–title pairs. For TEXTRUNNER, the original inspi- ration was a taxonomy of eight very general syntactic templates, as shown in Figure 22.3. It was felt that a small number of templates like this could cover most of the ways that relation- ships are expressed in English. The actual bootsrapping starts from a set of labelled examples that are extracted from the Penn Treebank, a corpus of parsed sentences. For example, from the parse of the sentence “Einstein received the Nobel Prize in 1921,” TEXTRUNNER is able  
 
-882 Chapter 22. Natural Language Processing
+
 
 to extract the relation (“Einstein,” “received,” “Nobel Prize”). Given a set of labeled examples of this type, TEXTRUNNER trains a linear-chain CRF
 
@@ -719,7 +719,7 @@ Add-one smoothing, first suggested by Pierre-Simon Laplace (1816), was formalize
 
 Simple n-gram letter and word models are not the only possible probabilistic models. Blei _et al._ (2001) describe a probabilistic text model called **latent Dirichlet allocation** that views a document as a mixture of topics, each with its own distribution of words. This model can be seen as an extension and rationalization of the **latent semantic indexing** model of (Deerwester _et al._, 1990) (see also Papadimitriou _et al._ (1998)) and is also related to the multiple-cause mixture model of (Sahami _et al._, 1996).  
 
-884 Chapter 22. Natural Language Processing
+
 
 Manning and Schütze (1999) and Sebastiani (2002) survey text-classification techniques. Joachims (2001) uses statistical learning theory and support vector machines to give a theo- retical analysis of when classification will be successful. Apté _et al._ (1994) report an accuracy of 96% in classifying Reuters news articles into the “Earnings” category. Koller and Sahami (1997) report accuracy up to 95% with a naive Bayes classifier, and up to 98.6% with a Bayes classifier that accounts for some dependencies among features. Lewis (1998) surveys forty years of application of naive Bayes techniques to text classification and retrieval. Schapire and Singer (2000) show that simple linear classifiers can often achieve accuracy almost as good as more complex models and are more efficient to evaluate. Nigam _et al._ (2000) show how to use the EM algorithm to label unlabeled documents, thus learning a better classifi- cation model. Witten _et al._ (1999) describe compression algorithms for classification, and show the deep connection between the LZW compression algorithm and maximum-entropy language models.
 
@@ -753,7 +753,7 @@ EXERCISES
 
 **22.1** This exercise explores the quality of the n-gram model of language. Find or create a monolingual corpus of 100,000 words or more. Segment it into words, and compute the fre- quency of each word. How many distinct words are there? Also count frequencies of bigrams (two consecutive words) and trigrams (three consecutive words). Now use those frequencies to generate language: from the unigram, bigram, and trigram models, in turn, generate a 100- word text by making random choices according to the frequency counts. Compare the three generated texts with actual language. Finally, calculate the perplexity of each model.  
 
-886 Chapter 22. Natural Language Processing
+
 
 **22.2** Write a program to do **segmentation** of words without spaces. Given a string, such as the URL “thelongestlistofthelongeststuffatthelongestdomainnameatlonglast.com,” return a list of component words: \[“the,” “longest,” “list,” . . .\]. This task is useful for parsing URLs, for spelling correction when words runtogether, and for languages such as Chinese that do not have spaces between words. It can be solved with a unigram or bigram word model and a dynamic programming algorithm similar to the Viterbi algorithm.
 
@@ -845,7 +845,7 @@ sequence of any number of as followed by any number of bs.
 
 The grammars higher up in the hierarchy have more expressive power, but the algorithms for dealing with them are less efficient. Up to the 1980s, linguists focused on context-free and context-sensitive languages. Since then, there has been renewed interest in regular grammars, brought about by the need to process and learn from gigabytes or terabytes of online text very quickly, even at the cost of a less complete analysis. As Fernando Pereira put it, “The older I get, the further down the Chomsky hierarchy I go.” To see what he means, compare Pereira and Warren (1980) with Mohri, Pereira, and Riley (2002) (and note that these three authors all now work on large text corpora at Google).  
 
-890 Chapter 23. Natural Language for Communication
+
 
 There have been many competing language models based on the idea of phrase struc- ture; we will describe a popular model called the **probabilistic context-free grammar**, or
 
@@ -927,7 +927,7 @@ PP → Prep NP \[1.00\] to + the east RelClause → RelPro VP \[1.00\] that + is
 
 **Figure 23.2** The grammar for E0, with example phrases for each rule. The syntactic cat- egories are sentence (S ), noun phrase (NP ), verb phrase (VP), list of adjectives (Adjs), prepositional phrase (PP ), and relative clause (RelClause).  
 
-892 Chapter 23. Natural Language for Communication
+
 
 _Article Noun_
 
@@ -1009,7 +1009,7 @@ Fall leaves fall and spring leaves spring.
 
 It is ambiguous because each word (except “and”) can be either a noun or a verb, and “fall” and “spring” can be adjectives as well. (For example, one meaning of “Fall leaves fall” is  
 
-894 Chapter 23. Natural Language for Communication
+
 
 **function** CYK-PARSE(words , grammar ) **returns** P , a table of probabilities
 
@@ -1077,7 +1077,7 @@ S → NP VP \[0.60\] .
 
 What if a treebank is not available, but we have a corpus of raw unlabeled sentences? It is still possible to learn a grammar from such a corpus, but it is more difficult. First of all, we actually have two problems: learning the structure of the grammar rules and learning the  
 
-896 Chapter 23. Natural Language for Communication
+
 
 probabilities associated with each rule. (We have the same distinction in learning Bayes nets.) We’ll assume that we’re given the lexical and syntactic category names. (If not, we can just assume categories X1, . . . Xn and use cross-validation to pick the best value of n.) We can then assume that the grammar includes every possible (X → Y Z ) or (X → _word_) rule, although many of these rules will have probability 0 or close to 0.
 
@@ -1135,7 +1135,7 @@ Noun(**banana**) → **banana** \[pn\]
 
 Here the probability P1(v, n) depends on the head words v and n. We would set this proba- bility to be relatively high when v is “eat” and n is “banana,” and low when n is “bandanna.”  
 
-898 Chapter 23. Natural Language for Communication
+
 
 Note that since we are considering only heads, the distinction between “eat a banana” and “eat a rancid banana” will not be caught by these probabilities. Another issue with this ap- proach is that, in a vocabulary with, say, 20,000 nouns and 5,000 verbs, P1 needs 100 million probability estimates. Only a few percent of these can come from a corpus; the rest will have to come from smoothing (see Section 22.1.2). For example, we can estimateP1(v, n) for a (v, n) pair that we have not seen often (or at all) by backing off to a model that depends only on v. These objectless probabilities are still very useful; they can capture the distinction between a transitive verb like “eat”—which will have a high value for P1 and a low value for P2—and an intransitive verb like “sleep,” which will have the reverse. It is quite feasible to learn these probabilities from a treebank.
 
@@ -1213,7 +1213,7 @@ We saw in Section 23.1 that the simple grammar for E0 overgenerates, producing n
 
 4 The subjective case is also sometimes called the nominative case and the objective case is sometimes called the accusative case. Many languages also have a dative case for words in the indirect object position.  
 
-900 Chapter 23. Natural Language for Communication
+
 
 splitting NP into two categories, NPS and NPO, to stand for noun phrases in the subjective and objective case, respectively. We would also need to split the category Pronoun into the two categories PronounS (which includes “I”) and PronounO (which includes “me”). The top part of Figure 23.7 shows the grammar for **case agreement**; we call the resulting languageCASE AGREEMENT
 
@@ -1285,7 +1285,7 @@ a phrase is a function of the semantics of the subphrases. Figure 23.9 shows the
 
 Now let’s move on to the semantics of English, or at least of E0. We start by determin- ing what semantic representations we want to associate with what phrases. We use the simple example sentence “John loves Mary.” The NP “John” should have as its semantic interpreta- tion the logical term John , and the sentence as a whole should have as its interpretation the logical sentence Loves(John ,Mary). That much seems clear. The complicated part is the VP “loves Mary.” The semantic interpretation of this phrase is neither a logical term nor a complete logical sentence. Intuitively, “loves Mary” is a description that might or might not  
 
-902 Chapter 23. Natural Language for Communication
+
 
 apply to a particular person. (In this case, it applies to John.) This means that “loves Mary” is a **predicate** that, when combined with a term that represents a person (the person doing the loving), yields a complete logical sentence. Using the λ-notation (see page 294), we can represent “loves Mary” as the predicate
 
@@ -1361,7 +1361,7 @@ is a discrete event category. A grammar would reflect that fact by having a low 
 
 only one syntactic parse under E0, but it is actually semantically ambiguous; the preferred  
 
-904 Chapter 23. Natural Language for Communication
+
 
 meaning is “For every agent there exists a breeze that the agent feels,” but an acceptable alternative meaning is “There exists a breeze that every agent feels.” 5 The two interpretations can be represented as
 
@@ -1433,7 +1433,7 @@ x = Chrysler ∧ e ∈ Announce(m) ∧After(Now ,Extent(e))
 
 ∧Metonymy(m,x) .  
 
-906 Chapter 23. Natural Language for Communication
+
 
 This says that there is one entity x that is equal to Chrysler, and another entity m that did the announcing, and that the two are in a metonymy relation. The next step is to define what kinds of metonymy relations can occur. The simplest case is when there is no metonymy at all—the literal object x and the metonymic object m are identical:
 
@@ -1483,7 +1483,7 @@ Historically, there have been three main applications of machine translation. _R
 
 Translation is difficult because, in the fully general case, it requires in-depth understand- ing of the text. This is true even for very simple texts—even “texts” of one word. Consider the word “Open” on the door of a store.6 It communicates the idea that the store is accepting customers at the moment. Now consider the same word “Open” on a large banner outside a newly constructed store. It means that the store is now in daily operation, but readers of this sign would not feel misled if the store closed at night without removing the banner. The two signs use the identical word to convey different meanings. In German the sign on the door would be “Offen” while the banner would read “Neu Eröffnet.” 6 This example is due to Martin Kay.  
 
-908 Chapter 23. Natural Language for Communication
+
 
 The problem is that different languages categorize the world differently. For example, the French word “doux” covers a wide range of meanings corresponding approximately to the English words “soft,” “sweet,” and “gentle.” Similarly, the English word “hard” covers virtually all uses of the German word “hart” (physically recalcitrant, cruel) and some uses of the word “schwierig” (difficult). Therefore, representing the meaning of a sentence is more difficult for translation than it is for single-language understanding. An English parsing system could use predicates like Open(x), but for translation, the representation language would have to make more distinctions, perhaps with Open1(x) representing the “Offen” sense and Open2(x) representing the “Neu Eröffnet” sense. A representation language that makes all the distinctions necessary for a set of languages is called an **interlingua**.INTERLINGUA
 
@@ -1539,7 +1539,7 @@ sentence is as a translation for a given French sentence. Similarly, P (f | e) i
 
 Should we work directly on P (f | e), or apply Bayes’ rule and work on P (e | f)P (f)? In **diagnostic** applications like medicine, it is easier to model the domain in the causal di- rection: P (symptoms | disease) rather than P (disease | symptoms). But in translation both directions are equally easy. The earliest work in statistical machine translation did apply Bayes’ rule—in part because the researchers had a good language model, P (f), and wanted to make use of it, and in part because they came from a background in speech recognition, which _is_ a diagnostic problem. We follow their lead in this chapter, but we note that re- cent work in statistical machine translation often optimizes P (f | e) directly, using a more sophisticated model that takes into account many of the features from the language model.  
 
-910 Chapter 23. Natural Language for Communication
+
 
 The language model, P (f), could address any level(s) on the right-hand side of Fig- ure 23.12, but the easiest and most common approach is to build an n-gram model from a French corpus, as we have seen before. This captures only a partial, local idea of French sentences; however, that is often sufficient for rough translation.8
 
@@ -1625,7 +1625,7 @@ is a record of parliamentary debate. Canada, Hong Kong, and other countries pro-
 
 9 Named after William Hansard, who first published the British parliamentary debates in 1811.  
 
-912 Chapter 23. Natural Language for Communication
+
 
 example, /en/ for the English page and /fr/ for the corresponding French page. The leading statistical translation systems train on hundreds of millions of words of parallel text and billions of words of monolingual text.
 
@@ -1679,7 +1679,7 @@ Once we define the acoustic and language models, we can solve for the most likel
 
 as a single random variable taking on a finite set of values, which makes it a Hidden Markov Model (HMM). Thus, speech recognition becomes a simple application of the HMM method- ology, as described in Section 15.3—simple that is, once we define the acoustic and language models. We cover them next.  
 
-914 Chapter 23. Natural Language for Communication
+
 
 Vowels Consonants B–N Consonants P–Z
 
@@ -1739,7 +1739,7 @@ We have seen how to go from the raw acoustic signal to a series of observations,
 
 **Figure 23.15** Translating the acoustic signal into a sequence of frames. In this diagram each frame is described by the discretized values of three acoustic features; a real system would have dozens of features.  
 
-916 Chapter 23. Natural Language for Communication
+
 
 Phone HMM for \[m\]:
 
@@ -1849,7 +1849,7 @@ Part of the design of a voice user interface is to coerce the user into saying t
 
 The quality of a speech recognition system depends on the quality of all of its components— the language model, the word-pronunciation models, the phone models, and the signal- processing algorithms used to extract spectral features from the acoustic signal. We have discussed how the language model can be constructed from a corpus of written text, and we leave the details of signal processing to other textbooks. We are left with the pronunciation and phone models. The _structure_ of the pronunciation models—such as the tomato models in  
 
-918 Chapter 23. Natural Language for Communication
+
 
 Figure 23.17—is usually developed by hand. Large pronunciation dictionaries are now avail- able for English and other languages, although their accuracy varies greatly. The structure of the three-state phone models is the same for all phones, as shown in Figure 23.16. That leaves the probabilities themselves.
 
@@ -1895,7 +1895,7 @@ ful for programming languages. Definite clause grammars were introduced by Colme
 
 **Probabilistic context-free grammars** were investigated by Booth (1969) and Salo- maa (1969). Other algorithms for PCFGs are presented in the excellent short monograph by  
 
-920 Chapter 23. Natural Language for Communication
+
 
 Charniak (1993) and the excellent long textbooks by Manning and Schütze (1999) and Juraf- sky and Martin (2008). Baker (1979) introduces the inside–outside algorithm for learning a PCFG, and Lari and Young (1990) describe its uses and limitations. Stolcke and Omohundro (1994) show how to learn grammar rules with Bayesian model merging; Haghighi and Klein (2006) describe a learning system based on prototypes.
 
@@ -1927,7 +1927,7 @@ children have from birth. The so-called _Poverty of the Stimulus_ argument says 
 
 Wordnet (Fellbaum, 2001) is a publicly available dictionary of about 100,000 words and phrases, categorized into parts of speech and linked by semantic relations such as synonym, antonym, and part-of. The Penn Treebank (Marcus _et al._, 1993) provides parse trees for a 3-million-word corpus of English. Charniak (1996) and Klein and Manning (2001) discuss parsing with treebank grammars. The British National Corpus (Leech _et al._, 2001) contains 100 million words, and the World Wide Web contains several trillion words; (Brants _et al._, 2007) describe n-gram models over a 2-trillion-word Web corpus.  
 
-922 Chapter 23. Natural Language for Communication
+
 
 In the 1930s Petr Troyanskii applied for a patent for a “translating machine,” but there were no computers available to implement his ideas. In March 1947, the Rockefeller Founda- tion’s Warren Weaver wrote to Norbert Wiener, suggesting that machine translation might be possible. Drawing on work in cryptography and information theory, Weaver wrote, “When I look at an article in Russian, I say: ‘This is really written in English, but it has been coded in strange symbols. I will now proceed to decode.”’ For the next decade, the community tried to decode in this way. IBM exhibited a rudimentary system in 1954. Bar-Hillel (1960) de- scribes the enthusiasm of this period. However, the U.S. government subsequently reported (ALPAC, 1966) that “there is no immediate or predictable prospect of useful machine trans- lation.” However, limited work continued, and starting in the 1980s, computer power had increased to the point where the ALPAC findings were no longer correct.
 
@@ -1951,7 +1951,7 @@ The procedure is actually quite simple. First you arrange things into different 
 
 **23.2** An _HMM grammar_ is essentially a standard HMM whose state variable is N (nonter- minal, with values such as Det, Adjective, Noun and so on) and whose evidence variable is W (word, with values such as is, duck, and so on). The HMM model includes a prior **P**(N0), a transition model **P**(Nt+1|Nt), and a sensor model **P**(Wt|Nt). Show that every HMM gram- mar can be written as a PCFG. \[Hint: start by thinking about how the HMM prior can be represented by PCFG rules for the sentence symbol. You may find it helpful to illustrate for the particular HMM with values A, B for N and values x, y for W .\]  
 
-924 Chapter 23. Natural Language for Communication
+
 
 **23.3** Consider the following PCFG for simple verb phrases:
 
@@ -2039,7 +2039,7 @@ Show each step of the process and the final set of rules.
 
 **23.9** Using DCG notation, write a grammar for a language that is just like E1, except that it enforces agreement between the subject and verb of a sentence and thus does not generate ungrammatical sentences such as “I smells the wumpus.”  
 
-926 Chapter 23. Natural Language for Communication
+
 
 **23.10** Consider the following PCFG:
 
@@ -2159,7 +2159,7 @@ Image sensors gather light scattered from objects in a **scene** and create a tw
 
 about 100 million rods, which are sensitive to light at a wide range of wavelengths, and 5  
 
-930 Chapter 24. Perception
+
 
 **Figure 24.1** Imaging distorts geometry. Parallel lines appear to meet in the distance, as in the image of the railway tracks on the left. In the center, a small hand blocks out most of a large moon. On the right is a foreshortening effect: the hand is tilted away from the eye, making it appear shorter than in the center figure.
 
@@ -2265,7 +2265,7 @@ The drawback of the pinhole camera is that we need a small pinhole to keep the i
 
 to multiple locations on the image plane. If we can’t keep the pinhole open longer, we can try to make it bigger. More light will enter, but light from a small patch of object in the scene will now be spread over a patch on the image plane, causing a blurred image.  
 
-932 Chapter 24. Perception
+
 
 Iris Cornea Fovea
 
@@ -2337,7 +2337,7 @@ small patches where specular reflection has occurred, called **specularities**. 
 
 identify, because they are small and bright (Figure 24.4). For almost all purposes, it is enough to model all surfaces as being diffuse with specularities.  
 
-934 Chapter 24. Perception
+
 
 A B
 
@@ -2387,7 +2387,7 @@ We have seen how light reflects off objects in the scene to form an image consis
 
 In this section we will study three useful image-processing operations: edge detection, texture analysis, and computation of optical flow. These are called “early” or “low-level” operations because they are the first in a pipeline of operations. Early vision operations are characterized by their local nature (they can be carried out in one part of the image without regard for anything more than a few pixels away) and by their lack of knowledge: we can perform these operations without consideration of the objects that might be present in the scene. This makes the low-level operations good candidates for implementation in parallel hardware—either in a graphics processor unit (GPU) or an eye. We will then look at one mid-level operation: segmenting the image into regions.  
 
-936 Chapter 24. Perception
+
 
 **A B** 1
 
@@ -2455,7 +2455,7 @@ candidate edge at x= 75 has disappeared.
 
 The measurement of brightness at a pixel in a CCD camera is based on a physical process involving the absorption of photons and the release of electrons; inevitably there will be statistical fluctuations of the measurement—noise. The noise can be modeled with  
 
-938 Chapter 24. Perception
+
 
 a Gaussian probability distribution, with each pixel independent of the others. One way to smooth an image is to assign to each pixel the average of its neighbors. This tends to cancel out extreme values. But how many neighbors should we consider—one pixel away, or two, or more? One good answer is a weighted average that weights the nearest pixels the most, then gradually decreases the weight for more distant pixels. The **Gaussian filter** does just that.GAUSSIAN FILTER
 
@@ -2567,7 +2567,7 @@ Next, let us consider what happens when we have a video sequence, instead of jus
 
 describes the direction and speed of motion of features _in the image_—the optical flow of a  
 
-940 Chapter 24. Perception
+
 
 (a) (b)
 
@@ -2609,7 +2609,7 @@ A boundary curve passing through a pixel (x, y) will have an orientation θ, so 
 
 Boundaries detected by this technique turn out to be significantly better than those found using the simple edge-detection technique described previously. But still there are two limita- tions. (1) The boundary pixels formed by thresholding Pb(x, y, θ) are not guaranteed to form closed curves, so this approach doesn’t deliver regions, and (2) the decision making exploits only local context and does not use global consistency constraints.  
 
-942 Chapter 24. Perception
+
 
 (a) (b) (c) (d)
 
@@ -2641,7 +2641,7 @@ Postprocessing is important, because it is unlikely that we have chosen a window
 
 Training data is quite easily obtained. There are several data sets of marked-up face images, and rotated face windows are easy to build (just rotate a window from a training data set). One trick that is widely used is to take each example window, then produce new examples by changing the orientation of the window, the center of the window, or the scale very slightly. This is an easy way of getting a bigger data set that reflects real images fairly well; the trick usually improves performance significantly. Face detectors built along these lines now perform very well for frontal faces (side views are harder).  
 
-944 Chapter 24. Perception
+
 
 Image Responses Detections
 
@@ -2693,7 +2693,7 @@ The most obvious approach is to represent the image window with a histogram of t
 
 The World Bank estimates that each year car accidents kill about 1.2 million people, of whom about two thirds are pedestrians. This means that detecting pedestrians is an important appli- cation problem, because cars that can automatically detect and avoid pedestrians might save many lives. Pedestrians wear many different kinds of clothing and appear in many different configurations, but, at relatively low resolution, pedestrians can have a fairly characteristic appearance. The most usual cases are lateral or frontal views of a walk. In these cases,  
 
-946 Chapter 24. Perception
+
 
 Image Orientation histograms
 
@@ -2731,7 +2731,7 @@ Pedestrians are not the only type of object we can detect. In Figure 24.15 we se
 
 In this section we show how to go from the two-dimensional image to a three-dimensional representation of the scene. The fundamental question is this: Given that all points in the scene that fall along a ray to the pinhole are projected to the same point in the image, how do we recover three-dimensional information? Two ideas come to our rescue:  
 
-948 Chapter 24. Perception
+
 
 • If we have two (or more) images from different camera positions, then we can triangu- late to find the position of a point in the scene.
 
@@ -2829,7 +2829,7 @@ Note that to measure disparity we need to solve the correspondence problem, that
 
 Assuming that we can measure disparity, how does this yield information about depth in the scene? We will need to work out the geometrical relationship between disparity and depth. First, we will consider the case when both the eyes (or cameras) are looking forward with their optical axes parallel. The relationship of the right camera to the left camera is then just a displacement along the x-axis by an amount b, the baseline. We can use the optical flow equations from the previous section, if we think of this as resulting from a translation  
 
-950 Chapter 24. Perception
+
 
 _b_
 
@@ -2915,7 +2915,7 @@ Earlier we saw how texture was used for segmenting objects. It can also be used 
 
 They appear different in the image for two reasons:  
 
-952 Chapter 24. Perception
+
 
 (a) (b)
 
@@ -2949,7 +2949,7 @@ When we look at a line drawing, such as Figure 24.21, we get a vivid perception 
 
 • Occluding contours, such as the outlines of the hills. One side of the contour is nearer to the viewer, the other side is farther away. Features such as local convexity and sym-  
 
-954 Chapter 24. Perception
+
 
 **Figure 24.21** An evocative line drawing. (Courtesy of Isha Malik.)
 
@@ -2991,7 +2991,7 @@ feet are, and pedestrians whose feet are closer to the horizon in the image are 
 
 There are several strategies for finding the horizon, including searching for a roughly horizontal line with a lot of blue above it, and using surface orientation estimates obtained from texture deformation. A more elegant strategy exploits the reverse of our geometric constraints. A reasonably reliable pedestrian detector is capable of producing estimates of the horizon, if there are several pedestrians in the scene at different distances from the camera. This is because the relative scaling of the pedestrians is a cue to where the horizon is. So we can extract a horizon estimate from the detector, then use this estimate to prune the pedestrian detector’s mistakes.  
 
-956 Chapter 24. Perception
+
 
 If the object is familiar, we can estimate more than just the distance to it, because what it looks like in the image depends very strongly on its pose, i.e., its position and orientation with respect to the viewer. This has many applications. For instance, in an industrial manipulation task, the robot arm cannot pick up an object until the pose is known. In the case of rigid objects, whether three-dimensional or two-dimensional, this problem has a simple and well- defined solution based on the **alignment method**, which we now develop.ALIGNMENT METHOD
 
@@ -3037,7 +3037,7 @@ TEMPLATE
 
 never joined to the foot. The simplest deformable template model of a person connects lower arms to upper arms, upper arms to the torso, and so on. There are richer models: for example,  
 
-958 Chapter 24. Perception
+
 
 we could represent the fact that left and right upper arms tend to have the same color and texture, as do left and right legs. These richer models remain difficult to work with, however.
 
@@ -3079,7 +3079,7 @@ image, we can start with a poorly tuned appearance model, estimate configuration
 
 Tracking people in video is an important practical problem. If we could reliably report the location of arms, legs, torso, and head in video sequences, we could build much improved game interfaces and surveillance systems. Filtering methods have not had much success with this problem, because people can produce large accelerations and move quite fast. This means that for 30 Hz video, the configuration of the body in frame i doesn’t constrain the configuration of the body in frame i+1 all that strongly. Currently, the most effective methods exploit the fact that appearance changes very slowly from frame to frame. If we can infer an appearance model of an individual from the video, then we can use this information in a pictorial structure model to detect that person in each frame of the video. We can then link these locations across time to make a track.  
 
-960 Chapter 24. Perception
+
 
 Lateral walking detector
 
@@ -3119,7 +3119,7 @@ tions. When performed against a simple background, videos of these actions are e
 
 More general problems remain open. The big research question is to link observations of the body and the objects nearby to the goals and intentions of the moving people. One source of difficulty is that we lack a simple vocabulary of human behavior. Behavior is a lot  
 
-962 Chapter 24. Perception
+
 
 like color, in that people tend to think they know a lot of behavior names but can’t produce long lists of such words on demand. There is quite a lot of evidence that behaviors combine— you can, for example, drink a milkshake while visiting an ATM—but we don’t yet know what the pieces are, how the composition works, or how many composites there might be. A second source of difficulty is that we don’t know what features expose what is happening. For example, knowing someone is close to an ATM may be enough to tell that they’re visiting the ATM. A third difficulty is that the usual reasoning about the relationship between training and test data is untrustworthy. For example, we cannot argue that a pedestrian detector is safe simply because it performs well on a large data set, because that data set may well omit important, but rare, phenomena (for example, people mounting bicycles). We wouldn’t want our automated driver to run over a pedestrian who happened to do something unusual.
 
@@ -3157,7 +3157,7 @@ One of the principal uses of vision is to provide information both for manipulat
 
 Let us consider a vision system for an automated vehicle driving on a freeway. The tasks faced by the driver include the following:  
 
-964 Chapter 24. Perception
+
 
 a b c
 
@@ -3199,7 +3199,7 @@ Although perception appears to be an effortless activity for humans, it requires
 
 • Object recognition in its full generality is a very hard problem. We discussed brightness- based and feature-based approaches. We also presented a simple algorithm for pose estimation. Other possibilities exist.  
 
-966 Chapter 24. Perception
+
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
@@ -3233,7 +3233,7 @@ lem as not significant. Their motivating examples were in domains such as optica
 
 In the late 1990s, these two paradigms started to converge, as both sides adopted the probabilistic modeling and learning techniques that were becoming popular throughout AI. Two lines of work contributed significantly. One was research on face detection, such as that  
 
-968 Chapter 24. Perception
+
 
 of Rowley, Baluja and Kanade (1996), and of Viola and Jones (2002b) which demonstrated the power of pattern recognition techniques on clearly important and useful tasks. The other was the development of point descriptors, which enable one to construct feature vectors from parts of objects. This was pioneered by Schmid and Mohr (1996). Lowe’s (2004) SIFT descriptor is widely used. The HOG descriptor is due to Dalal and Triggs (2005).
 
@@ -3277,7 +3277,7 @@ EXERCISES
 
 **d**. Straight lines in the image necessarily correspond to straight lines in the scene.  
 
-970 Chapter 24. Perception
+
 
 E
 
@@ -3325,7 +3325,7 @@ PLANETARY ROVER shown in Figure 25.2(b) explored Mars for a period of 3 months i
 
 971  
 
-972 Chapter 25. Robotics
+
 
 (a) (b)
 
@@ -3371,7 +3371,7 @@ days of robotics, robots were commonly equipped with **sonar sensors**. Sonar se
 
 directional sound waves, which are reflected by objects, with some of the sound making it  
 
-974 Chapter 25. Robotics
+
 
 (a) (b)
 
@@ -3439,7 +3439,7 @@ For nonrigid bodies, there are additional degrees of freedom within the robot it
 
 2 “Kinematic” is from the Greek word for _motion_, as is “cinema.”  
 
-976 Chapter 25. Robotics
+
 
 has exactly six degrees of freedom, created by five **revolute joints** that generate rotationalREVOLUTE JOINT
 
@@ -3499,7 +3499,7 @@ manipulator actuation and locomotion, but **pneumatic actuation** using compress
 
 **hydraulic actuation** using pressurized fluids also have their application niches.HYDRAULIC ACTUATION  
 
-978 Chapter 25. Robotics
+
 
 (a) (b)
 
@@ -3547,7 +3547,7 @@ To keep things simple, let us consider a mobile robot that moves slowly in a fla
 
  . So far so good.  
 
-980 Chapter 25. Robotics
+
 
 _xi_, _yi_
 
@@ -3647,7 +3647,7 @@ The Kalman filter is the other major way to localize. A Kalman filter represents
 
 nonlinear function by a linear function. Figure 25.11 illustrates the concept of linearization for a (one-dimensional) robot motion model. On the left, it depicts a nonlinear motion model f(**x**t, at) (the control at is omitted in this graph since it plays no role in the linearization). On the right, this function is approximated by a linear function f̃(xt, at). This linear function is tangent to f at the point **μ**t, the mean of our state estimate at time t. Such a linearization  
 
-982 Chapter 25. Robotics
+
 
 **function** MONTE-CARLO-LOCALIZATION(a , z , N , P (X ′|X, v, ω), P (z|z∗), m) **returns** a set of samples for the next time step
 
@@ -3711,7 +3711,7 @@ Robot position
 
 **Figure 25.10** Monte Carlo localization, a particle filtering algorithm for mobile robot lo- calization. (a) Initial, global uncertainty. (b) Approximately bimodal uncertainty after navi- gating in the (symmetric) corridor. (c) Unimodal uncertainty after entering a room and finding it to be distinctive.  
 
-984 Chapter 25. Robotics
+
 
 _X t+_1
 
@@ -3807,7 +3807,7 @@ Another machine learning technique enables robots to continuously adapt to broad
 
 Adaptive perception techniques enable robots to adjust to such changes. One example is shown in Figure 25.13, taken from the autonomous driving domain. Here an unmanned ground vehicle adapts its classifier of the concept “drivable surface.” How does this work? The robot uses a laser to provide classification for a small area right in front of the robot. When this area is found to be flat in the laser range scan, it is used as a positive training example for the concept “drivable surface.” A mixture-of-Gaussians technique similar to the EM algorithm discussed in Chapter 20 is then trained to recognize the specific color and texture coefficients of the small sample patch. The images in Figure 25.13 are the result of applying this classifier to the full image.  
 
-986 Chapter 25. Robotics
+
 
 Methods that make robots collect their own training data (with labels!) are called **self- supervised**. In this instance, the robot uses machine learning to leverage a short-range sensorSELF-SUPERVISED
 
@@ -3877,7 +3877,7 @@ KINEMATICS
 
 kinematics is hard, especially for robots with many DOFs. In particular, the solution is seldom unique. Figure 25.14(a) shows one of two possible configurations that put the gripper in the same location. (The other configuration would has the elbow below the shoulder.)  
 
-988 Chapter 25. Robotics
+
 
 conf-3
 
@@ -3923,7 +3923,7 @@ algorithm to find a shortest path. Such a decomposition has the advantage that i
 
 it also suffers from three limitations. First, it is workable only for low-dimensional configu- ration spaces, because the number of grid cells increases exponentially with d, the number of dimensions. Sounds familiar? This is the curse!dimensionality@of dimensionality. Second, there is the problem of what to do with cells that are “mixed”—that is, neither entirely within free space nor entirely within occupied space. A solution path that includes such a cell may not be a real solution, because there may be no way to cross the cell in the desired direction in a straight line. This would make the path planner _unsound_. On the other hand, if we insist that only completely free cells may be used, the planner will be _incomplete_, because it might  
 
-990 Chapter 25. Robotics
+
 
 start goal
 
@@ -3971,7 +3971,7 @@ Figure 25.18 shows an example skeletonization: it is a **Voronoi graph** of the 
 
 space—the set of all points that are equidistant to two or more obstacles. To do path plan- ning with a Voronoi graph, the robot first changes its present configuration to a point on the Voronoi graph. It is easy to show that this can always be achieved by a straight-line motion in configuration space. Second, the robot follows the Voronoi graph until it reaches the point nearest to the target configuration. Finally, the robot leaves the Voronoi graph and moves to the target. Again, this final step involves straight-line motion in configuration space.  
 
-992 Chapter 25. Robotics
+
 
 start goal
 
@@ -4001,7 +4001,7 @@ Most of today’s robots use deterministic algorithms for decision making, such 
 
 gorithm. The advantage of this approach is purely computational. Planning paths through configuration space is already a challenging problem; it would be worse if we had to work with a full probability distribution over states. Ignoring uncertainty in this way works when the uncertainty is small. In fact, when the environment model changes over time as the result of incorporating sensor measurements, many robots plan paths online during plan execution. This is the **online replanning** technique of Section 11.3.3.ONLINE REPLANNING  
 
-994 Chapter 25. Robotics
+
 
 Unfortunately, ignoring the uncertainty does not always work. In some problems the robot’s uncertainty is simply too massive: How can we use a deterministic path planner to control a mobile robot that has no clue where it is? In general, if the robot’s true state is not the one identified by the maximum likelihood rule, the resulting control will be suboptimal. Depending on the magnitude of the error this can lead to all sorts of unwanted effects, such as collisions with obstacles.
 
@@ -4061,7 +4061,7 @@ consists of (1) a motion command and (2) a termination condition, which is a pre
 
 command would cause collision with an obstacle. As an example, Figure 25.19 shows a two- dimensional configuration space with a narrow vertical hole. It could be the configuration space for insertion of a rectangular peg into a hole or a car key into the ignition. The motion commands are constant velocities. The termination conditions are contact with a surface. To model uncertainty in control, we assume that instead of moving in the commanded direction, the robot’s actual motion lies in the cone Cv about it. The figure shows what would happen  
 
-996 Chapter 25. Robotics
+
 
 v Cv
 
@@ -4103,7 +4103,7 @@ REFERENCE PATH that optimize a global cost function are known as **optimal contr
 
 On the surface, the problem of keeping a robot on a prespecified path appears to be relatively straightforward. In practice, however, even this seemingly simple problem has its pitfalls. Figure 25.22(a) illustrates what can go wrong; it shows the path of a robot that attempts to follow a kinematic path. Whenever a deviation occurs—whether due to noise or to constraints on the forces the robot can apply—the robot provides an opposing force whose magnitude is proportional to this deviation. Intuitively, this might appear plausible, since deviations should be compensated by a counterforce to keep the robot on track. However,  
 
-998 Chapter 25. Robotics
+
 
 (a) (b) (c)
 
@@ -4171,7 +4171,7 @@ for a variety of control problems.
 
 We introduced potential fields as an additional cost function in robot motion planning, but they can also be used for generating robot motion directly, dispensing with the path planning phase altogether. To achieve this, we have to define an attractive force that pulls the robot towards its goal configuration and a repellent potential field that pushes the robot away from obstacles. Such a potential field is shown in Figure 25.23. Its single global minimum is  
 
-1000 Chapter 25. Robotics
+
 
 start
 
@@ -4221,7 +4221,7 @@ It is possible, nonetheless, to specify a controller directly without an explici
 
 the right front, right rear, and left center legs forward (keeping the other three fixed), and then move the other three. This gait works well on flat terrain. On rugged terrain, obstacles may prevent a leg from swinging forward. This problem can be overcome by a remarkably simple control rule: _when a leg’s forward motion is blocked, simply retract it, lift it higher,_  
 
-1002 Chapter 25. Robotics
+
 
 **Figure 25.25** Multiple exposures of an RC helicopter executing a flip based on a policy learned with reinforcement learning. Images courtesy of Andrew Ng, Stanford University.
 
@@ -4269,7 +4269,7 @@ which generates cyclic leg motion for a hexapod walker. This AFSM implements a c
 
 The subsumption architecture offers additional primitives for synchronizing AFSMs, and for combining output values of multiple, possibly conflicting AFSMs. In this way, it enables the programmer to compose increasingly complex controllers in a bottom-up fashion.  
 
-1004 Chapter 25. Robotics
+
 
 In our example, we might begin with AFSMs for individual legs, followed by an AFSM for coordinating multiple legs. On top of this, we might implement higher-level behaviors such as collision avoidance, which might involve backing up and turning.
 
@@ -4423,7 +4423,7 @@ LAYER
 
 PERCEPTION LAYER  
 
-1006 Chapter 25. Robotics
+
 
 (a) (b)
 
@@ -4463,7 +4463,7 @@ Many of these robots require environmental modifications for their operation. Th
 
 Progress in robotic cars was stimulated by the DARPA Grand Challenge, a race over 100 miles of unrehearsed desert terrain, which represented a much more challenging task than  
 
-1008 Chapter 25. Robotics
+
 
 (a) (b)
 
@@ -4501,7 +4501,7 @@ cer, but played with autonomous mobile robots. Robot soccer provides great oppor
 
 **Human augmentation.** A final application domain of robotic technology is that of human augmentation. Researchers have developed legged walking machines that can carry people around, very much like a wheelchair. Several research efforts presently focus on the development of devices that make it easier for people to walk or move their arms by providing additional forces through extraskeletal attachments. If such devices are attached permanently,  
 
-1010 Chapter 25. Robotics
+
 
 they can be thought of as artificial robotic limbs. Figure 25.30(b) shows a robotic hand that may serve as a prosthetic device in the future.
 
@@ -4545,7 +4545,7 @@ robot, short for Programmable Universal Machine for Assembly. The PUMA robot, in
 
 The literature on robotics research can be divided roughly into two parts: mobile robots and stationary manipulators. Grey Walter’s “turtle,” built in 1948, could be considered the first autonomous mobile robot, although its control system was not programmable. The “Hop- kins Beast,” built in the early 1960s at Johns Hopkins University, was much more sophisti- cated; it had pattern-recognition hardware and could recognize the cover plate of a standard AC power outlet. It was capable of searching for outlets, plugging itself in, and then recharg- ing its batteries! Still, the Beast had a limited repertoire of skills. The first general-purpose mobile robot was “Shakey,” developed at what was then the Stanford Research Institute (now  
 
-1012 Chapter 25. Robotics
+
 
 SRI) in the late 1960s (Fikes and Nilsson, 1971; Nilsson, 1984). Shakey was the first robot to integrate perception, planning, and execution, and much subsequent research in AI was influenced by this remarkable achievement. Shakey appears on the cover of this book with project leader Charlie Rosen (1917–2002). Other influential projects include the Stanford Cart and the CMU Rover (Moravec, 1983). Cox and Wilfong (1990) describes classic work on autonomous vehicles.
 
@@ -4591,7 +4591,7 @@ The topic of software architectures for robots engenders much religious debate. 
 
 Research on mobile robotics has been stimulated over the last decade by several impor- tant competitions. The earliest competition, AAAI’s annual mobile robot competition, began in 1992. The first competition winner was CARMEL (Congdon _et al._, 1992). Progress has  
 
-1014 Chapter 25. Robotics
+
 
 been steady and impressive: in more recent competitions robots entered the conference com- plex, found their way to the registration desk, registered for the conference, and even gave a short talk. The **Robocup** competition, launched in 1995 by Kitano and colleagues (1997a),ROBOCUP
 
@@ -4657,7 +4657,7 @@ What are the KL divergences between the distributions in (a) and the true poster
 
 **25.3** Consider a robot with two simple manipulators, as shown in figure 25.31. Manipulator A is a square block of side 2 which can slide back and on a rod that runs along the x-axis from x=−10 to x=10. Manipulator B is a square block of side 2 which can slide back and on a rod that runs along the y-axis from y=−10 to y=10. The rods lie outside the plane of  
 
-1016 Chapter 25. Robotics
+
 
 manipulation, so the rods do not interfere with the movement of the blocks. A configuration is then a pair 〈x, y〉 where x is the x-coordinate of the center of manipulator A and where y is the y-coordinate of the center of manipulator B. Draw the configuration space for this robot, indicating the permitted and excluded zones.
 
@@ -4707,7 +4707,7 @@ The state of such a robot can be characterized in terms of three parameters 〈x
 
 **a**. Suppose that the robot is initially at 〈0, 0, 0〉 and then executes the actions Rotate(60◦), Roll(1), Rotate(25◦), Roll(2). What is the final state of the robot?  
 
-1018 Chapter 25. Robotics
+
 
 robot
 

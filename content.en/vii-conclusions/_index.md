@@ -53,7 +53,7 @@ The “argument from disability” makes the claim that “a machine can never d
 
 Be kind, resourceful, beautiful, friendly, have initiative, have a sense of humor, tell right from wrong, make mistakes, fall in love, enjoy strawberries and cream, make someone fall in love with it, learn from experience, use words properly, be the subject of its own thought, have as much diversity of behavior as man, do something really new.  
 
-1022 Chapter 26. Philosophical Foundations
+
 
 In retrospect, some of these are rather easy—we’re all familiar with computers that “make mistakes.” We are also familiar with a century-old technology that has had a proven ability to “make someone fall in love with it”—the teddy bear. Computer chess expert David Levy predicts that by 2050 people will routinely fall in love with humanoid robots (Levy, 2007). As for a robot falling in love, that is a common theme in fiction,1 but there has been only lim- ited speculation about whether it is in fact likely (Kim _et al._, 2007). Programs do play chess, checkers and other games; inspect parts on assembly lines, steer cars and helicopters; diag- nose diseases; and do hundreds of other tasks as well as or better than humans. Computers have made small but significant discoveries in astronomy, mathematics, chemistry, mineral- ogy, biology, computer science, and other fields. Each of these required performance at the level of a human expert.
 
@@ -83,7 +83,7 @@ If Lucas asserted this sentence, then he would be contradicting himself, so ther
 
 Third, and most important, even if we grant that computers have limitations on what they can prove, there is no evidence that humans are immune from those limitations. It is all too easy to show rigorously that a formal system cannot do X, and then claim that hu- mans _can_ do X using their own informal method, without giving any evidence for this claim. Indeed, it is impossible to _prove_ that humans are not subject to Gödel’s incompleteness theo- rem, because any rigorous proof would require a formalization of the claimed unformalizable human talent, and hence refute itself. So we are left with an appeal to intuition that humans can somehow perform superhuman feats of mathematical insight. This appeal is expressed with arguments such as “we must assume our own consistency, if thought is to be possible at all” (Lucas, 1976). But if anything, humans are known to be inconsistent. This is certainly true for everyday reasoning, but it is also true for careful mathematical thought. A famous example is the four-color map problem. Alfred Kempe published a proof in 1879 that was widely accepted and contributed to his election as a Fellow of the Royal Society. In 1890, however, Percy Heawood pointed out a flaw and the theorem remained unproved until 1977.  
 
-1024 Chapter 26. Philosophical Foundations
+
 
 **26.1.3 The argument from informality**
 
@@ -117,7 +117,7 @@ In sum, many of the issues Dreyfus has focused on—background commonsense knowl
 
 One of Dreyfus’ strongest arguments is for situated agents rather than disembodied logical inference engines. An agent whose understanding of “dog” comes only from a limited set of logical sentences such as “Dog(x) ⇒ Mammal (x)” is at a disadvantage compared to an agent that has watched dogs run, has played fetch with them, and has been licked by one. As philosopher Andy Clark (1998) says, “Biological brains are first and foremost the control systems for biological bodies. Biological bodies move and act in rich real-world  
 
-1026 Chapter 26. Philosophical Foundations
+
 
 surroundings.” To understand how human (or other animal) agents work, we have to consider the whole agent, not just the agent program. Indeed, the **embodied cognition** approach claimsEMBODIED
 
@@ -165,7 +165,7 @@ ious schools of Hindu thought, but was first analyzed in depth by the 17th-centu
 
 alists is the question of how the mind can control the body if the two are really separate. Descartes speculated that the two might interact through the pineal gland, which simply begs the question of how the mind controls the pineal gland.  
 
-1028 Chapter 26. Philosophical Foundations
+
 
 The **monist** theory of mind, often called **physicalism**, avoids this problem by assertingMONISM
 
@@ -209,7 +209,7 @@ You find, to your total amazement, that you are indeed losing control of your ex
 
 3 One can imagine using an identical “control” subject who is given a placebo operation, for comparison.  
 
-1030 Chapter 26. Philosophical Foundations
+
 
 to cry out “I can’t see anything. I’m going totally blind.” But you hear your voice saying in a way that is completely out of your control, “I see a red object in front of me.” . . .
 
@@ -251,7 +251,7 @@ Like Turing, Searle considered and attempted to rebuff a number of replies to hi
 
 4 The fact that the stacks of paper might contain trillions of pages and the generation of answers would take millions of years has no bearing on the _logical_ structure of the argument. One aim of philosophical training is to develop a finely honed sense of which objections are germane and which are not.  
 
-1032 Chapter 26. Philosophical Foundations
+
 
 water is wet, even though neither H nor O2 is. The real claim made by Searle rests upon the following four axioms (Searle, 1990):
 
@@ -299,7 +299,7 @@ humans are simply incapable of forming a proper understanding of their own consc
 
 Turing himself concedes that the question of consciousness is a difficult one, but denies that it has much relevance to the practice of AI: “I do not wish to give the impression that I think there is no mystery about consciousness . . . But I do not think these mysteries neces- sarily need to be solved before we can answer the question with which we are concerned in this paper.” We agree with Turing—we are interested in creating programs that behave intel- ligently. The additional project of making them conscious is not one that we are equipped to take on, nor one whose success we would be able to determine.  
 
-1034 Chapter 26. Philosophical Foundations
+
 
 26.3 THE ETHICS AND RISKS OF DEVELOPING ARTIFICIAL INTELLIGENCE
 
@@ -325,7 +325,7 @@ The only one of these predictions that has come close to panning out is the numb
 
 Weizenbaum (1976) also pointed out that speech recognition technology could lead to widespread wiretapping, and hence to a loss of civil liberties. He didn’t foresee a world with terrorist threats that would change the balance of how much surveillance people are willing to  
 
-1036 Chapter 26. Philosophical Foundations
+
 
 accept, but he did correctly recognize that AI has the potential to mass-produce surveillance. His prediction has in part come true: the U.K. now has an extensive network of surveillance cameras, and other countries routinely monitor Web traffic and telephone calls. Some accept that computerization leads to a loss of privacy—Sun Microsystems CEO Scott McNealy has said “You have zero privacy anyway. Get over it.” David Brin (1998) argues that loss of privacy is inevitable, and the way to combat the asymmetry of power of the state over the individual is to make the surveillance accessible to all citizens. Etzioni (2004) argues for a balancing of privacy and security; individual rights and community.
 
@@ -353,7 +353,7 @@ intellectual activities of any man however clever. Since the design of machines 
 
 5 As a young man, Charles Babbage was influenced by reading _Frankenstein_.  
 
-1038 Chapter 26. Philosophical Foundations
+
 
 The “intelligence explosion” has also been called the **technological singularity** by mathe-TECHNOLOGICAL SINGULARITY
 
@@ -391,7 +391,7 @@ Omohundro (2008) hypothesizes that even an innocuous chess program could pose a 
 
 6 A robot might notice the inequity that a human is allowed to kill another in self-defense, but a robot is required to sacrifice its own life to save a human.  
 
-1040 Chapter 26. Philosophical Foundations
+
 
 We should note that the idea of safeguards against change in utility function is not a new one. In the _Odyssey_, Homer (ca. 700 B.C.) described Ulysses’ encounter with the sirens, whose song was so alluring it compelled sailors to cast themselves into the sea. Knowing it would have that effect on him, Ulysses ordered his crew to bind him to the mast so that he could not perform the self-destructive act. It is interesting to think how similar safeguards could be built into AI systems.
 
@@ -431,7 +431,7 @@ Modern analytic philosophy has typically accepted physicalism, but the variety o
 
 device to generate identical brain states with different (wide) content.  
 
-1042 Chapter 26. Philosophical Foundations
+
 
 Functionalism is the philosophy of mind most naturally suggested by AI. The idea that mental states correspond to classes of brain states defined functionally is due to Putnam (1960, 1967) and Lewis (1966, 1980). Perhaps the most forceful proponent of functional- ism is Daniel Dennett, whose ambitiously titled work _Consciousness Explained_ (Dennett, 1991) has attracted many attempted rebuttals. Metzinger (2009) argues there is no such thing as an objective _self_, that consciousness is the subjective appearance of a world. The inverted spectrum argument concerning qualia was introduced by John Locke (1690). Frank Jack- son (1982) designed an influential thought experiment involving Mary, a color scientist who has been brought up in an entirely black-and-white world. _There’s Something About Mary_ (Ludlow _et al._, 2004) collects several papers on this topic.
 
@@ -519,7 +519,7 @@ Thus, we see that AI systems are at the cusp of moving from primarily software-o
 
 Another problem is that, although the approximate filtering algorithms from Chapter 15 can handle quite large environments, they are still dealing with a factored representation— they have random variables, but do not represent objects and relations explicitly. Section 14.6 explained how probability and first-order logic can be combined to solve this problem, and  
 
-1046 Chapter 27. AI: The Present and Future
+
 
 Section 14.6.3 showed how we can handle uncertainty about the identity of objects. We expect that the application of these ideas for tracking complex environments will yield huge benefits. However, we are still faced with a daunting task of defining general, reusable representation schemes for complex domains. As discussed in Chapter 12, we don’t yet know how to do that in general; only for isolated, simple domains. It is possible that a new focus on probabilistic rather than logical representation coupled with aggressive machine learning (rather than hand- encoding of knowledge) will allow for progress.
 
@@ -555,7 +555,7 @@ important property of hybrid architectures is that the boundaries between differ
 
 Agents also need ways to control their own deliberations. They must be able to cease deliberating when action is demanded, and they must be able to use the time available for deliberation to execute the most profitable computations. For example, a taxi-driving agent that sees an accident ahead must decide in a split second either to brake or to take evasive action. It should also spend that split second thinking about the most important questions, such as whether the lanes to the left and right are clear and whether there is a large truck close behind, rather than worrying about wear and tear on the tires or where to pick up the next passenger. These issues are usually studied under the heading of **real-time AI**. As AIREAL-TIME AI  
 
-1048 Chapter 27. AI: The Present and Future
+
 
 Percepts
 
@@ -613,7 +613,7 @@ The capacity of the human mind for formulating and solving complex problems is v
 
 He suggested that bounded rationality works primarily by **satisficing—that** is, deliberating only long enough to come up with an answer that is “good enough.” Simon won the Nobel Prize in economics for this work and has written about it in depth (Simon, 1982). It appears to be a useful model of human behaviors in many cases. It is not a formal specification for intelligent agents, however, because the definition of “good enough” is not given by the theory. Furthermore, satisficing seems to be just one of a large range of methods used to cope with bounded resources.  
 
-1050 Chapter 27. AI: The Present and Future
+
 
 **Bounded optimality** (BO). A bounded optimal agent behaves as well as possible, _given its_BOUNDED OPTIMALITY
 
@@ -651,7 +651,7 @@ We can expect that medium-level successes in AI would affect all kinds of people
 
 Finally, it seems likely that a large-scale success in AI—the creation of human-level in- telligence and beyond—would change the lives of a majority of humankind. The very nature of our work and play would be altered, as would our view of intelligence, consciousness, and the future destiny of the human race. AI systems at this level of capability could threaten hu- man autonomy, freedom, and even survival. For these reasons, we cannot divorce AI research from its ethical consequences (see Section 26.3).  
 
-1052 Chapter 27. AI: The Present and Future
+
 
 Which way will the future go? Science fiction authors seem to favor dystopian futures over utopian ones, probably because they make for more interesting plots. But so far, AI seems to fit in with other revolutionary technologies (printing, plumbing, air travel, telephony) whose negative repercussions are outweighed by their positive aspects.
 
