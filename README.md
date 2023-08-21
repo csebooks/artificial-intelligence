@@ -1,2 +1,4 @@
-# artificial-intelligence
-The Digital Book for artificial intelligence
+# Dev
+```sh
+hugo server --themesDir ../
+```
