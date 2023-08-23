@@ -501,7 +501,7 @@ An example of such a hypothesis for the two-input earthquake/explosion problem i
 
 The process of fitting the weights of this model to minimize loss on a data set is called **logistic regression**. There is no easy closed-form solution to find the optimal value of **w** with this model, but the gradient descent computation is straightforward. Because our hypotheses no longer output just 0 or 1, we will use the L2 loss function; also, to keep the formulas readable, we’ll use g to stand for the logistic function, with g′ its derivative. For a single example (**x**, y), the derivation of the gradient is the same as for linear regression (Equation (18.5)) up to the point where the actual form of h is inserted. (For this derivation, we will need the **chain rule**: ∂g(f(x))/∂x= g
 
-′(f(x)) ∂f(x)/∂x.) We haveCHAIN RULE
+′(f(x)) ∂f(x)/∂x.) We have
 
 ∂
 
