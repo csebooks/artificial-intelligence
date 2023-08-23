@@ -7,11 +7,61 @@ weight: 13
 
 Bibliography The following abbreviations are used for frequently cited conferences and journals:
 
-**AAAI** Proceedings of the AAAI Conference on Artificial Intelligence **AAMAS** Proceedings of the International Conference on Autonomous Agents and Multi-agent Systems **ACL** Proceedings of the Annual Meeting of the Association for Computational Linguistics **AIJ** Artificial Intelligence **AIMag** AI Magazine **AIPS** Proceedings of the International Conference on AI Planning Systems **BBS** Behavioral and Brain Sciences **CACM** Communications of the Association for Computing Machinery **COGSCI** Proceedings of the Annual Conference of the Cognitive Science Society **COLING** Proceedings of the International Conference on Computational Linguistics **COLT** Proceedings of the Annual ACM Workshop on Computational Learning Theory **CP** Proceedings of the International Conference on Principles and Practice of Constraint Programming **CVPR** Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition **EC** Proceedings of the ACM Conference on Electronic Commerce **ECAI** Proceedings of the European Conference on Artificial Intelligence **ECCV** Proceedings of the European Conference on Computer Vision **ECML** Proceedings of the The European Conference on Machine Learning **ECP** Proceedings of the European Conference on Planning **FGCS** Proceedings of the International Conference on Fifth Generation Computer Systems **FOCS** Proceedings of the Annual Symposium on Foundations of Computer Science **ICAPS** Proceedings of the International Conference on Automated Planning and Scheduling **ICASSP** Proceedings of the International Conference on Acoustics, Speech, and Signal Processing **ICCV** Proceedings of the International Conference on Computer Vision **ICLP** Proceedings of the International Conference on Logic Programming **ICML** Proceedings of the International Conference on Machine Learning **ICPR** Proceedings of the International Conference on Pattern Recognition **ICRA** Proceedings of the IEEE International Conference on Robotics and Automation **ICSLP** Proceedings of the International Conference on Speech and Language Processing **IJAR** International Journal of Approximate Reasoning **IJCAI** Proceedings of the International Joint Conference on Artificial Intelligence **IJCNN** Proceedings of the International Joint Conference on Neural Networks **IJCV** International Journal of Computer Vision **ILP** Proceedings of the International Workshop on Inductive Logic Programming **ISMIS** Proceedings of the International Symposium on Methodologies for Intelligent Systems **ISRR** Proceedings of the International Symposium on Robotics Research **JACM** Journal of the Association for Computing Machinery **JAIR** Journal of Artificial Intelligence Research **JAR** Journal of Automated Reasoning **JASA** Journal of the American Statistical Association **JMLR** Journal of Machine Learning Research **JSL** Journal of Symbolic Logic **KDD** Proceedings of the International Conference on Knowledge Discovery and Data Mining **KR** Proceedings of the International Conference on Principles of Knowledge Representation and Reasoning **LICS** Proceedings of the IEEE Symposium on Logic in Computer Science **NIPS** Advances in Neural Information Processing Systems **PAMI** IEEE Transactions on Pattern Analysis and Machine Intelligence **PNAS** Proceedings of the National Academy of Sciences of the United States of America **PODS** Proceedings of the ACM International Symposium on Principles of Database Systems **SIGIR** Proceedings of the Special Interest Group on Information Retrieval **SIGMOD** Proceedings of the ACM SIGMOD International Conference on Management of Data **SODA** Proceedings of the Annual ACM–SIAM Symposium on Discrete Algorithms **STOC** Proceedings of the Annual ACM Symposium on Theory of Computing **TARK** Proceedings of the Conference on Theoretical Aspects of Reasoning about Knowledge **UAI** Proceedings of the Conference on Uncertainty in Artificial Intelligence
+**AAAI** Proceedings of the AAAI Conference on Artificial Intelligence 
+**AAMAS** Proceedings of the International Conference on Autonomous Agents and Multi-agent Systems 
+**ACL** Proceedings of the Annual Meeting of the Association for Computational Linguistics 
+**AIJ** Artificial Intelligence 
+**AIMag** AI Magazine 
+**AIPS** Proceedings of the International Conference on AI Planning Systems 
+**BBS** Behavioral and Brain Sciences 
+**CACM** Communications of the Association for Computing Machinery 
+**COGSCI** Proceedings of the Annual Conference of the Cognitive Science Society 
+**COLING** Proceedings of the International Conference on Computational Linguistics 
+**COLT** Proceedings of the Annual ACM Workshop on Computational Learning Theory 
+**CP** Proceedings of the International Conference on Principles and Practice of Constraint Programming 
+**CVPR** Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition 
+**EC** Proceedings of the ACM Conference on Electronic Commerce 
+**ECAI** Proceedings of the European Conference on Artificial Intelligence 
+**ECCV** Proceedings of the European Conference on Computer Vision 
+**ECML** Proceedings of the The European Conference on Machine Learning 
+**ECP** Proceedings of the European Conference on Planning 
+**FGCS** Proceedings of the International Conference on Fifth Generation Computer Systems 
+**FOCS** Proceedings of the Annual Symposium on Foundations of Computer Science 
+**ICAPS** Proceedings of the International Conference on Automated Planning and Scheduling 
+**ICASSP** Proceedings of the International Conference on Acoustics, Speech, and Signal Processing 
+**ICCV** Proceedings of the International Conference on Computer Vision
+**ICLP** Proceedings of the International Conference on Logic Programming 
+**ICML** Proceedings of the International Conference on Machine Learning 
+**ICPR** Proceedings of the International Conference on Pattern Recognition 
+**ICRA** Proceedings of the IEEE International Conference on Robotics and Automation 
+**ICSLP** Proceedings of the International Conference on Speech and Language Processing 
+**IJAR** International Journal of Approximate Reasoning 
+**IJCAI** Proceedings of the International Joint Conference on Artificial Intelligence 
+**IJCNN** Proceedings of the International Joint Conference on Neural Networks 
+**IJCV** International Journal of Computer Vision 
+**ILP** Proceedings of the International Workshop on Inductive Logic Programming 
+**ISMIS** Proceedings of the International Symposium on Methodologies for Intelligent Systems 
+**ISRR** Proceedings of the International Symposium on Robotics Research 
+**JACM** Journal of the Association for Computing Machinery 
+**JAIR** Journal of Artificial Intelligence Research 
+**JAR** Journal of Automated Reasoning 
+**JASA** Journal of the American Statistical Association 
+**JMLR** Journal of Machine Learning Research 
+**JSL** Journal of Symbolic Logic 
+**KDD** Proceedings of the International Conference on Knowledge Discovery and Data Mining 
+**KR** Proceedings of the International Conference on Principles of Knowledge Representation and Reasoning 
+**LICS** Proceedings of the IEEE Symposium on Logic in Computer Science 
+**NIPS** Advances in Neural Information Processing Systems 
+**PAMI** IEEE Transactions on Pattern Analysis and Machine Intelligence 
+**PNAS** Proceedings of the National Academy of Sciences of the United States of America 
+**PODS** Proceedings of the ACM International Symposium on Principles of Database Systems 
+**SIGIR** Proceedings of the Special Interest Group on Information Retrieval 
+**SIGMOD** Proceedings of the ACM SIGMOD International Conference on Management of Data 
+**SODA** Proceedings of the Annual ACM–SIAM Symposium on Discrete Algorithms 
+**STOC** Proceedings of the Annual ACM Symposium on Theory of Computing 
+**TARK** Proceedings of the Conference on Theoretical Aspects of Reasoning about Knowledge 
+**UAI** Proceedings of the Conference on Uncertainty in Artificial Intelligence
 
-1063  
-
-1064 Bibliography
 
 **Aarup**, M., Arentoft, M. M., Parrod, Y., Stader, J., and Stokes, I. (1994). OPTIMUM-AIV: A knowledge-based planning and scheduling system for spacecraft AIV. In Fox, M. and Zweben, M. (Eds.), _Knowledge Based Scheduling_. Morgan Kauf- mann.
 
@@ -146,8 +196,6 @@ Bibliography The following abbreviations are used for frequently cited conferenc
 **Bacchus**, F. and Grove, A. (1995). Graphical models for preference and utility. In _UAI-95_, pp. 3–10.
 
 **Bacchus**, F. and Grove, A. (1996). Utility indepen- dence in a qualitative decision theory. In _KR-96_, pp. 542–552.  
-
-Bibliography 1065
 
 **Bacchus**, F., Grove, A., Halpern, J. Y., and Koller, D. (1992). From statistics to beliefs. In _AAAI-92_, pp. 602–608.
 
@@ -287,8 +335,6 @@ Bibliography 1065
 
 **Berry**, D. A. and Fristedt, B. (1985). _Bandit Prob- lems: Sequential Allocation of Experiments_. Chap- man and Hall.  
 
-1066 Bibliography
-
 **Bertele**, U. and Brioschi, F. (1972). _Nonserial dy- namic programming_. Academic Press.
 
 **Bertoli**, P., Cimatti, A., and Roveri, M. (2001a). Heuristic search + symbolic model checking = ef- ficient conformant planning. In _IJCAI-01_, pp. 467– 472.
@@ -423,8 +469,6 @@ Bibliography 1065
 
 **Boyer**, R. S. and Moore, J. S. (1984). Proof checking the RSA public key encryption algorithm. _American Mathematical Monthly_, _91_(3), 181–189.  
 
-Bibliography 1067
-
 **Brachman**, R. J. (1979). On the epistemologi- cal status of semantic networks. In Findler, N. V. (Ed.), _Associative Networks: Representation and Use of Knowledge by Computers_, pp. 3–50. Aca- demic Press.
 
 **Brachman**, R. J., Fikes, R. E., and Levesque, H. J. (1983). Krypton: A functional approach to knowl- edge representation. _Computer_, _16_(10), 67–73.
@@ -554,8 +598,6 @@ Bibliography 1067
 **Calvanese**, D., Lenzerini, M., and Nardi, D. (1999). Unifying class-based representation for- malisms. _JAIR_, _11_, 199–240.
 
 **Campbell**, M. S., Hoane, A. J., and Hsu, F.-H. (2002). Deep Blue. _AIJ_, _134_(1–2), 57–83.  
-
-1068 Bibliography
 
 **Canny**, J. and Reif, J. (1987). New lower bound techniques for robot motion planning problems. In _FOCS-87_, pp. 39–48.
 
@@ -699,8 +741,6 @@ Bibliography 1067
 
 **Cobham**, A. (1964). The intrinsic computational difficulty of functions. In _Proc. 1964 International Congress for Logic, Methodology, and Philosophy of Science_, pp. 24–30.  
 
-Bibliography 1069
-
 **Cohen**, P. R. (1995). _Empirical methods for artifi- cial intelligence_. MIT Press.
 
 **Cohen**, P. R. and Levesque, H. J. (1990). Intention is choice with commitment. _AIJ_, _42_(2–3), 213–261.
@@ -839,8 +879,6 @@ Bibliography 1069
 
 **Davis**, E. (1990). _Representations of Commonsense Knowledge_. Morgan Kaufmann.  
 
-1070 Bibliography
-
 **Davis**, E. (2005). Knowledge and communication: A first-order theory. _AIJ_, _166_, 81–140.
 
 **Davis**, E. (2006). The expressivity of quantifying over regions. _J. Logic and Computation_, _16_, 891– 916.
@@ -975,8 +1013,6 @@ Bibliography 1069
 
 **Dennett**, D. C. (1991). _Consciousness Explained_. Penguin Press.  
 
-Bibliography 1071
-
 **Denney**, E., Fischer, B., and Schumann, J. (2006). An empirical evaluation of automated theorem provers in software certification. _Int. J. AI Tools_, _15_(1), 81–107.
 
 **Descartes**, R. (1637). Discourse on method. In Cot- tingham, J., Stoothoff, R., and Murdoch, D. (Eds.), _The Philosophical Writings of Descartes_, Vol. I. Cambridge University Press, Cambridge, UK.
@@ -1110,8 +1146,6 @@ Bibliography 1071
 **Ernst**, M., Millstein, T., and Weld, D. S. (1997). Au- tomatic SAT-compilation of planning problems. In _IJCAI-97_, pp. 1169–1176.
 
 **Erol**, K., Hendler, J., and Nau, D. S. (1994). HTN planning: Complexity and expressivity. In _AAAI-94_, pp. 1123–1128.  
-
-1072 Bibliography
 
 **Erol**, K., Hendler, J., and Nau, D. S. (1996). Com- plexity results for HTN planning. _AIJ_, _18_(1), 69–93.
 
@@ -1255,8 +1289,6 @@ Bibliography 1071
 
 **Friedberg**, R. M., Dunham, B., and North, T. (1959). A learning machine: Part II. _IBM Journal of Research and Development_, _3_(3), 282–287.  
 
-Bibliography 1073
-
 **Friedgut**, E. (1999). Necessary and sufficient con- ditions for sharp thresholds of graph properties, and the k-SAT problem. _J. American Mathematical So- ciety_, _12_, 1017–1054.
 
 **Friedman**, G. J. (1959). Digital simulation of an evolutionary process. _General Systems Yearbook_, _4_, 171–184.
@@ -1390,8 +1422,6 @@ Bibliography 1073
 **Ginsberg**, M. L. (2001). GIB: Imperfect infoorma- tion in a computationally challenging game. _JAIR_, _14_, 303–358.
 
 **Gionis**, A., Indyk, P., and Motwani, R. (1999). Simi- larity search in high dimensions vis hashing. In _Proc. 25th Very Large Database (VLDB) Conference_.  
-
-1074 Bibliography
 
 **Gittins**, J. C. (1989). _Multi-Armed Bandit Allocation Indices_. Wiley.
 
@@ -1535,8 +1565,6 @@ Bibliography 1073
 
 **Hand**, D., Mannila, H., and Smyth, P. (2001). _Prin- ciples of Data Mining_. MIT Press.  
 
-Bibliography 1075
-
 **Handschin**, J. E. and Mayne, D. Q. (1969). Monte Carlo techniques to estimate the conditional expecta- tion in multi-stage nonlinear filtering. _Int. J. Control_, _9_(5), 547–559.
 
 **Hansen**, E. (1998). Solving POMDPs by searching in policy space. In _UAI-98_, pp. 211–219.
@@ -1674,8 +1702,6 @@ Bibliography 1075
 **Hobbs**, J. R. (1990). _Literature and Cognition_. CSLI Press.
 
 **Hobbs**, J. R., Appelt, D., Bear, J., Israel, D., Kameyama, M., Stickel, M. E., and Tyson, M. (1997). FASTUS: A cascaded finite-state transducer for extracting information from natural-language text. In Roche, E. and Schabes, Y. (Eds.), _Finite- State Devices for Natural Language Processing_, pp. 383–406. MIT Press.  
-
-1076 Bibliography
 
 **Hobbs**, J. R. and Moore, R. C. (Eds.). (1985). _For- mal Theories of the Commonsense World_. Ablex.
 
@@ -1817,8 +1843,6 @@ Bibliography 1075
 
 **Inoue**, K. (2001). Inverse entailment for full clausal theories. In _LICS-2001 Workshop on Logic and Learning_.  
 
-Bibliography 1077
-
 **Intille**, S. and Bobick, A. (1999). A framework for recognizing multi-agent action from visual evidence. In _AAAI-99_, pp. 518–525.
 
 **Isard**, M. and Blake, A. (1996). Contour tracking by stochastic propagation of conditional density. In _ECCV_, pp. 343–356.
@@ -1948,8 +1972,6 @@ Bibliography 1077
 **Kautz**, H., McAllester, D. A., and Selman, B. (1996). Encoding plans in propositional logic. In _KR-96_, pp. 374–384.
 
 **Kautz**, H. and Selman, B. (1992). Planning as satis- fiability. In _ECAI-92_, pp. 359–363.  
-
-1078 Bibliography
 
 **Kautz**, H. and Selman, B. (1998). BLACKBOX: A new approach to the application of theorem proving to problem solving. Working Notes of the AIPS-98 Workshop on Planning as Combinatorial Search.
 
@@ -2086,8 +2108,6 @@ Bibliography 1077
 **Konolige**, K. (1997). COLBERT: A language for re- active control in Saphira. In _Künstliche Intelligenz: Advances in Artificial Intelligence_, LNAI, pp. 31– 52.
 
 **Konolige**, K. (2004). Large-scale map-making. In _AAAI-04_, pp. 457–463.  
-
-Bibliography 1079
 
 **Konolige**, K. (1982). A first order formalization of knowledge and action for a multi-agent planning system. In Hayes, J. E., Michie, D., and Pao, Y.-H. (Eds.), _Machine Intelligence 10_. Ellis Horwood.
 
@@ -2231,8 +2251,6 @@ Bibliography 1079
 
 **Laplace**, P. (1816). _Essai philosophique sur les probabilités_ (3rd edition). Courcier Imprimeur, Paris.  
 
-1080 Bibliography
-
 **Laptev**, I. and Perez, P. (2007). Retrieving actions in movies. In _ICCV_, pp. 1–8.
 
 **Lari**, K. and Young, S. J. (1990). The estimation of stochastic context-free grammars using the inside- outside algorithm. _Computer Speech and Language_, _4_, 35–56.
@@ -2362,8 +2380,6 @@ Bibliography 1079
 **Lovejoy**, W. S. (1991). A survey of algorithmic methods for partially observed Markov decision pro- cesses. _Annals of Operations Research_, _28_(1–4), 47– 66.
 
 **Loveland**, D. (1970). A linear format for resolution. In _Proc. IRIA Symposium on Automatic Demonstra- tion_, pp. 147–162.  
-
-Bibliography 1081
 
 **Lowe**, D. (1987). Three-dimensional object recog- nition from single two-dimensional images. _AIJ_, _31_, 355–395.
 
@@ -2509,8 +2525,6 @@ Bibliography 1081
 
 **McCarthy**, J. (1963). Situations, actions, and causal laws. Memo 2, Stanford University Artificial Intelli- gence Project.  
 
-1082 Bibliography
-
 **McCarthy**, J. (1968). Programs with common sense. In Minsky, M. L. (Ed.), _Semantic Informa- tion Processing_, pp. 403–418. MIT Press.
 
 **McCarthy**, J. (1980). Circumscription: A form of non-monotonic reasoning. _AIJ_, _13_(1–2), 27–39.
@@ -2643,8 +2657,6 @@ Bibliography 1081
 
 **Mohr**, R. and Henderson, T. C. (1986). Arc and path consistency revisited. _AIJ_, _28_(2), 225–233.  
 
-Bibliography 1083
-
 **Mohri**, M., Pereira, F., and Riley, M. (2002). Weighted finite-state transducers in speech recogni- tion. _Computer Speech and Language_, _16_(1), 69–88.
 
 **Montague**, P. R., Dayan, P., Person, C., and Se- jnowski, T. (1995). Bee foraging in uncertain envi- ronments using predictive Hebbian learning. _Nature_, _377_, 725–728.
@@ -2776,8 +2788,6 @@ Bibliography 1083
 **Netto**, E. (1901). _Lehrbuch der Combinatorik_. B. G. Teubner.
 
 **Nevill-Manning**, C. G. and Witten, I. H. (1997). Identifying hierarchical structures in sequences: A linear-time algorithm. _JAIR_, _7_, 67–82.  
-
-1084 Bibliography
 
 **Newell**, A. (1982). The knowledge level. _AIJ_, _18_(1), 82–127.
 
@@ -2917,7 +2927,6 @@ Bibliography 1083
 
 **Parr**, R. and Russell, S. J. (1998). Reinforcement learning with hierarchies of machines. In Jordan, M. I., Kearns, M., and Solla, S. A. (Eds.), _NIPS 10_. MIT Press.  
 
-Bibliography 1085
 
 **Parzen**, E. (1962). On estimation of a probability density function and mode. _Annals of Mathematical Statistics_, _33_, 1065–1076.
 
@@ -3059,8 +3068,6 @@ Bibliography 1085
 
 **Poole**, D., Mackworth, A. K., and Goebel, R. (1998). _Computational intelligence: A logical approach_. Oxford University Press.  
 
-1086 Bibliography
-
 **Popper**, K. R. (1959). _The Logic of Scientific Dis- covery_. Basic Books.
 
 **Popper**, K. R. (1962). _Conjectures and Refutations: The Growth of Scientific Knowledge_. Basic Books.
@@ -3195,7 +3202,6 @@ Bibliography 1085
 
 **Rieger**, C. (1976). An organization of knowledge for problem solving and language comprehension. _AIJ_, _7_, 89–127.  
 
-Bibliography 1087
 
 **Riley**, J. and Samuelson, W. (1981). Optimal auc- tions. _American Economic Review_, _71_, 381–392.
 
@@ -3341,8 +3347,6 @@ Bibliography 1087
 
 **Sato**, T. and Kameya, Y. (1997). PRISM: A symbolic-statistical modeling language. In _IJCAI- 97_, pp. 1330–1335.  
 
-1088 Bibliography
-
 **Saul**, L. K., Jaakkola, T., and Jordan, M. I. (1996). Mean field theory for sigmoid belief networks. _JAIR_, _4_, 61–76.
 
 **Savage**, L. J. (1954). _The Foundations of Statistics_. Wiley.
@@ -3487,8 +3491,6 @@ Bibliography 1087
 
 **Simon**, H. A. (1981). _The Sciences of the Artificial_ (second edition). MIT Press.  
 
-Bibliography 1089
-
 **Simon**, H. A. (1982). _Models of Bounded Rational- ity, Volume 1_. The MIT Press.
 
 **Simon**, H. A. and Newell, A. (1958). Heuristic problem solving: The next advance in operations re- search. _Operations Research_, _6_, 1–10.
@@ -3627,7 +3629,6 @@ Bibliography 1089
 
 **Subramanian**, D. and Feldman, R. (1990). The util- ity of EBL in recursive domain theories. In _AAAI-90_, Vol. 2, pp. 942–949.  
 
-1090 Bibliography
 
 **Subramanian**, D. and Wang, E. (1994). Constraint- based kinematic synthesis. In _Proc. International Conference on Qualitative Reasoning_, pp. 228–239.
 
@@ -3754,8 +3755,6 @@ Bibliography 1089
 **Ullman**, J. D. (1985). Implementation of logical query languages for databases. _ACM Transactions on Database Systems_, _10_(3), 289–321.
 
 **Ullman**, S. (1979). _The Interpretation of Visual Mo- tion_. MIT Press.  
-
-Bibliography 1091
 
 **Urmson**, C. and Whittaker, W. (2008). Self-driving cars and the Urban Challenge. _IEEE Intelligent Sys- tems_, _23_(2), 66–68.
 
@@ -3893,8 +3892,6 @@ Bibliography 1091
 
 **Wellman**, M. P., Breese, J. S., and Goldman, R. (1992). From knowledge bases to decision models. _Knowledge Engineering Review_, _7_(1), 35–53.  
 
-1092 Bibliography
-
 **Wellman**, M. P. and Doyle, J. (1992). Modular util- ity representation for decision-theoretic planning. In _ICAPS-92_, pp. 236–242.
 
 **Wellman**, M. P., Wurman, P., O’Malley, K., Bangera, R., Lin, S., Reeves, D., and Walsh, W. (2001). A trading agent competition. _IEEE Inter- net Computing_.
@@ -4025,8 +4022,6 @@ Bibliography 1091
 
 **Younger**, D. H. (1967). Recognition and parsing of context-free languages in time n3 . _Information and Control_, _10_(2), 189–208.  
 
-Bibliography 1093
-
 **Yudkowsky**, E. (2008). Artificial intelligence as a positive and negative factor in global risk. In Bostrom, N. and Cirkovic, M. (Eds.), _Global Catas- trophic Risk_. Oxford University Press.
 
 **Zadeh**, L. A. (1965). Fuzzy sets. _Information and Control_, _8_, 338–353.
@@ -4066,5 +4061,3 @@ Bibliography 1093
 **Zollmann**, A., Venugopal, A., Och, F. J., and Ponte, J. (2008). A systematic comparison of phrase-based, hierarchical and syntax-augmented statistical MT. In _COLING-08_.
 
 **Zweig**, G. and Russell, S. J. (1998). Speech recogni- tion with dynamic Bayesian networks. In _AAAI-98_, pp. 173–180.  
-
-_This page intentionally left blank_

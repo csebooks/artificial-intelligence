@@ -9,15 +9,37 @@ Contents
 
 **I Artificial Intelligence**
 
-**1 Introduction 1** 1.1 What Is AI? . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1.2 The Foundations of Artificial Intelligence . . . . . . . . . . . . . . . . . . 5 1.3 The History of Artificial Intelligence . . . . . . . . . . . . . . . . . . . . 16 1.4 The State of the Art . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28 1.5 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 29
+**1 Introduction** ...............................................................1
+1.1 What Is AI? . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 
+1.2 The Foundations of Artificial Intelligence . . . . . . . . . . . . . . . . . . 5 
+1.3 The History of Artificial Intelligence . . . . . . . . . . . . . . . . . . . . 16 
+1.4 The State of the Art . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28 
+1.5 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 29
 
-**2 Intelligent Agents 34** 2.1 Agents and Environments . . . . . . . . . . . . . . . . . . . . . . . . . . 34 2.2 Good Behavior: The Concept of Rationality . . . . . . . . . . . . . . . . 36 2.3 The Nature of Environments . . . . . . . . . . . . . . . . . . . . . . . . . 40 2.4 The Structure of Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 2.5 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 59
+**2 Intelligent Agents** ........................................................ 34 
+2.1 Agents and Environments . . . . . . . . . . . . . . . . . . . . . . . . . . 34 
+2.2 Good Behavior: The Concept of Rationality . . . . . . . . . . . . . . . . 36 
+2.3 The Nature of Environments . . . . . . . . . . . . . . . . . . . . . . . . . 40 
+2.4 The Structure of Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . 46 
+2.5 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 59
 
 **II Problem-solving**
 
-**3 Solving Problems by Searching 64** 3.1 Problem-Solving Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . 64 3.2 Example Problems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69 3.3 Searching for Solutions . . . . . . . . . . . . . . . . . . . . . . . . . . . 75 3.4 Uninformed Search Strategies . . . . . . . . . . . . . . . . . . . . . . . . 81 3.5 Informed (Heuristic) Search Strategies . . . . . . . . . . . . . . . . . . . 92 3.6 Heuristic Functions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102 3.7 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 108
+**3 Solving Problems by Searching** .............................................64 
+3.1 Problem-Solving Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . 64 
+3.2 Example Problems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69 
+3.3 Searching for Solutions . . . . . . . . . . . . . . . . . . . . . . . . . . . 75 
+3.4 Uninformed Search Strategies . . . . . . . . . . . . . . . . . . . . . . . . 81 
+3.5 Informed (Heuristic) Search Strategies . . . . . . . . . . . . . . . . . . . 92 
+3.6 Heuristic Functions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 102 
+3.7 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 108
 
-**4 Beyond Classical Search 120** 4.1 Local Search Algorithms and Optimization Problems . . . . . . . . . . . 120 4.2 Local Search in Continuous Spaces . . . . . . . . . . . . . . . . . . . . . 129 4.3 Searching with Nondeterministic Actions . . . . . . . . . . . . . . . . . . 133 4.4 Searching with Partial Observations . . . . . . . . . . . . . . . . . . . . . 138 4.5 Online Search Agents and Unknown Environments . . . . . . . . . . . . 147 4.6 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 153
+**4 Beyond Classical Search** ..............................................120
+4.1 Local Search Algorithms and Optimization Problems . . . . . . . . . . . 120 
+4.2 Local Search in Continuous Spaces . . . . . . . . . . . . . . . . . . . . . 129 
+4.3 Searching with Nondeterministic Actions . . . . . . . . . . . . . . . . . . 133 
+4.4 Searching with Partial Observations . . . . . . . . . . . . . . . . . . . . . 138 
+4.5 Online Search Agents and Unknown Environments . . . . . . . . . . . . 147 4.6 Summary, Bibliographical and Historical Notes, Exercises . . . . . . . . . 153
 
 **5 Adversarial Search 161** 5.1 Games . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 161 5.2 Optimal Decisions in Games . . . . . . . . . . . . . . . . . . . . . . . . 163 5.3 Alpha–Beta Pruning . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 167 5.4 Imperfect Real-Time Decisions . . . . . . . . . . . . . . . . . . . . . . . 171 5.5 Stochastic Games . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 177
 
