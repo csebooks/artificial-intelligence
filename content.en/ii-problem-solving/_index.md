@@ -5,15 +5,13 @@ weight: 5
 
   
 
-3 SOLVING PROBLEMS BY SEARCHING
+# SOLVING PROBLEMS BY SEARCHING
 
 _In which we see how an agent can find a sequence of actions that achieves its goals when no single action will do._
 
 The simplest agents discussed in Chapter 2 were the reflex agents, which base their actions on a direct mapping from states to actions. Such agents cannot operate well in environments for which this mapping would be too large to store and would take too long to learn. Goal-based agents, on the other hand, consider future actions and the desirability of their outcomes.
 
-This chapter describes one kind of goal-based agent called a **problem-solving agent**.PROBLEM-SOLVING AGENT
-
-Problem-solving agents use **atomic** representations, as described in Section 2.4.7—that is, states of the world are considered as wholes, with no internal structure visible to the problem- solving algorithms. Goal-based agents that use more advanced **factored** or **structured** rep- resentations are usually called **planning agents** and are discussed in Chapters 7 and 10.
+This chapter describes one kind of goal-based agent called a **problem-solving agent**. Problem-solving agents use **atomic** representations, as described in Section 2.4.7—that is, states of the world are considered as wholes, with no internal structure visible to the problemsolving algorithms. Goal-based agents that use more advanced **factored** or **structured** representations are usually called **planning agents** and are discussed in Chapters 7 and 10. 
 
 Our discussion of problem solving begins with precise definitions of **problems** and their **solutions** and give several examples to illustrate these definitions. We then describe several general-purpose search algorithms that can be used to solve these problems. We will see several **uninformed** search algorithms—algorithms that are given no information about the problem other than its definition. Although some of these algorithms can solve any solvable problem, none of them can do so efficiently. **Informed** search algorithms, on the other hand, can do quite well given some guidance on where to look for solutions.
 
@@ -21,81 +19,61 @@ In this chapter, we limit ourselves to the simplest kind of task environment, fo
 
 This chapter uses the concepts of asymptotic complexity (that is, O() notation) and NP-completeness. Readers unfamiliar with these concepts should consult Appendix A.
 
-3.1 PROBLEM-SOLVING AGENTS
+## PROBLEM-SOLVING AGENTS
 
-Intelligent agents are supposed to maximize their performance measure. As we mentioned in Chapter 2, achieving this is sometimes simplified if the agent can adopt a **goal** and aim at satisfying it. Let us first look at why and how an agent might do this.
+Intelligent agents are supposed to maximize their performance measure. As we mentioned in Chapter 2, achieving this is sometimes simplified if the agent can adopt a **goal** and aim at satisfying it. Let us first look at why and how an agent might do this. 
 
-64  
+Imagine an agent in the city of Arad, Romania, enjoying a touring holiday. The agent’s performance measure contains many factors: it wants to improve its suntan, improve its Romanian, take in the sights, enjoy the nightlife (such as it is), avoid hangovers, and so on. The decision problem is a complex one involving many tradeoffs and careful reading of guidebooks. Now, suppose the agent has a nonrefundable ticket to fly out of Bucharest the following day. In that case, it makes sense for the agent to adopt the **goal** of getting to Bucharest. Courses of action that don’t reach Bucharest on time can be rejected without further consideration and the agent’s decision problem is greatly simplified. Goals help organize behavior by limiting the objectives that the agent is trying to achieve and hence the actions it needs to consider. **Goal formulation**, based on the current situation and the agent’s performance measure, is the first step in problem solving. 
 
-Section 3.1. Problem-Solving Agents 65
-
-Imagine an agent in the city of Arad, Romania, enjoying a touring holiday. The agent’s performance measure contains many factors: it wants to improve its suntan, improve its Ro- manian, take in the sights, enjoy the nightlife (such as it is), avoid hangovers, and so on. The decision problem is a complex one involving many tradeoffs and careful reading of guide- books. Now, suppose the agent has a nonrefundable ticket to fly out of Bucharest the follow- ing day. In that case, it makes sense for the agent to adopt the **goal** of getting to Bucharest. Courses of action that don’t reach Bucharest on time can be rejected without further consid- eration and the agent’s decision problem is greatly simplified. Goals help organize behavior by limiting the objectives that the agent is trying to achieve and hence the actions it needs to consider. **Goal formulation**, based on the current situation and the agent’s performanceGOAL FORMULATION
-
-measure, is the first step in problem solving. We will consider a goal to be a set of world states—exactly those states in which the
-
-goal is satisfied. The agent’s task is to find out how to act, now and in the future, so that it reaches a goal state. Before it can do this, it needs to decide (or we need to decide on its behalf) what sorts of actions and states it should consider. If it were to consider actions at the level of “move the left foot forward an inch” or “turn the steering wheel one degree left,” the agent would probably never find its way out of the parking lot, let alone to Bucharest, because at that level of detail there is too much uncertainty in the world and there would be too many steps in a solution. **Problem formulation** is the process of deciding what actionsPROBLEM
-
-FORMULATION
-
-and states to consider, given a goal. We discuss this process in more detail later. For now, let us assume that the agent will consider actions at the level of driving from one major town to another. Each state therefore corresponds to being in a particular town.
+We will consider a goal to be a set of world states—exactly those states in which the goal is satisfied. The agent’s task is to find out how to act, now and in the future, so that it reaches a goal state. Before it can do this, it needs to decide (or we need to decide on its behalf) what sorts of actions and states it should consider. If it were to consider actions at the level of “move the left foot forward an inch” or “turn the steering wheel one degree left,” the agent would probably never find its way out of the parking lot, let alone to Bucharest, because at that level of detail there is too much uncertainty in the world and there would be too many steps in a solution. **Problem formulation** is the process of deciding what actions and states to consider, given a goal. We discuss this process in more detail later. For now, let us assume that the agent will consider actions at the level of driving from one major town to another. Each state therefore corresponds to being in a particular town.
 
 Our agent has now adopted the goal of driving to Bucharest and is considering where to go from Arad. Three roads lead out of Arad, one toward Sibiu, one to Timisoara, and one to Zerind. None of these achieves the goal, so unless the agent is familiar with the geography of Romania, it will not know which road to follow.1 In other words, the agent will not know which of its possible actions is best, because it does not yet know enough about the state that results from taking each action. If the agent has no additional information—i.e., if the environment is **unknown** in the sense defined in Section 2.3—then it is has no choice but to try one of the actions at random. This sad situation is discussed in Chapter 4.
 
 But suppose the agent has a map of Romania. The point of a map is to provide the agent with information about the states it might get itself into and the actions it can take. The agent can use this information to consider _subsequent_ stages of a hypothetical journey via each of the three towns, trying to find a journey that eventually gets to Bucharest. Once it has found a path on the map from Arad to Bucharest, it can achieve its goal by carrying out the driving actions that correspond to the legs of the journey. In general, _an agent with several immediate options of unknown value can decide what to do by first examining_ future _actions that eventually lead to states of known value._
 
-To be more specific about what we mean by “examining future actions,” we have to be more specific about properties of the environment, as defined in Section 2.3. For now,
-
+To be more specific about what we mean by “examining future actions,” we have to be more specific about properties of the environment, as defined in Section 2.3. For now, 
+```
 1 We are assuming that most readers are in the same position and can easily imagine themselves to be as clueless as our agent. We apologize to Romanian readers who are unable to take advantage of this pedagogical device.  
-
-
-
-we assume that the environment is **observable**, so the agent always knows the current state. For the agent driving in Romania, it’s reasonable to suppose that each city on the map has a sign indicating its presence to arriving drivers. We also assume the environment is **discrete**, so at any given state there are only finitely many actions to choose from. This is true for navigating in Romania because each city is connected to a small number of other cities. We will assume the environment is **known**, so the agent knows which states are reached by each action. (Having an accurate map suffices to meet this condition for navigation problems.) Finally, we assume that the environment is **deterministic**, so each action has exactly one outcome. Under ideal conditions, this is true for the agent in Romania—it means that if it chooses to drive from Arad to Sibiu, it does end up in Sibiu. Of course, conditions are not always ideal, as we show in Chapter 4.
+```
+we assume that the environment is **observable**, so the agent always knows the current state. For the agent driving in Romania, it’s reasonable to suppose that each city on the map has a sign indicating its presence to arriving drivers. We also assume the environment is **discrete**, so at any given state there are only finitely many actions to choose from. This is true for navigating in Romania because each city is connected to a small number of other cities. We will assume the environment is **known**, so the agent knows which states are reached by each action. (Having an accurate map suffices to meet this condition for navigation problems.) Finally, we assume that the environment is **deterministic**, so each action has exactly one outcome. Under ideal conditions, this is true for the agent in Romania—it means that if it chooses to drive from Arad to Sibiu, it does end up in Sibiu. Of course, conditions are not always ideal, as we show in Chapter 4. 
 
 _Under these assumptions, the solution to any problem is a fixed sequence of actions._ “Of course!” one might say, “What else could it be?” Well, in general it could be a branching strategy that recommends different actions in the future depending on what percepts arrive. For example, under less than ideal conditions, the agent might plan to drive from Arad to Sibiu and then to Rimnicu Vilcea but may also need to have a contingency plan in case it arrives by accident in Zerind instead of Sibiu. Fortunately, if the agent knows the initial state and the environment is known and deterministic, it knows exactly where it will be after the first action and what it will perceive. Since only one percept is possible after the first action, the solution can specify only one possible second action, and so on.
 
-The process of looking for a sequence of actions that reaches the goal is called **search**.SEARCH
+The process of looking for a sequence of actions that reaches the goal is called **search**. A search algorithm takes a problem as input and returns a **solution** in the form of an action sequence. Once a solution is found, the actions it recommends can be carried out. This is called the **execution** phase. Thus, we have a simple “formulate, search, execute” design for the agent, as shown in Figure 3.1. After formulating a goal and a problem to solve, the agent calls a search procedure to solve it. It then uses the solution to guide its actions, doing whatever the solution recommends as the next thing to do—typically, the first action of the sequence—and then removing that step from the sequence. Once the solution has been executed, the agent will formulate a new goal.
 
-A search algorithm takes a problem as input and returns a **solution** in the form of an actionSOLUTION
+Notice that while the agent is executing the solution sequence it _ignores its percepts_ when choosing an action because it knows in advance what they will be. An agent that carries out its plans with its eyes closed, so to speak, must be quite certain of what is going on. Control theorists call this an **open-loop** system, because ignoring the percepts breaks the loop between agent and environment. We first describe the process of problem formulation, and then devote the bulk of the chapter to various algorithms for the SEARCH function. We do not discuss the workings of the UPDATE-STATE and FORMULATE-GOAL functions further in this chapter.
 
-sequence. Once a solution is found, the actions it recommends can be carried out. This is called the **execution** phase. Thus, we have a simple “formulate, search, execute” designEXECUTION
+### Well-defined problems and solutions
 
-for the agent, as shown in Figure 3.1. After formulating a goal and a problem to solve, the agent calls a search procedure to solve it. It then uses the solution to guide its actions, doing whatever the solution recommends as the next thing to do—typically, the first action of the sequence—and then removing that step from the sequence. Once the solution has been executed, the agent will formulate a new goal.
+A **problem** can be defined formally by five components:
 
-Notice that while the agent is executing the solution sequence it _ignores its percepts_ when choosing an action because it knows in advance what they will be. An agent that carries out its plans with its eyes closed, so to speak, must be quite certain of what is going on. Control theorists call this an **open-loop** system, because ignoring the percepts breaks theOPEN-LOOP
+- The **initial state** that the agent starts in. For example, the initial state for our agent in Romania might be described as In(Arad). 
 
-loop between agent and environment. We first describe the process of problem formulation, and then devote the bulk of the
+**function** SIMPLE-PROBLEM-SOLVING-AGENT(percept ) **returns** an action 
+**persistent**: seq , an action sequence, initially empty 
+state, some description of the current world state 
+goal , a goal, initially null 
+problem , a problem formulation
 
-chapter to various algorithms for the SEARCH function. We do not discuss the workings of the UPDATE-STATE and FORMULATE-GOAL functions further in this chapter.
-
-**3.1.1 Well-defined problems and solutions**
-
-A **problem** can be defined formally by five components:PROBLEM
-
-• The **initial state** that the agent starts in. For example, the initial state for our agent inINITIAL STATE
-
-Romania might be described as In(Arad).  
-
-Section 3.1. Problem-Solving Agents 67
-
-**function** SIMPLE-PROBLEM-SOLVING-AGENT(percept ) **returns** an action **persistent**: seq , an action sequence, initially empty
-
-state, some description of the current world state goal , a goal, initially null problem , a problem formulation
-
-state←UPDATE-STATE(state,percept ) **if** seq is empty **then**
-
-goal← FORMULATE-GOAL(state) problem← FORMULATE-PROBLEM(state, goal ) seq← SEARCH(problem) **if** seq = failure **then return** a null action
-
-action← FIRST(seq) seq←REST(seq) **return** action
+state←UPDATE-STATE(state,percept ) 
+**if** seq is empty **then**
+goal← FORMULATE-GOAL(state) 
+problem← FORMULATE-PROBLEM(state, goal ) 
+seq← SEARCH(problem) 
+**if** seq = failure **then return** a null action
+action← FIRST(seq) 
+seq←REST(seq) 
+**return** action
 
 **Figure 3.1** A simple problem-solving agent. It first formulates a goal and a problem, searches for a sequence of actions that would solve the problem, and then executes the actions one at a time. When this is complete, it formulates another goal and starts over.
 
-• A description of the possible **actions** available to the agent. Given a particular state s,ACTIONS
+- A description of the possible **actions** available to the agent. Given a particular state s,ACTIONS
 
 ACTIONS(s) returns the set of actions that can be executed in s. We say that each of these actions is **applicable** in s. For example, from the state In(Arad), the applicableAPPLICABLE
 
 actions are {Go(Sibiu),Go(Timisoara),Go(Zerind)}.
 
-• A description of what each action does; the formal name for this is the **transition model**, specified by a function RESULT(s, a) that returns the state that results fromTRANSITION MODEL
+- A description of what each action does; the formal name for this is the **transition model**, specified by a function RESULT(s, a) that returns the state that results fromTRANSITION MODEL
 
 doing action a in state s. We also use the term **successor** to refer to any state reachableSUCCESSOR
 
@@ -111,7 +89,7 @@ are states and the links between nodes are actions. (The map of Romania shown in
 
 of states connected by a sequence of actions.
 
-• The **goal test**, which determines whether a given state is a goal state. Sometimes thereGOAL TEST
+- The **goal test**, which determines whether a given state is a goal state. Sometimes thereGOAL TEST
 
 is an explicit set of possible goal states, and the test simply checks whether the given state is one of them. The agent’s goal in Romania is the singleton set {In(Bucharest)}.
 
@@ -201,9 +179,9 @@ is an explicit set of possible goal states, and the test simply checks whether t
 
 **Figure 3.2** A simplified road map of part of Romania.
 
-Sometimes the goal is specified by an abstract property rather than an explicitly enumer- ated set of states. For example, in chess, the goal is to reach a state called “checkmate,” where the opponent’s king is under attack and can’t escape.
+Sometimes the goal is specified by an abstract property rather than an explicitly enumerated set of states. For example, in chess, the goal is to reach a state called “checkmate,” where the opponent’s king is under attack and can’t escape.
 
-• A **path cost** function that assigns a numeric cost to each path. The problem-solvingPATH COST
+- A **path cost** function that assigns a numeric cost to each path. The problem-solvingPATH COST
 
 agent chooses a cost function that reflects its own performance measure. For the agent trying to get to Bucharest, time is of the essence, so the cost of a path might be its length in kilometers. In this chapter, we assume that the cost of a path can be described as the _sum_ of the costs of the individual actions along the path.3 The **step cost** of taking actionSTEP COST
 
@@ -221,9 +199,9 @@ In the preceding section we proposed a formulation of the problem of getting to 
 
 Section 3.2. Example Problems 69
 
-real thing. Compare the simple state description we have chosen, _In(Arad)_, to an actual cross- country trip, where the state of the world includes so many things: the traveling companions, the current radio program, the scenery out of the window, the proximity of law enforcement officers, the distance to the next rest stop, the condition of the road, the weather, and so on. All these considerations are left out of our state descriptions because they are irrelevant to the problem of finding a route to Bucharest. The process of removing detail from a representation is called **abstraction**.ABSTRACTION
+real thing. Compare the simple state description we have chosen, _In(Arad)_, to an actual crosscountry trip, where the state of the world includes so many things: the traveling companions, the current radio program, the scenery out of the window, the proximity of law enforcement officers, the distance to the next rest stop, the condition of the road, the weather, and so on. All these considerations are left out of our state descriptions because they are irrelevant to the problem of finding a route to Bucharest. The process of removing detail from a representation is called **abstraction**.ABSTRACTION
 
-In addition to abstracting the state description, we must abstract the actions themselves. A driving action has many effects. Besides changing the location of the vehicle and its oc- cupants, it takes up time, consumes fuel, generates pollution, and changes the agent (as they say, travel is broadening). Our formulation takes into account only the change in location. Also, there are many actions that we omit altogether: turning on the radio, looking out of the window, slowing down for law enforcement officers, and so on. And of course, we don’t specify actions at the level of “turn steering wheel to the left by one degree.”
+In addition to abstracting the state description, we must abstract the actions themselves. A driving action has many effects. Besides changing the location of the vehicle and its occupants, it takes up time, consumes fuel, generates pollution, and changes the agent (as they say, travel is broadening). Our formulation takes into account only the change in location. Also, there are many actions that we omit altogether: turning on the radio, looking out of the window, slowing down for law enforcement officers, and so on. And of course, we don’t specify actions at the level of “turn steering wheel to the left by one degree.”
 
 Can we be more precise about defining the appropriate level of abstraction? Think of the abstract states and actions we have chosen as corresponding to large sets of detailed world states and detailed action sequences. Now consider a solution to the abstract problem: for example, the path from Arad to Sibiu to Rimnicu Vilcea to Pitesti to Bucharest. This abstract solution corresponds to a large number of more detailed paths. For example, we could drive with the radio on between Sibiu and Rimnicu Vilcea, and then switch it off for the rest of the trip. The abstraction is _valid_ if we can expand any abstract solution into a solution in the more detailed world; a sufficient condition is that for every detailed state that is “in Arad,” there is a detailed path to some state that is “in Sibiu,” and so on.5 The abstraction is _useful_ if carrying out each of the actions in the solution is easier than the original problem; in this case they are easy enough that they can be carried out without further search or planning by an average driving agent. The choice of a good abstraction thus involves removing as much detail as possible while retaining validity and ensuring that the abstract actions are easy to carry out. Were it not for the ability to construct useful abstractions, intelligent agents would be completely swamped by the real world.
 
@@ -285,17 +263,17 @@ care about. Such problems tend not to have a single agreed-upon description, but
 
 The first example we examine is the **vacuum world** first introduced in Chapter 2. (See Figure 2.2.) This can be formulated as a problem as follows:
 
-• **States**: The state is determined by both the agent location and the dirt locations. The agent is in one of two locations, each of which might or might not contain dirt. Thus, there are 2 × 22 = 8 possible world states. A larger environment with n locations has n · 2n states.
+- **States**: The state is determined by both the agent location and the dirt locations. The agent is in one of two locations, each of which might or might not contain dirt. Thus, there are 2 × 22 = 8 possible world states. A larger environment with n locations has n · 2n states.
 
-• **Initial state**: Any state can be designated as the initial state.
+- **Initial state**: Any state can be designated as the initial state.
 
-• **Actions**: In this simple environment, each state has just three actions: _Left_, _Right_, and _Suck_. Larger environments might also include _Up_ and _Down_.
+- **Actions**: In this simple environment, each state has just three actions: _Left_, _Right_, and _Suck_. Larger environments might also include _Up_ and _Down_.
 
-• **Transition model**: The actions have their expected effects, except that moving _Left_ in the leftmost square, moving _Right_ in the rightmost square, and _Suck_ing in a clean square have no effect. The complete state space is shown in Figure 3.3.
+- **Transition model**: The actions have their expected effects, except that moving _Left_ in the leftmost square, moving _Right_ in the rightmost square, and _Suck_ing in a clean square have no effect. The complete state space is shown in Figure 3.3.
 
-• **Goal test**: This checks whether all the squares are clean.
+- **Goal test**: This checks whether all the squares are clean.
 
-• **Path cost**: Each step costs 1, so the path cost is the number of steps in the path.
+- **Path cost**: Each step costs 1, so the path cost is the number of steps in the path.
 
 Compared with the real world, this toy problem has discrete locations, discrete dirt, reliable cleaning, and it never gets any dirtier. Chapter 4 relaxes some of these assumptions.
 
@@ -337,17 +315,17 @@ Start State Goal State
 
 **Figure 3.4** A typical instance of the 8-puzzle.
 
-• **States**: A state description specifies the location of each of the eight tiles and the blank in one of the nine squares.
+- **States**: A state description specifies the location of each of the eight tiles and the blank in one of the nine squares.
 
-• **Initial state**: Any state can be designated as the initial state. Note that any given goal can be reached from exactly half of the possible initial states (Exercise 3.4).
+- **Initial state**: Any state can be designated as the initial state. Note that any given goal can be reached from exactly half of the possible initial states (Exercise 3.4).
 
-• **Actions**: The simplest formulation defines the actions as movements of the blank space _Left_, _Right_, _Up_, or _Down_. Different subsets of these are possible depending on where the blank is.
+- **Actions**: The simplest formulation defines the actions as movements of the blank space _Left_, _Right_, _Up_, or _Down_. Different subsets of these are possible depending on where the blank is.
 
-• **Transition model**: Given a state and action, this returns the resulting state; for example, if we apply _Left_ to the start state in Figure 3.4, the resulting state has the 5 and the blank switched.
+- **Transition model**: Given a state and action, this returns the resulting state; for example, if we apply _Left_ to the start state in Figure 3.4, the resulting state has the 5 and the blank switched.
 
-• **Goal test**: This checks whether the state matches the goal configuration shown in Fig- ure 3.4. (Other goal configurations are possible.)
+- **Goal test**: This checks whether the state matches the goal configuration shown in Figure 3.4. (Other goal configurations are possible.)
 
-• **Path cost**: Each step costs 1, so the path cost is the number of steps in the path.
+- **Path cost**: Each step costs 1, so the path cost is the number of steps in the path.
 
 What abstractions have we included here? The actions are abstracted to their beginning and final states, ignoring the intermediate locations where the block is sliding. We have abstracted away actions such as shaking the board when pieces get stuck and ruled out extracting the pieces with a knife and putting them back again. We are left with a description of the rules of the puzzle, avoiding all the details of physical manipulations.
 
@@ -357,7 +335,7 @@ test problems for new search algorithms in AI. This family is known to be NP-com
 
 The goal of the **8-queens problem** is to place eight queens on a chessboard such that8-QUEENS PROBLEM
 
-no queen attacks any other. (A queen attacks any piece in the same row, column or diago- nal.) Figure 3.5 shows an attempted solution that fails: the queen in the rightmost column is attacked by the queen at the top left.  
+no queen attacks any other. (A queen attacks any piece in the same row, column or diagonal.) Figure 3.5 shows an attempted solution that fails: the queen in the rightmost column is attacked by the queen at the top left.  
 
 
 
@@ -373,27 +351,27 @@ FORMULATION
 
 the board and moves them around. In either case, the path cost is of no interest because only the final state counts. The first incremental formulation one might try is the following:
 
-• **States**: Any arrangement of 0 to 8 queens on the board is a state.
+- **States**: Any arrangement of 0 to 8 queens on the board is a state.
 
-• **Initial state**: No queens on the board.
+- **Initial state**: No queens on the board.
 
-• **Actions**: Add a queen to any empty square.
+- **Actions**: Add a queen to any empty square.
 
-• **Transition model**: Returns the board with a queen added to the specified square.
+- **Transition model**: Returns the board with a queen added to the specified square.
 
-• **Goal test**: 8 queens are on the board, none attacked.
+- **Goal test**: 8 queens are on the board, none attacked.
 
 In this formulation, we have 64 · 63 · · · 57 ≈ 1.8× 1014 possible sequences to investigate. A better formulation would prohibit placing a queen in any square that is already attacked:
 
-• **States**: All possible arrangements of n queens (0 ≤ n ≤ 8), one per column in the leftmost n columns, with no queen attacking another.
+- **States**: All possible arrangements of n queens (0 ≤ n ≤ 8), one per column in the leftmost n columns, with no queen attacking another.
 
-• **Actions**: Add a queen to any square in the leftmost empty column such that it is not attacked by any other queen.
+- **Actions**: Add a queen to any square in the leftmost empty column such that it is not attacked by any other queen.
 
 This formulation reduces the 8-queens state space from 1.8× 1014 to just 2,057, and solutions are easy to find. On the other hand, for 100 queens the reduction is from roughly 10400 states to about 1052 states (Exercise 3.5)—a big improvement, but not enough to make the problem tractable. Section 4.1 describes the complete-state formulation, and Chapter 6 gives a simple algorithm that solves even the million-queens problem with ease.  
 
 Section 3.2. Example Problems 73
 
-Our final toy problem was devised by Donald Knuth (1964) and illustrates how infinite state spaces can arise. Knuth conjectured that, starting with the number 4, a sequence of fac- torial, square root, and floor operations will reach any desired positive integer. For example, we can reach 5 from 4 as follows:
+Our final toy problem was devised by Donald Knuth (1964) and illustrates how infinite state spaces can arise. Knuth conjectured that, starting with the number 4, a sequence of factorial, square root, and floor operations will reach any desired positive integer. For example, we can reach 5 from 4 as follows:
 
 ⌊
 
@@ -405,17 +383,17 @@ Our final toy problem was devised by Donald Knuth (1964) and illustrates how inf
 
 The problem definition is very simple:
 
-• **States**: Positive numbers.
+- **States**: Positive numbers.
 
-• **Initial state**: 4.
+- **Initial state**: 4.
 
-• **Actions**: Apply factorial, square root, or floor operation (factorial for integers only).
+- **Actions**: Apply factorial, square root, or floor operation (factorial for integers only).
 
-• **Transition model**: As given by the mathematical definitions of the operations.
+- **Transition model**: As given by the mathematical definitions of the operations.
 
-• **Goal test**: State is the desired positive integer.
+- **Goal test**: State is the desired positive integer.
 
-To our knowledge there is no bound on how large a number might be constructed in the pro- cess of reaching a given target—for example, the number 620,448,401,733,239,439,360,000 is generated in the expression for 5—so the state space for this problem is infinite. Such state spaces arise frequently in tasks involving the generation of mathematical expressions, circuits, proofs, programs, and other recursively defined objects.
+To our knowledge there is no bound on how large a number might be constructed in the process of reaching a given target—for example, the number 620,448,401,733,239,439,360,000 is generated in the expression for 5—so the state space for this problem is infinite. Such state spaces arise frequently in tasks involving the generation of mathematical expressions, circuits, proofs, programs, and other recursively defined objects.
 
 **3.2.2 Real-world problems**
 
@@ -423,25 +401,25 @@ We have already seen how the **route-finding problem** is defined in terms of sp
 
 tions and transitions along links between them. Route-finding algorithms are used in a variety of applications. Some, such as Web sites and in-car systems that provide driving directions, are relatively straightforward extensions of the Romania example. Others, such as routing video streams in computer networks, military operations planning, and airline travel-planning systems, involve much more complex specifications. Consider the airline travel problems that must be solved by a travel-planning Web site:
 
-• **States**: Each state obviously includes a location (e.g., an airport) and the current time. Furthermore, because the cost of an action (a flight segment) may depend on previous segments, their fare bases, and their status as domestic or international, the state must record extra information about these “historical” aspects.
+- **States**: Each state obviously includes a location (e.g., an airport) and the current time. Furthermore, because the cost of an action (a flight segment) may depend on previous segments, their fare bases, and their status as domestic or international, the state must record extra information about these “historical” aspects.
 
-• **Initial state**: This is specified by the user’s query.
+- **Initial state**: This is specified by the user’s query.
 
-• **Actions**: Take any flight from the current location, in any seat class, leaving after the current time, leaving enough time for within-airport transfer if needed.
+- **Actions**: Take any flight from the current location, in any seat class, leaving after the current time, leaving enough time for within-airport transfer if needed.
 
-• **Transition model**: The state resulting from taking a flight will have the flight’s desti- nation as the current location and the flight’s arrival time as the current time.
+- **Transition model**: The state resulting from taking a flight will have the flight’s destination as the current location and the flight’s arrival time as the current time.
 
-• **Goal test**: Are we at the final destination specified by the user?
+- **Goal test**: Are we at the final destination specified by the user?
 
-• **Path cost**: This depends on monetary cost, waiting time, flight time, customs and im- migration procedures, seat quality, time of day, type of airplane, frequent-flyer mileage awards, and so on.  
+- **Path cost**: This depends on monetary cost, waiting time, flight time, customs and immigration procedures, seat quality, time of day, type of airplane, frequent-flyer mileage awards, and so on.  
 
 
 
-Commercial travel advice systems use a problem formulation of this kind, with many addi- tional complications to handle the byzantine fare structures that airlines impose. Any sea- soned traveler knows, however, that not all air travel goes according to plan. A really good system should include contingency plans—such as backup reservations on alternate flights— to the extent that these are justified by the cost and likelihood of failure of the original plan.
+Commercial travel advice systems use a problem formulation of this kind, with many additional complications to handle the byzantine fare structures that airlines impose. Any seasoned traveler knows, however, that not all air travel goes according to plan. A really good system should include contingency plans—such as backup reservations on alternate flights— to the extent that these are justified by the cost and likelihood of failure of the original plan.
 
 **Touring problems** are closely related to route-finding problems, but with an impor-TOURING PROBLEM
 
-tant difference. Consider, for example, the problem “Visit every city in Figure 3.2 at least once, starting and ending in Bucharest.” As with route finding, the actions correspond to trips between adjacent cities. The state space, however, is quite different. Each state must include not just the current location but also the _set of cities the agent has visited_. So the initial state would be In(Bucharest),Visited({Bucharest}), a typical intermedi- ate state would be In(Vaslui),Visited({Bucharest ,Urziceni ,Vaslui}), and the goal test would check whether the agent is in Bucharest and all 20 cities have been visited.
+tant difference. Consider, for example, the problem “Visit every city in Figure 3.2 at least once, starting and ending in Bucharest.” As with route finding, the actions correspond to trips between adjacent cities. The state space, however, is quite different. Each state must include not just the current location but also the _set of cities the agent has visited_. So the initial state would be In(Bucharest),Visited({Bucharest}), a typical intermediate state would be In(Vaslui),Visited({Bucharest ,Urziceni ,Vaslui}), and the goal test would check whether the agent is in Bucharest and all 20 cities have been visited.
 
 The **traveling salesperson problem** (TSP) is a touring problem in which each city TRAVELING SALESPERSON PROBLEM
 
@@ -449,7 +427,7 @@ must be visited exactly once. The aim is to find the _shortest_ tour. The proble
 
 A **VLSI layout** problem requires positioning millions of components and connectionsVLSI LAYOUT
 
-on a chip to minimize area, minimize circuit delays, minimize stray capacitances, and max- imize manufacturing yield. The layout problem comes after the logical design phase and is usually split into two parts: **cell layout** and **channel routing**. In cell layout, the primitive components of the circuit are grouped into cells, each of which performs some recognized function. Each cell has a fixed footprint (size and shape) and requires a certain number of connections to each of the other cells. The aim is to place the cells on the chip so that they do not overlap and so that there is room for the connecting wires to be placed between the cells. Channel routing finds a specific route for each wire through the gaps between the cells. These search problems are extremely complex, but definitely worth solving. Later in this chapter, we present some algorithms capable of solving them.
+on a chip to minimize area, minimize circuit delays, minimize stray capacitances, and maximize manufacturing yield. The layout problem comes after the logical design phase and is usually split into two parts: **cell layout** and **channel routing**. In cell layout, the primitive components of the circuit are grouped into cells, each of which performs some recognized function. Each cell has a fixed footprint (size and shape) and requires a certain number of connections to each of the other cells. The aim is to place the cells on the chip so that they do not overlap and so that there is room for the connecting wires to be placed between the cells. Channel routing finds a specific route for each wire through the gaps between the cells. These search problems are extremely complex, but definitely worth solving. Later in this chapter, we present some algorithms capable of solving them.
 
 **Robot navigation** is a generalization of the route-finding problem described earlier.ROBOT NAVIGATION
 
@@ -487,9 +465,9 @@ with no children in the tree. The set of all leaf nodes available for expansion 
 
 OPEN LIST less evocative and less accurate, because other data structures are better suited than a list.) In Figure 3.6, the frontier of each tree consists of those nodes with bold outlines.
 
-The process of expanding nodes on the frontier continues until either a solution is found or there are no more states to expand. The general TREE-SEARCH algorithm is shown infor- mally in Figure 3.7. Search algorithms all share this basic structure; they vary primarily according to how they choose which state to expand next—the so-called **search strategy**.SEARCH STRATEGY
+The process of expanding nodes on the frontier continues until either a solution is found or there are no more states to expand. The general TREE-SEARCH algorithm is shown informally in Figure 3.7. Search algorithms all share this basic structure; they vary primarily according to how they choose which state to expand next—the so-called **search strategy**.SEARCH STRATEGY
 
-The eagle-eyed reader will notice one peculiar thing about the search tree shown in Fig- ure 3.6: it includes the path from Arad to Sibiu and back to Arad again! We say that _In(Arad)_ is a **repeated state** in the search tree, generated in this case by a **loopy path**. ConsideringREPEATED STATE
+The eagle-eyed reader will notice one peculiar thing about the search tree shown in Figure 3.6: it includes the path from Arad to Sibiu and back to Arad again! We say that _In(Arad)_ is a **repeated state** in the search tree, generated in this case by a **loopy path**. ConsideringREPEATED STATE
 
 LOOPY PATH such loopy paths means that the complete search tree for Romania is _infinite_ because there is no limit to how often one can traverse a loop. On the other hand, the state space—the map shown in Figure 3.2—has only 20 states. As we discuss in Section 3.4, loops can cause  
 
@@ -559,9 +537,9 @@ Section 3.3. Searching for Solutions 77
 
 **_only if not in the frontier or explored set_**
 
-**Figure 3.7** An informal description of the general tree-search and graph-search algo- rithms. The parts of GRAPH-SEARCH marked in bold italic are the additions needed to handle repeated states.
+**Figure 3.7** An informal description of the general tree-search and graph-search algorithms. The parts of GRAPH-SEARCH marked in bold italic are the additions needed to handle repeated states.
 
-In other cases, redundant paths are unavoidable. This includes all problems where the actions are reversible, such as route-finding problems and sliding-block puzzles. Route- finding on a **rectangular grid** (like the one used later for Figure 3.9) is a particularly impor-RECTANGULAR GRID
+In other cases, redundant paths are unavoidable. This includes all problems where the actions are reversible, such as route-finding problems and sliding-block puzzles. Routefinding on a **rectangular grid** (like the one used later for Figure 3.9) is a particularly impor-RECTANGULAR GRID
 
 tant example in computer games. In such a grid, each state has four successors, so a search tree of depth d that includes repeated states has 4d leaves; but there are only about 2d2 distinct states within d steps of any given state. For d = 20, this means about a trillion nodes but only about 800 distinct states. Thus, following redundant paths can cause a tractable problem to become intractable. This is true even for algorithms that know how to avoid infinite loops.
 
@@ -569,7 +547,7 @@ As the saying goes, _algorithms that forget their history are doomed to repeat i
 
 known as the **closed list**), which remembers every expanded node. Newly generated nodesCLOSED LIST
 
-that match previously generated nodes—ones in the explored set or the frontier—can be dis- carded instead of being added to the frontier. The new algorithm, called GRAPH-SEARCH, is shown informally in Figure 3.7. The specific algorithms in this chapter draw on this general design.
+that match previously generated nodes—ones in the explored set or the frontier—can be discarded instead of being added to the frontier. The new algorithm, called GRAPH-SEARCH, is shown informally in Figure 3.7. The specific algorithms in this chapter draw on this general design.
 
 Clearly, the search tree constructed by the GRAPH-SEARCH algorithm contains at most one copy of each state, so we can think of it as growing a tree directly on the state-space graph, as shown in Figure 3.8. The algorithm has another nice property: the frontier **separates** theSEPARATOR
 
@@ -577,25 +555,25 @@ state-space graph into the explored region and the unexplored region, so that ev
 
 
 
-**Figure 3.8** A sequence of search trees generated by a graph search on the Romania prob- lem of Figure 3.2. At each stage, we have extended each path by one step. Notice that at the third stage, the northernmost city (Oradea) has become a dead end: both of its successors are already explored via other paths.
+**Figure 3.8** A sequence of search trees generated by a graph search on the Romania problem of Figure 3.2. At each stage, we have extended each path by one step. Notice that at the third stage, the northernmost city (Oradea) has become a dead end: both of its successors are already explored via other paths.
 
 (c)(b)(a)
 
-**Figure 3.9** The separation property of GRAPH-SEARCH, illustrated on a rectangular-grid problem. The frontier (white nodes) always separates the explored region of the state space (black nodes) from the unexplored region (gray nodes). In (a), just the root has been ex- panded. In (b), one leaf node has been expanded. In (c), the remaining successors of the root have been expanded in clockwise order.
+**Figure 3.9** The separation property of GRAPH-SEARCH, illustrated on a rectangular-grid problem. The frontier (white nodes) always separates the explored region of the state space (black nodes) from the unexplored region (gray nodes). In (a), just the root has been expanded. In (b), one leaf node has been expanded. In (c), the remaining successors of the root have been expanded in clockwise order.
 
 the initial state to an unexplored state has to pass through a state in the frontier. (If this seems completely obvious, try Exercise 3.13 now.) This property is illustrated in Figure 3.9. As every step moves a state from the frontier into the explored region while moving some states from the unexplored region into the frontier, we see that the algorithm is _systematically_ examining the states in the state space, one by one, until it finds a solution.
 
 **3.3.1 Infrastructure for search algorithms**
 
-Search algorithms require a data structure to keep track of the search tree that is being con- structed. For each node n of the tree, we have a structure that contains four components:
+Search algorithms require a data structure to keep track of the search tree that is being constructed. For each node n of the tree, we have a structure that contains four components:
 
-• n.STATE: the state in the state space to which the node corresponds;
+- n.STATE: the state in the state space to which the node corresponds;
 
-• n.PARENT: the node in the search tree that generated this node;
+- n.PARENT: the node in the search tree that generated this node;
 
-• n.ACTION: the action that was applied to the parent to generate the node;
+- n.ACTION: the action that was applied to the parent to generate the node;
 
-• n.PATH-COST: the cost, traditionally denoted by g(n), of the path from the initial state to the node, as indicated by the parent pointers.  
+- n.PATH-COST: the cost, traditionally denoted by g(n), of the path from the initial state to the node, as indicated by the parent pointers.  
 
 Section 3.3. Searching for Solutions 79
 
@@ -635,11 +613,11 @@ Now that we have nodes, we need somewhere to put them. The frontier needs to be 
 
 operations on a queue are as follows:
 
-• EMPTY?(queue) returns true only if there are no more elements in the queue.
+- EMPTY?(queue) returns true only if there are no more elements in the queue.
 
-• POP(queue) removes the first element of the queue and returns it.
+- POP(queue) removes the first element of the queue and returns it.
 
-• INSERT(element , queue) inserts an element and returns the resulting queue.  
+- INSERT(element , queue) inserts an element and returns the resulting queue.  
 
 
 
@@ -659,15 +637,15 @@ of states described by sets, for example, a bit-vector representation or a sorte
 
 Before we get into the design of specific search algorithms, we need to consider the criteria that might be used to choose among them. We can evaluate an algorithm’s performance in four ways:
 
-• **Completeness**: Is the algorithm guaranteed to find a solution when there is one?COMPLETENESS
+- **Completeness**: Is the algorithm guaranteed to find a solution when there is one?COMPLETENESS
 
-• **Optimality**: Does the strategy find the optimal solution, as defined on page 68?OPTIMALITY
+- **Optimality**: Does the strategy find the optimal solution, as defined on page 68?OPTIMALITY
 
-• **Time complexity**: How long does it take to find a solution?TIME COMPLEXITY
+- **Time complexity**: How long does it take to find a solution?TIME COMPLEXITY
 
-• **Space complexity**: How much memory is needed to perform the search?SPACE COMPLEXITY
+- **Space complexity**: How much memory is needed to perform the search?SPACE COMPLEXITY
 
-Time and space complexity are always considered with respect to some measure of the prob- lem difficulty. In theoretical computer science, the typical measure is the size of the state space graph, |V | + |E|, where V is the set of vertices (nodes) of the graph and E is the set of edges (links). This is appropriate when the graph is an explicit data structure that is input to the search program. (The map of Romania is an example of this.) In AI, the graph is often represented _implicitly_ by the initial state, actions, and transition model and is frequently infi- nite. For these reasons, complexity is expressed in terms of three quantities: b, the **branching factor** or maximum number of successors of any node; d, the **depth** of the shallowest goalBRANCHING FACTOR
+Time and space complexity are always considered with respect to some measure of the problem difficulty. In theoretical computer science, the typical measure is the size of the state space graph, |V | + |E|, where V is the set of vertices (nodes) of the graph and E is the set of edges (links). This is appropriate when the graph is an explicit data structure that is input to the search program. (The map of Romania is an example of this.) In AI, the graph is often represented _implicitly_ by the initial state, actions, and transition model and is frequently infinite. For these reasons, complexity is expressed in terms of three quantities: b, the **branching factor** or maximum number of successors of any node; d, the **depth** of the shallowest goalBRANCHING FACTOR
 
 DEPTH node (i.e., the number of steps along the path from the root); and m, the maximum length of any path in the state space. Time is often measured in terms of the number of nodes generated during the search, and space in terms of the maximum number of nodes stored in memory. For the most part, we describe time and space complexity for search on a tree; for a graph, the answer depends on how “redundant” the paths in the state space are.
 
@@ -701,7 +679,7 @@ Breadth-first search is an instance of the general graph-search algorithm (Figur
 
 Pseudocode is given in Figure 3.11. Figure 3.12 shows the progress of the search on a simple binary tree.
 
-How does breadth-first search rate according to the four criteria from the previous sec- tion? We can easily see that it is _complete_—if the shallowest goal node is at some finite depth d, breadth-first search will eventually find it after generating all shallower nodes (provided the branching factor b is finite). Note that as soon as a goal node is generated, we know it is the shallowest goal node because all shallower nodes must have been generated already and failed the goal test. Now, the _shallowest_ goal node is not necessarily the _optimal_ one;  
+How does breadth-first search rate according to the four criteria from the previous section? We can easily see that it is _complete_—if the shallowest goal node is at some finite depth d, breadth-first search will eventually find it after generating all shallower nodes (provided the branching factor b is finite). Note that as soon as a goal node is generated, we know it is the shallowest goal node because all shallower nodes must have been generated already and failed the goal test. Now, the _shallowest_ goal node is not necessarily the _optimal_ one;  
 
 
 
@@ -769,7 +747,7 @@ Section 3.4. Uninformed Search Strategies 83
 
 so the space complexity is O(bd), i.e., it is dominated by the size of the frontier. Switching to a tree search would not save much space, and in a state space with many redundant paths, switching could cost a great deal of time.
 
-An exponential complexity bound such as O(bd) is scary. Figure 3.13 shows why. It lists, for various values of the solution depth d, the time and memory required for a breadth- first search with branching factor b = 10. The table assumes that 1 million nodes can be generated per second and that a node requires 1000 bytes of storage. Many search problems fit roughly within these assumptions (give or take a factor of 100) when run on a modern personal computer.
+An exponential complexity bound such as O(bd) is scary. Figure 3.13 shows why. It lists, for various values of the solution depth d, the time and memory required for a breadthfirst search with branching factor b = 10. The table assumes that 1 million nodes can be generated per second and that a node requires 1000 bytes of storage. Many search problems fit roughly within these assumptions (give or take a factor of 100) when run on a modern personal computer.
 
 Depth Nodes Time Memory
 
@@ -851,7 +829,7 @@ Uniform-cost search is guided by path costs rather than depths, so its complexit
 
 and assume that every action costs at least ε. Then the algorithm’s worst-case time and space complexity is O(b1+C∗/ε), which can be much greater than b
 
-d. This is because uniform- cost search can explore large trees of small steps before exploring paths involving large and perhaps useful steps. When all step costs are equal, b
+d. This is because uniformcost search can explore large trees of small steps before exploring paths involving large and perhaps useful steps. When all step costs are equal, b
 
 1+C∗/ε is just b d+1. When all step
 
@@ -863,9 +841,9 @@ costs are the same, uniform-cost search is similar to breadth-first search, exce
 
 The progress of the search is illustrated in Figure 3.16. The search proceeds immediately to the deepest level of the search tree, where the nodes have no successors. As those nodes are expanded, they are dropped from the frontier, so then the search “backs up” to the next deepest node that still has unexplored successors.
 
-The depth-first search algorithm is an instance of the graph-search algorithm in Fig- ure 3.7; whereas breadth-first-search uses a FIFO queue, depth-first search uses a LIFO queue. A LIFO queue means that the most recently generated node is chosen for expansion. This must be the deepest unexpanded node because it is one deeper than its parent—which, in turn, was the deepest unexpanded node when it was selected.
+The depth-first search algorithm is an instance of the graph-search algorithm in Figure 3.7; whereas breadth-first-search uses a FIFO queue, depth-first search uses a LIFO queue. A LIFO queue means that the most recently generated node is chosen for expansion. This must be the deepest unexpanded node because it is one deeper than its parent—which, in turn, was the deepest unexpanded node when it was selected.
 
-As an alternative to the GRAPH-SEARCH-style implementation, it is common to im- plement depth-first search with a recursive function that calls itself on each of its children in turn. (A recursive depth-first algorithm incorporating a depth limit is shown in Figure 3.17.)
+As an alternative to the GRAPH-SEARCH-style implementation, it is common to implement depth-first search with a recursive function that calls itself on each of its children in turn. (A recursive depth-first algorithm incorporating a depth limit is shown in Figure 3.17.)
 
 6 NoOp, or “no operation,” is the name of an assembly language instruction that does nothing. 7 Here, and throughout the book, the “star” in C
 
@@ -969,19 +947,19 @@ H I J K L M N O
 
 **Figure 3.16** Depth-first search on a binary tree. The unexplored region is shown in light gray. Explored nodes with no descendants in the frontier are removed from memory. Nodes at depth 3 have no successors and M is the only goal node.
 
-The properties of depth-first search depend strongly on whether the graph-search or tree-search version is used. The graph-search version, which avoids repeated states and re- dundant paths, is complete in finite state spaces because it will eventually expand every node. The tree-search version, on the other hand, is _not_ complete—for example, in Figure 3.6 the algorithm will follow the Arad–Sibiu–Arad–Sibiu loop forever. Depth-first tree search can be modified at no extra memory cost so that it checks new states against those on the path from the root to the current node; this avoids infinite loops in finite state spaces but does not avoid the proliferation of redundant paths. In infinite state spaces, both versions fail if an infinite non-goal path is encountered. For example, in Knuth’s 4 problem, depth-first search would keep applying the factorial operator forever.
+The properties of depth-first search depend strongly on whether the graph-search or tree-search version is used. The graph-search version, which avoids repeated states and redundant paths, is complete in finite state spaces because it will eventually expand every node. The tree-search version, on the other hand, is _not_ complete—for example, in Figure 3.6 the algorithm will follow the Arad–Sibiu–Arad–Sibiu loop forever. Depth-first tree search can be modified at no extra memory cost so that it checks new states against those on the path from the root to the current node; this avoids infinite loops in finite state spaces but does not avoid the proliferation of redundant paths. In infinite state spaces, both versions fail if an infinite non-goal path is encountered. For example, in Knuth’s 4 problem, depth-first search would keep applying the factorial operator forever.
 
-For similar reasons, both versions are nonoptimal. For example, in Figure 3.16, depth- first search will explore the entire left subtree even if node C is a goal node. If node J were also a goal node, then depth-first search would return it as a solution instead of C , which would be a better solution; hence, depth-first search is not optimal.  
+For similar reasons, both versions are nonoptimal. For example, in Figure 3.16, depthfirst search will explore the entire left subtree even if node C is a goal node. If node J were also a goal node, then depth-first search would return it as a solution instead of C , which would be a better solution; hence, depth-first search is not optimal.  
 
 Section 3.4. Uninformed Search Strategies 87
 
 The time complexity of depth-first graph search is bounded by the size of the state space (which may be infinite, of course). A depth-first tree search, on the other hand, may generate all of the O(bm) nodes in the search tree, where m is the maximum depth of any node; this can be much greater than the size of the state space. Note that m itself can be much larger than d (the depth of the shallowest solution) and is infinite if the tree is unbounded.
 
-So far, depth-first search seems to have no clear advantage over breadth-first search, so why do we include it? The reason is the space complexity. For a graph search, there is no advantage, but a depth-first tree search needs to store only a single path from the root to a leaf node, along with the remaining unexpanded sibling nodes for each node on the path. Once a node has been expanded, it can be removed from memory as soon as all its descendants have been fully explored. (See Figure 3.16.) For a state space with branching factor b and maximum depth m, depth-first search requires storage of only O(bm) nodes. Using the same assumptions as for Figure 3.13 and assuming that nodes at the same depth as the goal node have no successors, we find that depth-first search would require 156 kilobytes instead of 10 exabytes at depth d = 16, a factor of 7 trillion times less space. This has led to the adoption of depth-first tree search as the basic workhorse of many areas of AI, including constraint satisfaction (Chapter 6), propositional satisfiability (Chapter 7), and logic programming (Chapter 9). For the remainder of this section, we focus primarily on the tree- search version of depth-first search.
+So far, depth-first search seems to have no clear advantage over breadth-first search, so why do we include it? The reason is the space complexity. For a graph search, there is no advantage, but a depth-first tree search needs to store only a single path from the root to a leaf node, along with the remaining unexpanded sibling nodes for each node on the path. Once a node has been expanded, it can be removed from memory as soon as all its descendants have been fully explored. (See Figure 3.16.) For a state space with branching factor b and maximum depth m, depth-first search requires storage of only O(bm) nodes. Using the same assumptions as for Figure 3.13 and assuming that nodes at the same depth as the goal node have no successors, we find that depth-first search would require 156 kilobytes instead of 10 exabytes at depth d = 16, a factor of 7 trillion times less space. This has led to the adoption of depth-first tree search as the basic workhorse of many areas of AI, including constraint satisfaction (Chapter 6), propositional satisfiability (Chapter 7), and logic programming (Chapter 9). For the remainder of this section, we focus primarily on the treesearch version of depth-first search.
 
 A variant of depth-first search called **backtracking search** uses still less memory. (SeeBACKTRACKING SEARCH
 
-Chapter 6 for more details.) In backtracking, only one successor is generated at a time rather than all successors; each partially expanded node remembers which successor to generate next. In this way, only O(m) memory is needed rather than O(bm). Backtracking search facilitates yet another memory-saving (and time-saving) trick: the idea of generating a suc- cessor by _modifying_ the current state description directly rather than copying it first. This reduces the memory requirements to just one state description and O(m) actions. For this to work, we must be able to undo each modification when we go back to generate the next suc- cessor. For problems with large state descriptions, such as robotic assembly, these techniques are critical to success.
+Chapter 6 for more details.) In backtracking, only one successor is generated at a time rather than all successors; each partially expanded node remembers which successor to generate next. In this way, only O(m) memory is needed rather than O(bm). Backtracking search facilitates yet another memory-saving (and time-saving) trick: the idea of generating a successor by _modifying_ the current state description directly rather than copying it first. This reduces the memory requirements to just one state description and O(m) actions. For this to work, we must be able to undo each modification when we go back to generate the next successor. For problems with large state descriptions, such as robotic assembly, these techniques are critical to success.
 
 **3.4.4 Depth-limited search**
 
@@ -1011,7 +989,7 @@ map carefully, we would discover that any city can be reached from any other cit
 
 which leads to a more efficient depth-limited search. For most problems, however, we will not know a good depth limit until we have solved the problem.
 
-Depth-limited search can be implemented as a simple modification to the general tree- or graph-search algorithm. Alternatively, it can be implemented as a simple recursive al- gorithm as shown in Figure 3.17. Notice that depth-limited search can terminate with two kinds of failure: the standard failure value indicates no solution; the cutoff value indicates no solution within the depth limit.
+Depth-limited search can be implemented as a simple modification to the general treeor graph-search algorithm. Alternatively, it can be implemented as a simple recursive algorithm as shown in Figure 3.17. Notice that depth-limited search can terminate with two kinds of failure: the standard failure value indicates no solution; the cutoff value indicates no solution within the depth limit.
 
 **3.4.5 Iterative deepening depth-first search**
 
@@ -1029,7 +1007,7 @@ Section 3.4. Uninformed Search Strategies 89
 
 result←DEPTH-LIMITED-SEARCH(problem ,depth) **if** result = cutoff **then return** result
 
-**Figure 3.18** The iterative deepening search algorithm, which repeatedly applies depth- limited search with increasing limits. It terminates when a solution is found or if the depth- limited search returns failure , meaning that no solution exists.
+**Figure 3.18** The iterative deepening search algorithm, which repeatedly applies depthlimited search with increasing limits. It terminates when a solution is found or if the depthlimited search returns failure , meaning that no solution exists.
 
 Limit = 3
 
@@ -1217,7 +1195,7 @@ N(BFS) = 10 + 100 + 1, 000 + 10, 000 + 100, 000 = 111, 110 .
 
 If you are really concerned about repeating the repetition, you can use a hybrid approach that runs breadth-first search until almost all the available memory is consumed, and then runs iterative deepening from all the nodes in the frontier. _In general, iterative deepening is the preferred uninformed search method when the search space is large and the depth of the solution is not known._
 
-Iterative deepening search is analogous to breadth-first search in that it explores a com- plete layer of new nodes at each iteration before going on to the next layer. It would seem worthwhile to develop an iterative analog to uniform-cost search, inheriting the latter algo- rithm’s optimality guarantees while avoiding its memory requirements. The idea is to use increasing path-cost limits instead of increasing depth limits. The resulting algorithm, called **iterative lengthening search**, is explored in Exercise 3.17. It turns out, unfortunately, that
+Iterative deepening search is analogous to breadth-first search in that it explores a complete layer of new nodes at each iteration before going on to the next layer. It would seem worthwhile to develop an iterative analog to uniform-cost search, inheriting the latter algorithm’s optimality guarantees while avoiding its memory requirements. The idea is to use increasing path-cost limits instead of increasing depth limits. The resulting algorithm, called **iterative lengthening search**, is explored in Exercise 3.17. It turns out, unfortunately, that
 
 ITERATIVE LENGTHENING SEARCH
 
@@ -1249,7 +1227,7 @@ Consider the question of what we mean by “the goal” in searching “backward
 
 Figure 3.21 compares search strategies in terms of the four evaluation criteria set forth in Section 3.3.2. This comparison is for tree-search versions. For graph searches, the main differences are that depth-first search is complete for finite state spaces and that the space and time complexities are bounded by the size of the state space.
 
-Criterion Breadth- Uniform- Depth- Depth- Iterative Bidirectional
+Criterion BreadthUniformDepthDepthIterative Bidirectional
 
 First Cost First Limited Deepening (if applicable)
 
@@ -1277,7 +1255,7 @@ instance of the general TREE-SEARCH or GRAPH-SEARCH algorithm in which a node is
 
 FUNCTION
 
-construed as a cost estimate, so the node with the _lowest_ evaluation is expanded first. The implementation of best-first graph search is identical to that for uniform-cost search (Fig- ure 3.14), except for the use of f instead of g to order the priority queue.
+construed as a cost estimate, so the node with the _lowest_ evaluation is expanded first. The implementation of best-first graph search is identical to that for uniform-cost search (Figure 3.14), except for the use of f instead of g to order the priority queue.
 
 The choice of f determines the search strategy. (For example, as Exercise 3.21 shows, best-first tree search includes depth-first search as a special case.) Most best-first algorithms include as a component of f a **heuristic function**, denoted h(n):HEURISTIC
 
@@ -1295,11 +1273,11 @@ Heuristic functions are the most common form in which additional knowledge of th
 
 that this is likely to lead to a solution quickly. Thus, it evaluates nodes by using just the heuristic function; that is, f(n) = h(n).
 
-Let us see how this works for route-finding problems in Romania; we use the **straight- line distance** heuristic, which we will call hSLD . If the goal is Bucharest, we need toSTRAIGHT-LINE
+Let us see how this works for route-finding problems in Romania; we use the **straightline distance** heuristic, which we will call hSLD . If the goal is Bucharest, we need toSTRAIGHT-LINE
 
 DISTANCE
 
-know the straight-line distances to Bucharest, which are shown in Figure 3.22. For exam- ple, hSLD(In(Arad))= 366. Notice that the values of hSLD cannot be computed from the problem description itself. Moreover, it takes a certain amount of experience to know that hSLD is correlated with actual road distances and is, therefore, a useful heuristic.
+know the straight-line distances to Bucharest, which are shown in Figure 3.22. For example, hSLD(In(Arad))= 366. Notice that the values of hSLD cannot be computed from the problem description itself. Moreover, it takes a certain amount of experience to know that hSLD is correlated with actual road distances and is, therefore, a useful heuristic.
 
 Figure 3.23 shows the progress of a greedy best-first search using hSLD to find a path from Arad to Bucharest. The first node to be expanded from Arad will be Sibiu because it is closer to Bucharest than either Zerind or Timisoara. The next node to be expanded will be Fagaras because it is closest. Fagaras in turn generates Bucharest, which is the goal. For this particular problem, greedy best-first search using hSLD finds a solution without ever
 
@@ -1365,7 +1343,7 @@ Section 3.5. Informed (Heuristic) Search Strategies 93
 
 expanding a node that is not on the solution path; hence, its search cost is minimal. It is not optimal, however: the path via Sibiu and Fagaras to Bucharest is 32 kilometers longer than the path through Rimnicu Vilcea and Pitesti. This shows why the algorithm is called “greedy”—at each step it tries to get as close to the goal as it can.
 
-Greedy best-first tree search is also incomplete even in a finite state space, much like depth-first search. Consider the problem of getting from Iasi to Fagaras. The heuristic sug- gests that Neamt be expanded first because it is closest to Fagaras, but it is a dead end. The solution is to go first to Vaslui—a step that is actually farther from the goal according to the heuristic—and then to continue to Urziceni, Bucharest, and Fagaras. The algorithm will never find this solution, however, because expanding Neamt puts Iasi back into the frontier, Iasi is closer to Fagaras than Vaslui is, and so Iasi will be expanded again, leading to an infi- nite loop. (The graph search version _is_ complete in finite spaces, but not in infinite ones.) The worst-case time and space complexity for the tree version is O(bm), where m is the maximum depth of the search space. With a good heuristic function, however, the complexity can be reduced substantially. The amount of the reduction depends on the particular problem and on the quality of the heuristic.
+Greedy best-first tree search is also incomplete even in a finite state space, much like depth-first search. Consider the problem of getting from Iasi to Fagaras. The heuristic suggests that Neamt be expanded first because it is closest to Fagaras, but it is a dead end. The solution is to go first to Vaslui—a step that is actually farther from the goal according to the heuristic—and then to continue to Urziceni, Bucharest, and Fagaras. The algorithm will never find this solution, however, because expanding Neamt puts Iasi back into the frontier, Iasi is closer to Fagaras than Vaslui is, and so Iasi will be expanded again, leading to an infinite loop. (The graph search version _is_ complete in finite spaces, but not in infinite ones.) The worst-case time and space complexity for the tree version is O(bm), where m is the maximum depth of the search space. With a good heuristic function, however, the complexity can be reduced substantially. The amount of the reduction depends on the particular problem and on the quality of the heuristic.
 
 **3.5.2 A\* search: Minimizing the total estimated solution cost**
 
@@ -1705,9 +1683,9 @@ With uniform-cost search (A∗ search using h(n) = 0), the bands will be “circ
 
 ∗ is the cost of the optimal solution path, then we can say the following:
 
-• A∗ expands all nodes with f(n) < C ∗.
+- A∗ expands all nodes with f(n) < C ∗.
 
-• A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C ∗)
+- A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C ∗)
 
 before selecting a goal node.
 
@@ -1775,15 +1753,15 @@ result , best .f ←RBFS(problem , best , min( f limit , alternative)) **if** re
 
 **Figure 3.26** The algorithm for recursive best-first search.
 
-before it runs out of time. For this reason, A∗ is not practical for many large-scale prob- lems. There are, however, algorithms that overcome the space problem without sacrificing optimality or completeness, at a small cost in execution time. We discuss these next.
+before it runs out of time. For this reason, A∗ is not practical for many large-scale problems. There are, however, algorithms that overcome the space problem without sacrificing optimality or completeness, at a small cost in execution time. We discuss these next.
 
 **3.5.3 Memory-bounded heuristic search**
 
 The simplest way to reduce memory requirements for A∗ is to adapt the idea of iterative deepening to the heuristic search context, resulting in the **iterative-deepening A**∗ (IDA∗) al-
 
-ITERATIVE- DEEPENING A ∗
+ITERATIVEDEEPENING A ∗
 
-gorithm. The main difference between IDA∗ and standard iterative deepening is that the cutoff used is the f -cost (g +h) rather than the depth; at each iteration, the cutoff value is the small- est f -cost of any node that exceeded the cutoff on the previous iteration. IDA∗ is practical for many problems with unit step costs and avoids the substantial overhead associated with keeping a sorted queue of nodes. Unfortunately, it suffers from the same difficulties with real- valued costs as does the iterative version of uniform-cost search described in Exercise 3.17. This section briefly examines two other memory-bounded algorithms, called RBFS and MA∗.
+gorithm. The main difference between IDA∗ and standard iterative deepening is that the cutoff used is the f -cost (g +h) rather than the depth; at each iteration, the cutoff value is the smallest f -cost of any node that exceeded the cutoff on the previous iteration. IDA∗ is practical for many problems with unit step costs and avoids the substantial overhead associated with keeping a sorted queue of nodes. Unfortunately, it suffers from the same difficulties with realvalued costs as does the iterative version of uniform-cost search described in Exercise 3.17. This section briefly examines two other memory-bounded algorithms, called RBFS and MA∗.
 
 **Recursive best-first search** (RBFS) is a simple recursive algorithm that attempts toRECURSIVE BEST-FIRST SEARCH
 
@@ -1921,7 +1899,7 @@ Section 3.5. Informed (Heuristic) Search Strategies 101
 
 Like A∗ tree search, RBFS is an optimal algorithm if the heuristic function h(n) is admissible. Its space complexity is linear in the depth of the deepest optimal solution, but its time complexity is rather difficult to characterize: it depends both on the accuracy of the heuristic function and on how often the best path changes as nodes are expanded.
 
-IDA∗ and RBFS suffer from using _too little_ memory. Between iterations, IDA∗ retains only a single number: the current f -cost limit. RBFS retains more information in memory, but it uses only linear space: even if more memory were available, RBFS has no way to make use of it. Because they forget most of what they have done, both algorithms may end up reex- panding the same states many times over. Furthermore, they suffer the potentially exponential increase in complexity associated with redundant paths in graphs (see Section 3.3).
+IDA∗ and RBFS suffer from using _too little_ memory. Between iterations, IDA∗ retains only a single number: the current f -cost limit. RBFS retains more information in memory, but it uses only linear space: even if more memory were available, RBFS has no way to make use of it. Because they forget most of what they have done, both algorithms may end up reexpanding the same states many times over. Furthermore, they suffer the potentially exponential increase in complexity associated with redundant paths in graphs (see Section 3.3).
 
 It seems sensible, therefore, to use all available memory. Two algorithms that do this are **MA**∗ (memory-bounded A∗) and **SMA**∗ (simplified MA∗). SMA∗ is—well—simpler, soMA\*
 
@@ -1967,7 +1945,7 @@ ing subtrees. The techniques used for this kind of learning are described in Cha
 
 In this section, we look at heuristics for the 8-puzzle, in order to shed light on the nature of heuristics in general.
 
-The 8-puzzle was one of the earliest heuristic search problems. As mentioned in Sec- tion 3.2, the object of the puzzle is to slide the tiles horizontally or vertically into the empty space until the configuration matches the goal configuration (Figure 3.28).
+The 8-puzzle was one of the earliest heuristic search problems. As mentioned in Section 3.2, the object of the puzzle is to slide the tiles horizontally or vertically into the empty space until the configuration matches the goal configuration (Figure 3.28).
 
 The average solution cost for a randomly generated 8-puzzle instance is about 22 steps. The branching factor is about 3. (When the empty tile is in the middle, four moves are possible; when it is in a corner, two; and when it is along an edge, three.) This means that an exhaustive tree search to depth 22 would look at about 322 ≈ 3.1× 1010 states. A graph search would cut this down by a factor of about 170,000 because only 9!/2 =
 
@@ -2009,9 +1987,9 @@ Start State Goal State
 
 the corresponding number for the 15-puzzle is roughly 1013, so the next order of business is to find a good heuristic function. If we want to find the shortest solutions by using A∗, we need a heuristic function that never overestimates the number of steps to the goal. There is a long history of such heuristics for the 15-puzzle; here are two commonly used candidates:
 
-• h1 = the number of misplaced tiles. For Figure 3.28, all of the eight tiles are out of position, so the start state would have h1 = 8. h1 is an admissible heuristic because it is clear that any tile that is out of place must be moved at least once.
+- h1 = the number of misplaced tiles. For Figure 3.28, all of the eight tiles are out of position, so the start state would have h1 = 8. h1 is an admissible heuristic because it is clear that any tile that is out of place must be moved at least once.
 
-• h2 = the sum of the distances of the tiles from their goal positions. Because tiles cannot move along diagonals, the distance we will count is the sum of the horizontal and vertical distances. This is sometimes called the **city block distance** or **Manhattan distance**. h2 is also admissible because all any move can do is move one tile one stepMANHATTAN
+- h2 = the sum of the distances of the tiles from their goal positions. Because tiles cannot move along diagonals, the distance we will count is the sum of the horizontal and vertical distances. This is sometimes called the **city block distance** or **Manhattan distance**. h2 is also admissible because all any move can do is move one tile one stepMANHATTAN
 
 DISTANCE
 
@@ -2047,7 +2025,7 @@ For example, if A∗ finds a solution at depth 5 using 52 nodes, then the effect
 
 grows exponentially with solution depth.) Therefore, experimental measurements of b ∗ on a
 
-small set of problems can provide a good guide to the heuristic’s overall usefulness. A well- designed heuristic would have a value of b
+small set of problems can provide a good guide to the heuristic’s overall usefulness. A welldesigned heuristic would have a value of b
 
 ∗ close to 1, allowing fairly large problems to be solved at reasonable computational cost.  
 
@@ -2099,7 +2077,7 @@ we can generate three relaxed problems by removing one or both of the conditions
 
 From (a), we can derive h2 (Manhattan distance). The reasoning is that h2 would be the proper score if we moved each tile in turn to its destination. The heuristic derived from (b) is discussed in Exercise 3.31. From (c), we can derive h1 (misplaced tiles) because it would be the proper score if tiles could move to their intended destination in one step. Notice that it is crucial that the relaxed problems generated by this technique can be solved essentially _without search_, because the relaxed rules allow the problem to be decomposed into eight independent subproblems. If the relaxed problem is hard to solve, then the values of the corresponding heuristic will be expensive to obtain.12
 
-A program called ABSOLVER can generate heuristics automatically from problem def- initions, using the “relaxed problem” method and various other techniques (Prieditis, 1993). ABSOLVER generated a new heuristic for the 8-puzzle that was better than any preexisting heuristic and found the first useful heuristic for the famous Rubik’s Cube puzzle.
+A program called ABSOLVER can generate heuristics automatically from problem definitions, using the “relaxed problem” method and various other techniques (Prieditis, 1993). ABSOLVER generated a new heuristic for the 8-puzzle that was better than any preexisting heuristic and found the first useful heuristic for the famous Rubik’s Cube puzzle.
 
 One problem with generating new heuristic functions is that one often fails to get a single “clearly best” heuristic. If a collection of admissible heuristics h1 . . . hm is available for a problem and none of them dominates any of the others, which should we choose? As it turns out, we need not make a choice. We can have the best of all worlds, by defining
 
@@ -2141,11 +2119,11 @@ This composite heuristic uses whichever function is most accurate on the node in
 
 Admissible heuristics can also be derived from the solution cost of a **subproblem** of a givenSUBPROBLEM
 
-problem. For example, Figure 3.30 shows a subproblem of the 8-puzzle instance in Fig- ure 3.28. The subproblem involves getting tiles 1, 2, 3, 4 into their correct positions. Clearly, the cost of the optimal solution of this subproblem is a lower bound on the cost of the com- plete problem. It turns out to be more accurate than Manhattan distance in some cases.
+problem. For example, Figure 3.30 shows a subproblem of the 8-puzzle instance in Figure 3.28. The subproblem involves getting tiles 1, 2, 3, 4 into their correct positions. Clearly, the cost of the optimal solution of this subproblem is a lower bound on the cost of the complete problem. It turns out to be more accurate than Manhattan distance in some cases.
 
 The idea behind **pattern databases** is to store these exact solution costs for every pos-PATTERN DATABASE
 
-sible subproblem instance—in our example, every possible configuration of the four tiles and the blank. (The locations of the other four tiles are irrelevant for the purposes of solv- ing the subproblem, but moves of those tiles do count toward the cost.) Then we compute an admissible heuristic hDB for each complete state encountered during a search simply by looking up the corresponding subproblem configuration in the database. The database itself is constructed by searching back13 from the goal and recording the cost of each new pattern en- countered; the expense of this search is amortized over many subsequent problem instances.
+sible subproblem instance—in our example, every possible configuration of the four tiles and the blank. (The locations of the other four tiles are irrelevant for the purposes of solving the subproblem, but moves of those tiles do count toward the cost.) Then we compute an admissible heuristic hDB for each complete state encountered during a search simply by looking up the corresponding subproblem configuration in the database. The database itself is constructed by searching back13 from the goal and recording the cost of each new pattern encountered; the expense of this search is amortized over many subsequent problem instances.
 
 The choice of 1-2-3-4 is fairly arbitrary; we could also construct databases for 5-6-7-8, for 2-4-6-8, and so on. Each database yields an admissible heuristic, and these heuristics can be combined, as explained earlier, by taking the maximum value. A combined heuristic of this kind is much more accurate than the Manhattan distance; the number of nodes generated when solving random 15-puzzles can be reduced by a factor of 1000.
 
@@ -2155,7 +2133,7 @@ One might wonder whether the heuristics obtained from the 1-2-3-4 database and t
 
 Section 3.6. Heuristic Functions 107
 
-unlikely that 1-2-3-4 can be moved into place without touching 5-6-7-8, and vice versa. But what if we don’t count those moves? That is, we record not the total cost of solving the 1-2- 3-4 subproblem, but just the number of moves involving 1-2-3-4. Then it is easy to see that the sum of the two costs is still a lower bound on the cost of solving the entire problem. This is the idea behind **disjoint pattern databases**. With such databases, it is possible to solveDISJOINT PATTERN
+unlikely that 1-2-3-4 can be moved into place without touching 5-6-7-8, and vice versa. But what if we don’t count those moves? That is, we record not the total cost of solving the 1-23-4 subproblem, but just the number of moves involving 1-2-3-4. Then it is easy to see that the sum of the two costs is still a lower bound on the cost of solving the entire problem. This is the idea behind **disjoint pattern databases**. With such databases, it is possible to solveDISJOINT PATTERN
 
 DATABASES
 
@@ -2165,7 +2143,7 @@ Disjoint pattern databases work for sliding-tile puzzles because the problem can
 
 **3.6.4 Learning heuristics from experience**
 
-A heuristic function h(n) is supposed to estimate the cost of a solution beginning from the state at node n. How could an agent construct such a function? One solution was given in the preceding sections—namely, to devise relaxed problems for which an optimal solution can be found easily. Another solution is to learn from experience. “Experience” here means solving lots of 8-puzzles, for instance. Each optimal solution to an 8-puzzle problem provides examples from which h(n) can be learned. Each example consists of a state from the solu- tion path and the actual cost of the solution from that point. From these examples, a learning algorithm can be used to construct a function h(n) that can (with luck) predict solution costs for other states that arise during search. Techniques for doing just this using neural nets, de- cision trees, and other methods are demonstrated in Chapter 18. (The reinforcement learning methods described in Chapter 21 are also applicable.)
+A heuristic function h(n) is supposed to estimate the cost of a solution beginning from the state at node n. How could an agent construct such a function? One solution was given in the preceding sections—namely, to devise relaxed problems for which an optimal solution can be found easily. Another solution is to learn from experience. “Experience” here means solving lots of 8-puzzles, for instance. Each optimal solution to an 8-puzzle problem provides examples from which h(n) can be learned. Each example consists of a state from the solution path and the actual cost of the solution from that point. From these examples, a learning algorithm can be used to construct a function h(n) that can (with luck) predict solution costs for other states that arise during search. Techniques for doing just this using neural nets, decision trees, and other methods are demonstrated in Chapter 18. (The reinforcement learning methods described in Chapter 21 are also applicable.)
 
 Inductive learning methods work best when supplied with **features** of a state that areFEATURE
 
@@ -2181,29 +2159,29 @@ The constants c1 and c2 are adjusted to give the best fit to the actual data on 
 
 This chapter has introduced methods that an agent can use to select actions in environments that are deterministic, observable, static, and completely known. In such cases, the agent can construct sequences of actions that achieve its goals; this process is called **search**.
 
-• Before an agent can start searching for solutions, a **goal** must be identified and a well- defined **problem** must be formulated.
+- Before an agent can start searching for solutions, a **goal** must be identified and a welldefined **problem** must be formulated.
 
-• A problem consists of five parts: the **initial state**, a set of **actions**, a **transition model** describing the results of those actions, a **goal test** function, and a **path cost** function. The environment of the problem is represented by a **state space**. A **path** through the state space from the initial state to a goal state is a **solution**.
+- A problem consists of five parts: the **initial state**, a set of **actions**, a **transition model** describing the results of those actions, a **goal test** function, and a **path cost** function. The environment of the problem is represented by a **state space**. A **path** through the state space from the initial state to a goal state is a **solution**.
 
-• Search algorithms treat states and actions as **atomic**: they do not consider any internal structure they might possess.
+- Search algorithms treat states and actions as **atomic**: they do not consider any internal structure they might possess.
 
-• A general TREE-SEARCH algorithm considers all possible paths to find a solution, whereas a GRAPH-SEARCH algorithm avoids consideration of redundant paths.
+- A general TREE-SEARCH algorithm considers all possible paths to find a solution, whereas a GRAPH-SEARCH algorithm avoids consideration of redundant paths.
 
-• Search algorithms are judged on the basis of **completeness**, **optimality**, **time complex- ity**, and **space complexity**. Complexity depends on b, the branching factor in the state space, and d, the depth of the shallowest solution.
+- Search algorithms are judged on the basis of **completeness**, **optimality**, **time complexity**, and **space complexity**. Complexity depends on b, the branching factor in the state space, and d, the depth of the shallowest solution.
 
-• **Uninformed search** methods have access only to the problem definition. The basic algorithms are as follows:
+- **Uninformed search** methods have access only to the problem definition. The basic algorithms are as follows:
 
 **– Breadth-first search** expands the shallowest nodes first; it is complete, optimal for unit step costs, but has exponential space complexity.
 
 **– Uniform-cost search** expands the node with lowest path cost, g(n), and is optimal for general step costs.
 
-**– Depth-first search** expands the deepest unexpanded node first. It is neither com- plete nor optimal, but has linear space complexity. **Depth-limited search** adds a depth bound.
+**– Depth-first search** expands the deepest unexpanded node first. It is neither complete nor optimal, but has linear space complexity. **Depth-limited search** adds a depth bound.
 
 **– Iterative deepening search** calls depth-first search with increasing depth limits until a goal is found. It is complete, optimal for unit step costs, has time complexity comparable to breadth-first search, and has linear space complexity.
 
 **– Bidirectional search** can enormously reduce time complexity, but it is not always applicable and may require too much space.
 
-• **Informed search** methods may have access to a **heuristic** function h(n) that estimates the cost of a solution from n.
+- **Informed search** methods may have access to a **heuristic** function h(n) that estimates the cost of a solution from n.
 
 **–** The generic **best-first search** algorithm selects a node for expansion according to an **evaluation function**.
 
@@ -2215,33 +2193,33 @@ Bibliographical and Historical Notes 109
 
 **– RBFS** (recursive best-first search) and **SMA**∗ (simplified memory-bounded A∗) are robust, optimal search algorithms that use limited amounts of memory; given enough time, they can solve problems that A∗ cannot solve because it runs out of memory.
 
-• The performance of heuristic search algorithms depends on the quality of the heuristic function. One can sometimes construct good heuristics by relaxing the problem defi- nition, by storing precomputed solution costs for subproblems in a pattern database, or by learning from experience with the problem class.
+- The performance of heuristic search algorithms depends on the quality of the heuristic function. One can sometimes construct good heuristics by relaxing the problem definition, by storing precomputed solution costs for subproblems in a pattern database, or by learning from experience with the problem class.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-The topic of state-space search originated in more or less its current form in the early years of AI. Newell and Simon’s work on the Logic Theorist (1957) and GPS (1961) led to the estab- lishment of search algorithms as the primary weapons in the armory of 1960s AI researchers and to the establishment of problem solving as the canonical AI task. Work in operations research by Richard Bellman (1957) showed the importance of additive path costs in sim- plifying optimization algorithms. The text on _Automated Problem Solving_ by Nils Nilsson (1971) established the area on a solid theoretical footing.
+The topic of state-space search originated in more or less its current form in the early years of AI. Newell and Simon’s work on the Logic Theorist (1957) and GPS (1961) led to the establishment of search algorithms as the primary weapons in the armory of 1960s AI researchers and to the establishment of problem solving as the canonical AI task. Work in operations research by Richard Bellman (1957) showed the importance of additive path costs in simplifying optimization algorithms. The text on _Automated Problem Solving_ by Nils Nilsson (1971) established the area on a solid theoretical footing.
 
-Most of the state-space search problems analyzed in this chapter have a long history in the literature and are less trivial than they might seem. The missionaries and cannibals problem used in Exercise 3.9 was analyzed in detail by Amarel (1968). It had been consid- ered earlier—in AI by Simon and Newell (1961) and in operations research by Bellman and Dreyfus (1962).
+Most of the state-space search problems analyzed in this chapter have a long history in the literature and are less trivial than they might seem. The missionaries and cannibals problem used in Exercise 3.9 was analyzed in detail by Amarel (1968). It had been considered earlier—in AI by Simon and Newell (1961) and in operations research by Bellman and Dreyfus (1962).
 
-The 8-puzzle is a smaller cousin of the 15-puzzle, whose history is recounted at length by Slocum and Sonneveld (2006). It was widely believed to have been invented by the fa- mous American game designer Sam Loyd, based on his claims to that effect from 1891 on- ward (Loyd, 1959). Actually it was invented by Noyes Chapman, a postmaster in Canastota, New York, in the mid-1870s. (Chapman was unable to patent his invention, as a generic patent covering sliding blocks with letters, numbers, or pictures was granted to Ernest Kinsey in 1878.) It quickly attracted the attention of the public and of mathematicians (Johnson and Story, 1879; Tait, 1880). The editors of the _American Journal of Mathematics_ stated, “The ‘15’ puzzle for the last few weeks has been prominently before the American public, and may safely be said to have engaged the attention of nine out of ten persons of both sexes and all ages and conditions of the community.” Ratner and Warmuth (1986) showed that the general n× n version of the 15-puzzle belongs to the class of NP-complete problems.
+The 8-puzzle is a smaller cousin of the 15-puzzle, whose history is recounted at length by Slocum and Sonneveld (2006). It was widely believed to have been invented by the famous American game designer Sam Loyd, based on his claims to that effect from 1891 onward (Loyd, 1959). Actually it was invented by Noyes Chapman, a postmaster in Canastota, New York, in the mid-1870s. (Chapman was unable to patent his invention, as a generic patent covering sliding blocks with letters, numbers, or pictures was granted to Ernest Kinsey in 1878.) It quickly attracted the attention of the public and of mathematicians (Johnson and Story, 1879; Tait, 1880). The editors of the _American Journal of Mathematics_ stated, “The ‘15’ puzzle for the last few weeks has been prominently before the American public, and may safely be said to have engaged the attention of nine out of ten persons of both sexes and all ages and conditions of the community.” Ratner and Warmuth (1986) showed that the general n× n version of the 15-puzzle belongs to the class of NP-complete problems.
 
-The 8-queens problem was first published anonymously in the German chess maga- zine _Schach_ in 1848; it was later attributed to one Max Bezzel. It was republished in 1850 and at that time drew the attention of the eminent mathematician Carl Friedrich Gauss, who  
+The 8-queens problem was first published anonymously in the German chess magazine _Schach_ in 1848; it was later attributed to one Max Bezzel. It was republished in 1850 and at that time drew the attention of the eminent mathematician Carl Friedrich Gauss, who  
 
 
 
 attempted to enumerate all possible solutions; initially he found only 72, but eventually he found the correct answer of 92, although Nauck published all 92 solutions first, in 1850. Netto (1901) generalized the problem to n queens, and Abramson and Yung (1989) found an O(n) algorithm.
 
-Each of the real-world search problems listed in the chapter has been the subject of a good deal of research effort. Methods for selecting optimal airline flights remain proprietary for the most part, but Carl de Marcken (personal communication) has shown that airline ticket pricing and restrictions have become so convoluted that the problem of selecting an optimal flight is formally _undecidable_. The traveling-salesperson problem is a standard combinato- rial problem in theoretical computer science (Lawler _et al._, 1992). Karp (1972) proved the TSP to be NP-hard, but effective heuristic approximation methods were developed (Lin and Kernighan, 1973). Arora (1998) devised a fully polynomial approximation scheme for Eu- clidean TSPs. VLSI layout methods are surveyed by Shahookar and Mazumder (1991), and many layout optimization papers appear in VLSI journals. Robotic navigation and assembly problems are discussed in Chapter 25.
+Each of the real-world search problems listed in the chapter has been the subject of a good deal of research effort. Methods for selecting optimal airline flights remain proprietary for the most part, but Carl de Marcken (personal communication) has shown that airline ticket pricing and restrictions have become so convoluted that the problem of selecting an optimal flight is formally _undecidable_. The traveling-salesperson problem is a standard combinatorial problem in theoretical computer science (Lawler _et al._, 1992). Karp (1972) proved the TSP to be NP-hard, but effective heuristic approximation methods were developed (Lin and Kernighan, 1973). Arora (1998) devised a fully polynomial approximation scheme for Euclidean TSPs. VLSI layout methods are surveyed by Shahookar and Mazumder (1991), and many layout optimization papers appear in VLSI journals. Robotic navigation and assembly problems are discussed in Chapter 25.
 
-Uninformed search algorithms for problem solving are a central topic of classical com- puter science (Horowitz and Sahni, 1978) and operations research (Dreyfus, 1969). Breadth- first search was formulated for solving mazes by Moore (1959). The method of **dynamic programming** (Bellman, 1957; Bellman and Dreyfus, 1962), which systematically records solutions for all subproblems of increasing lengths, can be seen as a form of breadth-first search on graphs. The two-point shortest-path algorithm of Dijkstra (1959) is the origin of uniform-cost search. These works also introduced the idea of explored and frontier sets (closed and open lists).
+Uninformed search algorithms for problem solving are a central topic of classical computer science (Horowitz and Sahni, 1978) and operations research (Dreyfus, 1969). Breadthfirst search was formulated for solving mazes by Moore (1959). The method of **dynamic programming** (Bellman, 1957; Bellman and Dreyfus, 1962), which systematically records solutions for all subproblems of increasing lengths, can be seen as a form of breadth-first search on graphs. The two-point shortest-path algorithm of Dijkstra (1959) is the origin of uniform-cost search. These works also introduced the idea of explored and frontier sets (closed and open lists).
 
 A version of iterative deepening designed to make efficient use of the chess clock was first used by Slate and Atkin (1977) in the CHESS 4.5 game-playing program. Martelli’s algorithm B (1977) includes an iterative deepening aspect and also dominates A∗’s worst-case performance with admissible but inconsistent heuristics. The iterative deepening technique came to the fore in work by Korf (1985a). Bidirectional search, which was introduced by Pohl (1971), can also be effective in some cases.
 
-The use of heuristic information in problem solving appears in an early paper by Simon and Newell (1958), but the phrase “heuristic search” and the use of heuristic functions that estimate the distance to the goal came somewhat later (Newell and Ernst, 1965; Lin, 1965). Doran and Michie (1966) conducted extensive experimental studies of heuristic search. Al- though they analyzed path length and “penetrance” (the ratio of path length to the total num- ber of nodes examined so far), they appear to have ignored the information provided by the path cost g(n). The A∗ algorithm, incorporating the current path cost into heuristic search, was developed by Hart, Nilsson, and Raphael (1968), with some later corrections (Hart _et al._, 1972). Dechter and Pearl (1985) demonstrated the optimal efficiency of A∗.
+The use of heuristic information in problem solving appears in an early paper by Simon and Newell (1958), but the phrase “heuristic search” and the use of heuristic functions that estimate the distance to the goal came somewhat later (Newell and Ernst, 1965; Lin, 1965). Doran and Michie (1966) conducted extensive experimental studies of heuristic search. Although they analyzed path length and “penetrance” (the ratio of path length to the total number of nodes examined so far), they appear to have ignored the information provided by the path cost g(n). The A∗ algorithm, incorporating the current path cost into heuristic search, was developed by Hart, Nilsson, and Raphael (1968), with some later corrections (Hart _et al._, 1972). Dechter and Pearl (1985) demonstrated the optimal efficiency of A∗.
 
 The original A∗ paper introduced the consistency condition on heuristic functions. The monotone condition was introduced by Pohl (1977) as a simpler replacement, but Pearl (1984) showed that the two were equivalent.
 
-Pohl (1977) pioneered the study of the relationship between the error in heuristic func- tions and the time complexity of A∗. Basic results were obtained for tree search with unit step  
+Pohl (1977) pioneered the study of the relationship between the error in heuristic functions and the time complexity of A∗. Basic results were obtained for tree search with unit step  
 
 Bibliographical and Historical Notes 111
 
@@ -2257,11 +2235,11 @@ Bidirectional versions of A∗ have been investigated; a combination of bidirect
 
 and known landmarks was used to efficiently find driving routes for Microsoft’s online map service (Goldberg _et al._, 2006). After caching a set of paths between landmarks, the algorithm can find an optimal path between any pair of points in a 24 million point graph of the United States, searching less than 0.1% of the graph. Others approaches to bidirectional search include a breadth-first search backward from the goal up to a fixed depth, followed by a forward IDA∗ search (Dillenburg and Nelson, 1994; Manzini, 1995).
 
-A∗ and other state-space search algorithms are closely related to the _branch-and-bound_ techniques that are widely used in operations research (Lawler and Wood, 1966). The relationships between state-space search and branch-and-bound have been investigated in depth (Kumar and Kanal, 1983; Nau _et al._, 1984; Kumar _et al._, 1988). Martelli and Monta- nari (1978) demonstrate a connection between dynamic programming (see Chapter 17) and certain types of state-space search. Kumar and Kanal (1988) attempt a “grand unification” of heuristic search, dynamic programming, and branch-and-bound techniques under the name of CDP—the “composite decision process.”
+A∗ and other state-space search algorithms are closely related to the _branch-and-bound_ techniques that are widely used in operations research (Lawler and Wood, 1966). The relationships between state-space search and branch-and-bound have been investigated in depth (Kumar and Kanal, 1983; Nau _et al._, 1984; Kumar _et al._, 1988). Martelli and Montanari (1978) demonstrate a connection between dynamic programming (see Chapter 17) and certain types of state-space search. Kumar and Kanal (1988) attempt a “grand unification” of heuristic search, dynamic programming, and branch-and-bound techniques under the name of CDP—the “composite decision process.”
 
 Because computers in the late 1950s and early 1960s had at most a few thousand words of main memory, memory-bounded heuristic search was an early research topic. The Graph Traverser (Doran and Michie, 1966), one of the earliest search programs, commits to an operator after searching best-first up to the memory limit. IDA∗ (Korf, 1985a, 1985b) was the first widely used optimal, memory-bounded heuristic search algorithm, and a large number of variants have been developed. An analysis of the efficiency of IDA∗ and of its difficulties with real-valued heuristics appears in Patrick _et al._ (1992).
 
-RBFS (Korf, 1993) is actually somewhat more complicated than the algorithm shown in Figure 3.26, which is closer to an independently developed algorithm called **iterative ex- pansion** (Russell, 1992). RBFS uses a lower bound as well as the upper bound; the two al-ITERATIVE
+RBFS (Korf, 1993) is actually somewhat more complicated than the algorithm shown in Figure 3.26, which is closer to an independently developed algorithm called **iterative expansion** (Russell, 1992). RBFS uses a lower bound as well as the upper bound; the two al-ITERATIVE
 
 EXPANSION
 
@@ -2273,11 +2251,11 @@ order even with an inadmissible heuristic. The idea of keeping track of the best
 
 algorithm (Russell and Wefald, 1991). The latter work also discusses metalevel state spaces and metalevel learning.
 
-The MA∗ algorithm appeared in Chakrabarti _et al._ (1989). SMA∗, or Simplified MA∗, emerged from an attempt to implement MA∗ as a comparison algorithm for IE (Russell, 1992). Kaindl and Khorsand (1994) have applied SMA∗ to produce a bidirectional search algorithm that is substantially faster than previous algorithms. Korf and Zhang (2000) describe a divide- and-conquer approach, and Zhou and Hansen (2002) introduce memory-bounded A∗ graph search and a strategy for switching to breadth-first search to increase memory-efficiency (Zhou and Hansen, 2006). Korf (1995) surveys memory-bounded search techniques.
+The MA∗ algorithm appeared in Chakrabarti _et al._ (1989). SMA∗, or Simplified MA∗, emerged from an attempt to implement MA∗ as a comparison algorithm for IE (Russell, 1992). Kaindl and Khorsand (1994) have applied SMA∗ to produce a bidirectional search algorithm that is substantially faster than previous algorithms. Korf and Zhang (2000) describe a divideand-conquer approach, and Zhou and Hansen (2002) introduce memory-bounded A∗ graph search and a strategy for switching to breadth-first search to increase memory-efficiency (Zhou and Hansen, 2006). Korf (1995) surveys memory-bounded search techniques.
 
 The idea that admissible heuristics can be derived by problem relaxation appears in the seminal paper by Held and Karp (1970), who used the minimum-spanning-tree heuristic to solve the TSP. (See Exercise 3.30.)
 
-The automation of the relaxation process was implemented successfully by Priedi- tis (1993), building on earlier work with Mostow (Mostow and Prieditis, 1989). Holte and Hernadvolgyi (2001) describe more recent steps towards automating the process. The use of pattern databases to derive admissible heuristics is due to Gasser (1995) and Culberson and Schaeffer (1996, 1998); disjoint pattern databases are described by Korf and Felner (2002); a similar method using symbolic patterns is due to Edelkamp (2009). Felner _et al._ (2007) show how to compress pattern databases to save space. The probabilistic interpretation of heuristics was investigated in depth by Pearl (1984) and Hansson and Mayer (1989).
+The automation of the relaxation process was implemented successfully by Prieditis (1993), building on earlier work with Mostow (Mostow and Prieditis, 1989). Holte and Hernadvolgyi (2001) describe more recent steps towards automating the process. The use of pattern databases to derive admissible heuristics is due to Gasser (1995) and Culberson and Schaeffer (1996, 1998); disjoint pattern databases are described by Korf and Felner (2002); a similar method using symbolic patterns is due to Edelkamp (2009). Felner _et al._ (2007) show how to compress pattern databases to save space. The probabilistic interpretation of heuristics was investigated in depth by Pearl (1984) and Hansson and Mayer (1989).
 
 By far the most comprehensive source on heuristics and heuristic search algorithms is Pearl’s (1984) _Heuristics_ text. This book provides especially good coverage of the wide variety of offshoots and variations of A∗, including rigorous proofs of their formal properties. Kanal and Kumar (1988) present an anthology of important articles on heuristic search, and Rayward-Smith _et al._ (1996) cover approaches from Operations Research. Papers about new search algorithms—which, remarkably, continue to be discovered—appear in journals such as _Artificial Intelligence_ and _Journal of the ACM_.
 
@@ -2353,7 +2331,7 @@ function that takes a vertex as input and returns a set of vectors, each of whic
 
 **3.8** On page 68, we said that we would not consider problems with negative path costs. In this exercise, we explore this decision in more depth.
 
-**a**. Suppose that actions can have arbitrarily large negative costs; explain why this possi- bility would force any optimal algorithm to explore the entire state space.  
+**a**. Suppose that actions can have arbitrarily large negative costs; explain why this possibility would force any optimal algorithm to explore the entire state space.  
 
 Exercises 115
 
@@ -2365,7 +2343,7 @@ Exercises 115
 
 **e**. Can you think of a real domain in which step costs are such as to cause looping?
 
-**3.9** The **missionaries and cannibals** problem is usually stated as follows. Three mission- aries and three cannibals are on one side of a river, along with a boat that can hold one or two people. Find a way to get everyone to the other side without ever leaving a group of mis- sionaries in one place outnumbered by the cannibals in that place. This problem is famous in AI because it was the subject of the first paper that approached problem formulation from an analytical viewpoint (Amarel, 1968).
+**3.9** The **missionaries and cannibals** problem is usually stated as follows. Three missionaries and three cannibals are on one side of a river, along with a boat that can hold one or two people. Find a way to get everyone to the other side without ever leaving a group of missionaries in one place outnumbered by the cannibals in that place. This problem is famous in AI because it was the subject of the first paper that approached problem formulation from an analytical viewpoint (Amarel, 1968).
 
 **a**. Formulate the problem precisely, making only those distinctions necessary to ensure a valid solution. Draw a diagram of the complete state space.
 
@@ -2377,9 +2355,9 @@ Exercises 115
 
 **3.11** What’s the difference between a world state, a state description, and a search node? Why is this distinction useful?
 
-**3.12** An action such as _Go(Sibiu)_ really consists of a long sequence of finer-grained actions: turn on the car, release the brake, accelerate forward, etc. Having composite actions of this kind reduces the number of steps in a solution sequence, thereby reducing the search time. Suppose we take this to the logical extreme, by making super-composite actions out of every possible sequence of _Go_ actions. Then every problem instance is solved by a single super- composite action, such as _Go(Sibiu)Go(Rimnicu Vilcea)Go(Pitesti)Go(Bucharest)_. Explain how search would work in this formulation. Is this a practical approach for speeding up problem solving?
+**3.12** An action such as _Go(Sibiu)_ really consists of a long sequence of finer-grained actions: turn on the car, release the brake, accelerate forward, etc. Having composite actions of this kind reduces the number of steps in a solution sequence, thereby reducing the search time. Suppose we take this to the logical extreme, by making super-composite actions out of every possible sequence of _Go_ actions. Then every problem instance is solved by a single supercomposite action, such as _Go(Sibiu)Go(Rimnicu Vilcea)Go(Pitesti)Go(Bucharest)_. Explain how search would work in this formulation. Is this a practical approach for speeding up problem solving?
 
-**3.13** Prove that GRAPH-SEARCH satisfies the graph separation property illustrated in Fig- ure 3.9. (_Hint_: Begin by showing that the property holds at the start, then show that if it holds before an iteration of the algorithm, it holds afterwards.) Describe a search algorithm that violates the property.  
+**3.13** Prove that GRAPH-SEARCH satisfies the graph separation property illustrated in Figure 3.9. (_Hint_: Begin by showing that the property holds at the start, then show that if it holds before an iteration of the algorithm, it holds afterwards.) Describe a search algorithm that violates the property.  
 
 
 
@@ -2393,7 +2371,7 @@ x 2 x 2
 
 **3.14** Which of the following are true and which are false? Explain your answers.
 
-**a**. Depth-first search always expands at least as many nodes as A∗ search with an admissi- ble heuristic.
+**a**. Depth-first search always expands at least as many nodes as A∗ search with an admissible heuristic.
 
 **b**. h(n) = 0 is an admissible heuristic for the 8-puzzle.
 
@@ -2407,7 +2385,7 @@ x 2 x 2
 
 **a**. Draw the portion of the state space for states 1 to 15.
 
-**b**. Suppose the goal state is 11. List the order in which nodes will be visited for breadth- first search, depth-limited search with limit 3, and iterative deepening search.
+**b**. Suppose the goal state is 11. List the order in which nodes will be visited for breadthfirst search, depth-limited search with limit 3, and iterative deepening search.
 
 **c**. How well would bidirectional search work on this problem? What is the branching factor in each direction of the bidirectional search?
 
@@ -2427,7 +2405,7 @@ Exercises 117
 
 **d**. Give an upper bound on the total size of the state space defined by your formulation. (_Hint_: think about the maximum branching factor for the construction process and the maximum depth, ignoring the problem of overlapping pieces and loose ends. Begin by pretending that every piece is unique.)
 
-**3.17** On page 90, we mentioned **iterative lengthening search**, an iterative analog of uni- form cost search. The idea is to use increasing limits on path cost. If a node is generated whose path cost exceeds the current limit, it is immediately discarded. For each new itera- tion, the limit is set to the lowest path cost of any node discarded in the previous iteration.
+**3.17** On page 90, we mentioned **iterative lengthening search**, an iterative analog of uniform cost search. The idea is to use increasing limits on path cost. If a node is generated whose path cost exceeds the current limit, it is immediately discarded. For each new iteration, the limit is set to the lowest path cost of any node discarded in the previous iteration.
 
 **a**. Show that this algorithm is optimal for general path costs.
 
@@ -2435,7 +2413,7 @@ Exercises 117
 
 **c**. Now consider step costs drawn from the continuous range \[ε, 1\], where 0 < ε < 1. How many iterations are required in the worst case?
 
-**d**. Implement the algorithm and apply it to instances of the 8-puzzle and traveling sales- person problems. Compare the algorithm’s performance to that of uniform-cost search, and comment on your results.
+**d**. Implement the algorithm and apply it to instances of the 8-puzzle and traveling salesperson problems. Compare the algorithm’s performance to that of uniform-cost search, and comment on your results.
 
 **3.18** Describe a state space in which iterative deepening search performs much worse than depth-first search (for example, O(n2) vs. O(n)).
 
@@ -2453,7 +2431,7 @@ world whose initial state has dirt in the three top squares and the agent in the
 
 **d**. Compare your best search agent with a simple randomized reflex agent that sucks if there is dirt and otherwise moves randomly.
 
-**e**. Consider what would happen if the world were enlarged to n × n. How does the per- formance of the search agent and of the reflex agent vary with n?
+**e**. Consider what would happen if the world were enlarged to n × n. How does the performance of the search agent and of the reflex agent vary with n?
 
 **3.21** Prove each of the following statements, or give a counterexample:
 
@@ -2465,7 +2443,7 @@ world whose initial state has dirt in the three top squares and the agent in the
 
 
 
-**3.22** Compare the performance of A∗ and RBFS on a set of randomly generated problems in the 8-puzzle (with Manhattan distance) and TSP (with MST—see Exercise 3.30) domains. Discuss your results. What happens to the performance of RBFS when a small random num- ber is added to the heuristic values in the 8-puzzle domain?
+**3.22** Compare the performance of A∗ and RBFS on a set of randomly generated problems in the 8-puzzle (with Manhattan distance) and TSP (with MST—see Exercise 3.30) domains. Discuss your results. What happens to the performance of RBFS when a small random number is added to the heuristic values in the 8-puzzle domain?
 
 **3.23** Trace the operation of A∗ search applied to the problem of getting to Bucharest from Lugoj using the straight-line distance heuristic. That is, show the sequence of nodes that the algorithm will consider and the f , g, and h score for each node.
 
@@ -2501,7 +2479,7 @@ ation function is f(n) = (2 − w)g(n) + wh(n). For what values of w is this com
 
 **c**. Suppose that vehicle i is at (xi, yi); write a nontrivial admissible heuristic hi for the number of moves it will require to get to its goal location (n − i + 1, n), assuming no other vehicles are on the grid.
 
-**d**. Which of the following heuristics are admissible for the problem of moving all n vehi- cles to their destinations? Explain.
+**d**. Which of the following heuristics are admissible for the problem of moving all n vehicles to their destinations? Explain.
 
 (i) ∑n
 
@@ -2515,7 +2493,7 @@ Exercises 119
 
 **3.29** Prove that if a heuristic is consistent, it must be admissible. Construct an admissible heuristic that is not consistent.
 
-**3.30** The traveling salesperson problem (TSP) can be solved with the minimum-spanning- tree (MST) heuristic, which estimates the cost of completing a tour, given that a partial tour has already been constructed. The MST cost of a set of cities is the smallest sum of the link costs of any tree that connects all the cities.
+**3.30** The traveling salesperson problem (TSP) can be solved with the minimum-spanningtree (MST) heuristic, which estimates the cost of completing a tour, given that a partial tour has already been constructed. The MST cost of a set of cities is the smallest sum of the link costs of any tree that connects all the cities.
 
 **a**. Show how this heuristic can be derived from a relaxed version of the TSP.
 
@@ -2531,13 +2509,13 @@ graph search to solve instances of the TSP.
 
 (misplaced tiles), and show cases where it is more accurate than both h1 and h2 (Manhattan distance). Explain how to calculate Gaschnig’s heuristic efficiently.
 
-**3.32** We gave two simple heuristics for the 8-puzzle: Manhattan distance and misplaced tiles. Several heuristics in the literature purport to improve on this—see, for example, Nils- son (1971), Mostow and Prieditis (1989), and Hansson _et al._ (1992). Test these claims by implementing the heuristics and comparing the performance of the resulting algorithms.  
+**3.32** We gave two simple heuristics for the 8-puzzle: Manhattan distance and misplaced tiles. Several heuristics in the literature purport to improve on this—see, for example, Nilsson (1971), Mostow and Prieditis (1989), and Hansson _et al._ (1992). Test these claims by implementing the heuristics and comparing the performance of the resulting algorithms.  
 
 4 BEYOND CLASSICAL SEARCH
 
 _In which we relax the simplifying assumptions of the previous chapter, thereby getting closer to the real world._
 
-Chapter 3 addressed a single category of problems: observable, deterministic, known envi- ronments where the solution is a sequence of actions. In this chapter, we look at what happens when these assumptions are relaxed. We begin with a fairly simple case: Sections 4.1 and 4.2 cover algorithms that perform purely **local search** in the state space, evaluating and modify- ing one or more current states rather than systematically exploring paths from an initial state. These algorithms are suitable for problems in which all that matters is the solution state, not the path cost to reach it. The family of local search algorithms includes methods inspired by statistical physics (**simulated annealing**) and evolutionary biology (**genetic algorithms**).
+Chapter 3 addressed a single category of problems: observable, deterministic, known environments where the solution is a sequence of actions. In this chapter, we look at what happens when these assumptions are relaxed. We begin with a fairly simple case: Sections 4.1 and 4.2 cover algorithms that perform purely **local search** in the state space, evaluating and modifying one or more current states rather than systematically exploring paths from an initial state. These algorithms are suitable for problems in which all that matters is the solution state, not the path cost to reach it. The family of local search algorithms includes methods inspired by statistical physics (**simulated annealing**) and evolutionary biology (**genetic algorithms**).
 
 Then, in Sections 4.3–4.4, we examine what happens when we relax the assumptions of determinism and observability. The key idea is that if an agent cannot predict exactly what percept it will receive, then it will need to consider what to do under each **contingency** that its percepts may reveal. With partial observability, the agent will also need to keep track of the states it might be in.
 
@@ -2545,19 +2523,19 @@ Finally, Section 4.5 investigates **online search**, in which the agent is faced
 
 4.1 LOCAL SEARCH ALGORITHMS AND OPTIMIZATION PROBLEMS
 
-The search algorithms that we have seen so far are designed to explore search spaces sys- tematically. This systematicity is achieved by keeping one or more paths in memory and by recording which alternatives have been explored at each point along the path. When a goal is found, the _path_ to that goal also constitutes a _solution_ to the problem. In many problems, how- ever, the path to the goal is irrelevant. For example, in the 8-queens problem (see page 71), what matters is the final configuration of queens, not the order in which they are added. The same general property holds for many important applications such as integrated-circuit de- sign, factory-floor layout, job-shop scheduling, automatic programming, telecommunications network optimization, vehicle routing, and portfolio management.
+The search algorithms that we have seen so far are designed to explore search spaces systematically. This systematicity is achieved by keeping one or more paths in memory and by recording which alternatives have been explored at each point along the path. When a goal is found, the _path_ to that goal also constitutes a _solution_ to the problem. In many problems, however, the path to the goal is irrelevant. For example, in the 8-queens problem (see page 71), what matters is the final configuration of queens, not the order in which they are added. The same general property holds for many important applications such as integrated-circuit design, factory-floor layout, job-shop scheduling, automatic programming, telecommunications network optimization, vehicle routing, and portfolio management.
 
 120  
 
 Section 4.1. Local Search Algorithms and Optimization Problems 121
 
-If the path to the goal does not matter, we might consider a different class of algo- rithms, ones that do not worry about paths at all. **Local search** algorithms operate usingLOCAL SEARCH
+If the path to the goal does not matter, we might consider a different class of algorithms, ones that do not worry about paths at all. **Local search** algorithms operate usingLOCAL SEARCH
 
 a single **current node** (rather than multiple paths) and generally move only to neighborsCURRENT NODE
 
 of that node. Typically, the paths followed by the search are not retained. Although local search algorithms are not systematic, they have two key advantages: (1) they use very little memory—usually a constant amount; and (2) they can often find reasonable solutions in large or infinite (continuous) state spaces for which systematic algorithms are unsuitable.
 
-In addition to finding goals, local search algorithms are useful for solving pure **op- timization problems**, in which the aim is to find the best state according to an **objective**OPTIMIZATION
+In addition to finding goals, local search algorithms are useful for solving pure **optimization problems**, in which the aim is to find the best state according to an **objective**OPTIMIZATION
 
 PROBLEM
 
@@ -2601,7 +2579,7 @@ neighbor ← a highest-valued successor of current
 
 current←neighbor
 
-**Figure 4.2** The hill-climbing search algorithm, which is the most basic local search tech- nique. At each step the current node is replaced by the best neighbor; in this version, that means the neighbor with the highest VALUE, but if a heuristic cost estimate h is used, we would find the neighbor with the lowest h.
+**Figure 4.2** The hill-climbing search algorithm, which is the most basic local search technique. At each step the current node is replaced by the best neighbor; in this version, that means the neighbor with the highest VALUE, but if a heuristic cost estimate h is used, we would find the neighbor with the lowest h.
 
 **4.1.1 Hill-climbing search**
 
@@ -2615,7 +2593,7 @@ Hill climbing is sometimes called **greedy local search** because it grabs a goo
 
 state without thinking ahead about where to go next. Although greed is considered one of the seven deadly sins, it turns out that greedy algorithms often perform quite well. Hill climbing often makes rapid progress toward a solution because it is usually quite easy to improve a bad state. For example, from the state in Figure 4.3(a), it takes just five steps to reach the state in Figure 4.3(b), which has h= 1 and is very nearly a solution. Unfortunately, hill climbing often gets stuck for the following reasons:
 
-• **Local maxima**: a local maximum is a peak that is higher than each of its neighboringLOCAL MAXIMUM
+- **Local maxima**: a local maximum is a peak that is higher than each of its neighboringLOCAL MAXIMUM
 
 states but lower than the global maximum. Hill-climbing algorithms that reach the vicinity of a local maximum will be drawn upward toward the peak but will then be stuck with nowhere else to go. Figure 4.1 illustrates the problem schematically. More  
 
@@ -2739,11 +2717,11 @@ Section 4.1. Local Search Algorithms and Optimization Problems 123
 
 concretely, the state in Figure 4.3(b) is a local maximum (i.e., a local minimum for the cost h); every move of a single queen makes the situation worse.
 
-• **Ridges**: a ridge is shown in Figure 4.4. Ridges result in a sequence of local maximaRIDGE
+- **Ridges**: a ridge is shown in Figure 4.4. Ridges result in a sequence of local maximaRIDGE
 
 that is very difficult for greedy algorithms to navigate.
 
-• **Plateaux**: a plateau is a flat area of the state-space landscape. It can be a flat localPLATEAU
+- **Plateaux**: a plateau is a flat area of the state-space landscape. It can be a flat localPLATEAU
 
 maximum, from which no uphill exit exists, or a **shoulder**, from which progress isSHOULDER
 
@@ -2753,7 +2731,7 @@ In each case, the algorithm reaches a point at which no progress is being made. 
 
 The algorithm in Figure 4.2 halts if it reaches a plateau where the best successor has the same value as the current state. Might it not be a good idea to keep going—to allow a **sideways move** in the hope that the plateau is really a shoulder, as shown in Figure 4.1? TheSIDEWAYS MOVE
 
-answer is usually yes, but we must take care. If we always allow sideways moves when there are no uphill moves, an infinite loop will occur whenever the algorithm reaches a flat local maximum that is not a shoulder. One common solution is to put a limit on the number of con- secutive sideways moves allowed. For example, we could allow up to, say, 100 consecutive sideways moves in the 8-queens problem. This raises the percentage of problem instances solved by hill climbing from 14% to 94%. Success comes at a cost: the algorithm averages roughly 21 steps for each successful instance and 64 for each failure.  
+answer is usually yes, but we must take care. If we always allow sideways moves when there are no uphill moves, an infinite loop will occur whenever the algorithm reaches a flat local maximum that is not a shoulder. One common solution is to put a limit on the number of consecutive sideways moves allowed. For example, we could allow up to, say, 100 consecutive sideways moves in the 8-queens problem. This raises the percentage of problem instances solved by hill climbing from 14% to 94%. Success comes at a cost: the algorithm averages roughly 21 steps for each successful instance and 64 for each failure.  
 
 
 
@@ -2771,27 +2749,27 @@ The hill-climbing algorithms described so far are incomplete—they often fail t
 
 HILL CLIMBING
 
-ducts a series of hill-climbing searches from randomly generated initial states,1 until a goal is found. It is trivially complete with probability approaching 1, because it will eventually generate a goal state as the initial state. If each hill-climbing search has a probability p of success, then the expected number of restarts required is 1/p. For 8-queens instances with no sideways moves allowed, p ≈ 0.14, so we need roughly 7 iterations to find a goal (6 fail- ures and 1 success). The expected number of steps is the cost of one successful iteration plus (1−p)/p times the cost of failure, or roughly 22 steps in all. When we allow sideways moves, 1/0.94 ≈ 1.06 iterations are needed on average and (1× 21)+ (0.06/0.94)× 64 ≈ 25 steps. For 8-queens, then, random-restart hill climbing is very effective indeed. Even for three mil- lion queens, the approach can find solutions in under a minute.2
+ducts a series of hill-climbing searches from randomly generated initial states,1 until a goal is found. It is trivially complete with probability approaching 1, because it will eventually generate a goal state as the initial state. If each hill-climbing search has a probability p of success, then the expected number of restarts required is 1/p. For 8-queens instances with no sideways moves allowed, p ≈ 0.14, so we need roughly 7 iterations to find a goal (6 failures and 1 success). The expected number of steps is the cost of one successful iteration plus (1−p)/p times the cost of failure, or roughly 22 steps in all. When we allow sideways moves, 1/0.94 ≈ 1.06 iterations are needed on average and (1× 21)+ (0.06/0.94)× 64 ≈ 25 steps. For 8-queens, then, random-restart hill climbing is very effective indeed. Even for three million queens, the approach can find solutions in under a minute.2
 
 1 Generating a _random_ state from an implicitly specified state space can be a hard problem in itself. 2 Luby _et al._ (1993) prove that it is best, in some cases, to restart a randomized search algorithm after a particular, fixed amount of time and that this can be _much_ more efficient than letting each search continue indefinitely. Disallowing or limiting the number of sideways moves is an example of this idea.  
 
 Section 4.1. Local Search Algorithms and Optimization Problems 125
 
-The success of hill climbing depends very much on the shape of the state-space land- scape: if there are few local maxima and plateaux, random-restart hill climbing will find a good solution very quickly. On the other hand, many real problems have a landscape that looks more like a widely scattered family of balding porcupines on a flat floor, with miniature porcupines living on the tip of each porcupine needle, _ad infinitum._ NP-hard problems typi- cally have an exponential number of local maxima to get stuck on. Despite this, a reasonably good local maximum can often be found after a small number of restarts.
+The success of hill climbing depends very much on the shape of the state-space landscape: if there are few local maxima and plateaux, random-restart hill climbing will find a good solution very quickly. On the other hand, many real problems have a landscape that looks more like a widely scattered family of balding porcupines on a flat floor, with miniature porcupines living on the tip of each porcupine needle, _ad infinitum._ NP-hard problems typically have an exponential number of local maxima to get stuck on. Despite this, a reasonably good local maximum can often be found after a small number of restarts.
 
 **4.1.2 Simulated annealing**
 
-A hill-climbing algorithm that _never_ makes “downhill” moves toward states with lower value (or higher cost) is guaranteed to be incomplete, because it can get stuck on a local maxi- mum. In contrast, a purely random walk—that is, moving to a successor chosen uniformly at random from the set of successors—is complete but extremely inefficient. Therefore, it seems reasonable to try to combine hill climbing with a random walk in some way that yields both efficiency and completeness. **Simulated annealing** is such an algorithm. In metallurgy,SIMULATED
+A hill-climbing algorithm that _never_ makes “downhill” moves toward states with lower value (or higher cost) is guaranteed to be incomplete, because it can get stuck on a local maximum. In contrast, a purely random walk—that is, moving to a successor chosen uniformly at random from the set of successors—is complete but extremely inefficient. Therefore, it seems reasonable to try to combine hill climbing with a random walk in some way that yields both efficiency and completeness. **Simulated annealing** is such an algorithm. In metallurgy,SIMULATED
 
 ANNEALING
 
-**annealing** is the process used to temper or harden metals and glass by heating them to a high temperature and then gradually cooling them, thus allowing the material to reach a low- energy crystalline state. To explain simulated annealing, we switch our point of view from hill climbing to **gradient descent** (i.e., minimizing cost) and imagine the task of getting aGRADIENT DESCENT
+**annealing** is the process used to temper or harden metals and glass by heating them to a high temperature and then gradually cooling them, thus allowing the material to reach a lowenergy crystalline state. To explain simulated annealing, we switch our point of view from hill climbing to **gradient descent** (i.e., minimizing cost) and imagine the task of getting aGRADIENT DESCENT
 
-ping-pong ball into the deepest crevice in a bumpy surface. If we just let the ball roll, it will come to rest at a local minimum. If we shake the surface, we can bounce the ball out of the local minimum. The trick is to shake just hard enough to bounce the ball out of local min- ima but not hard enough to dislodge it from the global minimum. The simulated-annealing solution is to start by shaking hard (i.e., at a high temperature) and then gradually reduce the intensity of the shaking (i.e., lower the temperature).
+ping-pong ball into the deepest crevice in a bumpy surface. If we just let the ball roll, it will come to rest at a local minimum. If we shake the surface, we can bounce the ball out of the local minimum. The trick is to shake just hard enough to bounce the ball out of local minima but not hard enough to dislodge it from the global minimum. The simulated-annealing solution is to start by shaking hard (i.e., at a high temperature) and then gradually reduce the intensity of the shaking (i.e., lower the temperature).
 
-The innermost loop of the simulated-annealing algorithm (Figure 4.5) is quite similar to hill climbing. Instead of picking the _best_ move, however, it picks a _random_ move. If the move improves the situation, it is always accepted. Otherwise, the algorithm accepts the move with some probability less than 1. The probability decreases exponentially with the “badness” of the move—the amount ΔE by which the evaluation is worsened. The probability also de- creases as the “temperature” T goes down: “bad” moves are more likely to be allowed at the start when T is high, and they become more unlikely as T decreases. If the schedule lowers T slowly enough, the algorithm will find a global optimum with probability approaching 1.
+The innermost loop of the simulated-annealing algorithm (Figure 4.5) is quite similar to hill climbing. Instead of picking the _best_ move, however, it picks a _random_ move. If the move improves the situation, it is always accepted. Otherwise, the algorithm accepts the move with some probability less than 1. The probability decreases exponentially with the “badness” of the move—the amount ΔE by which the evaluation is worsened. The probability also decreases as the “temperature” T goes down: “bad” moves are more likely to be allowed at the start when T is high, and they become more unlikely as T decreases. If the schedule lowers T slowly enough, the algorithm will find a global optimum with probability approaching 1.
 
-Simulated annealing was first used extensively to solve VLSI layout problems in the early 1980s. It has been applied widely to factory scheduling and other large-scale optimiza- tion tasks. In Exercise 4.4, you are asked to compare its performance to that of random-restart hill climbing on the 8-queens puzzle.
+Simulated annealing was first used extensively to solve VLSI layout problems in the early 1980s. It has been applied widely to factory scheduling and other large-scale optimization tasks. In Exercise 4.4, you are asked to compare its performance to that of random-restart hill climbing on the 8-queens puzzle.
 
 **4.1.3 Local beam search**
 
@@ -2819,7 +2797,7 @@ next← a randomly selected successor of current
 
 **else** current←next only with probability e ΔE/T
 
-**Figure 4.5** The simulated annealing algorithm, a version of stochastic hill climbing where some downhill moves are allowed. Downhill moves are accepted readily early in the anneal- ing schedule and then less often as time goes on. The schedule input determines the value of the temperature T as a function of time.
+**Figure 4.5** The simulated annealing algorithm, a version of stochastic hill climbing where some downhill moves are allowed. Downhill moves are accepted readily early in the annealing schedule and then less often as time goes on. The schedule input determines the value of the temperature T as a function of time.
 
 just one. It begins with k randomly generated states. At each step, all the successors of all k
 
@@ -2923,7 +2901,7 @@ The production of the next generation of states is shown in Figure 4.6(b)–(e).
 
 fitness function should return higher values for better states, so, for the 8-queens problem we use the number of _nonattacking_ pairs of queens, which has a value of 28 for a solution. The values of the four states are 24, 23, 20, and 11. In this particular variant of the genetic algorithm, the probability of being chosen for reproducing is directly proportional to the fitness score, and the percentages are shown next to the raw scores.
 
-In (c), two pairs are selected at random for reproduction, in accordance with the prob-  
+In (c), two pairs are selected at random for reproduction, in accordance with the prob 
 
 
 
@@ -2937,7 +2915,7 @@ Finally, in (e), each location is subject to random **mutation** with a small in
 
 probability. One digit was mutated in the first, third, and fourth offspring. In the 8-queens problem, this corresponds to choosing a queen at random and moving it to a random square in its column. Figure 4.8 describes an algorithm that implements all these steps.
 
-Like stochastic beam search, genetic algorithms combine an uphill tendency with ran- dom exploration and exchange of information among parallel search threads. The primary advantage, if any, of genetic algorithms comes from the crossover operation. Yet it can be shown mathematically that, if the positions of the genetic code are permuted initially in a random order, crossover conveys no advantage. Intuitively, the advantage comes from the ability of crossover to combine large blocks of letters that have evolved independently to per- form useful functions, thus raising the level of granularity at which the search operates. For example, it could be that putting the first three queens in positions 2, 4, and 6 (where they do not attack each other) constitutes a useful block that can be combined with other blocks to construct a solution.
+Like stochastic beam search, genetic algorithms combine an uphill tendency with random exploration and exchange of information among parallel search threads. The primary advantage, if any, of genetic algorithms comes from the crossover operation. Yet it can be shown mathematically that, if the positions of the genetic code are permuted initially in a random order, crossover conveys no advantage. Intuitively, the advantage comes from the ability of crossover to combine large blocks of letters that have evolved independently to perform useful functions, thus raising the level of granularity at which the search operates. For example, it could be that putting the first three queens in positions 2, 4, and 6 (where they do not attack each other) constitutes a useful block that can be combined with other blocks to construct a solution.
 
 The theory of genetic algorithms explains how this works using the idea of a **schema**,SCHEMA
 
@@ -2975,7 +2953,7 @@ In practice, genetic algorithms have had a widespread impact on optimization pro
 
 4.2 LOCAL SEARCH IN CONTINUOUS SPACES
 
-In Chapter 2, we explained the distinction between discrete and continuous environments, pointing out that most real-world environments are continuous. Yet none of the algorithms we have described (except for first-choice hill climbing and simulated annealing) can handle continuous state and action spaces, because they have infinite branching factors. This section provides a _very brief_ introduction to some local search techniques for finding optimal solu- tions in continuous spaces. The literature on this topic is vast; many of the basic techniques  
+In Chapter 2, we explained the distinction between discrete and continuous environments, pointing out that most real-world environments are continuous. Yet none of the algorithms we have described (except for first-choice hill climbing and simulated annealing) can handle continuous state and action spaces, because they have infinite branching factors. This section provides a _very brief_ introduction to some local search techniques for finding optimal solutions in continuous spaces. The literature on this topic is vast; many of the basic techniques  
 
 
 
@@ -2983,11 +2961,11 @@ EVOLUTION AND SEARCH
 
 The theory of **evolution** was developed in Charles Darwin’s _On the Origin of Species by Means of Natural Selection_ (1859) and independently by Alfred Russel Wallace (1858). The central idea is simple: variations occur in reproduction and will be preserved in successive generations approximately in proportion to their effect on reproductive fitness.
 
-Darwin’s theory was developed with no knowledge of how the traits of organ- isms can be inherited and modified. The probabilistic laws governing these pro- cesses were first identified by Gregor Mendel (1866), a monk who experimented with sweet peas. Much later, Watson and Crick (1953) identified the structure of the DNA molecule and its alphabet, AGTC (adenine, guanine, thymine, cytosine). In the standard model, variation occurs both by point mutations in the letter sequence and by “crossover” (in which the DNA of an offspring is generated by combining long sections of DNA from each parent).
+Darwin’s theory was developed with no knowledge of how the traits of organisms can be inherited and modified. The probabilistic laws governing these processes were first identified by Gregor Mendel (1866), a monk who experimented with sweet peas. Much later, Watson and Crick (1953) identified the structure of the DNA molecule and its alphabet, AGTC (adenine, guanine, thymine, cytosine). In the standard model, variation occurs both by point mutations in the letter sequence and by “crossover” (in which the DNA of an offspring is generated by combining long sections of DNA from each parent).
 
-The analogy to local search algorithms has already been described; the princi- pal difference between stochastic beam search and evolution is the use of _sexual_ re- production, wherein successors are generated from _multiple_ organisms rather than just one. The actual mechanisms of evolution are, however, far richer than most genetic algorithms allow. For example, mutations can involve reversals, duplica- tions, and movement of large chunks of DNA; some viruses borrow DNA from one organism and insert it in another; and there are transposable genes that do nothing but copy themselves many thousands of times within the genome. There are even genes that poison cells from potential mates that do not carry the gene, thereby in- creasing their own chances of replication. Most important is the fact that the _genes themselves encode the mechanisms_ whereby the genome is reproduced and trans- lated into an organism. In genetic algorithms, those mechanisms are a separate program that is not represented within the strings being manipulated.
+The analogy to local search algorithms has already been described; the principal difference between stochastic beam search and evolution is the use of _sexual_ reproduction, wherein successors are generated from _multiple_ organisms rather than just one. The actual mechanisms of evolution are, however, far richer than most genetic algorithms allow. For example, mutations can involve reversals, duplications, and movement of large chunks of DNA; some viruses borrow DNA from one organism and insert it in another; and there are transposable genes that do nothing but copy themselves many thousands of times within the genome. There are even genes that poison cells from potential mates that do not carry the gene, thereby increasing their own chances of replication. Most important is the fact that the _genes themselves encode the mechanisms_ whereby the genome is reproduced and translated into an organism. In genetic algorithms, those mechanisms are a separate program that is not represented within the strings being manipulated.
 
-Darwinian evolution may appear inefficient, having generated blindly some 1045 or so organisms without improving its search heuristics one iota. Fifty years before Darwin, however, the otherwise great French naturalist Jean Lamarck (1809) proposed a theory of evolution whereby traits _acquired by adaptation dur- ing an organism’s lifetime_ would be passed on to its offspring. Such a process would be effective but does not seem to occur in nature. Much later, James Bald- win (1896) proposed a superficially similar theory: that behavior learned during an organism’s lifetime could accelerate the rate of evolution. Unlike Lamarck’s, Bald- win’s theory is entirely consistent with Darwinian evolution because it relies on se- lection pressures operating on individuals that have found local optima among the set of possible behaviors allowed by their genetic makeup. Computer simulations confirm that the “Baldwin effect” is real, once “ordinary” evolution has created organisms whose internal performance measure correlates with actual fitness.  
+Darwinian evolution may appear inefficient, having generated blindly some 1045 or so organisms without improving its search heuristics one iota. Fifty years before Darwin, however, the otherwise great French naturalist Jean Lamarck (1809) proposed a theory of evolution whereby traits _acquired by adaptation during an organism’s lifetime_ would be passed on to its offspring. Such a process would be effective but does not seem to occur in nature. Much later, James Baldwin (1896) proposed a superficially similar theory: that behavior learned during an organism’s lifetime could accelerate the rate of evolution. Unlike Lamarck’s, Baldwin’s theory is entirely consistent with Darwinian evolution because it relies on selection pressures operating on individuals that have found local optima among the set of possible behaviors allowed by their genetic makeup. Computer simulations confirm that the “Baldwin effect” is real, once “ordinary” evolution has created organisms whose internal performance measure correlates with actual fitness.  
 
 Section 4.2. Local Search in Continuous Spaces 131
 
@@ -3015,7 +2993,7 @@ This expression is correct _locally_, but not globally because the sets Ci are (
 
 One way to avoid continuous problems is simply to **discretize** the neighborhood of eachDISCRETIZATION
 
-state. For example, we can move only one airport at a time in either the x or y direction by a fixed amount ±δ. With 6 variables, this gives 12 possible successors for each state. We can then apply any of the local search algorithms described previously. We could also ap- ply stochastic hill climbing and simulated annealing directly, without discretizing the space. These algorithms choose successors randomly, which can be done by generating random vec- tors of length δ.
+state. For example, we can move only one airport at a time in either the x or y direction by a fixed amount ±δ. With 6 variables, this gives 12 possible successors for each state. We can then apply any of the local search algorithms described previously. We could also apply stochastic hill climbing and simulated annealing directly, without discretizing the space. These algorithms choose successors randomly, which can be done by generating random vectors of length δ.
 
 Many methods attempt to use the **gradient** of the landscape to find a maximum. TheGRADIENT
 
@@ -3139,7 +3117,7 @@ straints must be linear inequalities forming a **convex set** 8 and the objectiv
 
 linear. The time complexity of linear programming is polynomial in the number of variables. Linear programming is probably the most widely studied and broadly useful class of
 
-optimization problems. It is a special case of the more general problem of **convex opti- mization**, which allows the constraint region to be any convex region and the objective toCONVEX
+optimization problems. It is a special case of the more general problem of **convex optimization**, which allows the constraint region to be any convex region and the objective toCONVEX
 
 OPTIMIZATION
 
@@ -3149,7 +3127,7 @@ be any function that is convex within the constraint region. Under certain condi
 
 In Chapter 3, we assumed that the environment is fully observable and deterministic and that the agent knows what the effects of each action are. Therefore, the agent can calculate exactly which state results from any sequence of actions and always knows which state it is in. Its percepts provide no new information after each action, although of course they tell the agent the initial state.
 
-When the environment is either partially observable or nondeterministic (or both), per- cepts become useful. In a partially observable environment, every percept helps narrow down the set of possible states the agent might be in, thus making it easier for the agent to achieve its goals. When the environment is nondeterministic, percepts tell the agent which of the pos- sible outcomes of its actions has actually occurred. In both cases, the future percepts cannot be determined in advance and the agent’s future actions will depend on those future percepts. So the solution to a problem is not a sequence but a **contingency plan** (also known as a **strat-**CONTINGENCY PLAN
+When the environment is either partially observable or nondeterministic (or both), percepts become useful. In a partially observable environment, every percept helps narrow down the set of possible states the agent might be in, thus making it easier for the agent to achieve its goals. When the environment is nondeterministic, percepts tell the agent which of the possible outcomes of its actions has actually occurred. In both cases, the future percepts cannot be determined in advance and the agent’s future actions will depend on those future percepts. So the solution to a problem is not a sequence but a **contingency plan** (also known as a **strat-**CONTINGENCY PLAN
 
 **egy**) that specifies what to do depending on what percepts are received. In this section, weSTRATEGY
 
@@ -3177,11 +3155,11 @@ Now suppose that we introduce nondeterminism in the form of a powerful but errat
 
 WORLD
 
-• When applied to a dirty square the action cleans the square and sometimes cleans up dirt in an adjacent square, too.
+- When applied to a dirty square the action cleans the square and sometimes cleans up dirt in an adjacent square, too.
 
-• When applied to a clean square the action sometimes deposits dirt on the carpet.9
+- When applied to a clean square the action sometimes deposits dirt on the carpet.9
 
-To provide a precise formulation of this problem, we need to generalize the notion of a **tran- sition model** from Chapter 3. Instead of defining the transition model by a RESULT function that returns a single state, we use a RESULTS function that returns a _set_ of possible outcome states. For example, in the erratic vacuum world, the _Suck_ action in state 1 leads to a state in the set {5, 7}—the dirt in the right-hand square may or may not be vacuumed up.
+To provide a precise formulation of this problem, we need to generalize the notion of a **transition model** from Chapter 3. Instead of defining the transition model by a RESULT function that returns a single state, we use a RESULTS function that returns a _set_ of possible outcome states. For example, in the erratic vacuum world, the _Suck_ action in state 1 leads to a state in the set {5, 7}—the dirt in the right-hand square may or may not be vacuumed up.
 
 We also need to generalize the notion of a **solution** to the problem. For example, if we start in state 1, there is no single _sequence_ of actions that solves the problem. Instead, we need a contingency plan such as the following:
 
@@ -3273,7 +3251,7 @@ OR-SEARCH(problem .INITIAL-STATE,problem , \[ \])
 
 **Figure 4.11** An algorithm for searching AND–OR graphs generated by nondeterministic environments. It returns a conditional plan that reaches a goal state in all circumstances. (The notation \[x | l\] refers to the list formed by adding object x to the front of list l.)
 
-construct.) Modifying the basic problem-solving agent shown in Figure 3.1 to execute con- tingent solutions of this kind is straightforward. One may also consider a somewhat different agent design, in which the agent can act _before_ it has found a guaranteed plan and deals with some contingencies only as they arise during execution. This type of **interleaving** of searchINTERLEAVING
+construct.) Modifying the basic problem-solving agent shown in Figure 3.1 to execute contingent solutions of this kind is straightforward. One may also consider a somewhat different agent design, in which the agent can act _before_ it has found a guaranteed plan and deals with some contingencies only as they arise during execution. This type of **interleaving** of searchINTERLEAVING
 
 and execution is also useful for exploration problems (see Section 4.5) and for game playing (see Chapter 5).
 
@@ -3299,7 +3277,7 @@ _Right_
 
 **4.3.3 Try, try again**
 
-Consider the slippery vacuum world, which is identical to the ordinary (non-erratic) vac- uum world except that movement actions sometimes fail, leaving the agent in the same loca- tion. For example, moving _Right_ in state 1 leads to the state set {1, 2}. Figure 4.12 shows part of the search graph; clearly, there are no longer any acyclic solutions from state 1, and AND-OR-GRAPH-SEARCH would return with failure. There is, however, a **cyclic solution**,CYCLIC SOLUTION
+Consider the slippery vacuum world, which is identical to the ordinary (non-erratic) vacuum world except that movement actions sometimes fail, leaving the agent in the same location. For example, moving _Right_ in state 1 leads to the state set {1, 2}. Figure 4.12 shows part of the search graph; clearly, there are no longer any acyclic solutions from state 1, and AND-OR-GRAPH-SEARCH would return with failure. There is, however, a **cyclic solution**,CYCLIC SOLUTION
 
 which is to keep trying Right until it works. We can express this solution by adding a **label** toLABEL
 
@@ -3309,23 +3287,23 @@ denote some portion of the plan and using that label later instead of repeating 
 
 (A better syntax for the looping part of this plan would be “**while** State = 5 **do** Right .”) In general a cyclic plan may be considered a solution provided that every leaf is a goal state and that a leaf is reachable from every point in the plan. The modifications needed to AND-OR-GRAPH-SEARCH are covered in Exercise 4.6. The key realization is that a loop in the state space back to a state L translates to a loop in the plan back to the point where the subplan for state L is executed.
 
-Given the definition of a cyclic solution, an agent executing such a solution will eventu- ally reach the goal _provided that each outcome of a nondeterministic action eventually occurs_. Is this condition reasonable? It depends on the reason for the nondeterminism. If the action rolls a die, then it’s reasonable to suppose that eventually a six will be rolled. If the action is to insert a hotel card key into the door lock, but it doesn’t work the first time, then perhaps it will eventually work, or perhaps one has the wrong key (or the wrong room!). After seven or  
+Given the definition of a cyclic solution, an agent executing such a solution will eventually reach the goal _provided that each outcome of a nondeterministic action eventually occurs_. Is this condition reasonable? It depends on the reason for the nondeterminism. If the action rolls a die, then it’s reasonable to suppose that eventually a six will be rolled. If the action is to insert a hotel card key into the door lock, but it doesn’t work the first time, then perhaps it will eventually work, or perhaps one has the wrong key (or the wrong room!). After seven or  
 
 
 
-eight tries, most people will assume the problem is with the key and will go back to the front desk to get a new one. One way to understand this decision is to say that the initial problem formulation (observable, nondeterministic) is abandoned in favor of a different formulation (partially observable, deterministic) where the failure is attributed to an unobservable prop- erty of the key. We have more to say on this issue in Chapter 13.
+eight tries, most people will assume the problem is with the key and will go back to the front desk to get a new one. One way to understand this decision is to say that the initial problem formulation (observable, nondeterministic) is abandoned in favor of a different formulation (partially observable, deterministic) where the failure is attributed to an unobservable property of the key. We have more to say on this issue in Chapter 13.
 
 4.4 SEARCHING WITH PARTIAL OBSERVATIONS
 
-We now turn to the problem of partial observability, where the agent’s percepts do not suf- fice to pin down the exact state. As noted at the beginning of the previous section, if the agent is in one of several possible states, then an action may lead to one of several possible outcomes—_even if the environment is deterministic_. The key concept required for solving partially observable problems is the **belief state**, representing the agent’s current belief aboutBELIEF STATE
+We now turn to the problem of partial observability, where the agent’s percepts do not suffice to pin down the exact state. As noted at the beginning of the previous section, if the agent is in one of several possible states, then an action may lead to one of several possible outcomes—_even if the environment is deterministic_. The key concept required for solving partially observable problems is the **belief state**, representing the agent’s current belief aboutBELIEF STATE
 
 the possible physical states it might be in, given the sequence of actions and percepts up to that point. We begin with the simplest scenario for studying belief states, which is when the agent has no sensors at all; then we add in partial sensing as well as nondeterministic actions.
 
 **4.4.1 Searching with no observation**
 
-When the agent’s percepts provide _no information at all_, we have what is called a **sensor- less** problem or sometimes a **conformant** problem. At first, one might think the sensorlessSENSORLESS
+When the agent’s percepts provide _no information at all_, we have what is called a **sensorless** problem or sometimes a **conformant** problem. At first, one might think the sensorlessSENSORLESS
 
-CONFORMANT agent has no hope of solving a problem if it has no idea what state it’s in; in fact, sensorless problems are quite often solvable. Moreover, sensorless agents can be surprisingly useful, primarily because they _don’t_ rely on sensors working properly. In manufacturing systems, for example, many ingenious methods have been developed for orienting parts correctly from an unknown initial position by using a sequence of actions with no sensing at all. The high cost of sensing is another reason to avoid it: for example, doctors often prescribe a broad- spectrum antibiotic rather than using the contingent plan of doing an expensive blood test, then waiting for the results to come back, and then prescribing a more specific antibiotic and perhaps hospitalization because the infection has progressed too far.
+CONFORMANT agent has no hope of solving a problem if it has no idea what state it’s in; in fact, sensorless problems are quite often solvable. Moreover, sensorless agents can be surprisingly useful, primarily because they _don’t_ rely on sensors working properly. In manufacturing systems, for example, many ingenious methods have been developed for orienting parts correctly from an unknown initial position by using a sequence of actions with no sensing at all. The high cost of sensing is another reason to avoid it: for example, doctors often prescribe a broadspectrum antibiotic rather than using the contingent plan of doing an expensive blood test, then waiting for the results to come back, and then prescribing a more specific antibiotic and perhaps hospitalization because the infection has progressed too far.
 
 We can make a sensorless version of the vacuum world. Assume that the agent knows the geography of its world, but doesn’t know its location or the distribution of dirt. In that case, its initial state could be any element of the set {1, 2, 3, 4, 5, 6, 7, 8}. Now, consider what happens if it tries the action _Right_. This will cause it to be in one of the states {2, 4, 6, 8}—the agent now has more information! Furthermore, the action sequence \[_Right_,_Suck_\] will always end up in one of the states {4, 8}. Finally, the sequence \[_Right_,_Suck_,_Left_,_Suck_\] is guaranteed to reach the goal state 7 no matter what the start state. We say that the agent can **coerce** theCOERCION
 
@@ -3333,7 +3311,7 @@ world into state 7. To solve sensorless problems, we search in the space of beli
 
 states.10 Notice that in belief-state space, the problem is _fully observable_ because the agent
 
-10 In a fully observable environment, each belief state contains one physical state. Thus, we can view the algo- rithms in Chapter 3 as searching in a belief-state space of singleton belief states.  
+10 In a fully observable environment, each belief state contains one physical state. Thus, we can view the algorithms in Chapter 3 as searching in a belief-state space of singleton belief states.  
 
 Section 4.4. Searching with Partial Observations 139
 
@@ -3341,11 +3319,11 @@ always knows its own belief state. Furthermore, the solution (if any) is always 
 
 It is instructive to see how the belief-state search problem is constructed. Suppose the underlying physical problem P is defined by ACTIONSP , RESULTP , GOAL-TESTP , and STEP-COSTP . Then we can define the corresponding sensorless problem as follows:
 
-• **Belief states**: The entire belief-state space contains every possible set of physical states. If P has N states, then the sensorless problem has up to 2N states, although many may be unreachable from the initial state.
+- **Belief states**: The entire belief-state space contains every possible set of physical states. If P has N states, then the sensorless problem has up to 2N states, although many may be unreachable from the initial state.
 
-• **Initial state**: Typically the set of all states in P , although in some cases the agent will have more knowledge than this.
+- **Initial state**: Typically the set of all states in P , although in some cases the agent will have more knowledge than this.
 
-• **Actions**: This is slightly tricky. Suppose the agent is in belief state b= {s1, s2}, but ACTIONSP (s1) = ACTIONSP (s2); then the agent is unsure of which actions are legal. If we assume that illegal actions have no effect on the environment, then it is safe to take the _union_ of all the actions in any of the physical states in the current belief state b:
+- **Actions**: This is slightly tricky. Suppose the agent is in belief state b= {s1, s2}, but ACTIONSP (s1) = ACTIONSP (s2); then the agent is unsure of which actions are legal. If we assume that illegal actions have no effect on the environment, then it is safe to take the _union_ of all the actions in any of the physical states in the current belief state b:
 
 ACTIONS(b) =
 
@@ -3357,7 +3335,7 @@ ACTIONSP (s) .
 
 On the other hand, if an illegal action might be the end of the world, it is safer to allow only the _intersection_, that is, the set of actions legal in _all_ the states. For the vacuum world, every state has the same legal actions, so both methods give the same result.
 
-• **Transition model**: The agent doesn’t know which state in the belief state is the right one; so as far as it knows, it might get to any of the states resulting from applying the action to one of the physical states in the belief state. For deterministic actions, the set of states that might be reached is
+- **Transition model**: The agent doesn’t know which state in the belief state is the right one; so as far as it knows, it might get to any of the states resulting from applying the action to one of the physical states in the belief state. For deterministic actions, the set of states that might be reached is
 
 b ′
 
@@ -3383,11 +3361,11 @@ which may be larger than b, as shown in Figure 4.13. The process of generating t
 
 ′ =PREDICTION
 
-PREDICTP (b, a) will come in handy. • **Goal test**: The agent wants a plan that is sure to work, which means that a belief state
+PREDICTP (b, a) will come in handy. - **Goal test**: The agent wants a plan that is sure to work, which means that a belief state
 
 satisfies the goal only if _all_ the physical states in it satisfy GOAL-TESTP . The agent may _accidentally_ achieve the goal earlier, but it won’t _know_ that it has done so.
 
-• **Path cost**: This is also tricky. If the same action can have different costs in different states, then the cost of taking an action in a given belief state could be one of several values. (This gives rise to a new class of problems, which we explore in Exercise 4.9.) For now we assume that the cost of an action is the same in all states and so can be transferred directly from the underlying physical problem.  
+- **Path cost**: This is also tricky. If the same action can have different costs in different states, then the cost of taking an action in a given belief state could be one of several values. (This gives rise to a new class of problems, which we explore in Exercise 4.9.) For now we assume that the cost of an action is the same in all states and so can be transferred directly from the underlying physical problem.  
 
 
 
@@ -3499,7 +3477,7 @@ S
 
 7
 
-**Figure 4.14** The reachable portion of the belief-state space for the deterministic, sensor- less vacuum world. Each shaded box corresponds to a single belief state. At any given point, the agent is in a particular belief state but does not know which physical state it is in. The initial belief state (complete ignorance) is the top center box. Actions are represented by labeled links. Self-loops are omitted for clarity.
+**Figure 4.14** The reachable portion of the belief-state space for the deterministic, sensorless vacuum world. Each shaded box corresponds to a single belief state. At any given point, the agent is in a particular belief state but does not know which physical state it is in. The initial belief state (complete ignorance) is the top center box. Actions are represented by labeled links. Self-loops are omitted for clarity.
 
 _inside_ the belief states and develop **incremental belief-state search** algorithms that build up INCREMENTAL BELIEF-STATE SEARCH
 
@@ -3523,17 +3501,17 @@ When observations are partial, it will usually be the case that several states c
 
 are constructed from the underlying physical problem just as for sensorless problems, but the transition model is a bit more complicated. We can think of transitions from one belief state to the next for a particular action as occurring in three stages, as shown in Figure 4.15:
 
-• The **prediction** stage is the same as for sensorless problems: given the action a in belief state b, the predicted belief state is b̂= PREDICT(b, a).11
+- The **prediction** stage is the same as for sensorless problems: given the action a in belief state b, the predicted belief state is b̂= PREDICT(b, a).11
 
-• The **observation prediction** stage determines the set of percepts o that could be ob- served in the predicted belief state:
+- The **observation prediction** stage determines the set of percepts o that could be observed in the predicted belief state:
 
 POSSIBLE-PERCEPTS(b̂) = {o : o= PERCEPT(s) and s ∈ b̂} .
 
-• The **update** stage determines, for each possible percept, the belief state that would result from the percept. The new belief state bo is just the set of states in b̂ that could have produced the percept:
+- The **update** stage determines, for each possible percept, the belief state that would result from the percept. The new belief state bo is just the set of states in b̂ that could have produced the percept:
 
 bo = UPDATE(b̂, o) = {s : o= PERCEPT(s) and s ∈ b̂} .
 
-Notice that each updated belief state bo can be no larger than the predicted belief state b̂; observations can only help reduce uncertainty compared to the sensorless case. More- over, for deterministic sensing, the belief states for the different possible percepts will be disjoint, forming a _partition_ of the original predicted belief state.
+Notice that each updated belief state bo can be no larger than the predicted belief state b̂; observations can only help reduce uncertainty compared to the sensorless case. Moreover, for deterministic sensing, the belief states for the different possible percepts will be disjoint, forming a _partition_ of the original predicted belief state.
 
 11 Here, and throughout the book, the “hat” in b̂ means an estimated or predicted value for b.  
 
@@ -3585,7 +3563,7 @@ _Right_ \[_B,Dirty_\]
 
 \[_B,Clean_\]
 
-**Figure 4.15** Two example of transitions in local-sensing vacuum worlds. (a) In the de- terministic world, _Right_ is applied in the initial belief state, resulting in a new belief state with two possible physical states; for those states, the possible percepts are \[B,Dirty \] and \[B,Clean \], leading to two belief states, each of which is a singleton. (b) In the slippery world, _Right_ is applied in the initial belief state, giving a new belief state with four physi- cal states; for those states, the possible percepts are \[A,Dirty\], \[B,Dirty\], and \[B,Clean \], leading to three belief states as shown.
+**Figure 4.15** Two example of transitions in local-sensing vacuum worlds. (a) In the deterministic world, _Right_ is applied in the initial belief state, resulting in a new belief state with two possible physical states; for those states, the possible percepts are \[B,Dirty \] and \[B,Clean \], leading to two belief states, each of which is a singleton. (b) In the slippery world, _Right_ is applied in the initial belief state, giving a new belief state with four physical states; for those states, the possible percepts are \[A,Dirty\], \[B,Dirty\], and \[B,Clean \], leading to three belief states as shown.
 
 Putting these three stages together, we obtain the possible belief states resulting from a given action and the subsequent possible percepts:
 
@@ -3675,7 +3653,7 @@ FILTERING **tion**. Equation (4.6) is called a **recursive** state estimator bec
 
 RECURSIVE
 
-state from the previous one rather than by examining the entire percept sequence. If the agent is not to “fall behind,” the computation has to happen as fast as percepts are coming in. As the environment becomes more complex, the exact update computation becomes infeasible and the agent will have to compute an approximate belief state, perhaps focusing on the im- plications of the percept for the aspects of the environment that are of current interest. Most work on this problem has been done for stochastic, continuous-state environments with the tools of probability theory, as explained in Chapter 15. Here we will show an example in a discrete environment with detrministic sensors and nondeterministic actions.
+state from the previous one rather than by examining the entire percept sequence. If the agent is not to “fall behind,” the computation has to happen as fast as percepts are coming in. As the environment becomes more complex, the exact update computation becomes infeasible and the agent will have to compute an approximate belief state, perhaps focusing on the implications of the percept for the aspects of the environment that are of current interest. Most work on this problem has been done for stochastic, continuous-state environments with the tools of probability theory, as explained in Chapter 15. Here we will show an example in a discrete environment with detrministic sensors and nondeterministic actions.
 
 The example concerns a robot with the task of **localization**: working out where it is,LOCALIZATION
 
@@ -3695,7 +3673,7 @@ Suppose the robot has just been switched on, so it does not know where it is. Th
 
 _NSW_, meaning there are obstacles to the north, west, and south, and does an update using the equation bo = UPDATE(b), yielding the 4 locations shown in Figure 4.18(a). You can inspect the maze to see that those are the only four locations that yield the percept NWS .
 
-Next the robot executes a Move action, but the result is nondeterministic. The new be- lief state, ba = PREDICT(bo,Move), contains all the locations that are one step away from the locations in bo. When the second percept, NS , arrives, the robot does UPDATE(ba,NS ) and finds that the belief state has collapsed down to the single location shown in Figure 4.18(b). That’s the only location that could be the result of
+Next the robot executes a Move action, but the result is nondeterministic. The new belief state, ba = PREDICT(bo,Move), contains all the locations that are one step away from the locations in bo. When the second percept, NS , arrives, the robot does UPDATE(ba,NS ) and finds that the belief state has collapsed down to the single location shown in Figure 4.18(b). That’s the only location that could be the result of
 
 UPDATE(PREDICT(UPDATE(b,NSW ),Move),NS ) .
 
@@ -3721,15 +3699,15 @@ must explore it to build a map that it can use for getting from A to B. Methods 
 
 **4.5.1 Online search problems**
 
-An online search problem must be solved by an agent executing actions, rather than by pure computation. We assume a deterministic and fully observable environment (Chapter 17 re- laxes these assumptions), but we stipulate that the agent knows only the following:
+An online search problem must be solved by an agent executing actions, rather than by pure computation. We assume a deterministic and fully observable environment (Chapter 17 relaxes these assumptions), but we stipulate that the agent knows only the following:
 
-• ACTIONS(s), which returns a list of actions allowed in state s;
+- ACTIONS(s), which returns a list of actions allowed in state s;
 
-• The step-cost function c(s, a, s ′)—note that this cannot be used until the agent knows
+- The step-cost function c(s, a, s ′)—note that this cannot be used until the agent knows
 
 that s ′ is the outcome; and
 
-• GOAL-TEST(s).
+- GOAL-TEST(s).
 
 Note in particular that the agent _cannot_ determine RESULT(s, a) except by actually being in s and doing a. For example, in the maze problem shown in Figure 4.19, the agent does not know that going Up from (1,1) leads to (1,2); nor, having done that, does it know that going Down will take it back to (1,1). This degree of ignorance can be reduced in some applications—for example, a robot explorer might know how its movement actions work and be ignorant only of the locations of obstacles.
 
@@ -3767,7 +3745,7 @@ Note in particular that the agent _cannot_ determine RESULT(s, a) except by actu
 
 **Figure 4.20** (a) Two state spaces that might lead an online search agent into a dead end. Any given agent will fail in at least one of these spaces. (b) A two-dimensional environment that can cause an online search agent to follow an arbitrarily inefficient route to the goal. Whichever choice the agent makes, the adversary blocks that route with another long, thin wall, so that the path followed is much longer than the best possible path.
 
-Finally, the agent might have access to an admissible heuristic function h(s) that es- timates the distance from the current state to a goal state. For example, in Figure 4.19, the agent might know the location of the goal and be able to use the Manhattan-distance heuristic.
+Finally, the agent might have access to an admissible heuristic function h(s) that estimates the distance from the current state to a goal state. For example, in Figure 4.19, the agent might know the location of the goal and be able to use the Manhattan-distance heuristic.
 
 Typically, the agent’s objective is to reach a goal state while minimizing cost. (Another possible objective is simply to explore the entire environment.) The cost is the total path cost of the path that the agent actually travels. It is common to compare this cost with the path cost of the path the agent would follow _if it knew the search space in advance_—that is, the actual shortest path (or shortest complete exploration). In the language of online algorithms, this is called the **competitive ratio**; we would like it to be as small as possible.COMPETITIVE RATIO  
 
@@ -3787,7 +3765,7 @@ Dead ends are a real difficulty for robot exploration—staircases, ramps, cliff
 
 is reachable from every reachable state. State spaces with reversible actions, such as mazes and 8-puzzles, can be viewed as undirected graphs and are clearly safely explorable.
 
-Even in safely explorable environments, no bounded competitive ratio can be guaran- teed if there are paths of unbounded cost. This is easy to show in environments with irre- versible actions, but in fact it remains true for the reversible case as well, as Figure 4.20(b) shows. For this reason, it is common to describe the performance of online search algorithms in terms of the size of the entire state space rather than just the depth of the shallowest goal.
+Even in safely explorable environments, no bounded competitive ratio can be guaranteed if there are paths of unbounded cost. This is easy to show in environments with irreversible actions, but in fact it remains true for the reversible case as well, as Figure 4.20(b) shows. For this reason, it is common to describe the performance of online search algorithms in terms of the size of the entire state space rather than just the depth of the shallowest goal.
 
 **4.5.2 Online search agents**
 
@@ -3815,7 +3793,7 @@ add s to the front of unbacktracked \[s ′\] **if** untried\[s ′\] is empty *
 
 **return** a
 
-**Figure 4.21** An online search agent that uses depth-first exploration. The agent is appli- cable only in state spaces in which every action can be “undone” by some other action.
+**Figure 4.21** An online search agent that uses depth-first exploration. The agent is applicable only in state spaces in which every action can be “undone” by some other action.
 
 lists, for each state, the predecessor states to which the agent has not yet backtracked. If the agent has run out of states to which it can backtrack, then its search is complete.
 
@@ -3827,7 +3805,7 @@ Because of its method of backtracking, ONLINE-DFS-AGENT works only in state spac
 
 **4.5.3 Online local search**
 
-Like depth-first search, **hill-climbing search** has the property of locality in its node expan- sions. In fact, because it keeps just one current state in memory, hill-climbing search is _already_ an online search algorithm! Unfortunately, it is not very useful in its simplest form because it leaves the agent sitting at local maxima with nowhere to go. Moreover, random restarts cannot be used, because the agent cannot transport itself to a new state.
+Like depth-first search, **hill-climbing search** has the property of locality in its node expansions. In fact, because it keeps just one current state in memory, hill-climbing search is _already_ an online search algorithm! Unfortunately, it is not very useful in its simplest form because it leaves the agent sitting at local maxima with nowhere to go. Moreover, random restarts cannot be used, because the agent cannot transport itself to a new state.
 
 Instead of random restarts, one might consider using a **random walk** to explore theRANDOM WALK
 
@@ -3971,31 +3949,31 @@ increases the y-coordinate unless there is a wall in the way, that Down reduces 
 
 This chapter has examined search algorithms for problems beyond the “classical” case of finding the shortest path to a goal in an observable, deterministic, discrete environment.
 
-• _Local search_ methods such as **hill climbing** operate on complete-state formulations, keeping only a small number of nodes in memory. Several stochastic algorithms have been developed, including **simulated annealing**, which returns optimal solutions when given an appropriate cooling schedule.
+- _Local search_ methods such as **hill climbing** operate on complete-state formulations, keeping only a small number of nodes in memory. Several stochastic algorithms have been developed, including **simulated annealing**, which returns optimal solutions when given an appropriate cooling schedule.
 
-• Many local search methods apply also to problems in continuous spaces. **Linear pro- gramming** and **convex optimization** problems obey certain restrictions on the shape of the state space and the nature of the objective function, and admit polynomial-time algorithms that are often extremely efficient in practice.
+- Many local search methods apply also to problems in continuous spaces. **Linear programming** and **convex optimization** problems obey certain restrictions on the shape of the state space and the nature of the objective function, and admit polynomial-time algorithms that are often extremely efficient in practice.
 
-• A **genetic algorithm** is a stochastic hill-climbing search in which a large population of states is maintained. New states are generated by **mutation** and by **crossover**, which combines pairs of states from the population.  
+- A **genetic algorithm** is a stochastic hill-climbing search in which a large population of states is maintained. New states are generated by **mutation** and by **crossover**, which combines pairs of states from the population.  
 
 
 
-• In **nondeterministic** environments, agents can apply AND–OR search to generate **con- tingent** plans that reach the goal regardless of which outcomes occur during execution.
+- In **nondeterministic** environments, agents can apply AND–OR search to generate **contingent** plans that reach the goal regardless of which outcomes occur during execution.
 
-• When the environment is partially observable, the **belief state** represents the set of possible states that the agent might be in.
+- When the environment is partially observable, the **belief state** represents the set of possible states that the agent might be in.
 
-• Standard search algorithms can be applied directly to belief-state space to solve **sensor- less problems**, and belief-state AND–OR search can solve general partially observable problems. Incremental algorithms that construct solutions state-by-state within a belief state are often more efficient.
+- Standard search algorithms can be applied directly to belief-state space to solve **sensorless problems**, and belief-state AND–OR search can solve general partially observable problems. Incremental algorithms that construct solutions state-by-state within a belief state are often more efficient.
 
-• **Exploration problems** arise when the agent has no idea about the states and actions of its environment. For safely explorable environments, **online search** agents can build a map and find a goal if one exists. Updating heuristic estimates from experience provides an effective method to escape from local minima.
+- **Exploration problems** arise when the agent has no idea about the states and actions of its environment. For safely explorable environments, **online search** agents can build a map and find a goal if one exists. Updating heuristic estimates from experience provides an effective method to escape from local minima.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Local search techniques have a long history in mathematics and computer science. Indeed, the Newton–Raphson method (Newton, 1671; Raphson, 1690) can be seen as a very effi- cient local search method for continuous spaces in which gradient information is available. Brent (1973) is a classic reference for optimization algorithms that do not require such in- formation. Beam search, which we have presented as a local search algorithm, originated as a bounded-width variant of dynamic programming for speech recognition in the HARPY
+Local search techniques have a long history in mathematics and computer science. Indeed, the Newton–Raphson method (Newton, 1671; Raphson, 1690) can be seen as a very efficient local search method for continuous spaces in which gradient information is available. Brent (1973) is a classic reference for optimization algorithms that do not require such information. Beam search, which we have presented as a local search algorithm, originated as a bounded-width variant of dynamic programming for speech recognition in the HARPY
 
 system (Lowerre, 1976). A related algorithm is analyzed in depth by Pearl (1984, Ch. 5). The topic of local search was reinvigorated in the early 1990s by surprisingly good re-
 
-sults for large constraint-satisfaction problems such as n-queens (Minton _et al._, 1992) and logical reasoning (Selman _et al._, 1992) and by the incorporation of randomness, multiple simultaneous searches, and other improvements. This renaissance of what Christos Papadim- itriou has called “New Age” algorithms also sparked increased interest among theoretical computer scientists (Koutsoupias and Papadimitriou, 1992; Aldous and Vazirani, 1994). In the field of operations research, a variant of hill climbing called **tabu search** has gained popu-TABU SEARCH
+sults for large constraint-satisfaction problems such as n-queens (Minton _et al._, 1992) and logical reasoning (Selman _et al._, 1992) and by the incorporation of randomness, multiple simultaneous searches, and other improvements. This renaissance of what Christos Papadimitriou has called “New Age” algorithms also sparked increased interest among theoretical computer scientists (Koutsoupias and Papadimitriou, 1992; Aldous and Vazirani, 1994). In the field of operations research, a variant of hill climbing called **tabu search** has gained popu-TABU SEARCH
 
-larity (Glover and Laguna, 1997). This algorithm maintains a tabu list of k previously visited states that cannot be revisited; as well as improving efficiency when searching graphs, this list can allow the algorithm to escape from some local minima. Another useful improvement on hill climbing is the STAGE algorithm (Boyan and Moore, 1998). The idea is to use the local maxima found by random-restart hill climbing to get an idea of the overall shape of the land- scape. The algorithm fits a smooth surface to the set of local maxima and then calculates the global maximum of that surface analytically. This becomes the new restart point. The algo- rithm has been shown to work in practice on hard problems. Gomes _et al._ (1998) showed that the run times of systematic backtracking algorithms often have a **heavy-tailed distribution**,HEAVY-TAILED
+larity (Glover and Laguna, 1997). This algorithm maintains a tabu list of k previously visited states that cannot be revisited; as well as improving efficiency when searching graphs, this list can allow the algorithm to escape from some local minima. Another useful improvement on hill climbing is the STAGE algorithm (Boyan and Moore, 1998). The idea is to use the local maxima found by random-restart hill climbing to get an idea of the overall shape of the landscape. The algorithm fits a smooth surface to the set of local maxima and then calculates the global maximum of that surface analytically. This becomes the new restart point. The algorithm has been shown to work in practice on hard problems. Gomes _et al._ (1998) showed that the run times of systematic backtracking algorithms often have a **heavy-tailed distribution**,HEAVY-TAILED
 
 DISTRIBUTION
 
@@ -4007,19 +3985,19 @@ Simulated annealing was first described by Kirkpatrick _et al._ (1983), who borr
 
 Finding optimal solutions in continuous spaces is the subject matter of several fields, including **optimization theory**, **optimal control theory**, and the **calculus of variations**. The basic techniques are explained well by Bishop (1995); Press _et al._ (2007) cover a wide range of algorithms and provide working software.
 
-As Andrew Moore points out, researchers have taken inspiration for search and opti- mization algorithms from a wide variety of fields of study: metallurgy (simulated annealing), biology (genetic algorithms), economics (market-based algorithms), entomology (ant colony optimization), neurology (neural networks), animal behavior (reinforcement learning), moun- taineering (hill climbing), and others.
+As Andrew Moore points out, researchers have taken inspiration for search and optimization algorithms from a wide variety of fields of study: metallurgy (simulated annealing), biology (genetic algorithms), economics (market-based algorithms), entomology (ant colony optimization), neurology (neural networks), animal behavior (reinforcement learning), mountaineering (hill climbing), and others.
 
-**Linear programming** (LP) was first studied systematically by the Russian mathemati- cian Leonid Kantorovich (1939). It was one of the first applications of computers; the **sim- plex algorithm** (Dantzig, 1949) is still used despite worst-case exponential complexity. Kar- markar (1984) developed the far more efficient family of **interior-point** methods, which was shown to have polynomial complexity for the more general class of convex optimization prob- lems by Nesterov and Nemirovski (1994). Excellent introductions to convex optimization are provided by Ben-Tal and Nemirovski (2001) and Boyd and Vandenberghe (2004).
+**Linear programming** (LP) was first studied systematically by the Russian mathematician Leonid Kantorovich (1939). It was one of the first applications of computers; the **simplex algorithm** (Dantzig, 1949) is still used despite worst-case exponential complexity. Karmarkar (1984) developed the far more efficient family of **interior-point** methods, which was shown to have polynomial complexity for the more general class of convex optimization problems by Nesterov and Nemirovski (1994). Excellent introductions to convex optimization are provided by Ben-Tal and Nemirovski (2001) and Boyd and Vandenberghe (2004).
 
-Work by Sewall Wright (1931) on the concept of a **fitness landscape** was an impor- tant precursor to the development of genetic algorithms. In the 1950s, several statisticians, including Box (1957) and Friedman (1959), used evolutionary techniques for optimization problems, but it wasn’t until Rechenberg (1965) introduced **evolution strategies** to solve op-EVOLUTION
+Work by Sewall Wright (1931) on the concept of a **fitness landscape** was an important precursor to the development of genetic algorithms. In the 1950s, several statisticians, including Box (1957) and Friedman (1959), used evolutionary techniques for optimization problems, but it wasn’t until Rechenberg (1965) introduced **evolution strategies** to solve op-EVOLUTION
 
 STRATEGY
 
-timization problems for airfoils that the approach gained popularity. In the 1960s and 1970s, John Holland (1975) championed genetic algorithms, both as a useful tool and as a method to expand our understanding of adaptation, biological or otherwise (Holland, 1995). The **ar- tificial life** movement (Langton, 1995) takes this idea one step further, viewing the productsARTIFICIAL LIFE
+timization problems for airfoils that the approach gained popularity. In the 1960s and 1970s, John Holland (1975) championed genetic algorithms, both as a useful tool and as a method to expand our understanding of adaptation, biological or otherwise (Holland, 1995). The **artificial life** movement (Langton, 1995) takes this idea one step further, viewing the productsARTIFICIAL LIFE
 
-of genetic algorithms as _organisms_ rather than solutions to problems. Work in this field by Hinton and Nowlan (1987) and Ackley and Littman (1991) has done much to clarify the im- plications of the Baldwin effect. For general background on evolution, we recommend Smith and Szathmáry (1999), Ridley (2004), and Carroll (2007).
+of genetic algorithms as _organisms_ rather than solutions to problems. Work in this field by Hinton and Nowlan (1987) and Ackley and Littman (1991) has done much to clarify the implications of the Baldwin effect. For general background on evolution, we recommend Smith and Szathmáry (1999), Ridley (2004), and Carroll (2007).
 
-Most comparisons of genetic algorithms to other approaches (especially stochastic hill climbing) have found that the genetic algorithms are slower to converge (O’Reilly and Op- pacher, 1994; Mitchell _et al._, 1996; Juels and Wattenberg, 1996; Baluja, 1997). Such findings are not universally popular within the GA community, but recent attempts within that com- munity to understand population-based search as an approximate form of Bayesian learning (see Chapter 20) might help close the gap between the field and its critics (Pelikan _et al._, 1999). The theory of **quadratic dynamical systems** may also explain the performance of GAs (Rabani _et al._, 1998). See Lohn _et al._ (2001) for an example of GAs applied to antenna design, and Renner and Ekart (2003) for an application to computer-aided design.
+Most comparisons of genetic algorithms to other approaches (especially stochastic hill climbing) have found that the genetic algorithms are slower to converge (O’Reilly and Oppacher, 1994; Mitchell _et al._, 1996; Juels and Wattenberg, 1996; Baluja, 1997). Such findings are not universally popular within the GA community, but recent attempts within that community to understand population-based search as an approximate form of Bayesian learning (see Chapter 20) might help close the gap between the field and its critics (Pelikan _et al._, 1999). The theory of **quadratic dynamical systems** may also explain the performance of GAs (Rabani _et al._, 1998). See Lohn _et al._ (2001) for an example of GAs applied to antenna design, and Renner and Ekart (2003) for an application to computer-aided design.
 
 The field of **genetic programming** is closely related to genetic algorithms. The princi-GENETIC PROGRAMMING
 
@@ -4027,27 +4005,27 @@ pal difference is that the representations that are mutated and combined are pro
 
 
 
-than bit strings. The programs are represented in the form of expression trees; the expressions can be in a standard language such as Lisp or can be specially designed to represent circuits, robot controllers, and so on. Crossover involves splicing together subtrees rather than sub- strings. This form of mutation guarantees that the offspring are well-formed expressions, which would not be the case if programs were manipulated as strings.
+than bit strings. The programs are represented in the form of expression trees; the expressions can be in a standard language such as Lisp or can be specially designed to represent circuits, robot controllers, and so on. Crossover involves splicing together subtrees rather than substrings. This form of mutation guarantees that the offspring are well-formed expressions, which would not be the case if programs were manipulated as strings.
 
 Interest in genetic programming was spurred by John Koza’s work (Koza, 1992, 1994), but it goes back at least to early experiments with machine code by Friedberg (1958) and with finite-state automata by Fogel _et al._ (1966). As with genetic algorithms, there is debate about the effectiveness of the technique. Koza _et al._ (1999) describe experiments in the use of genetic programming to design circuit devices.
 
-The journals _Evolutionary Computation_ and _IEEE Transactions on Evolutionary Com- putation_ cover genetic algorithms and genetic programming; articles are also found in _Com- plex Systems_, _Adaptive Behavior_, and _Artificial Life_. The main conference is the _Genetic and Evolutionary Computation Conference_ (GECCO). Good overview texts on genetic algo- rithms are given by Mitchell (1996), Fogel (2000), and Langdon and Poli (2002), and by the free online book by Poli _et al._ (2008).
+The journals _Evolutionary Computation_ and _IEEE Transactions on Evolutionary Computation_ cover genetic algorithms and genetic programming; articles are also found in _Complex Systems_, _Adaptive Behavior_, and _Artificial Life_. The main conference is the _Genetic and Evolutionary Computation Conference_ (GECCO). Good overview texts on genetic algorithms are given by Mitchell (1996), Fogel (2000), and Langdon and Poli (2002), and by the free online book by Poli _et al._ (2008).
 
-The unpredictability and partial observability of real environments were recognized early on in robotics projects that used planning techniques, including Shakey (Fikes _et al._, 1972) and FREDDY (Michie, 1974). The problems received more attention after the publica- tion of McDermott’s (1978a) influential article, _Planning and Acting_.
+The unpredictability and partial observability of real environments were recognized early on in robotics projects that used planning techniques, including Shakey (Fikes _et al._, 1972) and FREDDY (Michie, 1974). The problems received more attention after the publication of McDermott’s (1978a) influential article, _Planning and Acting_.
 
 The first work to make explicit use of AND–OR trees seems to have been Slagle’s SAINT
 
 program for symbolic integration, mentioned in Chapter 1. Amarel (1967) applied the idea to propositional theorem proving, a topic discussed in Chapter 7, and introduced a search algorithm similar to AND-OR-GRAPH-SEARCH. The algorithm was further developed and formalized by Nilsson (1971), who also described AO∗—which, as its name suggests, finds optimal solutions given an admissible heuristic. AO∗ was analyzed and improved by Martelli and Montanari (1973). AO∗ is a top-down algorithm; a bottom-up generalization of A∗ is A∗LD, for A∗ Lightest Derivation (Felzenszwalb and McAllester, 2007). Interest in AND–OR
 
-search has undergone a revival in recent years, with new algorithms for finding cyclic solu- tions (Jimenez and Torras, 2000; Hansen and Zilberstein, 2001) and new techniques inspired by dynamic programming (Bonet and Geffner, 2005).
+search has undergone a revival in recent years, with new algorithms for finding cyclic solutions (Jimenez and Torras, 2000; Hansen and Zilberstein, 2001) and new techniques inspired by dynamic programming (Bonet and Geffner, 2005).
 
-The idea of transforming partially observable problems into belief-state problems orig- inated with Astrom (1965) for the much more complex case of probabilistic uncertainty (see Chapter 17). Erdmann and Mason (1988) studied the problem of robotic manipulation with- out sensors, using a continuous form of belief-state search. They showed that it was possible to orient a part on a table from an arbitrary initial position by a well-designed sequence of tilt- ing actions. More practical methods, based on a series of precisely oriented diagonal barriers across a conveyor belt, use the same algorithmic insights (Wiegley _et al._, 1996).
+The idea of transforming partially observable problems into belief-state problems originated with Astrom (1965) for the much more complex case of probabilistic uncertainty (see Chapter 17). Erdmann and Mason (1988) studied the problem of robotic manipulation without sensors, using a continuous form of belief-state search. They showed that it was possible to orient a part on a table from an arbitrary initial position by a well-designed sequence of tilting actions. More practical methods, based on a series of precisely oriented diagonal barriers across a conveyor belt, use the same algorithmic insights (Wiegley _et al._, 1996).
 
-The belief-state approach was reinvented in the context of sensorless and partially ob- servable search problems by Genesereth and Nourbakhsh (1993). Additional work was done on sensorless problems in the logic-based planning community (Goldman and Boddy, 1996; Smith and Weld, 1998). This work has emphasized concise representations for belief states, as explained in Chapter 11. Bonet and Geffner (2000) introduced the first effective heuristics  
+The belief-state approach was reinvented in the context of sensorless and partially observable search problems by Genesereth and Nourbakhsh (1993). Additional work was done on sensorless problems in the logic-based planning community (Goldman and Boddy, 1996; Smith and Weld, 1998). This work has emphasized concise representations for belief states, as explained in Chapter 11. Bonet and Geffner (2000) introduced the first effective heuristics  
 
 Exercises 157
 
-for belief-state search; these were refined by Bryce _et al._ (2006). The incremental approach to belief-state search, in which solutions are constructed incrementally for subsets of states within each belief state, was studied in the planning literature by Kurien _et al._ (2002); several new incremental algorithms were introduced for nondeterministic, partially observable prob- lems by Russell and Wolfe (2005). Additional references for planning in stochastic, partially observable environments appear in Chapter 17.
+for belief-state search; these were refined by Bryce _et al._ (2006). The incremental approach to belief-state search, in which solutions are constructed incrementally for subsets of states within each belief state, was studied in the planning literature by Kurien _et al._ (2002); several new incremental algorithms were introduced for nondeterministic, partially observable problems by Russell and Wolfe (2005). Additional references for planning in stochastic, partially observable environments appear in Chapter 17.
 
 Algorithms for exploring unknown state spaces have been of interest for many centuries. Depth-first search in a maze can be implemented by keeping one’s left hand on the wall; loops can be avoided by marking each junction. Depth-first search fails with irreversible actions; the more general problem of exploring **Eulerian graphs** (i.e., graphs in which each node hasEULERIAN GRAPH
 
@@ -4055,7 +4033,7 @@ equal numbers of incoming and outgoing edges) was solved by an algorithm due to 
 
 The LRTA∗ algorithm was developed by Korf (1990) as part of an investigation into **real-time search** for environments in which the agent must act after searching for only aREAL-TIME SEARCH
 
-fixed amount of time (a common situation in two-player games). LRTA∗ is in fact a special case of reinforcement learning algorithms for stochastic environments (Barto _et al._, 1995). Its policy of optimism under uncertainty—always head for the closest unvisited state—can result in an exploration pattern that is less efficient in the uninformed case than simple depth-first search (Koenig, 2000). Dasgupta _et al._ (1994) show that online iterative deepening search is optimally efficient for finding a goal in a uniform tree with no heuristic information. Sev- eral informed variants on the LRTA∗ theme have been developed with different methods for searching and updating within the known portion of the graph (Pemberton and Korf, 1992). As yet, there is no good understanding of how to find goals with optimal efficiency when using heuristic information.
+fixed amount of time (a common situation in two-player games). LRTA∗ is in fact a special case of reinforcement learning algorithms for stochastic environments (Barto _et al._, 1995). Its policy of optimism under uncertainty—always head for the closest unvisited state—can result in an exploration pattern that is less efficient in the uninformed case than simple depth-first search (Koenig, 2000). Dasgupta _et al._ (1994) show that online iterative deepening search is optimally efficient for finding a goal in a uniform tree with no heuristic information. Several informed variants on the LRTA∗ theme have been developed with different methods for searching and updating within the known portion of the graph (Pemberton and Korf, 1992). As yet, there is no good understanding of how to find goals with optimal efficiency when using heuristic information.
 
 EXERCISES
 
@@ -4077,11 +4055,11 @@ EXERCISES
 
 **4.3** In this exercise, we explore the use of local search methods to solve TSPs of the type defined in Exercise 3.30.
 
-**a**. Implement and test a hill-climbing method to solve TSPs. Compare the results with op- timal solutions obtained from the A∗ algorithm with the MST heuristic (Exercise 3.30).
+**a**. Implement and test a hill-climbing method to solve TSPs. Compare the results with optimal solutions obtained from the A∗ algorithm with the MST heuristic (Exercise 3.30).
 
 **b**. Repeat part (a) using a genetic algorithm instead of hill climbing. You may want to consult Larrañaga _et al._ (1999) for some suggestions for representations.
 
-**4.4** Generate a large number of 8-puzzle and 8-queens instances and solve them (where pos- sible) by hill climbing (steepest-ascent and first-choice variants), hill climbing with random restart, and simulated annealing. Measure the search cost and percentage of solved problems and graph these against the optimal solution cost. Comment on your results.
+**4.4** Generate a large number of 8-puzzle and 8-queens instances and solve them (where possible) by hill climbing (steepest-ascent and first-choice variants), hill climbing with random restart, and simulated annealing. Measure the search cost and percentage of solved problems and graph these against the optimal solution cost. Comment on your results.
 
 **4.5** The AND-OR-GRAPH-SEARCH algorithm in Figure 4.11 checks for repeated states only on the path from the root to the current state. Suppose that, in addition, the algorithm were to store _every_ visited state and check against that list. (See BREADTH-FIRST-SEARCH
 
@@ -4105,19 +4083,19 @@ Exercises 159
 
 **c**. Explain in detail how to modify AND–OR search for partially observable problems, beyond the modifications you describe in (b).
 
-**4.9** On page 139 it was assumed that a given action would have the same cost when ex- ecuted in any physical state within a given belief state. (This leads to a belief-state search problem with well-defined step costs.) Now consider what happens when the assumption does not hold. Does the notion of optimality still make sense in this context, or does it require modification? Consider also various possible definitions of the “cost” of executing an action in a belief state; for example, we could use the _minimum_ of the physical costs; or the _maxi- mum_; or a cost _interval_ with the lower bound being the minimum cost and the upper bound being the maximum; or just keep the set of all possible costs for that action. For each of these, explore whether A∗ (with modifications if necessary) can return optimal solutions.
+**4.9** On page 139 it was assumed that a given action would have the same cost when executed in any physical state within a given belief state. (This leads to a belief-state search problem with well-defined step costs.) Now consider what happens when the assumption does not hold. Does the notion of optimality still make sense in this context, or does it require modification? Consider also various possible definitions of the “cost” of executing an action in a belief state; for example, we could use the _minimum_ of the physical costs; or the _maximum_; or a cost _interval_ with the lower bound being the minimum cost and the upper bound being the maximum; or just keep the set of all possible costs for that action. For each of these, explore whether A∗ (with modifications if necessary) can return optimal solutions.
 
 **4.10** Consider the sensorless version of the erratic vacuum world. Draw the belief-state space reachable from the initial belief state {1, 2, 3, 4, 5, 6, 7, 8}, and explain why the problem is unsolvable.
 
 **4.11** We can turn the navigation problem in Exercise 3.7 into an environment as follows:
 
-• The percept will be a list of the positions, _relative to the agent_, of the visible vertices. The percept does _not_ include the position of the robot! The robot must learn its own po- sition from the map; for now, you can assume that each location has a different “view.”
+- The percept will be a list of the positions, _relative to the agent_, of the visible vertices. The percept does _not_ include the position of the robot! The robot must learn its own position from the map; for now, you can assume that each location has a different “view.”
 
-• Each action will be a vector describing a straight-line path to follow. If the path is unobstructed, the action succeeds; otherwise, the robot stops at the point where its path first intersects an obstacle. If the agent returns a zero motion vector and is at the goal (which is fixed and known), then the environment teleports the agent to a _random location_ (not inside an obstacle).
+- Each action will be a vector describing a straight-line path to follow. If the path is unobstructed, the action succeeds; otherwise, the robot stops at the point where its path first intersects an obstacle. If the agent returns a zero motion vector and is at the goal (which is fixed and known), then the environment teleports the agent to a _random location_ (not inside an obstacle).
 
-• The performance measure charges the agent 1 point for each unit of distance traversed and awards 1000 points each time the goal is reached.
+- The performance measure charges the agent 1 point for each unit of distance traversed and awards 1000 points each time the goal is reached.
 
-**a**. Implement this environment and a problem-solving agent for it. After each teleporta- tion, the agent will need to formulate a new problem, which will involve discovering its current location.
+**a**. Implement this environment and a problem-solving agent for it. After each teleportation, the agent will need to formulate a new problem, which will involve discovering its current location.
 
 **b**. Document your agent’s performance (by having the agent generate suitable commentary as it moves around) and report its performance over 100 episodes.
 
@@ -4129,7 +4107,7 @@ Exercises 159
 
 **e**. Now suppose that there are locations from which the view is identical. (For example, suppose the world is a grid with square obstacles.) What kind of problem does the agent now face? What do solutions look like?
 
-**4.12** Suppose that an agent is in a 3× 3 maze environment like the one shown in Fig- ure 4.19. The agent knows that its initial location is (1,1), that the goal is at (3,3), and that the actions Up, Down , Left , Right have their usual effects unless blocked by a wall. The agent does _not_ know where the internal walls are. In any given state, the agent perceives the set of legal actions; it can also tell whether the state is one it has visited before.
+**4.12** Suppose that an agent is in a 3× 3 maze environment like the one shown in Figure 4.19. The agent knows that its initial location is (1,1), that the goal is at (3,3), and that the actions Up, Down , Left , Right have their usual effects unless blocked by a wall. The agent does _not_ know where the internal walls are. In any given state, the agent perceives the set of legal actions; it can also tell whether the state is one it has visited before.
 
 **a**. Explain how this online search problem can be viewed as an offline search in belief-state space, where the initial belief state includes all possible environment configurations. How large is the initial belief state? How large is the space of belief states?
 
@@ -4159,7 +4137,7 @@ _In which we examine the problems that arise when we try to plan ahead in a worl
 
 5.1 GAMES
 
-Chapter 2 introduced **multiagent environments**, in which each agent needs to consider the actions of other agents and how they affect its own welfare. The unpredictability of these other agents can introduce **contingencies** into the agent’s problem-solving process, as dis- cussed in Chapter 4. In this chapter we cover **competitive** environments, in which the agents’ goals are in conflict, giving rise to **adversarial search** problems—often known as **games**.GAME
+Chapter 2 introduced **multiagent environments**, in which each agent needs to consider the actions of other agents and how they affect its own welfare. The unpredictability of these other agents can introduce **contingencies** into the agent’s problem-solving process, as discussed in Chapter 4. In this chapter we cover **competitive** environments, in which the agents’ goals are in conflict, giving rise to **adversarial search** problems—often known as **games**.GAME
 
 Mathematical **game theory**, a branch of economics, views any multiagent environment as a game, provided that the impact of each agent on the others is “significant,” regardless of whether the agents are cooperative or competitive.1 In AI, the most common games are of a rather specialized kind—what game theorists call deterministic, turn-taking, two-player, **zero-sum games** of **perfect information** (such as chess). In our terminology, this meansZERO-SUM GAMES
 
@@ -4181,7 +4159,7 @@ nodes (although the search graph has “only” about 1040 distinct nodes). Game
 
 We begin with a definition of the optimal move and an algorithm for finding it. We then look at techniques for choosing a good move when time is limited. **Pruning** allows usPRUNING
 
-to ignore portions of the search tree that make no difference to the final choice, and heuristic **evaluation functions** allow us to approximate the true utility of a state without doing a com- plete search. Section 5.5 discusses games such as backgammon that include an element of chance; we also discuss bridge, which includes elements of **imperfect information** becauseIMPERFECT
+to ignore portions of the search tree that make no difference to the final choice, and heuristic **evaluation functions** allow us to approximate the true utility of a state without doing a complete search. Section 5.5 discusses games such as backgammon that include an element of chance; we also discuss bridge, which includes elements of **imperfect information** becauseIMPERFECT
 
 INFORMATION
 
@@ -4189,11 +4167,11 @@ not all cards are visible to each player. Finally, we look at how state-of-the-a
 
 We first consider games with two players, whom we call MAX and MIN for reasons that will soon become obvious. MAX moves first, and then they take turns moving until the game is over. At the end of the game, points are awarded to the winning player and penalties are given to the loser. A game can be formally defined as a kind of search problem with the following elements:
 
-• S0: The **initial state**, which specifies how the game is set up at the start. • PLAYER(s): Defines which player has the move in a state. • ACTIONS(s): Returns the set of legal moves in a state. • RESULT(s, a): The **transition model**, which defines the result of a move. • TERMINAL-TEST(s): A **terminal test**, which is true when the game is over and falseTERMINAL TEST
+- S0: The **initial state**, which specifies how the game is set up at the start. - PLAYER(s): Defines which player has the move in a state. - ACTIONS(s): Returns the set of legal moves in a state. - RESULT(s, a): The **transition model**, which defines the result of a move. - TERMINAL-TEST(s): A **terminal test**, which is true when the game is over and falseTERMINAL TEST
 
 otherwise. States where the game has ended are called **terminal states**.TERMINAL STATES
 
-• UTILITY(s, p): A **utility function** (also called an objective function or payoff function), defines the final numeric value for a game that ends in terminal state s for a player p. In chess, the outcome is a win, loss, or draw, with values +1, 0, or 1
+- UTILITY(s, p): A **utility function** (also called an objective function or payoff function), defines the final numeric value for a game that ends in terminal state s for a player p. In chess, the outcome is a win, loss, or draw, with values +1, 0, or 1
 
 2 . Some games have a
 
@@ -4341,7 +4319,7 @@ maximizes the _worst-case_ outcome for MAX. What if MIN does not play optimally?
 
 The **minimax algorithm** (Figure 5.3) computes the minimax decision from the current state.MINIMAX ALGORITHM
 
-It uses a simple recursive computation of the minimax values of each successor state, directly implementing the defining equations. The recursion proceeds all the way down to the leaves of the tree, and then the minimax values are **backed up** through the tree as the recursion unwinds. For example, in Figure 5.2, the algorithm first recurses down to the three bottom- left nodes and uses the UTILITY function on them to discover that their values are 3, 12, and 8, respectively. Then it takes the minimum of these values, 3, and returns it as the backed- up value of node B. A similar process gives the backed-up values of 2 for C and 2 for D. Finally, we take the maximum of 3, 2, and 2 to get the backed-up value of 3 for the root node.
+It uses a simple recursive computation of the minimax values of each successor state, directly implementing the defining equations. The recursion proceeds all the way down to the leaves of the tree, and then the minimax values are **backed up** through the tree as the recursion unwinds. For example, in Figure 5.2, the algorithm first recurses down to the three bottomleft nodes and uses the UTILITY function on them to discover that their values are 3, 12, and 8, respectively. Then it takes the minimum of these values, 3, and returns it as the backedup value of node B. A similar process gives the backed-up values of 2 for C and 2 for D. Finally, we take the maximum of 3, 2, and 2 to get the backed-up value of 3 for the root node.
 
 The minimax algorithm performs a complete depth-first exploration of the game tree. If the maximum depth of the tree is m and there are b legal moves at each point, then the time complexity of the minimax algorithm is O(b m). The space complexity is O(bm) for an algorithm that generates all actions at once, or O(m) for an algorithm that generates actions one at a time (see page 87). For real games, of course, the time cost is totally impractical, but this algorithm serves as the basis for the mathematical analysis of games and for more practical algorithms.
 
@@ -4375,7 +4353,7 @@ Now we have to consider nonterminal states. Consider the node marked X in the ga
 
 **return** v
 
-**Figure 5.3** An algorithm for calculating minimax decisions. It returns the action corre- sponding to the best possible move, that is, the move that leads to the outcome with the best utility, under the assumption that the opponent plays to minimize utility. The functions MAX-VALUE and MIN-VALUE go through the whole game tree, all the way to the leaves, to determine the backed-up value of a state. The notation argmaxa∈ S f(a) computes the element a of set S that has the maximum value of f(a).
+**Figure 5.3** An algorithm for calculating minimax decisions. It returns the action corresponding to the best possible move, that is, the move that leads to the outcome with the best utility, under the assumption that the opponent plays to minimize utility. The functions MAX-VALUE and MIN-VALUE go through the whole game tree, all the way to the leaves, to determine the backed-up value of a state. The notation argmaxa∈ S f(a) computes the element a of set S that has the maximum value of f(a).
 
 to move A
 
@@ -4499,7 +4477,7 @@ is worth 5, so again we need to keep exploring. The third successor is worth 2, 
 
 somewhere in the tree (see Figure 5.6), such that Player has a choice of moving to that node. If Player has a better choice m either at the parent node of n or at any choice point further up, then n _will never be reached in actual play._ So once we have found out enough about n (by examining some of its descendants) to reach this conclusion, we can prune it.
 
-Remember that minimax search is depth-first, so at any one time we just have to con- sider the nodes along a single path in the tree. Alpha–beta pruning gets its name from the following two parameters that describe bounds on the backed-up values that appear anywhere along the path:  
+Remember that minimax search is depth-first, so at any one time we just have to consider the nodes along a single path in the tree. Alpha–beta pruning gets its name from the following two parameters that describe bounds on the backed-up values that appear anywhere along the path:  
 
 Section 5.3. Alpha–Beta Pruning 169
 
@@ -4515,7 +4493,7 @@ _m_
 
 _n_
 
-• • •
+- - -
 
 **Figure 5.6** The general case for alpha–beta pruning. If m is better than n for Player, we will never get to n in play.
 
@@ -4565,9 +4543,9 @@ way, alpha–beta can solve a tree roughly twice as deep as minimax in the same 
 
 Adding dynamic move-ordering schemes, such as trying first the moves that were found to be best in the past, brings us quite close to the theoretical limit. The past could be the previous move—often the same threats remain—or it could come from previous exploration of the current move. One way to gain information from the current move is with iterative deepening search. First, search 1 ply deep and record the best path of moves. Then search 1 ply deeper, but use the recorded path to inform move ordering. As we saw in Chapter 3, iterative deepening on an exponential game tree adds only a constant fraction to the total search time, which can be more than made up from better move ordering. The best moves are often called **killer moves** and to try them first is called the killer move heuristic.KILLER MOVES
 
-In Chapter 3, we noted that repeated states in the search tree can cause an exponential increase in search cost. In many games, repeated states occur frequently because of **transpo- sitions**—different permutations of the move sequence that end up in the same position. ForTRANSPOSITION
+In Chapter 3, we noted that repeated states in the search tree can cause an exponential increase in search cost. In many games, repeated states occur frequently because of **transpositions**—different permutations of the move sequence that end up in the same position. ForTRANSPOSITION
 
-example, if White has one move, a1, that can be answered by Black with b1 and an unre- lated move a2 on the other side of the board that can be answered by b2, then the sequences \[a1, b1, a2, b2\] and \[a2, b2, a1, b1\] both end up in the same position. It is worthwhile to store the evaluation of the resulting position in a hash table the first time it is encountered so that we don’t have to recompute it on subsequent occurrences. The hash table of previously seen positions is traditionally called a **transposition table**; it is essentially identical to the _explored_TRANSPOSITION
+example, if White has one move, a1, that can be answered by Black with b1 and an unrelated move a2 on the other side of the board that can be answered by b2, then the sequences \[a1, b1, a2, b2\] and \[a2, b2, a1, b1\] both end up in the same position. It is worthwhile to store the evaluation of the resulting position in a hash table the first time it is encountered so that we don’t have to recompute it on subsequent occurrences. The hash table of previously seen positions is traditionally called a **transposition table**; it is essentially identical to the _explored_TRANSPOSITION
 
 TABLE  
 
@@ -4577,7 +4555,7 @@ list in GRAPH-SEARCH (Section 3.3). Using a transposition table can have a drama
 
 5.4 IMPERFECT REAL-TIME DECISIONS
 
-The minimax algorithm generates the entire game search space, whereas the alpha–beta algo- rithm allows us to prune large parts of it. However, alpha–beta still has to search all the way to terminal states for at least a portion of the search space. This depth is usually not practical, because moves must be made in a reasonable amount of time—typically a few minutes at most. Claude Shannon’s paper _Programming a Computer for Playing Chess_ (1950) proposed instead that programs should cut off the search earlier and apply a heuristic **evaluation func- tion** to states in the search, effectively turning nonterminal nodes into terminal leaves. InEVALUATION
+The minimax algorithm generates the entire game search space, whereas the alpha–beta algorithm allows us to prune large parts of it. However, alpha–beta still has to search all the way to terminal states for at least a portion of the search space. This depth is usually not practical, because moves must be made in a reasonable amount of time—typically a few minutes at most. Claude Shannon’s paper _Programming a Computer for Playing Chess_ (1950) proposed instead that programs should cut off the search earlier and apply a heuristic **evaluation function** to states in the search, effectively turning nonterminal nodes into terminal leaves. InEVALUATION
 
 FUNCTION
 
@@ -4653,7 +4631,7 @@ did.) The depth d is chosen so that a move is selected within the allocated time
 
 
 
-These simple approaches can lead to errors due to the approximate nature of the eval- uation function. Consider again the simple evaluation function for chess based on material advantage. Suppose the program searches to the depth limit, reaching the position in Fig- ure 5.8(b), where Black is ahead by a knight and two pawns. It would report this as the heuristic value of the state, thereby declaring that the state is a probable win by Black. But White’s next move captures Black’s queen with no compensation. Hence, the position is really won for White, but this can be seen only by looking ahead one more ply.
+These simple approaches can lead to errors due to the approximate nature of the evaluation function. Consider again the simple evaluation function for chess based on material advantage. Suppose the program searches to the depth limit, reaching the position in Figure 5.8(b), where Black is ahead by a knight and two pawns. It would report this as the heuristic value of the state, thereby declaring that the state is a probable win by Black. But White’s next move captures Black’s queen with no compensation. Hence, the position is really won for White, but this can be seen only by looking ahead one more ply.
 
 Obviously, a more sophisticated cutoff test is needed. The evaluation function should be applied only to positions that are **quiescent**—that is, unlikely to exhibit wild swings in valueQUIESCENCE
 
@@ -4701,11 +4679,11 @@ a b c d e f g h
 
 Unfortunately, this approach is rather dangerous because there is no guarantee that the best move will not be pruned away.
 
-The PROBCUT, or probabilistic cut, algorithm (Buro, 1995) is a forward-pruning ver- sion of alpha–beta search that uses statistics gained from prior experience to lessen the chance that the best move will be pruned. Alpha–beta search prunes any node that is _provably_ out- side the current (α, β) window. PROBCUT also prunes nodes that are _probably_ outside the window. It computes this probability by doing a shallow search to compute the backed-up value v of a node and then using past experience to estimate how likely it is that a score of v
+The PROBCUT, or probabilistic cut, algorithm (Buro, 1995) is a forward-pruning version of alpha–beta search that uses statistics gained from prior experience to lessen the chance that the best move will be pruned. Alpha–beta search prunes any node that is _provably_ outside the current (α, β) window. PROBCUT also prunes nodes that are _probably_ outside the window. It computes this probability by doing a shallow search to compute the backed-up value v of a node and then using past experience to estimate how likely it is that a score of v
 
-at depth d in the tree would be outside (α, β). Buro applied this technique to his Othello pro- gram, LOGISTELLO, and found that a version of his program with PROBCUT beat the regular version 64% of the time, even when the regular version was given twice as much time.
+at depth d in the tree would be outside (α, β). Buro applied this technique to his Othello program, LOGISTELLO, and found that a version of his program with PROBCUT beat the regular version 64% of the time, even when the regular version was given twice as much time.
 
-Combining all the techniques described here results in a program that can play cred- itable chess (or other games). Let us assume we have implemented an evaluation function for chess, a reasonable cutoff test with a quiescence search, and a large transposition table. Let us also assume that, after months of tedious bit-bashing, we can generate and evaluate around a million nodes per second on the latest PC, allowing us to search roughly 200 million nodes per move under standard time controls (three minutes per move). The branching factor for chess is about 35, on average, and 355 is about 50 million, so if we used minimax search, we could look ahead only about five plies. Though not incompetent, such a program can be fooled easily by an average human chess player, who can occasionally plan six or eight plies ahead. With alpha–beta search we get to about 10 plies, which results in an expert level of play.  plies. To reach grandmaster status we would need an extensively tuned evaluation function and a large database of optimal opening and endgame moves.  
+Combining all the techniques described here results in a program that can play creditable chess (or other games). Let us assume we have implemented an evaluation function for chess, a reasonable cutoff test with a quiescence search, and a large transposition table. Let us also assume that, after months of tedious bit-bashing, we can generate and evaluate around a million nodes per second on the latest PC, allowing us to search roughly 200 million nodes per move under standard time controls (three minutes per move). The branching factor for chess is about 35, on average, and 355 is about 50 million, so if we used minimax search, we could look ahead only about five plies. Though not incompetent, such a program can be fooled easily by an average human chess player, who can occasionally plan six or eight plies ahead. With alpha–beta search we get to about 10 plies, which results in an expert level of play.  plies. To reach grandmaster status we would need an extensively tuned evaluation function and a large database of optimal opening and endgame moves.  
 
 
 
@@ -4715,7 +4693,7 @@ Somehow it seems like overkill for a chess program to start a game by considerin
 
 For the openings, the computer is mostly relying on the expertise of humans. The best advice of human experts on how to play each opening is copied from books and entered into tables for the computer’s use. However, computers can also gather statistics from a database of previously played games to see which opening sequences most often lead to a win. In the early moves there are few choices, and thus much expert commentary and past games on which to draw. Usually after ten moves we end up in a rarely seen position, and the program must switch from table lookup to search.
 
-Near the end of the game there are again fewer possible positions, and thus more chance to do lookup. But here it is the computer that has the expertise: computer analysis of endgames goes far beyond anything achieved by humans. A human can tell you the gen- eral strategy for playing a king-and-rook-versus-king (KRK) endgame: reduce the opposing king’s mobility by squeezing it toward one edge of the board, using your king to prevent the opponent from escaping the squeeze. Other endings, such as king, bishop, and knight versus king (KBNK), are difficult to master and have no succinct strategy description. A computer, on the other hand, can completely _solve_ the endgame by producing a **policy**, which is a map-POLICY
+Near the end of the game there are again fewer possible positions, and thus more chance to do lookup. But here it is the computer that has the expertise: computer analysis of endgames goes far beyond anything achieved by humans. A human can tell you the general strategy for playing a king-and-rook-versus-king (KRK) endgame: reduce the opposing king’s mobility by squeezing it toward one edge of the board, using your king to prevent the opponent from escaping the squeeze. Other endings, such as king, bishop, and knight versus king (KBNK), are difficult to master and have no succinct strategy description. A computer, on the other hand, can completely _solve_ the endgame by producing a **policy**, which is a map-POLICY
 
 ping from every possible state to the best move in that state. Then we can just look up the best move rather than recompute it anew. How big will the KBNK lookup table be? It turns out there are 462 ways that two kings can be placed on the board without being adjacent. After the kings are placed, there are 62 empty squares for the bishop, 61 for the knight, and two possible players to move next, so there are just 462 × 62 × 61 × 2 = 3, 494, 568 possible positions. Some of these are checkmates; mark them as such in a table. Then do a **retrograde**RETROGRADE
 
@@ -4859,7 +4837,7 @@ _a_1 _a_2 _a_1 _a_2
 
 **Figure 5.12** An order-preserving transformation on leaf values changes the best move.
 
-If the program knew in advance all the dice rolls that would occur for the rest of the game, solving a game with dice would be just like solving a game without dice, which mini- max does in O(bm) time, where b is the branching factor and m is the maximum depth of the game tree. Because expectiminimax is also considering all the possible dice-roll sequences, it will take O(bm
+If the program knew in advance all the dice rolls that would occur for the rest of the game, solving a game with dice would be just like solving a game without dice, which minimax does in O(bm) time, where b is the branching factor and m is the maximum depth of the game tree. Because expectiminimax is also considering all the possible dice-roll sequences, it will take O(bm
 
 n m), where n is the number of distinct rolls.
 
@@ -4881,31 +4859,31 @@ an alpha–beta (or other) search algorithm. From a start position, have the alg
 
 5.6 PARTIALLY OBSERVABLE GAMES
 
-Chess has often been described as war in miniature, but it lacks at least one major charac- teristic of real wars, namely, **partial observability**. In the “fog of war,” the existence and disposition of enemy units is often unknown until revealed by direct contact. As a result, warfare includes the use of scouts and spies to gather information and the use of concealment and bluff to confuse the enemy. Partially observable games share these characteristics and are thus qualitatively different from the games described in the preceding sections.
+Chess has often been described as war in miniature, but it lacks at least one major characteristic of real wars, namely, **partial observability**. In the “fog of war,” the existence and disposition of enemy units is often unknown until revealed by direct contact. As a result, warfare includes the use of scouts and spies to gather information and the use of concealment and bluff to confuse the enemy. Partially observable games share these characteristics and are thus qualitatively different from the games described in the preceding sections.
 
 **5.6.1 Kriegspiel: Partially observable chess**
 
-In _deterministic_ partially observable games, uncertainty about the state of the board arises en- tirely from lack of access to the choices made by the opponent. This class includes children’s games such as Battleships (where each player’s ships are placed in locations hidden from the opponent but do not move) and Stratego (where piece locations are known but piece types are hidden). We will examine the game of **Kriegspiel**, a partially observable variant of chess inKRIEGSPIEL
+In _deterministic_ partially observable games, uncertainty about the state of the board arises entirely from lack of access to the choices made by the opponent. This class includes children’s games such as Battleships (where each player’s ships are placed in locations hidden from the opponent but do not move) and Stratego (where piece locations are known but piece types are hidden). We will examine the game of **Kriegspiel**, a partially observable variant of chess inKRIEGSPIEL
 
 which pieces can move but are completely invisible to the opponent. The rules of Kriegspiel are as follows: White and Black each see a board containing
 
-only their own pieces. A referee, who can see all the pieces, adjudicates the game and period- ically makes announcements that are heard by both players. On his turn, White proposes to the referee any move that would be legal if there were no black pieces. If the move is in fact not legal (because of the black pieces), the referee announces “illegal.” In this case, White may keep proposing moves until a legal one is found—and learns more about the location of Black’s pieces in the process. Once a legal move is proposed, the referee announces one or  
+only their own pieces. A referee, who can see all the pieces, adjudicates the game and periodically makes announcements that are heard by both players. On his turn, White proposes to the referee any move that would be legal if there were no black pieces. If the move is in fact not legal (because of the black pieces), the referee announces “illegal.” In this case, White may keep proposing moves until a legal one is found—and learns more about the location of Black’s pieces in the process. Once a legal move is proposed, the referee announces one or  
 
 Section 5.6. Partially Observable Games 181
 
-more of the following: “Capture on square _X_” if there is a capture, and “Check by _D_” if the black king is in check, where _D_ is the direction of the check, and can be one of “Knight,” “Rank,” “File,” “Long diagonal,” or “Short diagonal.” (In case of discovered check, the ref- eree may make two “Check” announcements.) If Black is checkmated or stalemated, the referee says so; otherwise, it is Black’s turn to move.
+more of the following: “Capture on square _X_” if there is a capture, and “Check by _D_” if the black king is in check, where _D_ is the direction of the check, and can be one of “Knight,” “Rank,” “File,” “Long diagonal,” or “Short diagonal.” (In case of discovered check, the referee may make two “Check” announcements.) If Black is checkmated or stalemated, the referee says so; otherwise, it is Black’s turn to move.
 
-Kriegspiel may seem terrifyingly impossible, but humans manage it quite well and com- puter programs are beginning to catch up. It helps to recall the notion of a **belief state** as defined in Section 4.4 and illustrated in Figure 4.14—the set of all _logically possible_ board states given the complete history of percepts to date. Initially, White’s belief state is a sin- gleton because Black’s pieces haven’t moved yet. After White makes a move and Black re- sponds, White’s belief state contains 20 positions because Black has 20 replies to any White move. Keeping track of the belief state as the game progresses is exactly the problem of **state estimation**, for which the update step is given in Equation (4.6). We can map Kriegspiel state estimation directly onto the partially observable, nondeterministic framework of Sec- tion 4.4 if we consider the opponent as the source of nondeterminism; that is, the RESULTS
+Kriegspiel may seem terrifyingly impossible, but humans manage it quite well and computer programs are beginning to catch up. It helps to recall the notion of a **belief state** as defined in Section 4.4 and illustrated in Figure 4.14—the set of all _logically possible_ board states given the complete history of percepts to date. Initially, White’s belief state is a singleton because Black’s pieces haven’t moved yet. After White makes a move and Black responds, White’s belief state contains 20 positions because Black has 20 replies to any White move. Keeping track of the belief state as the game progresses is exactly the problem of **state estimation**, for which the update step is given in Equation (4.6). We can map Kriegspiel state estimation directly onto the partially observable, nondeterministic framework of Section 4.4 if we consider the opponent as the source of nondeterminism; that is, the RESULTS
 
 of White’s move are composed from the (predictable) outcome of White’s own move and the unpredictable outcome given by Black’s reply.3
 
-Given a current belief state, White may ask, “Can I win the game?” For a partially observable game, the notion of a **strategy** is altered; instead of specifying a move to make for each possible _move_ the opponent might make, we need a move for every possible _percept sequence_ that might be received. For Kriegspiel, a winning strategy, or **guaranteed check- mate**, is one that, for each possible percept sequence, leads to an actual checkmate for everyGUARANTEED
+Given a current belief state, White may ask, “Can I win the game?” For a partially observable game, the notion of a **strategy** is altered; instead of specifying a move to make for each possible _move_ the opponent might make, we need a move for every possible _percept sequence_ that might be received. For Kriegspiel, a winning strategy, or **guaranteed checkmate**, is one that, for each possible percept sequence, leads to an actual checkmate for everyGUARANTEED
 
 CHECKMATE
 
 possible board state in the current belief state, regardless of how the opponent moves. With this definition, the opponent’s belief state is irrelevant—the strategy has to work even if the opponent can see all the pieces. This greatly simplifies the computation. Figure 5.13 shows part of a guaranteed checkmate for the KRK (king and rook against king) endgame. In this case, Black has just one piece (the king), so a belief state for White can be shown in a single board by marking each possible position of the Black king.
 
-The general AND-OR search algorithm can be applied to the belief-state space to find guaranteed checkmates, just as in Section 4.4. The incremental belief-state algorithm men- tioned in that section often finds midgame checkmates up to depth 9—probably well beyond the abilities of human players.
+The general AND-OR search algorithm can be applied to the belief-state space to find guaranteed checkmates, just as in Section 4.4. The incremental belief-state algorithm mentioned in that section often finds midgame checkmates up to depth 9—probably well beyond the abilities of human players.
 
 In addition to guaranteed checkmates, Kriegspiel admits an entirely new concept that makes no sense in fully observable games: **probabilistic checkmate**. Such checkmates arePROBABILISTIC
 
@@ -4949,9 +4927,9 @@ it would be checkmate—if Black’s pieces happen to be in the right places. (M
 
 Section 5.6. Partially Observable Games 183
 
-One’s first inclination might be to propose that all board states in the current belief state are equally likely—but this can’t be right. Consider, for example, White’s belief state after Black’s first move of the game. By definition (assuming that Black plays optimally), Black must have played an optimal move, so all board states resulting from suboptimal moves ought to be assigned zero probability. This argument is not quite right either, because _each player’s goal is not just to move pieces to the right squares but also to minimize the information that the opponent has about their location._ Playing any _predictable_ “optimal” strategy provides the opponent with information. Hence, optimal play in partially observable games requires a willingness to play somewhat _randomly_. (This is why restaurant hygiene inspectors do _random_ inspection visits.) This means occasionally selecting moves that may seem “intrinsi- cally” weak—but they gain strength from their very unpredictability, because the opponent is unlikely to have prepared any defense against them.
+One’s first inclination might be to propose that all board states in the current belief state are equally likely—but this can’t be right. Consider, for example, White’s belief state after Black’s first move of the game. By definition (assuming that Black plays optimally), Black must have played an optimal move, so all board states resulting from suboptimal moves ought to be assigned zero probability. This argument is not quite right either, because _each player’s goal is not just to move pieces to the right squares but also to minimize the information that the opponent has about their location._ Playing any _predictable_ “optimal” strategy provides the opponent with information. Hence, optimal play in partially observable games requires a willingness to play somewhat _randomly_. (This is why restaurant hygiene inspectors do _random_ inspection visits.) This means occasionally selecting moves that may seem “intrinsically” weak—but they gain strength from their very unpredictability, because the opponent is unlikely to have prepared any defense against them.
 
-From these considerations, it seems that the probabilities associated with the board states in the current belief state can only be calculated given an optimal randomized strat- egy; in turn, computing that strategy seems to require knowing the probabilities of the var- ious states the board might be in. This conundrum can be resolved by adopting the game- theoretic notion of an **equilibrium** solution, which we pursue further in Chapter 17. An equilibrium specifies an optimal randomized strategy for each player. Computing equilib- ria is prohibitively expensive, however, even for small games, and is out of the question for Kriegspiel. At present, the design of effective algorithms for general Kriegspiel play is an open research topic. Most systems perform bounded-depth lookahead in their own belief- state space, ignoring the opponent’s belief state. Evaluation functions resemble those for the observable game but include a component for the size of the belief state—smaller is better!
+From these considerations, it seems that the probabilities associated with the board states in the current belief state can only be calculated given an optimal randomized strategy; in turn, computing that strategy seems to require knowing the probabilities of the various states the board might be in. This conundrum can be resolved by adopting the gametheoretic notion of an **equilibrium** solution, which we pursue further in Chapter 17. An equilibrium specifies an optimal randomized strategy for each player. Computing equilibria is prohibitively expensive, however, even for small games, and is out of the question for Kriegspiel. At present, the design of effective algorithms for general Kriegspiel play is an open research topic. Most systems perform bounded-depth lookahead in their own beliefstate space, ignoring the opponent’s belief state. Evaluation functions resemble those for the observable game but include a component for the size of the belief state—smaller is better!
 
 **5.6.2 Card games**
 
@@ -4995,17 +4973,17 @@ i = 1
 
 MINIMAX(RESULT(si, a)) . (5.2)
 
-(Notice that P (s) does not appear explicitly in the summation, because the samples are al- ready drawn according to P (s).) As N grows large, the sum over the random sample tends to the exact value, but even for fairly small N—say, 100 to 1,000—the method gives a good approximation. It can also be applied to deterministic games such as Kriegspiel, given some reasonable estimate of P (s).
+(Notice that P (s) does not appear explicitly in the summation, because the samples are already drawn according to P (s).) As N grows large, the sum over the random sample tends to the exact value, but even for fairly small N—say, 100 to 1,000—the method gives a good approximation. It can also be applied to deterministic games such as Kriegspiel, given some reasonable estimate of P (s).
 
 For games like whist and hearts, where there is no bidding or betting phase before play commences, each deal will be equally likely and so the values of P (s) are all equal. For bridge, play is preceded by a bidding phase in which each team indicates how many tricks it expects to win. Since players bid based on the cards they hold, the other players learn more about the probability of each deal. Taking this into account in deciding how to play the hand is tricky, for the reasons mentioned in our description of Kriegspiel: players may bid in such a way as to minimize the information conveyed to their opponents. Even so, the approach is quite effective for bridge, as we show in Section 5.7.
 
-The strategy described in Equations 5.1 and 5.2 is sometimes called _averaging over clairvoyance_ because it assumes that the game will become observable to both players im- mediately after the first move. Despite its intuitive appeal, the strategy can lead one astray. Consider the following story:
+The strategy described in Equations 5.1 and 5.2 is sometimes called _averaging over clairvoyance_ because it assumes that the game will become observable to both players immediately after the first move. Despite its intuitive appeal, the strategy can lead one astray. Consider the following story:
 
 Day 1: Road _A_ leads to a heap of gold; Road _B_ leads to a fork. Take the left fork and you’ll find a bigger heap of gold, but take the right fork and you’ll be run over by a bus. Day 2: Road _A_ leads to a heap of gold; Road _B_ leads to a fork. Take the right fork and you’ll find a bigger heap of gold, but take the left fork and you’ll be run over by a bus. Day 3: Road _A_ leads to a heap of gold; Road _B_ leads to a fork. One branch of the fork leads to a bigger heap of gold, but take the wrong fork and you’ll be hit by a bus. Unfortunately you don’t know which fork is which.
 
 Averaging over clairvoyance leads to the following reasoning: on Day 1, _B_ is the right choice; on Day 2, _B_ is the right choice; on Day 3, the situation is the same as either Day 1 or Day 2, so _B_ must still be the right choice.
 
-Now we can see how averaging over clairvoyance fails: it does not consider the _belief state_ that the agent will be in after acting. A belief state of total ignorance is not desirable, es- pecially when one possibility is certain death. Because it assumes that every future state will automatically be one of perfect knowledge, the approach never selects actions that _gather in- formation_ (like the first move in Figure 5.13); nor will it choose actions that hide information from the opponent or provide information to a partner because it assumes that they already know the information; and it will never **bluff** in poker,4 because it assumes the opponent canBLUFF
+Now we can see how averaging over clairvoyance fails: it does not consider the _belief state_ that the agent will be in after acting. A belief state of total ignorance is not desirable, especially when one possibility is certain death. Because it assumes that every future state will automatically be one of perfect knowledge, the approach never selects actions that _gather information_ (like the first move in Figure 5.13); nor will it choose actions that hide information from the opponent or provide information to a partner because it assumes that they already know the information; and it will never **bluff** in poker,4 because it assumes the opponent canBLUFF
 
 see its cards. In Chapter 17, we show how to construct algorithms that do all these things by virtue of solving the true partially observable decision problem.
 
@@ -5015,11 +4993,11 @@ Section 5.7. State-of-the-Art Game Programs 185
 
 5.7 STATE-OF-THE-ART GAME PROGRAMS
 
-In 1965, the Russian mathematician Alexander Kronrod called chess “the _Drosophila_ of ar- tificial intelligence.” John McCarthy disagrees: whereas geneticists use fruit flies to make discoveries that apply to biology more broadly, AI has used chess to do the equivalent of breeding very fast fruit flies. Perhaps a better analogy is that chess is to AI as Grand Prix motor racing is to the car industry: state-of-the-art game programs are blindingly fast, highly optimized machines that incorporate the latest engineering advances, but they aren’t much use for doing the shopping or driving off-road. Nonetheless, racing and game-playing gen- erate excitement and a steady stream of innovations that have been adopted by the wider community. In this section we look at what it takes to come out on top in various games.
+In 1965, the Russian mathematician Alexander Kronrod called chess “the _Drosophila_ of artificial intelligence.” John McCarthy disagrees: whereas geneticists use fruit flies to make discoveries that apply to biology more broadly, AI has used chess to do the equivalent of breeding very fast fruit flies. Perhaps a better analogy is that chess is to AI as Grand Prix motor racing is to the car industry: state-of-the-art game programs are blindingly fast, highly optimized machines that incorporate the latest engineering advances, but they aren’t much use for doing the shopping or driving off-road. Nonetheless, racing and game-playing generate excitement and a steady stream of innovations that have been adopted by the wider community. In this section we look at what it takes to come out on top in various games.
 
 **Chess**: IBM’s DEEP BLUE chess program, now retired, is well known for defeating worldCHESS
 
-champion Garry Kasparov in a widely publicized exhibition match. Deep Blue ran on a par- allel computer with 30 IBM RS/6000 processors doing alpha–beta search. The unique part was a configuration of 480 custom VLSI chess processors that performed move generation and move ordering for the last few levels of the tree, and evaluated the leaf nodes. Deep Blue searched up to 30 billion positions per move, reaching depth 14 routinely. The key to its success seems to have been its ability to generate singular extensions beyond the depth limit for sufficiently interesting lines of forcing/forced moves. In some cases the search reached a depth of 40 plies. The evaluation function had over 8000 features, many of them describing highly specific patterns of pieces. An “opening book” of about 4000 positions was used, as well as a database of 700,000 grandmaster games from which consensus recommendations could be extracted. The system also used a large endgame database of solved positions con- taining all positions with five pieces and many with six pieces. This database had the effect of substantially extending the effective search depth, allowing Deep Blue to play perfectly in some cases even when it was many moves away from checkmate.
+champion Garry Kasparov in a widely publicized exhibition match. Deep Blue ran on a parallel computer with 30 IBM RS/6000 processors doing alpha–beta search. The unique part was a configuration of 480 custom VLSI chess processors that performed move generation and move ordering for the last few levels of the tree, and evaluated the leaf nodes. Deep Blue searched up to 30 billion positions per move, reaching depth 14 routinely. The key to its success seems to have been its ability to generate singular extensions beyond the depth limit for sufficiently interesting lines of forcing/forced moves. In some cases the search reached a depth of 40 plies. The evaluation function had over 8000 features, many of them describing highly specific patterns of pieces. An “opening book” of about 4000 positions was used, as well as a database of 700,000 grandmaster games from which consensus recommendations could be extracted. The system also used a large endgame database of solved positions containing all positions with five pieces and many with six pieces. This database had the effect of substantially extending the effective search depth, allowing Deep Blue to play perfectly in some cases even when it was many moves away from checkmate.
 
 The success of DEEP BLUE reinforced the widely held belief that progress in computer game-playing has come primarily from ever-more-powerful hardware—a view encouraged by IBM. But algorithmic improvements have allowed programs running on standard PCs to win World Computer Chess Championships. A variety of pruning heuristics are used to reduce the effective branching factor to less than 3 (compared with the actual branching factor of about 35). The most important of these is the **null move** heuristic, which generates a goodNULL MOVE
 
@@ -5031,7 +5009,7 @@ cluster with 1 gigabyte per processor and with custom hardware in the form of FP
 
 
 
-RYBKA, winner of the 2008 and 2009 World Computer Chess Championships, is con- sidered the strongest current computer player. It uses an off-the-shelf 8-core 3.2 GHz Intel Xeon processor, but little is known about the design of the program. RYBKA’s main ad- vantage appears to be its evaluation function, which has been tuned by its main developer, International Master Vasik Rajlich, and at least three other grandmasters.
+RYBKA, winner of the 2008 and 2009 World Computer Chess Championships, is considered the strongest current computer player. It uses an off-the-shelf 8-core 3.2 GHz Intel Xeon processor, but little is known about the design of the program. RYBKA’s main advantage appears to be its evaluation function, which has been tuned by its main developer, International Master Vasik Rajlich, and at least three other grandmasters.
 
 The most recent matches suggest that the top computer chess programs have pulled ahead of all human contenders. (See the historical notes for details.)
 
@@ -5045,11 +5023,11 @@ game. It has a smaller search space than chess, usually 5 to 15 legal moves, but
 
 **Backgammon**: Section 5.5 explained why the inclusion of uncertainty from dice rolls makesBACKGAMMON
 
-deep search an expensive luxury. Most work on backgammon has gone into improving the evaluation function. Gerry Tesauro (1992) combined reinforcement learning with neural networks to develop a remarkably accurate evaluator that is used with a search to depth 2 or 3. After playing more than a million training games against itself, Tesauro’s program, TD-GAMMON, is competitive with top human players. The program’s opinions on the open- ing moves of the game have in some cases radically altered the received wisdom.
+deep search an expensive luxury. Most work on backgammon has gone into improving the evaluation function. Gerry Tesauro (1992) combined reinforcement learning with neural networks to develop a remarkably accurate evaluator that is used with a search to depth 2 or 3. After playing more than a million training games against itself, Tesauro’s program, TD-GAMMON, is competitive with top human players. The program’s opinions on the opening moves of the game have in some cases radically altered the received wisdom.
 
 **Go** is the most popular board game in Asia. Because the board is 19 × 19 and moves areGO
 
-allowed into (almost) every empty square, the branching factor starts at 361, which is too daunting for regular alpha–beta search methods. In addition, it is difficult to write an eval- uation function because control of territory is often very unpredictable until the endgame. Therefore the top programs, such as MOGO, avoid alpha–beta search and instead use Monte Carlo rollouts. The trick is to decide what moves to make in the course of the rollout. There is no aggressive pruning; all moves are possible. The UCT (upper confidence bounds on trees) method works by making random moves in the first few iterations, and over time guiding the sampling process to prefer moves that have led to wins in previous samples. Some tricks are added, including _knowledge-based rules_ that suggest particular moves whenever a given pattern is detected and _limited local search_ to decide tactical questions. Some programs also include special techniques from **combinatorial game theory** to analyze endgames. TheseCOMBINATORIAL
+allowed into (almost) every empty square, the branching factor starts at 361, which is too daunting for regular alpha–beta search methods. In addition, it is difficult to write an evaluation function because control of territory is often very unpredictable until the endgame. Therefore the top programs, such as MOGO, avoid alpha–beta search and instead use Monte Carlo rollouts. The trick is to decide what moves to make in the course of the rollout. There is no aggressive pruning; all moves are possible. The UCT (upper confidence bounds on trees) method works by making random moves in the first few iterations, and over time guiding the sampling process to prefer moves that have led to wins in previous samples. Some tricks are added, including _knowledge-based rules_ that suggest particular moves whenever a given pattern is detected and _limited local search_ to decide tactical questions. Some programs also include special techniques from **combinatorial game theory** to analyze endgames. TheseCOMBINATORIAL
 
 GAME THEORY
 
@@ -5065,13 +5043,13 @@ players are paired into two teams. As in Section 5.6, optimal play in partially 
 
 The GIB program (Ginsberg, 1999) won the 2000 computer bridge championship quite decisively using the Monte Carlo method. Since then, other winning programs have followed GIB’s lead. GIB’s major innovation is using **explanation-based generalization** to compute
 
-EXPLANATION- BASED GENERALIZATION
+EXPLANATIONBASED GENERALIZATION
 
 and cache general rules for optimal play in various standard classes of situations rather than evaluating each situation individually. For example, in a situation where one player has the cards A-K-Q-J-4-3-2 of one suit and another player has 10-9-8-7-6-5, there are 7 × 6 = 42
 
 ways that the first player can lead from that suit and the second player can follow. But GIB treats these situations as just two: the first player can lead either a high card or a low card; the exact cards played don’t matter. With this optimization (and a few others), GIB can solve a 52-card, fully observable deal _exactly_ in about a second. GIB’s tactical accuracy makes up for its inability to reason about information. It finished 12th in a field of 35 in the par contest (involving just play of the hand, not bidding) at the 1998 human world championship, far exceeding the expectations of many human experts.
 
-There are several reasons why GIB plays at expert level with Monte Carlo simulation, whereas Kriegspiel programs do not. First, GIB’s evaluation of the fully observable version of the game is exact, searching the full game tree, while Kriegspiel programs rely on inexact heuristics. But far more important is the fact that in bridge, most of the uncertainty in the partially observable information comes from the randomness of the deal, not from the adver- sarial play of the opponent. Monte Carlo simulation handles randomness well, but does not always handle strategy well, especially when the strategy involves the value of information.
+There are several reasons why GIB plays at expert level with Monte Carlo simulation, whereas Kriegspiel programs do not. First, GIB’s evaluation of the fully observable version of the game is exact, searching the full game tree, while Kriegspiel programs rely on inexact heuristics. But far more important is the fact that in bridge, most of the uncertainty in the partially observable information comes from the randomness of the deal, not from the adversarial play of the opponent. Monte Carlo simulation handles randomness well, but does not always handle strategy well, especially when the strategy involves the value of information.
 
 **Scrabble**: Most people think the hard part about Scrabble is coming up with good words, butSCRABBLE
 
@@ -5081,7 +5059,7 @@ program defeated the former world champion, David Boys, 3–2.
 
 5.8 ALTERNATIVE APPROACHES
 
-Because calculating optimal decisions in games is intractable in most cases, all algorithms must make some assumptions and approximations. The standard approach, based on mini- max, evaluation functions, and alpha–beta, is just one way to do this. Probably because it has  
+Because calculating optimal decisions in games is intractable in most cases, all algorithms must make some assumptions and approximations. The standard approach, based on minimax, evaluation functions, and alpha–beta, is just one way to do this. Probably because it has  
 
 
 
@@ -5093,7 +5071,7 @@ MAX
 
 **Figure 5.14** A two-ply game tree for which heuristic minimax may make an error.
 
-been worked on for so long, the standard approach dominates other methods in tournament play. Some believe that this has caused game playing to become divorced from the main- stream of AI research: the standard approach no longer provides much room for new insight into general questions of decision making. In this section, we look at the alternatives.
+been worked on for so long, the standard approach dominates other methods in tournament play. Some believe that this has caused game playing to become divorced from the mainstream of AI research: the standard approach no longer provides much room for new insight into general questions of decision making. In this section, we look at the alternatives.
 
 First, let us consider heuristic minimax. It selects an optimal move in a given search tree _provided that the leaf node evaluations are exactly correct_. In reality, evaluations are usually crude estimates of the value of a position and can be considered to have large errors associated with them. Figure 5.14 shows a two-ply game tree for which minimax suggests taking the right-hand branch because 100 > 99. That is the correct move if the evaluations are all correct. But of course the evaluation function is only approximate. Suppose that the evaluation of each node has an error that is independent of other nodes and is randomly distributed with mean zero and standard deviation of σ. Then when σ = 5, the left-hand branch is actually better 71% of the time, and 58% of the time when σ = 2. The intuition behind this is that the right-hand branch has four nodes that are close to 99; if an error in the evaluation of any one of the four makes the right-hand branch slip below 99, then the left-hand branch is better.
 
@@ -5113,57 +5091,57 @@ Finally, let us reexamine the nature of search itself. Algorithms for heuristic 
 
 5.9 SUMMARY
 
-We have looked at a variety of games to understand what optimal play means and to under- stand how to play well in practice. The most important ideas are as follows:
+We have looked at a variety of games to understand what optimal play means and to understand how to play well in practice. The most important ideas are as follows:
 
-• A game can be defined by the **initial state** (how the board is set up), the legal **actions** in each state, the **result** of each action, a **terminal test** (which says when the game is over), and a **utility function** that applies to terminal states.
+- A game can be defined by the **initial state** (how the board is set up), the legal **actions** in each state, the **result** of each action, a **terminal test** (which says when the game is over), and a **utility function** that applies to terminal states.
 
-• In two-player zero-sum games with **perfect information**, the **minimax** algorithm can select optimal moves by a depth-first enumeration of the game tree.
+- In two-player zero-sum games with **perfect information**, the **minimax** algorithm can select optimal moves by a depth-first enumeration of the game tree.
 
-• The **alpha–beta** search algorithm computes the same optimal move as minimax, but achieves much greater efficiency by eliminating subtrees that are provably irrelevant.
+- The **alpha–beta** search algorithm computes the same optimal move as minimax, but achieves much greater efficiency by eliminating subtrees that are provably irrelevant.
 
-• Usually, it is not feasible to consider the whole game tree (even with alpha–beta), so we  
+- Usually, it is not feasible to consider the whole game tree (even with alpha–beta), so we  
 
 
 
 need to cut the search off at some point and apply a heuristic **evaluation function** that estimates the utility of a state.
 
-• Many game programs precompute tables of best moves in the opening and endgame so that they can look up a move rather than search.
+- Many game programs precompute tables of best moves in the opening and endgame so that they can look up a move rather than search.
 
-• Games of chance can be handled by an extension to the minimax algorithm that eval- uates a **chance node** by taking the average utility of all its children, weighted by the probability of each child.
+- Games of chance can be handled by an extension to the minimax algorithm that evaluates a **chance node** by taking the average utility of all its children, weighted by the probability of each child.
 
-• Optimal play in games of **imperfect information**, such as Kriegspiel and bridge, re- quires reasoning about the current and future **belief states** of each player. A simple approximation can be obtained by averaging the value of an action over each possible configuration of missing information.
+- Optimal play in games of **imperfect information**, such as Kriegspiel and bridge, requires reasoning about the current and future **belief states** of each player. A simple approximation can be obtained by averaging the value of an action over each possible configuration of missing information.
 
-• Programs have bested even champion human players at games such as chess, checkers, and Othello. Humans retain the edge in several games of imperfect information, such as poker, bridge, and Kriegspiel, and in games with very large branching factors and little good heuristic knowledge, such as Go.
+- Programs have bested even champion human players at games such as chess, checkers, and Othello. Humans retain the edge in several games of imperfect information, such as poker, bridge, and Kriegspiel, and in games with very large branching factors and little good heuristic knowledge, such as Go.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
 The early history of mechanical game playing was marred by numerous frauds. The most notorious of these was Baron Wolfgang von Kempelen’s (1734–1804) “The Turk,” a supposed chess-playing automaton that defeated Napoleon before being exposed as a magician’s trick cabinet housing a human chess expert (see Levitt, 2000). It played from 1769 to 1854. In 1846, Charles Babbage (who had been fascinated by the Turk) appears to have contributed the first serious discussion of the feasibility of computer chess and checkers (Morrison and Morrison, 1961). He did not understand the exponential complexity of search trees, claiming “the combinations involved in the Analytical Engine enormously surpassed any required, even by the game of chess.” Babbage also designed, but did not build, a special-purpose machine for playing tic-tac-toe. The first true game-playing machine was built around 1890 by the Spanish engineer Leonardo Torres y Quevedo. It specialized in the “KRK” (king and rook vs. king) chess endgame, guaranteeing a win with king and rook from any position.
 
-The minimax algorithm is traced to a 1912 paper by Ernst Zermelo, the developer of modern set theory. The paper unfortunately contained several errors and did not describe min- imax correctly. On the other hand, it did lay out the ideas of retrograde analysis and proposed (but did not prove) what became known as Zermelo’s theorem: that chess is determined— White can force a win or Black can or it is a draw; we just don’t know which. Zermelo says that should we eventually know, “Chess would of course lose the character of a game at all.” A solid foundation for game theory was developed in the seminal work _Theory of Games and Economic Behavior_ (von Neumann and Morgenstern, 1944), which included an analysis showing that some games _require_ strategies that are randomized (or otherwise unpredictable). See Chapter 17 for more information.  
+The minimax algorithm is traced to a 1912 paper by Ernst Zermelo, the developer of modern set theory. The paper unfortunately contained several errors and did not describe minimax correctly. On the other hand, it did lay out the ideas of retrograde analysis and proposed (but did not prove) what became known as Zermelo’s theorem: that chess is determined— White can force a win or Black can or it is a draw; we just don’t know which. Zermelo says that should we eventually know, “Chess would of course lose the character of a game at all.” A solid foundation for game theory was developed in the seminal work _Theory of Games and Economic Behavior_ (von Neumann and Morgenstern, 1944), which included an analysis showing that some games _require_ strategies that are randomized (or otherwise unpredictable). See Chapter 17 for more information.  
 
 Bibliographical and Historical Notes 191
 
 John McCarthy conceived the idea of alpha–beta search in 1956, although he did not publish it. The NSS chess program (Newell _et al._, 1958) used a simplified version of alpha– beta; it was the first chess program to do so. Alpha–beta pruning was described by Hart and Edwards (1961) and Hart _et al._ (1972). Alpha–beta was used by the “Kotok–McCarthy” chess program written by a student of John McCarthy (Kotok, 1962). Knuth and Moore (1975) proved the correctness of alpha–beta and analysed its time complexity. Pearl (1982b) shows alpha–beta to be asymptotically optimal among all fixed-depth game-tree search algorithms.
 
-Several attempts have been made to overcome the problems with the “standard ap- proach” that were outlined in Section 5.8. The first nonexhaustive heuristic search algorithm with some theoretical grounding was probably B∗ (Berliner, 1979), which attempts to main- tain interval bounds on the possible value of a node in the game tree rather than giving it a single point-valued estimate. Leaf nodes are selected for expansion in an attempt to re- fine the top-level bounds until one move is “clearly best.” Palay (1985) extends the B∗ idea using probability distributions on values in place of intervals. David McAllester’s (1988) conspiracy number search expands leaf nodes that, by changing their values, could cause the program to prefer a new move at the root. MGSS∗ (Russell and Wefald, 1989) uses the decision-theoretic techniques of Chapter 16 to estimate the value of expanding each leaf in terms of the expected improvement in decision quality at the root. It outplayed an alpha– beta algorithm at Othello despite searching an order of magnitude fewer nodes. The MGSS∗
+Several attempts have been made to overcome the problems with the “standard approach” that were outlined in Section 5.8. The first nonexhaustive heuristic search algorithm with some theoretical grounding was probably B∗ (Berliner, 1979), which attempts to maintain interval bounds on the possible value of a node in the game tree rather than giving it a single point-valued estimate. Leaf nodes are selected for expansion in an attempt to refine the top-level bounds until one move is “clearly best.” Palay (1985) extends the B∗ idea using probability distributions on values in place of intervals. David McAllester’s (1988) conspiracy number search expands leaf nodes that, by changing their values, could cause the program to prefer a new move at the root. MGSS∗ (Russell and Wefald, 1989) uses the decision-theoretic techniques of Chapter 16 to estimate the value of expanding each leaf in terms of the expected improvement in decision quality at the root. It outplayed an alpha– beta algorithm at Othello despite searching an order of magnitude fewer nodes. The MGSS∗
 
 approach is, in principle, applicable to the control of any form of deliberation. Alpha–beta search is in many ways the two-player analog of depth-first branch-and-
 
-bound, which is dominated by A∗ in the single-agent case. The SSS∗ algorithm (Stockman, 1979) can be viewed as a two-player A∗ and never expands more nodes than alpha–beta to reach the same decision. The memory requirements and computational overhead of the queue make SSS∗ in its original form impractical, but a linear-space version has been developed from the RBFS algorithm (Korf and Chickering, 1996). Plaat _et al._ (1996) developed a new view of SSS∗ as a combination of alpha–beta and transposition tables, showing how to over- come the drawbacks of the original algorithm and developing a new variant called MTD(_f_) that has been adopted by a number of top programs.
+bound, which is dominated by A∗ in the single-agent case. The SSS∗ algorithm (Stockman, 1979) can be viewed as a two-player A∗ and never expands more nodes than alpha–beta to reach the same decision. The memory requirements and computational overhead of the queue make SSS∗ in its original form impractical, but a linear-space version has been developed from the RBFS algorithm (Korf and Chickering, 1996). Plaat _et al._ (1996) developed a new view of SSS∗ as a combination of alpha–beta and transposition tables, showing how to overcome the drawbacks of the original algorithm and developing a new variant called MTD(_f_) that has been adopted by a number of top programs.
 
-D. F. Beal (1980) and Dana Nau (1980, 1983) studied the weaknesses of minimax ap- plied to approximate evaluations. They showed that under certain assumptions about the dis- tribution of leaf values in the tree, minimaxing can yield values at the root that are actually _less_ reliable than the direct use of the evaluation function itself. Pearl’s book _Heuristics_ (1984) partially explains this apparent paradox and analyzes many game-playing algorithms. Baum and Smith (1997) propose a probability-based replacement for minimax, showing that it re- sults in better choices in certain games. The expectiminimax algorithm was proposed by Donald Michie (1966). Bruce Ballard (1983) extended alpha–beta pruning to cover trees with chance nodes and Hauk (2004) reexamines this work and provides empirical results.
+D. F. Beal (1980) and Dana Nau (1980, 1983) studied the weaknesses of minimax applied to approximate evaluations. They showed that under certain assumptions about the distribution of leaf values in the tree, minimaxing can yield values at the root that are actually _less_ reliable than the direct use of the evaluation function itself. Pearl’s book _Heuristics_ (1984) partially explains this apparent paradox and analyzes many game-playing algorithms. Baum and Smith (1997) propose a probability-based replacement for minimax, showing that it results in better choices in certain games. The expectiminimax algorithm was proposed by Donald Michie (1966). Bruce Ballard (1983) extended alpha–beta pruning to cover trees with chance nodes and Hauk (2004) reexamines this work and provides empirical results.
 
-Koller and Pfeffer (1997) describe a system for completely solving partially observ- able games. The system is quite general, handling games whose optimal strategy requires randomized moves and games that are more complex than those handled by any previous system. Still, it can’t handle games as complex as poker, bridge, and Kriegspiel. Frank _et al._ (1998) describe several variants of Monte Carlo search, including one where MIN has  
+Koller and Pfeffer (1997) describe a system for completely solving partially observable games. The system is quite general, handling games whose optimal strategy requires randomized moves and games that are more complex than those handled by any previous system. Still, it can’t handle games as complex as poker, bridge, and Kriegspiel. Frank _et al._ (1998) describe several variants of Monte Carlo search, including one where MIN has  
 
 
 
-complete information but MAX does not. Among deterministic, partially observable games, Kriegspiel has received the most attention. Ferguson demonstrated hand-derived random- ized strategies for winning Kriegspiel with a bishop and knight (1992) or two bishops (1995) against a king. The first Kriegspiel programs concentrated on finding endgame checkmates and performed AND–OR search in belief-state space (Sakuta and Iida, 2002; Bolognesi and Ciancarini, 2003). Incremental belief-state algorithms enabled much more complex midgame checkmates to be found (Russell and Wolfe, 2005; Wolfe and Russell, 2007), but efficient state estimation remains the primary obstacle to effective general play (Parker _et al._, 2005).
+complete information but MAX does not. Among deterministic, partially observable games, Kriegspiel has received the most attention. Ferguson demonstrated hand-derived randomized strategies for winning Kriegspiel with a bishop and knight (1992) or two bishops (1995) against a king. The first Kriegspiel programs concentrated on finding endgame checkmates and performed AND–OR search in belief-state space (Sakuta and Iida, 2002; Bolognesi and Ciancarini, 2003). Incremental belief-state algorithms enabled much more complex midgame checkmates to be found (Russell and Wolfe, 2005; Wolfe and Russell, 2007), but efficient state estimation remains the primary obstacle to effective general play (Parker _et al._, 2005).
 
-**Chess** was one of the first tasks undertaken in AI, with early efforts by many of the pio- neers of computing, including Konrad Zuse in 1945, Norbert Wiener in his book _Cybernetics_ (1948), and Alan Turing in 1950 (see Turing _et al._, 1953). But it was Claude Shannon’s article _Programming a Computer for Playing Chess_ (1950) that had the most complete set of ideas, describing a representation for board positions, an evaluation function, quiescence search, and some ideas for selective (nonexhaustive) game-tree search. Slater (1950) and the commentators on his article also explored the possibilities for computer chess play.
+**Chess** was one of the first tasks undertaken in AI, with early efforts by many of the pioneers of computing, including Konrad Zuse in 1945, Norbert Wiener in his book _Cybernetics_ (1948), and Alan Turing in 1950 (see Turing _et al._, 1953). But it was Claude Shannon’s article _Programming a Computer for Playing Chess_ (1950) that had the most complete set of ideas, describing a representation for board positions, an evaluation function, quiescence search, and some ideas for selective (nonexhaustive) game-tree search. Slater (1950) and the commentators on his article also explored the possibilities for computer chess play.
 
 D. G. Prinz (1952) completed a program that solved chess endgame problems but did not play a full game. Stan Ulam and a group at the Los Alamos National Lab produced a program that played chess on a 6× 6 board with no bishops (Kister _et al._, 1957). It could search 4 plies deep in about 12 minutes. Alex Bernstein wrote the first documented program to play a full game of standard chess (Bernstein and Roberts, 1958).5
 
-The first computer chess match featured the Kotok–McCarthy program from MIT (Ko- tok, 1962) and the ITEP program written in the mid-1960s at Moscow’s Institute of Theo- retical and Experimental Physics (Adelson-Velsky _et al._, 1970). This intercontinental match was played by telegraph. It ended with a 3–1 victory for the ITEP program in 1967. The first chess program to compete successfully with humans was MIT’s MACHACK-6 (Greenblatt _et al._, 1967). Its Elo rating of approximately 1400 was well above the novice level of 1000.
+The first computer chess match featured the Kotok–McCarthy program from MIT (Kotok, 1962) and the ITEP program written in the mid-1960s at Moscow’s Institute of Theoretical and Experimental Physics (Adelson-Velsky _et al._, 1970). This intercontinental match was played by telegraph. It ended with a 3–1 victory for the ITEP program in 1967. The first chess program to compete successfully with humans was MIT’s MACHACK-6 (Greenblatt _et al._, 1967). Its Elo rating of approximately 1400 was well above the novice level of 1000.
 
 The Fredkin Prize, established in 1980, offered awards for progressive milestones in chess play. The $5,000 prize for the first program to achieve a master rating went to BELLE
 
@@ -5193,7 +5171,7 @@ The challenge started by Samuel was taken up by Jonathan Schaeffer of the Univer
 
 and fifth losses, but won the match 20.5–18.5. A rematch at the 1994 world championship ended prematurely when Tinsley had to withdraw for health reasons. CHINOOK became the official world champion. Schaeffer kept on building on his database of endgames, and in 2007 “solved” checkers (Schaeffer _et al._, 2007; Schaeffer, 2008). This had been predicted by Richard Bellman (1965). In the paper that introduced the dynamic programming approach to retrograde analysis, he wrote, “In checkers, the number of possible moves in any given situation is so small that we can confidently expect a complete digital computer solution to the problem of optimal play in this game.” Bellman did not, however, fully appreciate the size of the checkers game tree. There are about 500 quadrillion positions. After 18 years of computation on a cluster of 50 or more machines, Jonathan Schaeffer’s team completed an endgame table for all checkers positions with 10 or fewer pieces: over 39 trillion entries. From there, they were able to do forward alpha–beta search to derive a policy that proves that checkers is in fact a draw with best play by both sides. Note that this is an application of bidirectional search (Section 3.4.6). Building an endgame table for all of checkers would be impractical: it would require a billion gigabytes of storage. Searching without any table would also be impractical: the search tree has about 847 positions, and would take thousands of years to search with today’s technology. Only a combination of clever search, endgame data, and a drop in the price of processors and memory could solve checkers. Thus, checkers joins Qubic (Patashnik, 1980), Connect Four (Allis, 1988), and Nine-Men’s Morris (Gasser, 1998) as games that have been solved by computer analysis.
 
-**Backgammon**, a game of chance, was analyzed mathematically by Gerolamo Cardano (1663), but only taken up for computer play in the late 1970s, first with the BKG pro- gram (Berliner, 1980b); it used a complex, manually constructed evaluation function and searched only to depth 1. It was the first program to defeat a human world champion at a ma- jor classic game (Berliner, 1980a). Berliner readily acknowledged that BKG was very lucky with the dice. Gerry Tesauro’s (1995) TD-GAMMON played consistently at world champion level. The BGBLITZ program was the winner of the 2008 Computer Olympiad.
+**Backgammon**, a game of chance, was analyzed mathematically by Gerolamo Cardano (1663), but only taken up for computer play in the late 1970s, first with the BKG program (Berliner, 1980b); it used a complex, manually constructed evaluation function and searched only to depth 1. It was the first program to defeat a human world champion at a major classic game (Berliner, 1980a). Berliner readily acknowledged that BKG was very lucky with the dice. Gerry Tesauro’s (1995) TD-GAMMON played consistently at world champion level. The BGBLITZ program was the winner of the 2008 Computer Olympiad.
 
 **Go** is a deterministic game, but the large branching factor makes it challeging. The key issues and early literature in computer Go are summarized by Bouzy and Cazenave (2001) and Müller (2002). Up to 1997 there were no competent Go programs. Now the best programs play _most_ of their moves at the master level; the only problem is that over the course of a game they usually make at least one serious blunder that allows a strong opponent to win. Whereas alpha–beta search reigns in most games, many recent Go programs have adopted Monte Carlo methods based on the UCT (upper confidence bounds on trees) scheme (Kocsis and Szepesvari, 2006). The strongest Go program as of 2009 is Gelly and Silver’s MOGO
 
@@ -5209,7 +5187,7 @@ computer bridge championship, and (Ginsberg, 2001) describes how his GIB program
 
 **Soccer** (Kitano _et al._, 1997b; Visser _et al._, 2008) and **billiards** (Lam and Greenspan, 2008; Archibald _et al._, 2009) and other stochastic games with a continuous space of actions are beginning to attract attention in AI, both in simulation and with physical robot players.
 
-Computer game competitions occur annually, and papers appear in a variety of venues. The rather misleadingly named conference proceedings _Heuristic Programming in Artificial Intelligence_ report on the Computer Olympiads, which include a wide variety of games. The General Game Competition (Love _et al._, 2006) tests programs that must learn to play an un- known game given only a logical description of the rules of the game. There are also several edited collections of important papers on game-playing research (Levy, 1988a, 1988b; Mars- land and Schaeffer, 1990). The International Computer Chess Association (ICCA), founded in 1977, publishes the _ICGA Journal_ (formerly the _ICCA Journal_). Important papers have been published in the serial anthology _Advances in Computer Chess_, starting with Clarke (1977). Volume 134 of the journal _Artificial Intelligence_ (2002) contains descriptions of state-of-the-art programs for chess, Othello, Hex, shogi, Go, backgammon, poker, Scrabble, and other games. Since 1998, a biennial _Computers and Games_ conference has been held.
+Computer game competitions occur annually, and papers appear in a variety of venues. The rather misleadingly named conference proceedings _Heuristic Programming in Artificial Intelligence_ report on the Computer Olympiads, which include a wide variety of games. The General Game Competition (Love _et al._, 2006) tests programs that must learn to play an unknown game given only a logical description of the rules of the game. There are also several edited collections of important papers on game-playing research (Levy, 1988a, 1988b; Marsland and Schaeffer, 1990). The International Computer Chess Association (ICCA), founded in 1977, publishes the _ICGA Journal_ (formerly the _ICCA Journal_). Important papers have been published in the serial anthology _Advances in Computer Chess_, starting with Clarke (1977). Volume 134 of the journal _Artificial Intelligence_ (2002) contains descriptions of state-of-the-art programs for chess, Othello, Hex, shogi, Go, backgammon, poker, Scrabble, and other games. Since 1998, a biennial _Computers and Games_ conference has been held.
 
 EXERCISES
 
@@ -5221,7 +5199,7 @@ EXERCISES
 
 **b**. How large is the reachable state space? Give an exact numerical expression.
 
-**c**. Suppose we make the problem adversarial as follows: the two players take turns mov- ing; a coin is flipped to determine the puzzle on which to make a move in that turn; and the winner is the first to solve one puzzle. Which algorithm can be used to choose a move in this setting?
+**c**. Suppose we make the problem adversarial as follows: the two players take turns moving; a coin is flipped to determine the puzzle on which to make a move in that turn; and the winner is the first to solve one puzzle. Which algorithm can be used to choose a move in this setting?
 
 **d**. Give an informal proof that someone will eventually win if both play perfectly.  
 
@@ -5269,7 +5247,7 @@ of shortest-path lengths on the map, and derive such bounds for these nodes. Rem
 
 Exercises 197
 
-**5.4** Describe and implement state descriptions, move generators, terminal tests, utility func- tions, and evaluation functions for one or more of the following stochastic games: Monopoly, Scrabble, bridge play with a given contract, or Texas hold’em poker.
+**5.4** Describe and implement state descriptions, move generators, terminal tests, utility functions, and evaluation functions for one or more of the following stochastic games: Monopoly, Scrabble, bridge play with a given contract, or Texas hold’em poker.
 
 **5.5** Describe and implement a _real-time_, _multiplayer_ game-playing environment, where time is part of the environment state and players are given fixed time allocations.
 
@@ -5285,13 +5263,13 @@ Exercises 197
 
 **a**. Draw the complete game tree, using the following conventions:
 
-• Write each state as (sA, sB), where sA and sB denote the token locations. • Put each terminal state in a square box and write its game value in a circle. • Put _loop states_ (states that already appear on the path to the root) in double square
+- Write each state as (sA, sB), where sA and sB denote the token locations. - Put each terminal state in a square box and write its game value in a circle. - Put _loop states_ (states that already appear on the path to the root) in double square
 
 boxes. Since their value is unclear, annotate each with a “?” in a circle.
 
 **b**. Now mark each node with its backed-up minimax value (also in a circle). Explain how you handled the “?” values and why.
 
-**c**. Explain why the standard minimax algorithm would fail on this game tree and briefly sketch how you might fix it, drawing on your answer to (b). Does your modified algo- rithm give optimal decisions for all games with loops?
+**c**. Explain why the standard minimax algorithm would fail on this game tree and briefly sketch how you might fix it, drawing on your answer to (b). Does your modified algorithm give optimal decisions for all games with loops?
 
 **d**. This 4-square game can be generalized to n squares for any n > 2. Prove that A wins if n is even and loses if n is odd.
 
@@ -5313,7 +5291,7 @@ and one O on the board), taking symmetry into account.
 
 **e**. Circle the nodes at depth 2 that would _not_ be evaluated if alpha–beta pruning were applied, assuming the nodes are generated in the optimal order for alpha–beta pruning.
 
-**5.10** Consider the family of generalized tic-tac-toe games, defined as follows. Each partic- ular game is specified by a set S of _squares_ and a collection W of _winning positions._ Each winning position is a subset of S . For example, in standard tic-tac-toe, S is a set of 9 squares andW is a collection of 8 subsets ofW: the three rows, the three columns, and the two diag- onals. In other respects, the game is identical to standard tic-tac-toe. Starting from an empty board, players alternate placing their marks on an empty square. A player who marks every square in a winning position wins the game. It is a tie if all squares are marked and neither player has won.
+**5.10** Consider the family of generalized tic-tac-toe games, defined as follows. Each particular game is specified by a set S of _squares_ and a collection W of _winning positions._ Each winning position is a subset of S . For example, in standard tic-tac-toe, S is a set of 9 squares andW is a collection of 8 subsets ofW: the three rows, the three columns, and the two diagonals. In other respects, the game is identical to standard tic-tac-toe. Starting from an empty board, players alternate placing their marks on an empty square. A player who marks every square in a winning position wins the game. It is a tie if all squares are marked and neither player has won.
 
 **a**. Let N = |S|, the number of squares. Give an upper bound on the number of nodes in the complete game tree for generalized tic-tac-toe as a function of N .
 
@@ -5329,7 +5307,7 @@ and one O on the board), taking symmetry into account.
 
 **b**. Construct a general alpha–beta game-playing agent.
 
-**c**. Compare the effect of increasing search depth, improving move ordering, and improv- ing the evaluation function. How close does your effective branching factor come to the ideal case of perfect move ordering?
+**c**. Compare the effect of increasing search depth, improving move ordering, and improving the evaluation function. How close does your effective branching factor come to the ideal case of perfect move ordering?
 
 **d**. Implement a selective search algorithm, such as B\* (Berliner, 1979), conspiracy number search (McAllester, 1988), or MGSS\* (Russell and Wefald, 1989) and compare its performance to A\*.  
 
@@ -5343,9 +5321,9 @@ _nj_
 
 **Figure 5.18** Situation when considering whether to prune node nj .
 
-**5.12** Describe how the minimax and alpha–beta algorithms change for two-player, non- zero-sum games in which each player has a distinct utility function and both utility functions are known to both players. If there are no constraints on the two terminal utilities, is it possible for any node to be pruned by alpha–beta? What if the player’s utility functions on any state differ by at most a constant k, making the game almost cooperative?
+**5.12** Describe how the minimax and alpha–beta algorithms change for two-player, nonzero-sum games in which each player has a distinct utility function and both utility functions are known to both players. If there are no constraints on the two terminal utilities, is it possible for any node to be pruned by alpha–beta? What if the player’s utility functions on any state differ by at most a constant k, making the game almost cooperative?
 
-**5.13** Develop a formal proof of correctness for alpha–beta pruning. To do this, consider the situation shown in Figure 5.18. The question is whether to prune node nj , which is a max- node and a descendant of node n1. The basic idea is to prune it if and only if the minimax value of n1 can be shown to be independent of the value of nj .
+**5.13** Develop a formal proof of correctness for alpha–beta pruning. To do this, consider the situation shown in Figure 5.18. The question is whether to prune node nj , which is a maxnode and a descendant of node n1. The basic idea is to prune it if and only if the minimax value of n1 can be shown to be independent of the value of nj .
 
 **a**. Mode n1 takes on the minimum value among its children: n1 = min(n2, n21, . . . , n2b2). Find a similar expression for n2 and hence an expression for n1 in terms of nj .
 
@@ -5369,7 +5347,7 @@ _nj_
 
 three minutes of search allocated for one move? How many table lookups can you do in the time it would take to do one evaluation? Now suppose the transposition table is stored on disk. About how many evaluations could you do in the time it takes to do one disk seek with standard disk hardware?
 
-**5.16** This question considers pruning in games with chance nodes. Figure 5.19 shows the complete game tree for a trivial game. Assume that the leaf nodes are to be evaluated in left- to-right order, and that before a leaf node is evaluated, we know nothing about its value—the range of possible values is −∞ to ∞.
+**5.16** This question considers pruning in games with chance nodes. Figure 5.19 shows the complete game tree for a trivial game. Assume that the leaf nodes are to be evaluated in leftto-right order, and that before a leaf node is evaluated, we know nothing about its value—the range of possible values is −∞ to ∞.
 
 **a**. Copy the figure, mark the value of all the internal nodes, and indicate the best move at the root with an arrow.
 
@@ -5385,13 +5363,13 @@ three minutes of search allocated for one move? How many table lookups can you d
 
 **5.19** Consider the following procedure for choosing moves in games with chance nodes:
 
-• Generate some dice-roll sequences (say, 50) down to a suitable depth (say, 8).
+- Generate some dice-roll sequences (say, 50) down to a suitable depth (say, 8).
 
-• With known dice rolls, the game tree becomes deterministic. For each dice-roll se- quence, solve the resulting deterministic game tree using alpha–beta.  
+- With known dice rolls, the game tree becomes deterministic. For each dice-roll sequence, solve the resulting deterministic game tree using alpha–beta.  
 
 Exercises 201
 
-• Use the results to estimate the value of each move and to choose the best.
+- Use the results to estimate the value of each move and to choose the best.
 
 Will this procedure work well? Why (or why not)?
 
@@ -5415,7 +5393,7 @@ evaluation orders is most likely to yield pruning opportunities?
 
 **5.21** Which of the following are true and which are false? Give brief explanations.
 
-**a**. In a fully observable, turn-taking, zero-sum game between two perfectly rational play- ers, it does not help the first player to know what strategy the second player is using— that is, what move the second player will make, given the first player’s move.
+**a**. In a fully observable, turn-taking, zero-sum game between two perfectly rational players, it does not help the first player to know what strategy the second player is using— that is, what move the second player will make, given the first player’s move.
 
 **b**. In a partially observable, turn-taking, zero-sum game between two perfectly rational players, it does not help the first player to know what move the second player will make, given the first player’s move.
 
@@ -5423,7 +5401,7 @@ evaluation orders is most likely to yield pruning opportunities?
 
 **5.22** Consider carefully the interplay of chance events and partial information in each of the games in Exercise 5.4.
 
-**a**. For which is the standard expectiminimax model appropriate? Implement the algorithm and run it in your game-playing agent, with appropriate modifications to the game- playing environment.
+**a**. For which is the standard expectiminimax model appropriate? Implement the algorithm and run it in your game-playing agent, with appropriate modifications to the gameplaying environment.
 
 **b**. For which would the scheme described in Exercise 5.19 be appropriate? **c**. Discuss how you might deal with the fact that in some of the games, the players do not
 
@@ -5485,9 +5463,9 @@ There are many possible solutions to this problem, such as
 
 It can be helpful to visualize a CSP as a **constraint graph**, as shown in Figure 6.1(b). TheCONSTRAINT GRAPH
 
-nodes of the graph correspond to variables of the problem, and a link connects any two vari- ables that participate in a constraint.
+nodes of the graph correspond to variables of the problem, and a link connects any two variables that participate in a constraint.
 
-Why formulate a problem as a CSP? One reason is that the CSPs yield a natural rep- resentation for a wide variety of problems; if you already have a CSP-solving system, it is often easier to solve a problem using it than to design a custom solution using another search technique. In addition, CSP solvers can be faster than state-space searchers because the CSP solver can quickly eliminate large swatches of the search space. For example, once we have chosen {SA= blue} in the Australia problem, we can conclude that none of the five neighbor- ing variables can take on the value blue . Without taking advantage of constraint propagation, a search procedure would have to consider 35 = 243 assignments for the five neighboring variables; with constraint propagation we never have to consider blue as a value, so we have only 25 = 32 assignments to look at, a reduction of 87%.
+Why formulate a problem as a CSP? One reason is that the CSPs yield a natural representation for a wide variety of problems; if you already have a CSP-solving system, it is often easier to solve a problem using it than to design a custom solution using another search technique. In addition, CSP solvers can be faster than state-space searchers because the CSP solver can quickly eliminate large swatches of the search space. For example, once we have chosen {SA= blue} in the Australia problem, we can conclude that none of the five neighboring variables can take on the value blue . Without taking advantage of constraint propagation, a search procedure would have to consider 35 = 243 assignments for the five neighboring variables; with constraint propagation we never have to consider blue as a value, so we have only 25 = 32 assignments to look at, a reduction of 87%.
 
 In regular state-space search we can only ask: is this specific state a goal? No? What about this one? With CSPs, once we find out that a partial assignment is not a solution, we can  
 
@@ -5577,13 +5555,13 @@ We also need to assert that the inspection comes last and takes 3 minutes. For e
 
 Di = {1, 2, 3, . . . , 27} .
 
-This particular problem is trivial to solve, but CSPs have been applied to job-shop schedul- ing problems like this with thousands of variables. In some cases, there are complicated constraints that are difficult to specify in the CSP formalism, and more advanced planning techniques are used, as discussed in Chapter 11.
+This particular problem is trivial to solve, but CSPs have been applied to job-shop scheduling problems like this with thousands of variables. In some cases, there are complicated constraints that are difficult to specify in the CSP formalism, and more advanced planning techniques are used, as discussed in Chapter 11.
 
 **6.1.3 Variations on the CSP formalism**
 
 The simplest kind of CSP involves variables that have **discrete**, **finite domains**. Map-DISCRETE DOMAIN
 
-FINITE DOMAIN coloring problems and scheduling with time limits are both of this kind. The 8-queens prob- lem described in Chapter 3 can also be viewed as a finite-domain CSP, where the variables Q1, . . . , Q8 are the positions of each queen in columns 1, . . . , 8 and each variable has the domain Di = {1, 2, 3, 4, 5, 6, 7, 8}.
+FINITE DOMAIN coloring problems and scheduling with time limits are both of this kind. The 8-queens problem described in Chapter 3 can also be viewed as a finite-domain CSP, where the variables Q1, . . . , Q8 are the positions of each queen in columns 1, . . . , 8 and each variable has the domain Di = {1, 2, 3, 4, 5, 6, 7, 8}.
 
 A discrete domain can be **infinite,** such as the set of integers or strings. (If we didn’t putINFINITE
 
@@ -5603,7 +5581,7 @@ CONSTRAINTS
 
 Constraint satisfaction problems with **continuous domains** are common in the realCONTINUOUS DOMAINS
 
-world and are widely studied in the field of operations research. For example, the scheduling of experiments on the Hubble Space Telescope requires very precise timing of observations; the start and finish of each observation and maneuver are continuous-valued variables that must obey a variety of astronomical, precedence, and power constraints. The best-known category of continuous-domain CSPs is that of **linear programming** problems, where con- straints must be linear equalities or inequalities. Linear programming problems can be solved in time polynomial in the number of variables. Problems with different types of constraints and objective functions have also been studied—quadratic programming, second-order conic programming, and so on.
+world and are widely studied in the field of operations research. For example, the scheduling of experiments on the Hubble Space Telescope requires very precise timing of observations; the start and finish of each observation and maneuver are continuous-valued variables that must obey a variety of astronomical, precedence, and power constraints. The best-known category of continuous-domain CSPs is that of **linear programming** problems, where constraints must be linear equalities or inequalities. Linear programming problems can be solved in time polynomial in the number of variables. Problems with different types of constraints and objective functions have also been studied—quadratic programming, second-order conic programming, and so on.
 
 In addition to examining the types of variables that can appear in CSPs, it is useful to look at the types of constraints. The simplest type is the **unary constraint**, which restrictsUNARY CONSTRAINT
 
@@ -5617,7 +5595,7 @@ We can also describe higher-order constraints, such as asserting that the value 
 
 A constraint involving an arbitrary number of variables is called a **global constraint**.GLOBAL CONSTRAINT
 
-(The name is traditional but confusing because it need not involve _all_ the variables in a prob- lem). One of the most common global constraints is Alldiff , which says that all of the variables involved in the constraint must have different values. In Sudoku problems (see Section 6.2.6), all variables in a row or column must satisfy an Alldiff constraint. An- other example is provided by **cryptarithmetic** puzzles. (See Figure 6.2(a).) Each letter in aCRYPTARITHMETIC
+(The name is traditional but confusing because it need not involve _all_ the variables in a problem). One of the most common global constraints is Alldiff , which says that all of the variables involved in the constraint must have different values. In Sudoku problems (see Section 6.2.6), all variables in a row or column must satisfy an Alldiff constraint. Another example is provided by **cryptarithmetic** puzzles. (See Figure 6.2(a).) Each letter in aCRYPTARITHMETIC
 
 cryptarithmetic puzzle represents a different digit. For the case in Figure 6.2(a), this would be represented as the global constraint Alldiff (F, T,U,W,R,O). The addition constraints on the four columns of the puzzle can be written as the following n-ary constraints:
 
@@ -5683,7 +5661,7 @@ The constraints we have described so far have all been absolute constraints, vio
 
 CONSTRAINTS
 
-indicating which solutions are preferred. For example, in a university class-scheduling prob- lem there are absolute constraints that no professor can teach two classes at the same time. But we also may allow preference constraints: Prof. R might prefer teaching in the morning, whereas Prof. N prefers teaching in the afternoon. A schedule that has Prof. R teaching at 2 p.m. would still be an allowable solution (unless Prof. R happens to be the department chair) but would not be an optimal one. Preference constraints can often be encoded as costs on in- dividual variable assignments—for example, assigning an afternoon slot for Prof. R costs 2 points against the overall objective function, whereas a morning slot costs 1. With this formulation, CSPs with preferences can be solved with optimization search methods, either path-based or local. We call such a problem a **constraint optimization problem**, or COP.
+indicating which solutions are preferred. For example, in a university class-scheduling problem there are absolute constraints that no professor can teach two classes at the same time. But we also may allow preference constraints: Prof. R might prefer teaching in the morning, whereas Prof. N prefers teaching in the afternoon. A schedule that has Prof. R teaching at 2 p.m. would still be an allowable solution (unless Prof. R happens to be the department chair) but would not be an optimal one. Preference constraints can often be encoded as costs on individual variable assignments—for example, assigning an afternoon slot for Prof. R costs 2 points against the overall objective function, whereas a morning slot costs 1. With this formulation, CSPs with preferences can be solved with optimization search methods, either path-based or local. We call such a problem a **constraint optimization problem**, or COP.
 
 CONSTRAINT OPTIMIZATION PROBLEM
 
@@ -5701,7 +5679,7 @@ for another variable, and so on. Constraint propagation may be intertwined with 
 
 The key idea is **local consistency**. If we treat each variable as a node in a graph (seeLOCAL CONSISTENCY
 
-Figure 6.1(b)) and each binary constraint as an arc, then the process of enforcing local con- sistency in each part of the graph causes inconsistent values to be eliminated throughout the graph. There are different types of local consistency, which we now cover in turn.
+Figure 6.1(b)) and each binary constraint as an arc, then the process of enforcing local consistency in each part of the graph causes inconsistent values to be eliminated throughout the graph. There are different types of local consistency, which we now cover in turn.
 
 **6.2.1 Node consistency**
 
@@ -5709,7 +5687,7 @@ A single variable (corresponding to a node in the CSP network) is **node-consist
 
 the values in the variable’s domain satisfy the variable’s unary constraints. For example, in the variant of the Australia map-coloring problem (Figure 6.1) where South Australians dislike green, the variable SA starts with domain {red , green , blue}, and we can make it node consistent by eliminating green , leaving SA with the reduced domain {red , blue}. We say that a network is node-consistent if every variable in the network is node-consistent.
 
-It is always possible to eliminate all the unary constraints in a CSP by running node consistency. It is also possible to transform all n-ary constraints into binary ones (see Ex- ercise 6.6). Because of this, it is common to define CSP solvers that work with only binary constraints; we make that assumption for the rest of this chapter, except where noted.
+It is always possible to eliminate all the unary constraints in a CSP by running node consistency. It is also possible to transform all n-ary constraints into binary ones (see Exercise 6.6). Because of this, it is common to define CSP solvers that work with only binary constraints; we make that assumption for the rest of this chapter, except where noted.
 
 **6.2.2 Arc consistency**
 
@@ -5723,7 +5701,7 @@ binary constraints. More formally, Xi is arc-consistent with respect to another 
 
 To make X arc-consistent with respect to Y , we reduce X’s domain to {0, 1, 2, 3}. If we also make Y arc-consistent with respect to X, then Y ’s domain becomes {0, 1, 4, 9} and the whole CSP is arc-consistent.
 
-On the other hand, arc consistency can do nothing for the Australia map-coloring prob- lem. Consider the following inequality constraint on (SA,WA):
+On the other hand, arc consistency can do nothing for the Australia map-coloring problem. Consider the following inequality constraint on (SA,WA):
 
 {(red , green), (red , blue), (green , red), (green , blue), (blue, red ), (blue, green)} .  
 
@@ -5737,7 +5715,7 @@ Section 6.2. Constraint Propagation: Inference in CSPs 209
 
 **if** size of Di = 0 **then return** false
 
-**for each** Xk **in** Xi.NEIGHBORS - {Xj} **do** add (Xk, Xi) to queue
+**for each** Xk **in** Xi.NEIGHBORS {Xj} **do** add (Xk, Xi) to queue
 
 **return** true
 
@@ -5765,11 +5743,11 @@ The complexity of AC-3 can be analyzed as follows. Assume a CSP with n variables
 
 consistency of an arc can be done in O(d2) time, so we get O(cd3) total worst-case time.1
 
-It is possible to extend the notion of arc consistency to handle n-ary rather than just binary constraints; this is called generalized arc consistency or sometimes hyperarc consis- tency, depending on the author. A variable Xi is **generalized arc consistent** with respect toGENERALIZED ARC
+It is possible to extend the notion of arc consistency to handle n-ary rather than just binary constraints; this is called generalized arc consistency or sometimes hyperarc consistency, depending on the author. A variable Xi is **generalized arc consistent** with respect toGENERALIZED ARC
 
 CONSISTENT
 
-an n-ary constraint if for every value v in the domain of Xi there exists a tuple of values that is a member of the constraint, has all its values taken from the domains of the corresponding variables, and has its Xi component equal to v. For example, if all variables have the do- main {0, 1, 2, 3}, then to make the variable X consistent with the constraint X < Y < Z , we would have to eliminate 2 and 3 from the domain of X because the constraint cannot be satisfied when X is 2 or 3.
+an n-ary constraint if for every value v in the domain of Xi there exists a tuple of values that is a member of the constraint, has all its values taken from the domains of the corresponding variables, and has its Xi component equal to v. For example, if all variables have the domain {0, 1, 2, 3}, then to make the variable X consistent with the constraint X < Y < Z , we would have to eliminate 2 and 3 from the domain of X because the constraint cannot be satisfied when X is 2 or 3.
 
 **6.2.3 Path consistency**
 
@@ -5809,9 +5787,9 @@ d). Of course, there is no free lunch: any algorithm for establishing n-consiste
 
 **6.2.5 Global constraints**
 
-Remember that a **global constraint** is one involving an arbitrary number of variables (but not necessarily all variables). Global constraints occur frequently in real problems and can be handled by special-purpose algorithms that are more efficient than the general-purpose meth- ods described so far. For example, the Alldiff constraint says that all the variables involved must have distinct values (as in the cryptarithmetic problem above and Sudoku puzzles be- low). One simple form of inconsistency detection for Alldiff constraints works as follows: if m variables are involved in the constraint, and if they have n possible distinct values alto- gether, and m > n, then the constraint cannot be satisfied.
+Remember that a **global constraint** is one involving an arbitrary number of variables (but not necessarily all variables). Global constraints occur frequently in real problems and can be handled by special-purpose algorithms that are more efficient than the general-purpose methods described so far. For example, the Alldiff constraint says that all the variables involved must have distinct values (as in the cryptarithmetic problem above and Sudoku puzzles below). One simple form of inconsistency detection for Alldiff constraints works as follows: if m variables are involved in the constraint, and if they have n possible distinct values altogether, and m > n, then the constraint cannot be satisfied.
 
-This leads to the following simple algorithm: First, remove any variable in the con- straint that has a singleton domain, and delete that variable’s value from the domains of the remaining variables. Repeat as long as there are singleton variables. If at any point an empty domain is produced or there are more variables than domain values left, then an inconsistency has been detected.
+This leads to the following simple algorithm: First, remove any variable in the constraint that has a singleton domain, and delete that variable’s value from the domains of the remaining variables. Repeat as long as there are singleton variables. If at any point an empty domain is produced or there are more variables than domain values left, then an inconsistency has been detected.
 
 This method can detect the inconsistency in the assignment {WA= red , NSW = red}
 
@@ -5851,7 +5829,7 @@ The Sudoku puzzles that are printed in newspapers and puzzle books have the prop
 
 A Sudoku puzzle can be considered a CSP with 81 variables, one for each square. We use the variable names A1 through A9 for the top row (left to right), down to I1 through I9
 
-for the bottom row. The empty squares have the domain {1, 2, 3, 4, 5, 6, 7, 8, 9} and the pre- filled squares have a domain consisting of a single value. In addition, there are 27 different  
+for the bottom row. The empty squares have the domain {1, 2, 3, 4, 5, 6, 7, 8, 9} and the prefilled squares have a domain consisting of a single value. In addition, there are 27 different  
 
 Section 6.2. Constraint Propagation: Inference in CSPs 213
 
@@ -5983,11 +5961,11 @@ mechanical application of AC-3, and indeed AC-3 works only for the easiest Sudok
 
 Indeed, the appeal of Sudoku puzzles for the human solver is the need to be resourceful in applying more complex inference strategies. Aficionados give them colorful names, such as “naked triples.” That strategy works as follows: in any unit (row, column or box), find three squares that each have a domain that contains the same three numbers or a subset of those numbers. For example, the three domains might be {1, 8}, {3, 8}, and {1, 3, 8}. From that we don’t know which square contains 1, 3, or 8, but we do know that the three numbers must be distributed among the three squares. Therefore we can remove 1, 3, and 8 from the domains of every _other_ square in the unit.
 
-It is interesting to note how far we can go without saying much that is specific to Su- doku. We do of course have to say that there are 81 variables, that their domains are the digits 1 to 9, and that there are 27 Alldiff constraints. But beyond that, all the strategies—arc con- sistency, path consistency, etc.—apply generally to all CSPs, not just to Sudoku problems. Even naked triples is really a strategy for enforcing consistency of Alldiff constraints and has nothing to do with Sudoku _per se_. This is the power of the CSP formalism: for each new problem area, we only need to define the problem in terms of constraints; then the general constraint-solving mechanisms can take over.
+It is interesting to note how far we can go without saying much that is specific to Sudoku. We do of course have to say that there are 81 variables, that their domains are the digits 1 to 9, and that there are 27 Alldiff constraints. But beyond that, all the strategies—arc consistency, path consistency, etc.—apply generally to all CSPs, not just to Sudoku problems. Even naked triples is really a strategy for enforcing consistency of Alldiff constraints and has nothing to do with Sudoku _per se_. This is the power of the CSP formalism: for each new problem area, we only need to define the problem in terms of constraints; then the general constraint-solving mechanisms can take over.
 
 6.3 BACKTRACKING SEARCH FOR CSPS
 
-Sudoku problems are designed to be solved by inference over constraints. But many other CSPs cannot be solved by inference alone; there comes a time when we must search for a solution. In this section we look at backtracking search algorithms that work on partial as- signments; in the next section we look at local search algorithms over complete assignments.
+Sudoku problems are designed to be solved by inference over constraints. But many other CSPs cannot be solved by inference alone; there comes a time when we must search for a solution. In this section we look at backtracking search algorithms that work on partial assignments; in the next section we look at local search algorithms over complete assignments.
 
 We could apply a standard depth-limited search (from Chapter 3). A state would be a partial assignment, and an action would be adding var = value to the assignment. But for a CSP with n variables of domain size d, we quickly notice something terrible: the branching factor at the top level is nd because any of d values can be assigned to any of n variables. At the next level, the branching factor is (n − 1)d, and so on for n levels. We generate a tree with n! · dn leaves, even though there are only d
 
@@ -6021,7 +5999,7 @@ remove {var = value} and inferences from assignment
 
 **return** failure
 
-**Figure 6.5** A simple backtracking algorithm for constraint satisfaction problems. The al- gorithm is modeled on the recursive depth-first search of Chapter 3. By varying the functions SELECT-UNASSIGNED-VARIABLE and ORDER-DOMAIN-VALUES, we can implement the general-purpose heuristics discussed in the text. The function INFERENCE can optionally be used to impose arc-, path-, or _k_\-consistency, as desired. If a value choice leads to failure (noticed either by INFERENCE or by BACKTRACK), then value assignments (including those made by INFERENCE) are removed from the current assignment and a new value is tried.
+**Figure 6.5** A simple backtracking algorithm for constraint satisfaction problems. The algorithm is modeled on the recursive depth-first search of Chapter 3. By varying the functions SELECT-UNASSIGNED-VARIABLE and ORDER-DOMAIN-VALUES, we can implement the general-purpose heuristics discussed in the text. The function INFERENCE can optionally be used to impose arc-, path-, or _k_\-consistency, as desired. If a value choice leads to failure (noticed either by INFERENCE or by BACKTRACK), then value assignments (including those made by INFERENCE) are removed from the current assignment and a new value is tried.
 
 The term **backtracking search** is used for a depth-first search that chooses values forBACKTRACKING SEARCH
 
@@ -6029,7 +6007,7 @@ one variable at a time and backtracks when a variable has no legal values left t
 
 Notice that BACKTRACKING-SEARCH keeps only a single representation of a state and alters that representation rather than creating new ones, as described on page 87.
 
-In Chapter 3 we improved the poor performance of uninformed search algorithms by supplying them with domain-specific heuristic functions derived from our knowledge of the problem. It turns out that we can solve CSPs efficiently _without_ such domain-specific knowl- edge. Instead, we can add some sophistication to the unspecified functions in Figure 6.5, using them to address the following questions:
+In Chapter 3 we improved the poor performance of uninformed search algorithms by supplying them with domain-specific heuristic functions derived from our knowledge of the problem. It turns out that we can solve CSPs efficiently _without_ such domain-specific knowledge. Instead, we can add some sophistication to the unspecified functions in Figure 6.5, using them to address the following questions:
 
 1\. Which variable should be assigned next (SELECT-UNASSIGNED-VARIABLE), and in what order should its values be tried (ORDER-DOMAIN-VALUES)?  
 
@@ -6059,7 +6037,7 @@ The backtracking algorithm contains the line
 
 var← SELECT-UNASSIGNED-VARIABLE(csp) .
 
-The simplest strategy for SELECT-UNASSIGNED-VARIABLE is to choose the next unassigned variable in order, {X1,X2, . . .}. This static variable ordering seldom results in the most effi- cient search. For example, after the assignments for WA= red and NT = green in Figure 6.6, there is only one possible value for SA, so it makes sense to assign SA= blue next rather than assigning Q. In fact, after SA is assigned, the choices for Q, NSW , and V are all forced. This intuitive idea—choosing the variable with the fewest “legal” values—is called the **minimum- remaining-values** (MRV) heuristic. It also has been called the “most constrained variable” orMINIMUM-
+The simplest strategy for SELECT-UNASSIGNED-VARIABLE is to choose the next unassigned variable in order, {X1,X2, . . .}. This static variable ordering seldom results in the most efficient search. For example, after the assignments for WA= red and NT = green in Figure 6.6, there is only one possible value for SA, so it makes sense to assign SA= blue next rather than assigning Q. In fact, after SA is assigned, the choices for Q, NSW , and V are all forced. This intuitive idea—choosing the variable with the fewest “legal” values—is called the **minimumremaining-values** (MRV) heuristic. It also has been called the “most constrained variable” orMINIMUM-
 
 REMAINING-VALUES
 
@@ -6067,7 +6045,7 @@ REMAINING-VALUES
 
 The MRV heuristic doesn’t help at all in choosing the first region to color in Australia, because initially every region has three legal colors. In this case, the **degree heuristic** comesDEGREE HEURISTIC
 
-in handy. It attempts to reduce the branching factor on future choices by selecting the vari- able that is involved in the largest number of constraints on other unassigned variables. In Figure 6.1, SA is the variable with highest degree, 5; the other variables have degree 2 or 3, except for T , which has degree 0. In fact, once SA is chosen, applying the degree heuris- tic solves the problem without any false steps—you can choose _any_ consistent color at each choice point and still arrive at a solution with no backtracking. The minimum-remaining-  
+in handy. It attempts to reduce the branching factor on future choices by selecting the variable that is involved in the largest number of constraints on other unassigned variables. In Figure 6.1, SA is the variable with highest degree, 5; the other variables have degree 2 or 3, except for T , which has degree 0. In fact, once SA is chosen, applying the degree heuristic solves the problem without any false steps—you can choose _any_ consistent color at each choice point and still arrive at a solution with no backtracking. The minimum-remaining 
 
 Section 6.3. Backtracking Search for CSPs 217
 
@@ -6075,7 +6053,7 @@ values heuristic is usually a more powerful guide, but the degree heuristic can 
 
 Once a variable has been selected, the algorithm must decide on the order in which to examine its values. For this, the **least-constraining-value** heuristic can be effective in some
 
-LEAST- CONSTRAINING- VALUE
+LEASTCONSTRAININGVALUE
 
 cases. It prefers the value that rules out the fewest choices for the neighboring variables in the constraint graph. For example, suppose that in Figure 6.1 we have generated the partial assignment with WA= red and NT = green and that our next choice is for Q. Blue would be a bad choice because it eliminates the last legal value left for Q’s neighbor, SA. The least-constraining-value heuristic therefore prefers red to blue. In general, the heuristic is trying to leave the maximum flexibility for subsequent variable assignments. Of course, if we are trying to find all the solutions to a problem, not just the first one, then the ordering does not matter because we have to consider every value anyway. The same holds if there are no solutions to the problem.
 
@@ -6089,9 +6067,9 @@ One of the simplest forms of inference is called **forward checking**. Whenever 
 
 able X is assigned, the forward-checking process establishes arc consistency for it: for each unassigned variable Y that is connected to X by a constraint, delete from Y ’s domain any value that is inconsistent with the value chosen for X. Because forward checking only does arc consistency inferences, there is no reason to do forward checking if we have already done arc consistency as a preprocessing step.
 
-Figure 6.7 shows the progress of backtracking search on the Australia CSP with for- ward checking. There are two important points to notice about this example. First, notice that after WA= red and Q= green are assigned, the domains of NT and SA are reduced to a single value; we have eliminated branching on these variables altogether by propagat- ing information from WA and Q. A second point to notice is that after V = blue , the do- main of SA is empty. Hence, forward checking has detected that the partial assignment {WA= red , Q= green, V = blue} is inconsistent with the constraints of the problem, and the algorithm will therefore backtrack immediately.
+Figure 6.7 shows the progress of backtracking search on the Australia CSP with forward checking. There are two important points to notice about this example. First, notice that after WA= red and Q= green are assigned, the domains of NT and SA are reduced to a single value; we have eliminated branching on these variables altogether by propagating information from WA and Q. A second point to notice is that after V = blue , the domain of SA is empty. Hence, forward checking has detected that the partial assignment {WA= red , Q= green, V = blue} is inconsistent with the constraints of the problem, and the algorithm will therefore backtrack immediately.
 
-For many problems the search will be more effective if we combine the MRV heuris- tic with forward checking. Consider Figure 6.7 after assigning {WA= red}. Intuitively, it seems that that assignment constrains its neighbors, NT and SA, so we should handle those  
+For many problems the search will be more effective if we combine the MRV heuristic with forward checking. Consider Figure 6.7 after assigning {WA= red}. Intuitively, it seems that that assignment constrains its neighbors, NT and SA, so we should handle those  
 
 
 
@@ -6159,7 +6137,7 @@ is assigned first; then forward checking deletes red from the domains of the nei
 
 and SA, leaving SA with no legal values.
 
-variables next, and then all the other variables will fall into place. That’s exactly what hap- pens with MRV: NT and SA have two values, so one of them is chosen first, then the other, then Q, NSW , and V in order. Finally T still has three values, and any one of them works. We can view forward checking as an efficient way to incrementally compute the information that the MRV heuristic needs to do its job.
+variables next, and then all the other variables will fall into place. That’s exactly what happens with MRV: NT and SA have two values, so one of them is chosen first, then the other, then Q, NSW , and V in order. Finally T still has three values, and any one of them works. We can view forward checking as an efficient way to incrementally compute the information that the MRV heuristic needs to do its job.
 
 Although forward checking detects many inconsistencies, it does not detect all of them. The problem is that it makes the current variable arc-consistent, but doesn’t look ahead and make all the other variables arc-consistent. For example, consider the third row of Figure 6.7. It shows that when WA is red and Q is green , both NT and SA are forced to be blue. Forward checking does not look far enough ahead to notice that this is an inconsistency: NT and SA
 
@@ -6193,9 +6171,9 @@ The sharp-eyed reader will have noticed that forward checking can supply the con
 
 The eagle-eyed reader will have noticed something odd: backjumping occurs when every value in a domain is in conflict with the current assignment; but forward checking detects this event and prevents the search from ever reaching such a node! In fact, it can be shown that _every_ branch pruned by backjumping is also pruned by forward checking. Hence, simple backjumping is redundant in a forward-checking search or, indeed, in a search that uses stronger consistency checking, such as MAC.
 
-Despite the observations of the preceding paragraph, the idea behind backjumping re- mains a good one: to backtrack based on the reasons for failure. Backjumping notices failure when a variable’s domain becomes empty, but in many cases a branch is doomed long before this occurs. Consider again the partial assignment {WA= red ,NSW = red} (which, from our earlier discussion, is inconsistent). Suppose we try T = red next and then assign NT , Q, V , SA. We know that no assignment can work for these last four variables, so eventually we run out of values to try at NT . Now, the question is, where to backtrack? Backjumping cannot work, because NT _does_ have values consistent with the preceding assigned variables—NT
+Despite the observations of the preceding paragraph, the idea behind backjumping remains a good one: to backtrack based on the reasons for failure. Backjumping notices failure when a variable’s domain becomes empty, but in many cases a branch is doomed long before this occurs. Consider again the partial assignment {WA= red ,NSW = red} (which, from our earlier discussion, is inconsistent). Suppose we try T = red next and then assign NT , Q, V , SA. We know that no assignment can work for these last four variables, so eventually we run out of values to try at NT . Now, the question is, where to backtrack? Backjumping cannot work, because NT _does_ have values consistent with the preceding assigned variables—NT
 
-doesn’t have a complete conflict set of preceding variables that caused it to fail. We know, however, that the four variables NT , Q, V , and SA, _taken together_, failed because of a set of preceding variables, which must be those variables that directly conflict with the four. This leads to a deeper notion of the conflict set for a variable such as NT : it is that set of preced- ing variables that caused NT , _together with any subsequent variables_, to have no consistent solution. In this case, the set is WA and NSW , so the algorithm should backtrack to NSW
+doesn’t have a complete conflict set of preceding variables that caused it to fail. We know, however, that the four variables NT , Q, V , and SA, _taken together_, failed because of a set of preceding variables, which must be those variables that directly conflict with the four. This leads to a deeper notion of the conflict set for a variable such as NT : it is that set of preceding variables that caused NT , _together with any subsequent variables_, to have no consistent solution. In this case, the set is WA and NSW , so the algorithm should backtrack to NSW
 
 and skip over Tasmania. A backjumping algorithm that uses conflict sets defined in this way is called **conflict-directed backjumping**.CONFLICT-DIRECTED
 
@@ -6245,7 +6223,7 @@ value← the value v for var that minimizes CONFLICTS(var , v , current , csp) s
 
 **return** failure
 
-**Figure 6.8** The MIN-CONFLICTS algorithm for solving CSPs by local search. The initial state may be chosen randomly or by a greedy assignment process that chooses a minimal- conflict value for each variable in turn. The CONFLICTS function counts the number of constraints violated by a particular value, given the rest of the current assignment.
+**Figure 6.8** The MIN-CONFLICTS algorithm for solving CSPs by local search. The initial state may be chosen randomly or by a greedy assignment process that chooses a minimalconflict value for each variable in turn. The CONFLICTS function counts the number of constraints violated by a particular value, given the rest of the current assignment.
 
 **2**
 
@@ -6279,11 +6257,11 @@ value← the value v for var that minimizes CONFLICTS(var , v , current , csp) s
 
 heuristic. The algorithm is shown in Figure 6.8 and its application to an 8-queens problem is diagrammed in Figure 6.9.
 
-Min-conflicts is surprisingly effective for many CSPs. Amazingly, on the n-queens problem, if you don’t count the initial placement of queens, the run time of min-conflicts is roughly _independent of problem size_. It solves even the _million_\-queens problem in an aver- age of 50 steps (after the initial assignment). This remarkable observation was the stimulus leading to a great deal of research in the 1990s on local search and the distinction between easy and hard problems, which we take up in Chapter 7. Roughly speaking, n-queens is easy for local search because solutions are densely distributed throughout the state space. Min-conflicts also works well for hard problems. For example, it has been used to schedule observations for the Hubble Space Telescope, reducing the time taken to schedule a week of observations from three weeks (!) to around 10 minutes.  
+Min-conflicts is surprisingly effective for many CSPs. Amazingly, on the n-queens problem, if you don’t count the initial placement of queens, the run time of min-conflicts is roughly _independent of problem size_. It solves even the _million_\-queens problem in an average of 50 steps (after the initial assignment). This remarkable observation was the stimulus leading to a great deal of research in the 1990s on local search and the distinction between easy and hard problems, which we take up in Chapter 7. Roughly speaking, n-queens is easy for local search because solutions are densely distributed throughout the state space. Min-conflicts also works well for hard problems. For example, it has been used to schedule observations for the Hubble Space Telescope, reducing the time taken to schedule a week of observations from three weeks (!) to around 10 minutes.  
 
 
 
-All the local search techniques from Section 4.1 are candidates for application to CSPs, and some of those have proved especially effective. The landscape of a CSP under the min- conflicts heuristic usually has a series of plateaux. There may be millions of variable as- signments that are only one conflict away from a solution. Plateau search—allowing side- ways moves to another state with the same score—can help local search find its way off this plateau. This wandering on the plateau can be directed with **tabu search**: keeping a small list of recently visited states and forbidding the algorithm to return to those states. Simulated annealing can also be used to escape from plateaux.
+All the local search techniques from Section 4.1 are candidates for application to CSPs, and some of those have proved especially effective. The landscape of a CSP under the minconflicts heuristic usually has a series of plateaux. There may be millions of variable assignments that are only one conflict away from a solution. Plateau search—allowing sideways moves to another state with the same score—can help local search find its way off this plateau. This wandering on the plateau can be directed with **tabu search**: keeping a small list of recently visited states and forbidding the algorithm to return to those states. Simulated annealing can also be used to escape from plateaux.
 
 Another technique, called **constraint weighting**, can help concentrate the search on theCONSTRAINT WEIGHTING
 
@@ -6349,7 +6327,7 @@ _A CB D E F_
 
 Now that we have an efficient algorithm for trees, we can consider whether more general constraint graphs can be _reduced_ to trees somehow. There are two primary ways to do this, one based on removing nodes and one based on collapsing nodes together.
 
-The first approach involves assigning values to some variables so that the remaining variables form a tree. Consider the constraint graph for Australia, shown again in Fig- ure 6.12(a). If we could delete South Australia, the graph would become a tree, as in (b). Fortunately, we can do this (in the graph, not the continent) by fixing a value for SA and
+The first approach involves assigning values to some variables so that the remaining variables form a tree. Consider the constraint graph for Australia, shown again in Figure 6.12(a). If we could delete South Australia, the graph would become a tree, as in (b). Fortunately, we can do this (in the graph, not the continent) by fixing a value for SA and
 
 4 Sadly, very few regions of the world have tree-structured maps, although Sulawesi comes close.  
 
@@ -6403,7 +6381,7 @@ _T_
 
 deleting from the domains of the other variables any values that are inconsistent with the value chosen for SA.
 
-Now, any solution for the CSP after SA and its constraints are removed will be con- sistent with the value chosen for SA. (This works for binary CSPs; the situation is more complicated with higher-order constraints.) Therefore, we can solve the remaining tree with the algorithm given above and thus solve the whole problem. Of course, in the general case (as opposed to map coloring), the value chosen for SA could be the wrong one, so we would need to try each possible value. The general algorithm is as follows:  
+Now, any solution for the CSP after SA and its constraints are removed will be consistent with the value chosen for SA. (This works for binary CSPs; the situation is more complicated with higher-order constraints.) Therefore, we can solve the remaining tree with the algorithm given above and thus solve the whole problem. Of course, in the general case (as opposed to map coloring), the value chosen for SA could be the wrong one, so we would need to try each possible value. The general algorithm is as follows:  
 
 Section 6.5. The Structure of Problems 225
 
@@ -6411,7 +6389,7 @@ Section 6.5. The Structure of Problems 225
 
 2\. For each possible assignment to the variables in S that satisfies all constraints on S,
 
-(a) remove from the domains of the remaining variables any values that are inconsis- tent with the assignment for S, and
+(a) remove from the domains of the remaining variables any values that are inconsistent with the assignment for S, and
 
 (b) If the remaining CSP has a solution, return it together with the assignment for S.
 
@@ -6425,19 +6403,19 @@ comes up again in Chapter 14, where it is used for reasoning about probabilities
 
 DECOMPOSITION
 
-graph into a set of connected subproblems. Each subproblem is solved independently, and the resulting solutions are then combined. Like most divide-and-conquer algorithms, this works well if no subproblem is too large. Figure 6.13 shows a tree decomposition of the map- coloring problem into five subproblems. A tree decomposition must satisfy the following three requirements:
+graph into a set of connected subproblems. Each subproblem is solved independently, and the resulting solutions are then combined. Like most divide-and-conquer algorithms, this works well if no subproblem is too large. Figure 6.13 shows a tree decomposition of the mapcoloring problem into five subproblems. A tree decomposition must satisfy the following three requirements:
 
-• Every variable in the original problem appears in at least one of the subproblems. • If two variables are connected by a constraint in the original problem, they must appear
+- Every variable in the original problem appears in at least one of the subproblems. - If two variables are connected by a constraint in the original problem, they must appear
 
-together (along with the constraint) in at least one of the subproblems. • If a variable appears in two subproblems in the tree, it must appear in every subproblem
+together (along with the constraint) in at least one of the subproblems. - If a variable appears in two subproblems in the tree, it must appear in every subproblem
 
 along the path connecting those subproblems.
 
 The first two conditions ensure that all the variables and constraints are represented in the decomposition. The third condition seems rather technical, but simply reflects the constraint that any given variable must have the same value in every subproblem in which it appears; the links joining subproblems in the tree enforce this constraint. For example, SA appears in all four of the connected subproblems in Figure 6.13. You can verify from Figure 6.12 that this decomposition makes sense.
 
-We solve each subproblem independently; if any one has no solution, we know the en- tire problem has no solution. If we can solve all the subproblems, then we attempt to construct a global solution as follows. First, we view each subproblem as a “mega-variable” whose do- main is the set of all solutions for the subproblem. For example, the leftmost subproblem in Figure 6.13 is a map-coloring problem with three variables and hence has six solutions—one is {WA = red ,SA = blue,NT = green}. Then, we solve the constraints connecting the subproblems, using the efficient algorithm for trees given earlier. The constraints between subproblems simply insist that the subproblem solutions agree on their shared variables. For example, given the solution {WA = red ,SA = blue,NT = green} for the first subproblem, the only consistent solution for the next subproblem is {SA = blue,NT = green , Q = red}.
+We solve each subproblem independently; if any one has no solution, we know the entire problem has no solution. If we can solve all the subproblems, then we attempt to construct a global solution as follows. First, we view each subproblem as a “mega-variable” whose domain is the set of all solutions for the subproblem. For example, the leftmost subproblem in Figure 6.13 is a map-coloring problem with three variables and hence has six solutions—one is {WA = red ,SA = blue,NT = green}. Then, we solve the constraints connecting the subproblems, using the efficient algorithm for trees given earlier. The constraints between subproblems simply insist that the subproblem solutions agree on their shared variables. For example, given the solution {WA = red ,SA = blue,NT = green} for the first subproblem, the only consistent solution for the next subproblem is {SA = blue,NT = green , Q = red}.
 
-A given constraint graph admits many tree decompositions; in choosing a decompo- sition, the aim is to make the subproblems as small as possible. The **tree width** of a treeTREE WIDTH  
+A given constraint graph admits many tree decompositions; in choosing a decomposition, the aim is to make the subproblems as small as possible. The **tree width** of a treeTREE WIDTH  
 
 
 
@@ -6473,7 +6451,7 @@ w+1) time. Hence, _CSPs with constraint graphs of bounded tree width are solvabl
 
 So far, we have looked at the structure of the constraint graph. There can be important structure in the _values_ of variables as well. Consider the map-coloring problem with n colors. For every consistent solution, there is actually a set of n! solutions formed by permuting the color names. For example, on the Australia map we know that WA,NT , and SA must all have different colors, but there are 3! = 6 ways to assign the three colors to these three regions. This is called **value symmetry**. We would like to reduce the search space by a factor ofVALUE SYMMETRY
 
-n! by breaking the symmetry. We do this by introducing a **symmetry-breaking constraint**. SYMMETRY- BREAKING CONSTRAINT
+n! by breaking the symmetry. We do this by introducing a **symmetry-breaking constraint**. SYMMETRYBREAKING CONSTRAINT
 
 For our example, we might impose an arbitrary ordering constraint, NT < SA < WA, that requires the three values to be in alphabetical order. This constraint ensures that only one of the n! solutions is possible: {NT = blue,SA = green ,WA = red}.
 
@@ -6483,25 +6461,25 @@ Section 6.6. Summary 227
 
 6.6 SUMMARY
 
-• **Constraint satisfaction problems** (CSPs) represent a state with a set of variable/value pairs and represent the conditions for a solution by a set of constraints on the variables. Many important real-world problems can be described as CSPs.
+- **Constraint satisfaction problems** (CSPs) represent a state with a set of variable/value pairs and represent the conditions for a solution by a set of constraints on the variables. Many important real-world problems can be described as CSPs.
 
-• A number of inference techniques use the constraints to infer which variable/value pairs are consistent and which are not. These include node, arc, path, and k-consistency.
+- A number of inference techniques use the constraints to infer which variable/value pairs are consistent and which are not. These include node, arc, path, and k-consistency.
 
-• **Backtracking search**, a form of depth-first search, is commonly used for solving CSPs. Inference can be interwoven with search.
+- **Backtracking search**, a form of depth-first search, is commonly used for solving CSPs. Inference can be interwoven with search.
 
-• The **minimum-remaining-values** and **degree** heuristics are domain-independent meth- ods for deciding which variable to choose next in a backtracking search. The **least- constraining-value** heuristic helps in deciding which value to try first for a given variable. Backtracking occurs when no legal assignment can be found for a variable. **Conflict-directed backjumping** backtracks directly to the source of the problem.
+- The **minimum-remaining-values** and **degree** heuristics are domain-independent methods for deciding which variable to choose next in a backtracking search. The **leastconstraining-value** heuristic helps in deciding which value to try first for a given variable. Backtracking occurs when no legal assignment can be found for a variable. **Conflict-directed backjumping** backtracks directly to the source of the problem.
 
-• Local search using the **min-conflicts** heuristic has also been applied to constraint satis- faction problems with great success.
+- Local search using the **min-conflicts** heuristic has also been applied to constraint satisfaction problems with great success.
 
-• The complexity of solving a CSP is strongly related to the structure of its constraint graph. Tree-structured problems can be solved in linear time. **Cutset conditioning** can reduce a general CSP to a tree-structured one and is quite efficient if a small cutset can be found. **Tree decomposition** techniques transform the CSP into a tree of subproblems and are efficient if the **tree width** of the constraint graph is small.
+- The complexity of solving a CSP is strongly related to the structure of its constraint graph. Tree-structured problems can be solved in linear time. **Cutset conditioning** can reduce a general CSP to a tree-structured one and is quite efficient if a small cutset can be found. **Tree decomposition** techniques transform the CSP into a tree of subproblems and are efficient if the **tree width** of the constraint graph is small.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-The earliest work related to constraint satisfaction dealt largely with numerical constraints. Equational constraints with integer domains were studied by the Indian mathematician Brah- magupta in the seventh century; they are often called **Diophantine equations**, after the GreekDIOPHANTINE
+The earliest work related to constraint satisfaction dealt largely with numerical constraints. Equational constraints with integer domains were studied by the Indian mathematician Brahmagupta in the seventh century; they are often called **Diophantine equations**, after the GreekDIOPHANTINE
 
 EQUATIONS
 
-mathematician Diophantus (c. 200–284), who actually considered the domain of positive ra- tionals. Systematic methods for solving linear equations by variable elimination were studied by Gauss (1829); the solution of linear inequality constraints goes back to Fourier (1827).
+mathematician Diophantus (c. 200–284), who actually considered the domain of positive rationals. Systematic methods for solving linear equations by variable elimination were studied by Gauss (1829); the solution of linear inequality constraints goes back to Fourier (1827).
 
 Finite-domain constraint satisfaction problems also have a long history. For example, **graph coloring** (of which map coloring is a special case) is an old problem in mathematics.GRAPH COLORING
 
@@ -6509,15 +6487,15 @@ The four-color conjecture (that every planar graph can be colored with four or f
 
 theorem prover, derived a formal proof that Appel and Haken’s proof was correct. Specific classes of constraint satisfaction problems occur throughout the history of
 
-computer science. One of the most influential early examples was the SKETCHPAD sys-  
+computer science. One of the most influential early examples was the SKETCHPAD sys 
 
 
 
-tem (Sutherland, 1963), which solved geometric constraints in diagrams and was the fore- runner of modern drawing programs and CAD tools. The identification of CSPs as a _general_ class is due to Ugo Montanari (1974). The reduction of higher-order CSPs to purely binary CSPs with auxiliary variables (see Exercise 6.6) is due originally to the 19th-century logician Charles Sanders Peirce. It was introduced into the CSP literature by Dechter (1990b) and was elaborated by Bacchus and van Beek (1998). CSPs with preferences among solutions are studied widely in the optimization literature; see Bistarelli _et al._ (1997) for a generalization of the CSP framework to allow for preferences. The bucket-elimination algorithm (Dechter, 1999) can also be applied to optimization problems.
+tem (Sutherland, 1963), which solved geometric constraints in diagrams and was the forerunner of modern drawing programs and CAD tools. The identification of CSPs as a _general_ class is due to Ugo Montanari (1974). The reduction of higher-order CSPs to purely binary CSPs with auxiliary variables (see Exercise 6.6) is due originally to the 19th-century logician Charles Sanders Peirce. It was introduced into the CSP literature by Dechter (1990b) and was elaborated by Bacchus and van Beek (1998). CSPs with preferences among solutions are studied widely in the optimization literature; see Bistarelli _et al._ (1997) for a generalization of the CSP framework to allow for preferences. The bucket-elimination algorithm (Dechter, 1999) can also be applied to optimization problems.
 
-Constraint propagation methods were popularized by Waltz’s (1975) success on poly- hedral line-labeling problems for computer vision. Waltz showed that, in many problems, propagation completely eliminates the need for backtracking. Montanari (1974) introduced the notion of constraint networks and propagation by path consistency. Alan Mackworth (1977) proposed the AC-3 algorithm for enforcing arc consistency as well as the general idea of combining backtracking with some degree of consistency enforcement. AC-4, a more efficient arc-consistency algorithm, was developed by Mohr and Henderson (1986). Soon af- ter Mackworth’s paper appeared, researchers began experimenting with the tradeoff between the cost of consistency enforcement and the benefits in terms of search reduction. Haralick and Elliot (1980) favored the minimal forward-checking algorithm described by McGregor (1979), whereas Gaschnig (1979) suggested full arc-consistency checking after each vari- able assignment—an algorithm later called MAC by Sabin and Freuder (1994). The latter paper provides somewhat convincing evidence that, on harder CSPs, full arc-consistency checking pays off. Freuder (1978, 1982) investigated the notion of k-consistency and its relationship to the complexity of solving CSPs. Apt (1999) describes a generic algorithmic framework within which consistency propagation algorithms can be analyzed, and Bessière (2006) presents a current survey.
+Constraint propagation methods were popularized by Waltz’s (1975) success on polyhedral line-labeling problems for computer vision. Waltz showed that, in many problems, propagation completely eliminates the need for backtracking. Montanari (1974) introduced the notion of constraint networks and propagation by path consistency. Alan Mackworth (1977) proposed the AC-3 algorithm for enforcing arc consistency as well as the general idea of combining backtracking with some degree of consistency enforcement. AC-4, a more efficient arc-consistency algorithm, was developed by Mohr and Henderson (1986). Soon after Mackworth’s paper appeared, researchers began experimenting with the tradeoff between the cost of consistency enforcement and the benefits in terms of search reduction. Haralick and Elliot (1980) favored the minimal forward-checking algorithm described by McGregor (1979), whereas Gaschnig (1979) suggested full arc-consistency checking after each variable assignment—an algorithm later called MAC by Sabin and Freuder (1994). The latter paper provides somewhat convincing evidence that, on harder CSPs, full arc-consistency checking pays off. Freuder (1978, 1982) investigated the notion of k-consistency and its relationship to the complexity of solving CSPs. Apt (1999) describes a generic algorithmic framework within which consistency propagation algorithms can be analyzed, and Bessière (2006) presents a current survey.
 
-Special methods for handling higher-order or global constraints were developed first within the context of **constraint logic programming**. Marriott and Stuckey (1998) provide excellent coverage of research in this area. The Alldiff constraint was studied by Regin (1994), Stergiou and Walsh (1999), and van Hoeve (2001). Bounds constraints were incorpo- rated into constraint logic programming by Van Hentenryck _et al._ (1998). A survey of global constraints is provided by van Hoeve and Katriel (2006).
+Special methods for handling higher-order or global constraints were developed first within the context of **constraint logic programming**. Marriott and Stuckey (1998) provide excellent coverage of research in this area. The Alldiff constraint was studied by Regin (1994), Stergiou and Walsh (1999), and van Hoeve (2001). Bounds constraints were incorporated into constraint logic programming by Van Hentenryck _et al._ (1998). A survey of global constraints is provided by van Hoeve and Katriel (2006).
 
 Sudoku has become the most widely known CSP and was described as such by Simonis (2005). Agerbeck and Hansen (2008) describe some of the strategies and show that Sudoku on an n
 
@@ -6529,15 +6507,15 @@ application to constraint satisfaction is due to Bitner and Reingold (1975), alt
 
 Bibliographical and Historical Notes 229
 
-The basic backjumping method is due to John Gaschnig (1977, 1979). Kondrak and van Beek (1997) showed that this algorithm is essentially subsumed by forward checking. Conflict-directed backjumping was devised by Prosser (1993). The most general and pow- erful form of intelligent backtracking was actually developed very early on by Stallman and Sussman (1977). Their technique of **dependency-directed backtracking** led to the develop-
+The basic backjumping method is due to John Gaschnig (1977, 1979). Kondrak and van Beek (1997) showed that this algorithm is essentially subsumed by forward checking. Conflict-directed backjumping was devised by Prosser (1993). The most general and powerful form of intelligent backtracking was actually developed very early on by Stallman and Sussman (1977). Their technique of **dependency-directed backtracking** led to the develop-
 
-DEPENDENCY- DIRECTED BACKTRACKING
+DEPENDENCYDIRECTED BACKTRACKING
 
 ment of **truth maintenance systems** (Doyle, 1979), which we discuss in Section 12.6.2. The connection between the two areas is analyzed by de Kleer (1989).
 
 The work of Stallman and Sussman also introduced the idea of **constraint learning**, in which partial results obtained by search can be saved and reused later in the search. The idea was formalized Dechter (1990a). **Backmarking** (Gaschnig, 1979) is a particularly sim-BACKMARKING
 
-ple method in which consistent and inconsistent pairwise assignments are saved and used to avoid rechecking constraints. Backmarking can be combined with conflict-directed back- jumping; Kondrak and van Beek (1997) present a hybrid algorithm that provably subsumes either method taken separately. The method of **dynamic backtracking** (Ginsberg, 1993) re-DYNAMIC
+ple method in which consistent and inconsistent pairwise assignments are saved and used to avoid rechecking constraints. Backmarking can be combined with conflict-directed backjumping; Kondrak and van Beek (1997) present a hybrid algorithm that provably subsumes either method taken separately. The method of **dynamic backtracking** (Ginsberg, 1993) re-DYNAMIC
 
 BACKTRACKING
 
@@ -6545,7 +6523,7 @@ tains successful partial assignments from later subsets of variables when backtr
 
 Empirical studies of several randomized backtracking methods were done by Gomes _et al._ (2000) and Gomes and Selman (2001). Van Beek (2006) surveys backtracking.
 
-Local search in constraint satisfaction problems was popularized by the work of Kirk- patrick _et al._ (1983) on simulated annealing (see Chapter 4), which is widely used for schedul- ing problems. The min-conflicts heuristic was first proposed by Gu (1989) and was developed independently by Minton _et al._ (1992). Sosic and Gu (1994) showed how it could be applied to solve the 3,000,000 queens problem in less than a minute. The astounding success of local search using min-conflicts on the n-queens problem led to a reappraisal of the nature and prevalence of “easy” and “hard” problems. Peter Cheeseman _et al._ (1991) explored the difficulty of randomly generated CSPs and discovered that almost all such problems either are trivially easy or have no solutions. Only if the parameters of the problem generator are set in a certain narrow range, within which roughly half of the problems are solvable, do we find “hard” problem instances. We discuss this phenomenon further in Chapter 7. Konolige (1994) showed that local search is inferior to backtracking search on problems with a certain degree of local structure; this led to work that combined local search and inference, such as that by Pinkas and Dechter (1995). Hoos and Tsang (2006) survey local search techniques.
+Local search in constraint satisfaction problems was popularized by the work of Kirkpatrick _et al._ (1983) on simulated annealing (see Chapter 4), which is widely used for scheduling problems. The min-conflicts heuristic was first proposed by Gu (1989) and was developed independently by Minton _et al._ (1992). Sosic and Gu (1994) showed how it could be applied to solve the 3,000,000 queens problem in less than a minute. The astounding success of local search using min-conflicts on the n-queens problem led to a reappraisal of the nature and prevalence of “easy” and “hard” problems. Peter Cheeseman _et al._ (1991) explored the difficulty of randomly generated CSPs and discovered that almost all such problems either are trivially easy or have no solutions. Only if the parameters of the problem generator are set in a certain narrow range, within which roughly half of the problems are solvable, do we find “hard” problem instances. We discuss this phenomenon further in Chapter 7. Konolige (1994) showed that local search is inferior to backtracking search on problems with a certain degree of local structure; this led to work that combined local search and inference, such as that by Pinkas and Dechter (1995). Hoos and Tsang (2006) survey local search techniques.
 
 Work relating the structure and complexity of CSPs originates with Freuder (1985), who showed that search on arc consistent trees works without any backtracking. A similar result, with extensions to acyclic hypergraphs, was developed in the database community (Beeri _et al._, 1983). Bayardo and Miranker (1994) present an algorithm for tree-structured CSPs that runs in linear time without any preprocessing.
 
@@ -6555,7 +6533,7 @@ Since those papers were published, there has been a great deal of progress in de
 
 from database theory, Gottlob _et al._ (1999a, 1999b) developed a notion, **hypertree width**, that is based on the characterization of the CSP as a hypergraph. In addition to showing that any CSP with hypertree width w can be solved in time O(nw+1 log n), they also showed that hypertree width subsumes all previously defined measures of “width” in the sense that there are cases where the hypertree width is bounded and the other measures are unbounded.
 
-Interest in look-back approaches to backtracking was rekindled by the work of Bayardo and Schrag (1997), whose RELSAT algorithm combined constraint learning and backjumping and was shown to outperform many other algorithms of the time. This led to AND/OR search algorithms applicable to both CSPs and probabilistic reasoning (Dechter and Ma- teescu, 2007). Brown _et al._ (1988) introduce the idea of symmetry breaking in CSPs, and Gent _et al._ (2006) give a recent survey.
+Interest in look-back approaches to backtracking was rekindled by the work of Bayardo and Schrag (1997), whose RELSAT algorithm combined constraint learning and backjumping and was shown to outperform many other algorithms of the time. This led to AND/OR search algorithms applicable to both CSPs and probabilistic reasoning (Dechter and Mateescu, 2007). Brown _et al._ (1988) introduce the idea of symmetry breaking in CSPs, and Gent _et al._ (2006) give a recent survey.
 
 The field of **distributed constraint satisfaction** looks at solving CSPs when there is a DISTRIBUTED CONSTRAINT SATISFACTION
 
@@ -6581,7 +6559,7 @@ Exercises 231
 
 **c**. What sets of variables are constrained, and how?
 
-**d**. Now consider the problem of putting _as many knights as possible_ on the board with- out any attacks. Explain how to solve this with local search by defining appropriate ACTIONS and RESULT functions and a sensible objective function.
+**d**. Now consider the problem of putting _as many knights as possible_ on the board without any attacks. Explain how to solve this with local search by defining appropriate ACTIONS and RESULT functions and a sensible objective function.
 
 **6.3** Consider the problem of constructing (not solving) crossword puzzles:5 fitting words into a rectangular grid. The grid, which is given as part of the problem, specifies which squares are blank and which are shaded. Assume that a list of words (i.e., a dictionary) is provided and that the task is to fill in the blank squares by using any subset of the list. Formulate this problem precisely in two ways:
 
@@ -6599,7 +6577,7 @@ Which formulation do you think will be better? Why?
 
 **c**. Hamiltonian tour: given a network of cities connected by roads, choose an order to visit all cities in a country without repeating any.
 
-**6.5** Solve the cryptarithmetic problem in Figure 6.2 by hand, using the strategy of back- tracking with forward checking and the MRV and least-constraining-value heuristics.
+**6.5** Solve the cryptarithmetic problem in Figure 6.2 by hand, using the strategy of backtracking with forward checking and the MRV and least-constraining-value heuristics.
 
 **6.6** Show how a single ternary constraint such as “A + B = C” can be turned into three binary constraints by using an auxiliary variable. You may assume finite domains. (_Hint:_ Consider a new variable that takes on values that are pairs of other values, and consider constraints such as “X is the first element of the pair Y .”) Next, show how constraints with more than three variables can be treated similarly. Finally, show how unary constraints can be eliminated by altering the domains of variables. This completes the demonstration that any CSP can be transformed into a CSP with only binary constraints.
 
@@ -6611,7 +6589,7 @@ Which formulation do you think will be better? Why?
 
 The Englishman lives in the red house. The Spaniard owns the dog. The Norwegian lives in the first house on the left. The green house is immediately to the right of the ivory house. The man who eats Hershey bars lives in the house next to the man with the fox. Kit Kats are eaten in the yellow house. The Norwegian lives next to the blue house. The Smarties eater owns snails. The Snickers eater drinks orange juice. The Ukrainian drinks tea. The Japanese eats Milky Ways. Kit Kats are eaten in a house next to the house where the horse is kept. Coffee is drunk in the green house. Milk is drunk in the middle house.
 
-Discuss different representations of this problem as a CSP. Why would one prefer one repre- sentation over another?
+Discuss different representations of this problem as a CSP. Why would one prefer one representation over another?
 
 **6.8** Consider the graph with 8 nodes A1, A2, A3, A4, H , T , F1, F2. Ai is connected to Ai+1 for all i, each Ai is connected to H , H is connected to T , and T is connected to each Fi. Find a 3-coloring of this graph by hand using the following strategy: backtracking with conflict-directed backjumping, the variable order A1, H , A4, F1, A2, F2, A3, T , and the value order R, G, B.
 
@@ -6633,7 +6611,7 @@ Exercises 233
 
 **6.14** The TREE-CSP-SOLVER (Figure 6.10) makes arcs consistent starting at the leaves and working backwards towards the root. Why does it do that? What would happen if it went in the opposite direction?
 
-**6.15** We introduced Sudoku as a CSP to be solved by search over partial assignments be- cause that is the way people generally undertake solving Sudoku problems. It is also possible, of course, to attack these problems with local search over complete assignments. How well would a local solver using the min-conflicts heuristic do on Sudoku problems?
+**6.15** We introduced Sudoku as a CSP to be solved by search over partial assignments because that is the way people generally undertake solving Sudoku problems. It is also possible, of course, to attack these problems with local search over complete assignments. How well would a local solver using the min-conflicts heuristic do on Sudoku problems?
 
 **6.16** Define in your own words the terms constraint, backtracking search, arc consistency, backjumping, min-conflicts, and cycle cutset.
 
