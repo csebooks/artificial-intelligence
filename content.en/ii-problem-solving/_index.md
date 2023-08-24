@@ -67,203 +67,49 @@ seq←REST(seq)
 
 **Figure 3.1** A simple problem-solving agent. It first formulates a goal and a problem, searches for a sequence of actions that would solve the problem, and then executes the actions one at a time. When this is complete, it formulates another goal and starts over.
 
-- A description of the possible **actions** available to the agent. Given a particular state s,ACTIONS
+- A description of the possible **actions** available to the agent. Given a particular state s,ACTIONS(s) returns the set of actions that can be executed in s. We say that each of these actions is **applicable** in s. For example, from the state In(Arad), the applicable actions are {Go(Sibiu),Go(Timisoara),Go(Zerind)}.
 
-ACTIONS(s) returns the set of actions that can be executed in s. We say that each of these actions is **applicable** in s. For example, from the state In(Arad), the applicableAPPLICABLE
-
-actions are {Go(Sibiu),Go(Timisoara),Go(Zerind)}.
-
-- A description of what each action does; the formal name for this is the **transition model**, specified by a function RESULT(s, a) that returns the state that results fromTRANSITION MODEL
-
-doing action a in state s. We also use the term **successor** to refer to any state reachableSUCCESSOR
-
-from a given state by a single action.2 For example, we have
+- A description of what each action does; the formal name for this is the **transition model**, specified by a function RESULT(s, a) that returns the state that results from doing action a in state s. We also use the term **successor** to refer to any state reachable from a given state by a single action.2 For example, we have
 
 RESULT(In(Arad),Go(Zerind)) = In(Zerind) .
 
-Together, the initial state, actions, and transition model implicitly define the **state space**STATE SPACE
+Together, the initial state, actions, and transition model implicitly define the **state space** of the problem—the set of all states reachable from the initial state by any sequence of actions. The state space forms a directed network or **graph** in which the nodes are states and the links between nodes are actions. (The map of Romania shown in Figure 3.2 can be interpreted as a state-space graph if we view each road as standing for two driving actions, one in each direction.) A **path** in the state space is a sequence of states connected by a sequence of actions.
 
-of the problem—the set of all states reachable from the initial state by any sequence of actions. The state space forms a directed network or **graph** in which the nodesGRAPH
-
-are states and the links between nodes are actions. (The map of Romania shown in Figure 3.2 can be interpreted as a state-space graph if we view each road as standing for two driving actions, one in each direction.) A **path** in the state space is a sequencePATH
-
-of states connected by a sequence of actions.
-
-- The **goal test**, which determines whether a given state is a goal state. Sometimes thereGOAL TEST
-
-is an explicit set of possible goal states, and the test simply checks whether the given state is one of them. The agent’s goal in Romania is the singleton set {In(Bucharest)}.
-
+- The **goal test**, which determines whether a given state is a goal state. Sometimes there is an explicit set of possible goal states, and the test simply checks whether the given state is one of them. The agent’s goal in Romania is the singleton set {In(Bucharest)}.
+```
 2 Many treatments of problem solving, including previous editions of this book, use a **successor function**, which returns the set of all successors, instead of separate ACTIONS and RESULT functions. The successor function makes it difficult to describe an agent that knows what actions it can try but not what they achieve. Also, note some author use RESULT(a, s) instead of RESULT(s, a), and some use DO instead of RESULT.  
+```
 
-
-
-**Giurgiu**
-
-**Urziceni Hirsova**
-
-**Eforie**
-
-**Neamt**
-
-**Oradea**
-
-**Zerind**
-
-**Arad**
-
-**Timisoara**
-
-**Lugoj**
-
-**Mehadia**
-
-**Drobeta**
-
-**Craiova**
-
-**Sibiu Fagaras**
-
-**Pitesti**
-
-**Vaslui**
-
-**Iasi**
-
-**Rimnicu Vilcea**
-
-**Bucharest**
-
-71
-
-75
-
-118
-
-111
-
-70
-
-75
-
-120
-
-151
-
-140
-
-99
-
-80
-
-97
-
-101
-
-211
-
-138
-
-146 85
-
-90
-
-98
-
-142
-
-92
-
-87
-
-86
-
-**Figure 3.2** A simplified road map of part of Romania.
+![Alt text](3image/figure-3.2.png)
 
 Sometimes the goal is specified by an abstract property rather than an explicitly enumerated set of states. For example, in chess, the goal is to reach a state called “checkmate,” where the opponent’s king is under attack and can’t escape.
 
-- A **path cost** function that assigns a numeric cost to each path. The problem-solvingPATH COST
-
-agent chooses a cost function that reflects its own performance measure. For the agent trying to get to Bucharest, time is of the essence, so the cost of a path might be its length in kilometers. In this chapter, we assume that the cost of a path can be described as the _sum_ of the costs of the individual actions along the path.3 The **step cost** of taking actionSTEP COST
-
-a in state s to reach state s ′ is denoted by c(s, a, s
-
-′). The step costs for Romania are shown in Figure 3.2 as route distances. We assume that step costs are nonnegative.4
+- A **path cost** function that assigns a numeric cost to each path. The problem-solving agent chooses a cost function that reflects its own performance measure. For the agent trying to get to Bucharest, time is of the essence, so the cost of a path might be its length in kilometers. In this chapter, we assume that the cost of a path can be described as the _sum_ of the costs of the individual actions along the path.3 The **step cost** of taking action a in state s to reach state s ′ is denoted by c(s, a, s′). The step costs for Romania are shown in Figure 3.2 as route distances. We assume that step costs are nonnegative.4
 
 The preceding elements define a problem and can be gathered into a single data structure that is given as input to a problem-solving algorithm. A **solution** to a problem is an action sequence that leads from the initial state to a goal state. Solution quality is measured by the path cost function, and an **optimal solution** has the lowest path cost among all solutions.OPTIMAL SOLUTION
 
-**3.1.2 Formulating problems**
+### Formulating problems
 
-In the preceding section we proposed a formulation of the problem of getting to Bucharest in terms of the initial state, actions, transition model, goal test, and path cost. This formulation seems reasonable, but it is still a _model_—an abstract mathematical description—and not the
-
-3 This assumption is algorithmically convenient but also theoretically justifiable—see page 649 in Chapter 17. 4 The implications of negative costs are explored in Exercise 3.8.  
-
-Section 3.2. Example Problems 69
-
-real thing. Compare the simple state description we have chosen, _In(Arad)_, to an actual crosscountry trip, where the state of the world includes so many things: the traveling companions, the current radio program, the scenery out of the window, the proximity of law enforcement officers, the distance to the next rest stop, the condition of the road, the weather, and so on. All these considerations are left out of our state descriptions because they are irrelevant to the problem of finding a route to Bucharest. The process of removing detail from a representation is called **abstraction**.ABSTRACTION
+In the preceding section we proposed a formulation of the problem of getting to Bucharest in terms of the initial state, actions, transition model, goal test, and path cost. This formulation seems reasonable, but it is still a _model_—an abstract mathematical description—and not the 3 This assumption is algorithmically convenient but also theoretically justifiable—see page 649 in Chapter 17. 4 The implications of negative costs are explored in Exercise 3.8. real thing. Compare the simple state description we have chosen, _In(Arad)_, to an actual crosscountry trip, where the state of the world includes so many things: the traveling companions, the current radio program, the scenery out of the window, the proximity of law enforcement officers, the distance to the next rest stop, the condition of the road, the weather, and so on. All these considerations are left out of our state descriptions because they are irrelevant to the problem of finding a route to Bucharest. The process of removing detail from a representation is called **abstraction**.
 
 In addition to abstracting the state description, we must abstract the actions themselves. A driving action has many effects. Besides changing the location of the vehicle and its occupants, it takes up time, consumes fuel, generates pollution, and changes the agent (as they say, travel is broadening). Our formulation takes into account only the change in location. Also, there are many actions that we omit altogether: turning on the radio, looking out of the window, slowing down for law enforcement officers, and so on. And of course, we don’t specify actions at the level of “turn steering wheel to the left by one degree.”
 
 Can we be more precise about defining the appropriate level of abstraction? Think of the abstract states and actions we have chosen as corresponding to large sets of detailed world states and detailed action sequences. Now consider a solution to the abstract problem: for example, the path from Arad to Sibiu to Rimnicu Vilcea to Pitesti to Bucharest. This abstract solution corresponds to a large number of more detailed paths. For example, we could drive with the radio on between Sibiu and Rimnicu Vilcea, and then switch it off for the rest of the trip. The abstraction is _valid_ if we can expand any abstract solution into a solution in the more detailed world; a sufficient condition is that for every detailed state that is “in Arad,” there is a detailed path to some state that is “in Sibiu,” and so on.5 The abstraction is _useful_ if carrying out each of the actions in the solution is easier than the original problem; in this case they are easy enough that they can be carried out without further search or planning by an average driving agent. The choice of a good abstraction thus involves removing as much detail as possible while retaining validity and ensuring that the abstract actions are easy to carry out. Were it not for the ability to construct useful abstractions, intelligent agents would be completely swamped by the real world.
 
-3.2 EXAMPLE PROBLEMS
+## EXAMPLE PROBLEMS
 
-The problem-solving approach has been applied to a vast array of task environments. We list some of the best known here, distinguishing between _toy_ and _real-world_ problems. A **toy problem** is intended to illustrate or exercise various problem-solving methods. It can beTOY PROBLEM
-
-given a concise, exact description and hence is usable by different researchers to compare the performance of algorithms. A **real-world problem** is one whose solutions people actuallyREAL-WORLD
-
-PROBLEM
-
-care about. Such problems tend not to have a single agreed-upon description, but we can give the general flavor of their formulations.
-
+The problem-solving approach has been applied to a vast array of task environments. We list some of the best known here, distinguishing between _toy_ and _real-world_ problems. A **toy problem** is intended to illustrate or exercise various problem-solving methods. It can be given a concise, exact description and hence is usable by different researchers to compare the performance of algorithms. A **real-world problem** is one whose solutions people actually care about. Such problems tend not to have a single agreed-upon description, but we can give the general flavor of their formulations.
+```
 5 See Section 11.2 for a more complete set of definitions and algorithms.  
+```
 
+![Alt text](3image/figure-3.3.png)
 
-
-**R**
-
-**L**
-
-**S S**
-
-**S S**
-
-**R**
-
-**L**
-
-**R**
-
-**L**
-
-**R**
-
-**L**
-
-**S**
-
-**SS**
-
-**S**
-
-**L**
-
-**L**
-
-**LL R**
-
-**R**
-
-**R**
-
-**R**
-
-**Figure 3.3** The state space for the vacuum world. Links denote actions: L = _Left_, R = _Right_, S = _Suck_.
-
-**3.2.1 Toy problems**
+### Toy problems
 
 The first example we examine is the **vacuum world** first introduced in Chapter 2. (See Figure 2.2.) This can be formulated as a problem as follows:
 
-- **States**: The state is determined by both the agent location and the dirt locations. The agent is in one of two locations, each of which might or might not contain dirt. Thus, there are 2 × 22 = 8 possible world states. A larger environment with n locations has n · 2n states.
+- **States**: The state is determined by both the agent location and the dirt locations. The agent is in one of two locations, each of which might or might not contain dirt. Thus, there are 2 × 2^2^ = 8 possible world states. A larger environment with n locations has n · 2^n^ states.
 
 - **Initial state**: Any state can be designated as the initial state.
 
@@ -277,43 +123,9 @@ The first example we examine is the **vacuum world** first introduced in Chapter
 
 Compared with the real world, this toy problem has discrete locations, discrete dirt, reliable cleaning, and it never gets any dirtier. Chapter 4 relaxes some of these assumptions.
 
-The **8-puzzle**, an instance of which is shown in Figure 3.4, consists of a 3×3 board with8-PUZZLE
+The **8-puzzle**, an instance of which is shown in Figure 3.4, consists of a 3×3 board with eight numbered tiles and a blank space. A tile adjacent to the blank space can slide into the space. The object is to reach a specified goal state, such as the one shown on the right of the figure. The standard formulation is as follows:  
 
-eight numbered tiles and a blank space. A tile adjacent to the blank space can slide into the space. The object is to reach a specified goal state, such as the one shown on the right of the figure. The standard formulation is as follows:  
-
-Section 3.2. Example Problems 71
-
-2
-
-Start State Goal State
-
-1
-
-3 4
-
-6 7
-
-5
-
-1
-
-2
-
-3
-
-4
-
-6
-
-7
-
-8
-
-5
-
-8
-
-**Figure 3.4** A typical instance of the 8-puzzle.
+![Alt text](3image/figure-3.4.png)
 
 - **States**: A state description specifies the location of each of the eight tiles and the blank in one of the nine squares.
 
@@ -329,27 +141,13 @@ Start State Goal State
 
 What abstractions have we included here? The actions are abstracted to their beginning and final states, ignoring the intermediate locations where the block is sliding. We have abstracted away actions such as shaking the board when pieces get stuck and ruled out extracting the pieces with a knife and putting them back again. We are left with a description of the rules of the puzzle, avoiding all the details of physical manipulations.
 
-The 8-puzzle belongs to the family of **sliding-block puzzles**, which are often used asSLIDING-BLOCK PUZZLES
+The 8-puzzle belongs to the family of **sliding-block puzzles**, which are often used as test problems for new search algorithms in AI. This family is known to be NP-complete, so one does not expect to find methods significantly better in the worst case than the search algorithms described in this chapter and the next. The 8-puzzle has 9!/2= 181, 440 reachable states and is easily solved. The 15-puzzle (on a 4×4 board) has around 1.3 trillion states, and random instances can be solved optimally in a few milliseconds by the best search algorithms. The 24-puzzle (on a 5 × 5 board) has around 1025 states, and random instances take several hours to solve optimally.
 
-test problems for new search algorithms in AI. This family is known to be NP-complete, so one does not expect to find methods significantly better in the worst case than the search algorithms described in this chapter and the next. The 8-puzzle has 9!/2= 181, 440 reachable states and is easily solved. The 15-puzzle (on a 4×4 board) has around 1.3 trillion states, and random instances can be solved optimally in a few milliseconds by the best search algorithms. The 24-puzzle (on a 5 × 5 board) has around 1025 states, and random instances take several hours to solve optimally.
+The goal of the **8-queens problem** is to place eight queens on a chessboard such that no queen attacks any other. (A queen attacks any piece in the same row, column or diagonal.) Figure 3.5 shows an attempted solution that fails: the queen in the rightmost column is attacked by the queen at the top left.  
 
-The goal of the **8-queens problem** is to place eight queens on a chessboard such that8-QUEENS PROBLEM
+![Alt text](3image/figure-3.5.png)
 
-no queen attacks any other. (A queen attacks any piece in the same row, column or diagonal.) Figure 3.5 shows an attempted solution that fails: the queen in the rightmost column is attacked by the queen at the top left.  
-
-
-
-**Figure 3.5** Almost a solution to the 8-queens problem. (Solution is left as an exercise.)
-
-Although efficient special-purpose algorithms exist for this problem and for the whole n-queens family, it remains a useful test problem for search algorithms. There are two main kinds of formulation. An **incremental formulation** involves operators that _augment_ the stateINCREMENTAL
-
-FORMULATION
-
-description, starting with an empty state; for the 8-queens problem, this means that each action adds a queen to the state. A **complete-state formulation** starts with all 8 queens onCOMPLETE-STATE
-
-FORMULATION
-
-the board and moves them around. In either case, the path cost is of no interest because only the final state counts. The first incremental formulation one might try is the following:
+Although efficient special-purpose algorithms exist for this problem and for the whole n-queens family, it remains a useful test problem for search algorithms. There are two main kinds of formulation. An **incremental formulation** involves operators that _augment_ the state description, starting with an empty state; for the 8-queens problem, this means that each action adds a queen to the state. A **complete-state formulation** starts with all 8 queens on the board and moves them around. In either case, the path cost is of no interest because only the final state counts. The first incremental formulation one might try is the following:
 
 - **States**: Any arrangement of 0 to 8 queens on the board is a state.
 
@@ -361,25 +159,15 @@ the board and moves them around. In either case, the path cost is of no interest
 
 - **Goal test**: 8 queens are on the board, none attacked.
 
-In this formulation, we have 64 · 63 · · · 57 ≈ 1.8× 1014 possible sequences to investigate. A better formulation would prohibit placing a queen in any square that is already attacked:
+In this formulation, we have 64 · 63 · · · 57 ≈ 1.8× 10^14^ possible sequences to investigate. A better formulation would prohibit placing a queen in any square that is already attacked:
 
 - **States**: All possible arrangements of n queens (0 ≤ n ≤ 8), one per column in the leftmost n columns, with no queen attacking another.
 
 - **Actions**: Add a queen to any square in the leftmost empty column such that it is not attacked by any other queen.
 
-This formulation reduces the 8-queens state space from 1.8× 1014 to just 2,057, and solutions are easy to find. On the other hand, for 100 queens the reduction is from roughly 10400 states to about 1052 states (Exercise 3.5)—a big improvement, but not enough to make the problem tractable. Section 4.1 describes the complete-state formulation, and Chapter 6 gives a simple algorithm that solves even the million-queens problem with ease.  
+This formulation reduces the 8-queens state space from 1.8× 10^14^ to just 2,057, and solutions are easy to find. On the other hand, for 100 queens the reduction is from roughly 10^400^ states to about 10^52^ states (Exercise 3.5)—a big improvement, but not enough to make the problem tractable. Section 4.1 describes the complete-state formulation, and Chapter 6 gives a simple algorithm that solves even the million-queens problem with ease. Our final toy problem was devised by Donald Knuth (1964) and illustrates how infinite state spaces can arise. Knuth conjectured that, starting with the number 4, a sequence of factorial, square root, and floor operations will reach any desired positive integer. For example, we can reach 5 from 4 as follows:
 
-Section 3.2. Example Problems 73
-
-Our final toy problem was devised by Donald Knuth (1964) and illustrates how infinite state spaces can arise. Knuth conjectured that, starting with the number 4, a sequence of factorial, square root, and floor operations will reach any desired positive integer. For example, we can reach 5 from 4 as follows:
-
-⌊
-
-√ √ √ √
-
-√√√√ (4!)!
-
-⌋ = 5 .
+⌊ √√√√√(4!)!⌋ = 5 .
 
 The problem definition is very simple:
 
@@ -395,11 +183,9 @@ The problem definition is very simple:
 
 To our knowledge there is no bound on how large a number might be constructed in the process of reaching a given target—for example, the number 620,448,401,733,239,439,360,000 is generated in the expression for 5—so the state space for this problem is infinite. Such state spaces arise frequently in tasks involving the generation of mathematical expressions, circuits, proofs, programs, and other recursively defined objects.
 
-**3.2.2 Real-world problems**
+### Real-world problems
 
-We have already seen how the **route-finding problem** is defined in terms of specified loca-ROUTE-FINDING PROBLEM
-
-tions and transitions along links between them. Route-finding algorithms are used in a variety of applications. Some, such as Web sites and in-car systems that provide driving directions, are relatively straightforward extensions of the Romania example. Others, such as routing video streams in computer networks, military operations planning, and airline travel-planning systems, involve much more complex specifications. Consider the airline travel problems that must be solved by a travel-planning Web site:
+We have already seen how the **route-finding problem** is defined in terms of specified locations and transitions along links between them. Route-finding algorithms are used in a variety of applications. Some, such as Web sites and in-car systems that provide driving directions, are relatively straightforward extensions of the Romania example. Others, such as routing video streams in computer networks, military operations planning, and airline travel-planning systems, involve much more complex specifications. Consider the airline travel problems that must be solved by a travel-planning Web site:
 
 - **States**: Each state obviously includes a location (e.g., an airport) and the current time. Furthermore, because the cost of an action (a flight segment) may depend on previous segments, their fare bases, and their status as domestic or international, the state must record extra information about these “historical” aspects.
 
@@ -417,153 +203,45 @@ tions and transitions along links between them. Route-finding algorithms are use
 
 Commercial travel advice systems use a problem formulation of this kind, with many additional complications to handle the byzantine fare structures that airlines impose. Any seasoned traveler knows, however, that not all air travel goes according to plan. A really good system should include contingency plans—such as backup reservations on alternate flights— to the extent that these are justified by the cost and likelihood of failure of the original plan.
 
-**Touring problems** are closely related to route-finding problems, but with an impor-TOURING PROBLEM
+**Touring problems** are closely related to route-finding problems, but with an important difference. Consider, for example, the problem “Visit every city in Figure 3.2 at least once, starting and ending in Bucharest.” As with route finding, the actions correspond to trips between adjacent cities. The state space, however, is quite different. Each state must include not just the current location but also the _set of cities the agent has visited_. So the initial state would be In(Bucharest),Visited({Bucharest}), a typical intermediate state would be In(Vaslui),Visited({Bucharest ,Urziceni ,Vaslui}), and the goal test would check whether the agent is in Bucharest and all 20 cities have been visited.
 
-tant difference. Consider, for example, the problem “Visit every city in Figure 3.2 at least once, starting and ending in Bucharest.” As with route finding, the actions correspond to trips between adjacent cities. The state space, however, is quite different. Each state must include not just the current location but also the _set of cities the agent has visited_. So the initial state would be In(Bucharest),Visited({Bucharest}), a typical intermediate state would be In(Vaslui),Visited({Bucharest ,Urziceni ,Vaslui}), and the goal test would check whether the agent is in Bucharest and all 20 cities have been visited.
+The **traveling salesperson problem** (TSP) is a touring problem in which each city must be visited exactly once. The aim is to find the _shortest_ tour. The problem is known to be NP-hard, but an enormous amount of effort has been expended to improve the capabilities of TSP algorithms. In addition to planning trips for traveling salespersons, these algorithms have been used for tasks such as planning movements of automatic circuit-board drills and of stocking machines on shop floors.
 
-The **traveling salesperson problem** (TSP) is a touring problem in which each city TRAVELING SALESPERSON PROBLEM
+A **VLSI layout** problem requires positioning millions of components and connections on a chip to minimize area, minimize circuit delays, minimize stray capacitances, and maximize manufacturing yield. The layout problem comes after the logical design phase and is usually split into two parts: **cell layout** and **channel routing**. In cell layout, the primitive components of the circuit are grouped into cells, each of which performs some recognized function. Each cell has a fixed footprint (size and shape) and requires a certain number of connections to each of the other cells. The aim is to place the cells on the chip so that they do not overlap and so that there is room for the connecting wires to be placed between the cells. Channel routing finds a specific route for each wire through the gaps between the cells. These search problems are extremely complex, but definitely worth solving. Later in this chapter, we present some algorithms capable of solving them.
 
-must be visited exactly once. The aim is to find the _shortest_ tour. The problem is known to be NP-hard, but an enormous amount of effort has been expended to improve the capabilities of TSP algorithms. In addition to planning trips for traveling salespersons, these algorithms have been used for tasks such as planning movements of automatic circuit-board drills and of stocking machines on shop floors.
+**Robot navigation** is a generalization of the route-finding problem described earlier.Rather than following a discrete set of routes, a robot can move in a continuous space with (in principle) an infinite set of possible actions and states. For a circular robot moving on a flat surface, the space is essentially two-dimensional. When the robot has arms and legs or wheels that must also be controlled, the search space becomes many-dimensional. Advanced techniques are required just to make the search space finite. We examine some of these methods in Chapter 25. In addition to the complexity of the problem, real robots must also deal with errors in their sensor readings and motor controls.
 
-A **VLSI layout** problem requires positioning millions of components and connectionsVLSI LAYOUT
+**Automatic assembly sequencing** of complex objects by a robot was first demonstrated by FREDDY (Michie, 1972). Progress since then has been slow but sure, to the point where the assembly of intricate objects such as electric motors is economically feasible. In assembly problems, the aim is to find an order in which to assemble the parts of some object. If the wrong order is chosen, there will be no way to add some part later in the sequence without undoing some of the work already done. Checking a step in the sequence for feasibility is a difficult geometrical search problem closely related to robot navigation. Thus, the generation of legal actions is the expensive part of assembly sequencing. Any practical algorithm must avoid exploring all but a tiny fraction of the state space. Another important assembly problem is **protein design**, in which the goal is to find a sequence of amino acids that will fold into a three-dimensional protein with the right properties to cure some disease.
 
-on a chip to minimize area, minimize circuit delays, minimize stray capacitances, and maximize manufacturing yield. The layout problem comes after the logical design phase and is usually split into two parts: **cell layout** and **channel routing**. In cell layout, the primitive components of the circuit are grouped into cells, each of which performs some recognized function. Each cell has a fixed footprint (size and shape) and requires a certain number of connections to each of the other cells. The aim is to place the cells on the chip so that they do not overlap and so that there is room for the connecting wires to be placed between the cells. Channel routing finds a specific route for each wire through the gaps between the cells. These search problems are extremely complex, but definitely worth solving. Later in this chapter, we present some algorithms capable of solving them.
+## SEARCHING FOR SOLUTIONS
 
-**Robot navigation** is a generalization of the route-finding problem described earlier.ROBOT NAVIGATION
+Having formulated some problems, we now need to solve them. A solution is an action sequence, so search algorithms work by considering various possible action sequences. The possible action sequences starting at the initial state form a **search tree** with the initial stateat the root; the branches are actions and the **nodes** correspond to states in the state space of the problem. Figure 3.6 shows the first few steps in growing the search tree for finding a route from Arad to Bucharest. The root node of the tree corresponds to the initial state, _In(Arad)_. The first step is to test whether this is a goal state. (Clearly it is not, but it is important to check so that we can solve trick problems like “starting in Arad, get to Arad.”) Then we need to consider taking various actions. We do this by **expanding** the current state; that is,applying each legal action to the current state, thereby **generating** a new set of states. In this case, we add three branches from the **parent node** _In(Arad)_ leading to three new **child****nodes**: _In(Sibiu), In(Timisoara),_ and _In(Zerind)_. Now we must choose which of these three possibilities to consider further. 
 
-Rather than following a discrete set of routes, a robot can move in a continuous space with (in principle) an infinite set of possible actions and states. For a circular robot moving on a flat surface, the space is essentially two-dimensional. When the robot has arms and legs or wheels that must also be controlled, the search space becomes many-dimensional. Advanced techniques are required just to make the search space finite. We examine some of these methods in Chapter 25. In addition to the complexity of the problem, real robots must also deal with errors in their sensor readings and motor controls.
+This is the essence of search—following up one option now and putting the others aside for later, in case the first choice does not lead to a solution. Suppose we choose Sibiu first. We check to see whether it is a goal state (it is not) and then expand it to get _In(Arad)_, _In(Fagaras)_, _In(Oradea)_, and _In(RimnicuVilcea)_. We can then choose any of these four or go back and choose Timisoara or Zerind. Each of these six nodes is a **leaf node**, that is, a node with no children in the tree. The set of all leaf nodes available for expansion at any given point is called the **frontier**. (Many authors call it the **open list**, which is both geographically OPEN LIST less evocative and less accurate, because other data structures are better suited than a list.) In Figure 3.6, the frontier of each tree consists of those nodes with bold outlines.
 
-**Automatic assembly sequencing** of complex objects by a robot was first demonstrated AUTOMATIC ASSEMBLY SEQUENCING
+The process of expanding nodes on the frontier continues until either a solution is found or there are no more states to expand. The general TREE-SEARCH algorithm is shown informally in Figure 3.7. Search algorithms all share this basic structure; they vary primarily according to how they choose which state to expand next—the so-called **search strategy**.
 
-by FREDDY (Michie, 1972). Progress since then has been slow but sure, to the point where the assembly of intricate objects such as electric motors is economically feasible. In assembly problems, the aim is to find an order in which to assemble the parts of some object. If the wrong order is chosen, there will be no way to add some part later in the sequence without  
+The eagle-eyed reader will notice one peculiar thing about the search tree shown in Figure 3.6: it includes the path from Arad to Sibiu and back to Arad again! We say that _In(Arad)_ is a **repeated state** in the search tree, generated in this case by a **loopy path**. Considering such loopy paths means that the complete search tree for Romania is _infinite_ because there is no limit to how often one can traverse a loop. On the other hand, the state space—the map shown in Figure 3.2—has only 20 states. As we discuss in Section 3.4, loops can cause certain algorithms to fail, making otherwise solvable problems unsolvable. Fortunately, there is no need to consider loopy paths. We can rely on more than intuition for this: because path costs are additive and step costs are nonnegative, a loopy path to any given state is never better than the same path with the loop removed.
 
-Section 3.3. Searching for Solutions 75
-
-undoing some of the work already done. Checking a step in the sequence for feasibility is a difficult geometrical search problem closely related to robot navigation. Thus, the generation of legal actions is the expensive part of assembly sequencing. Any practical algorithm must avoid exploring all but a tiny fraction of the state space. Another important assembly problem is **protein design**, in which the goal is to find a sequence of amino acids that will fold into aPROTEIN DESIGN
-
-three-dimensional protein with the right properties to cure some disease.
-
-3.3 SEARCHING FOR SOLUTIONS
-
-Having formulated some problems, we now need to solve them. A solution is an action sequence, so search algorithms work by considering various possible action sequences. The possible action sequences starting at the initial state form a **search tree** with the initial stateSEARCH TREE
-
-at the root; the branches are actions and the **nodes** correspond to states in the state space ofNODE
-
-the problem. Figure 3.6 shows the first few steps in growing the search tree for finding a route from Arad to Bucharest. The root node of the tree corresponds to the initial state, _In(Arad)_. The first step is to test whether this is a goal state. (Clearly it is not, but it is important to check so that we can solve trick problems like “starting in Arad, get to Arad.”) Then we need to consider taking various actions. We do this by **expanding** the current state; that is,EXPANDING
-
-applying each legal action to the current state, thereby **generating** a new set of states. InGENERATING
-
-this case, we add three branches from the **parent node** _In(Arad)_ leading to three new **child**PARENT NODE
-
-**nodes**: _In(Sibiu), In(Timisoara),_ and _In(Zerind)_. Now we must choose which of these threeCHILD NODE
-
-possibilities to consider further. This is the essence of search—following up one option now and putting the others aside
-
-for later, in case the first choice does not lead to a solution. Suppose we choose Sibiu first. We check to see whether it is a goal state (it is not) and then expand it to get _In(Arad)_, _In(Fagaras)_, _In(Oradea)_, and _In(RimnicuVilcea)_. We can then choose any of these four or go back and choose Timisoara or Zerind. Each of these six nodes is a **leaf node**, that is, a nodeLEAF NODE
-
-with no children in the tree. The set of all leaf nodes available for expansion at any given point is called the **frontier**. (Many authors call it the **open list**, which is both geographicallyFRONTIER
-
-OPEN LIST less evocative and less accurate, because other data structures are better suited than a list.) In Figure 3.6, the frontier of each tree consists of those nodes with bold outlines.
-
-The process of expanding nodes on the frontier continues until either a solution is found or there are no more states to expand. The general TREE-SEARCH algorithm is shown informally in Figure 3.7. Search algorithms all share this basic structure; they vary primarily according to how they choose which state to expand next—the so-called **search strategy**.SEARCH STRATEGY
-
-The eagle-eyed reader will notice one peculiar thing about the search tree shown in Figure 3.6: it includes the path from Arad to Sibiu and back to Arad again! We say that _In(Arad)_ is a **repeated state** in the search tree, generated in this case by a **loopy path**. ConsideringREPEATED STATE
-
-LOOPY PATH such loopy paths means that the complete search tree for Romania is _infinite_ because there is no limit to how often one can traverse a loop. On the other hand, the state space—the map shown in Figure 3.2—has only 20 states. As we discuss in Section 3.4, loops can cause  
-
-
-
-certain algorithms to fail, making otherwise solvable problems unsolvable. Fortunately, there is no need to consider loopy paths. We can rely on more than intuition for this: because path costs are additive and step costs are nonnegative, a loopy path to any given state is never better than the same path with the loop removed.
-
-Loopy paths are a special case of the more general concept of **redundant paths**, whichREDUNDANT PATH
-
-exist whenever there is more than one way to get from one state to another. Consider the paths Arad–Sibiu (140 km long) and Arad–Zerind–Oradea–Sibiu (297 km long). Obviously, the second path is redundant—it’s just a worse way to get to the same state. If you are concerned about reaching the goal, there’s never any reason to keep more than one path to any given state, because any goal state that is reachable by extending one path is also reachable by extending the other.
+Loopy paths are a special case of the more general concept of **redundant paths**, which exist whenever there is more than one way to get from one state to another. Consider the paths Arad–Sibiu (140 km long) and Arad–Zerind–Oradea–Sibiu (297 km long). Obviously, the second path is redundant—it’s just a worse way to get to the same state. If you are concerned about reaching the goal, there’s never any reason to keep more than one path to any given state, because any goal state that is reachable by extending one path is also reachable by extending the other.
 
 In some cases, it is possible to define the problem itself so as to eliminate redundant paths. For example, if we formulate the 8-queens problem (page 71) so that a queen can be placed in any column, then each state with n queens can be reached by n! different paths; but if we reformulate the problem so that each new queen is placed in the leftmost empty column, then each state can be reached only through one path.
 
-**(a) The initial state**
+![Alt text](3image/figure-3.6.png)
 
-**(b) After expanding Arad**
+![Alt text](3image/figure-3.7.png)
 
-**(c) After expanding Sibiu**
+In other cases, redundant paths are unavoidable. This includes all problems where the actions are reversible, such as route-finding problems and sliding-block puzzles. Routefinding on a **rectangular grid** (like the one used later for Figure 3.9) is a particularly important example in computer games. In such a grid, each state has four successors, so a search tree of depth d that includes repeated states has 4d leaves; but there are only about 2d2 distinct states within d steps of any given state. For d = 20, this means about a trillion nodes but only about 800 distinct states. Thus, following redundant paths can cause a tractable problem to become intractable. This is true even for algorithms that know how to avoid infinite loops.
 
-Rimnicu Vilcea LugojArad Fagaras Oradea AradArad Oradea
+As the saying goes, _algorithms that forget their history are doomed to repeat it._ The way to avoid exploring redundant paths is to remember where one has been. To do this, we augment the TREE-SEARCH algorithm with a data structure called the **explored set** (also known as the **closed list**), which remembers every expanded node. Newly generated nodes that match previously generated nodes—ones in the explored set or the frontier—can be discarded instead of being added to the frontier. The new algorithm, called GRAPH-SEARCH, is shown informally in Figure 3.7. The specific algorithms in this chapter draw on this general design.
 
-Rimnicu Vilcea Lugoj
+Clearly, the search tree constructed by the GRAPH-SEARCH algorithm contains at most one copy of each state, so we can think of it as growing a tree directly on the state-space graph, as shown in Figure 3.8. The algorithm has another nice property: the frontier **separates** the state-space graph into the explored region and the unexplored region, so that every path from  
 
-ZerindSibiu
-
-Arad Fagaras Oradea
-
-Timisoara
-
-AradArad Oradea
-
-Lugoj AradArad Oradea
-
-Zerind
-
-Arad
-
-Sibiu Timisoara
-
-Arad
-
-Rimnicu Vilcea
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad Fagaras Oradea
-
-Timisoara
-
-**Figure 3.6** Partial search trees for finding a route from Arad to Bucharest. Nodes that have been expanded are shaded; nodes that have been generated but not yet expanded are outlined in bold; nodes that have not yet been generated are shown in faint dashed lines.  
-
-Section 3.3. Searching for Solutions 77
-
-**function** TREE-SEARCH(problem) **returns** a solution, or failure initialize the frontier using the initial state of problem
-
-**loop do if** the frontier is empty **then return** failure choose a leaf node and remove it from the frontier **if** the node contains a goal state **then return** the corresponding solution expand the chosen node, adding the resulting nodes to the frontier
-
-**function** GRAPH-SEARCH(problem) **returns** a solution, or failure initialize the frontier using the initial state of problem
-
-**_initialize the explored set to be empty_ loop do**
-
-**if** the frontier is empty **then return** failure choose a leaf node and remove it from the frontier **if** the node contains a goal state **then return** the corresponding solution **_add the node to the explored set_** expand the chosen node, adding the resulting nodes to the frontier
-
-**_only if not in the frontier or explored set_**
-
-**Figure 3.7** An informal description of the general tree-search and graph-search algorithms. The parts of GRAPH-SEARCH marked in bold italic are the additions needed to handle repeated states.
-
-In other cases, redundant paths are unavoidable. This includes all problems where the actions are reversible, such as route-finding problems and sliding-block puzzles. Routefinding on a **rectangular grid** (like the one used later for Figure 3.9) is a particularly impor-RECTANGULAR GRID
-
-tant example in computer games. In such a grid, each state has four successors, so a search tree of depth d that includes repeated states has 4d leaves; but there are only about 2d2 distinct states within d steps of any given state. For d = 20, this means about a trillion nodes but only about 800 distinct states. Thus, following redundant paths can cause a tractable problem to become intractable. This is true even for algorithms that know how to avoid infinite loops.
-
-As the saying goes, _algorithms that forget their history are doomed to repeat it._ The way to avoid exploring redundant paths is to remember where one has been. To do this, we augment the TREE-SEARCH algorithm with a data structure called the **explored set** (alsoEXPLORED SET
-
-known as the **closed list**), which remembers every expanded node. Newly generated nodesCLOSED LIST
-
-that match previously generated nodes—ones in the explored set or the frontier—can be discarded instead of being added to the frontier. The new algorithm, called GRAPH-SEARCH, is shown informally in Figure 3.7. The specific algorithms in this chapter draw on this general design.
-
-Clearly, the search tree constructed by the GRAPH-SEARCH algorithm contains at most one copy of each state, so we can think of it as growing a tree directly on the state-space graph, as shown in Figure 3.8. The algorithm has another nice property: the frontier **separates** theSEPARATOR
-
-state-space graph into the explored region and the unexplored region, so that every path from  
-
-
-
-**Figure 3.8** A sequence of search trees generated by a graph search on the Romania problem of Figure 3.2. At each stage, we have extended each path by one step. Notice that at the third stage, the northernmost city (Oradea) has become a dead end: both of its successors are already explored via other paths.
-
-(c)(b)(a)
-
-**Figure 3.9** The separation property of GRAPH-SEARCH, illustrated on a rectangular-grid problem. The frontier (white nodes) always separates the explored region of the state space (black nodes) from the unexplored region (gray nodes). In (a), just the root has been expanded. In (b), one leaf node has been expanded. In (c), the remaining successors of the root have been expanded in clockwise order.
+![Alt text](3image/figure-3.8-and-3.9.png)
 
 the initial state to an unexplored state has to pass through a state in the frontier. (If this seems completely obvious, try Exercise 3.13 now.) This property is illustrated in Figure 3.9. As every step moves a state from the frontier into the explored region while moving some states from the unexplored region into the frontier, we see that the algorithm is _systematically_ examining the states in the state space, one by one, until it finds a solution.
 
-**3.3.1 Infrastructure for search algorithms**
+### Infrastructure for search algorithms
 
 Search algorithms require a data structure to keep track of the search tree that is being constructed. For each node n of the tree, we have a structure that contains four components:
 
@@ -575,35 +253,14 @@ Search algorithms require a data structure to keep track of the search tree that
 
 - n.PATH-COST: the cost, traditionally denoted by g(n), of the path from the initial state to the node, as indicated by the parent pointers.  
 
-Section 3.3. Searching for Solutions 79
-
-1
-
-23
-
-45
-
-6
-
-7
-
-8
-
-**Node**
-
-STATE
-
-PARENT
-
-ACTION = _Right_ PATH-COST = 6
-
-**Figure 3.10** Nodes are the data structures from which the search tree is constructed. Each has a parent, a state, and various bookkeeping fields. Arrows point from child to parent.
+![Alt text](3image/figure-3.10.png)
 
 Given the components for a parent node, it is easy to see how to compute the necessary components for a child node. The function CHILD-NODE takes a parent node and an action and returns the resulting child node:
 
-**function** CHILD-NODE(problem ,parent ,action) **returns** a node **return** a node with
-
-STATE = problem .RESULT(parent .STATE,action ), PARENT = parent , ACTION = action , PATH-COST = parent .PATH-COST + problem .STEP-COST(parent .STATE,action )
+**function** CHILD-NODE(problem ,parent ,action) **returns** a node 
+**return** a node with
+  STATE = problem .RESULT(parent .STATE,action ), PARENT = parent , ACTION = action , 
+  PATH-COST = parent .PATH-COST + problem .STEP-COST(parent .STATE,action )
 
 The node data structure is depicted in Figure 3.10. Notice how the PARENT pointers string the nodes together into a tree structure. These pointers also allow the solution path to be extracted when a goal node is found; we use the SOLUTION function to return the sequence of actions obtained by following parent pointers back to the root.
 
@@ -621,61 +278,36 @@ operations on a queue are as follows:
 
 
 
-Queues are characterized by the _order_ in which they store the inserted nodes. Three common variants are the first-in, first-out or **FIFO queue**, which pops the _oldest_ element of the queue;FIFO QUEUE
+Queues are characterized by the _order_ in which they store the inserted nodes. Three common variants are the first-in, first-out or **FIFO queue**, which pops the _oldest_ element of the queue; the last-in, first-out or **LIFO queue** (also known as a **stack**), which pops the _newest_ element of the queue; and the **priority queue**, which pops the element of the queue with the highest priority according to some ordering function. 
 
-the last-in, first-out or **LIFO queue** (also known as a **stack**), which pops the _newest_ elementLIFO QUEUE
+The explored set can be implemented with a hash table to allow efficient checking forepeated states. With a good implementation, insertion and lookup can be done in roughly constant time no matter how many states are stored. One must take care to implement the hash table with the right notion of equality between states. For example, in the traveling salesperson problem (page 74), the hash table needs to know that the set of visited cities {Bucharest,Urziceni,Vaslui} is the same as {Urziceni,Vaslui,Bucharest}. Sometimes this can be achieved most easily by insisting that the data structures for states be in some **canonical form**; that is, logically equivalent states should map to the same data structure. In the case of states described by sets, for example, a bit-vector representation or a sorted list without repetition would be canonical, whereas an unsorted list would not.
 
-of the queue; and the **priority queue**, which pops the element of the queue with the highestPRIORITY QUEUE
-
-priority according to some ordering function. The explored set can be implemented with a hash table to allow efficient checking for
-
-repeated states. With a good implementation, insertion and lookup can be done in roughly constant time no matter how many states are stored. One must take care to implement the hash table with the right notion of equality between states. For example, in the traveling salesperson problem (page 74), the hash table needs to know that the set of visited cities {Bucharest,Urziceni,Vaslui} is the same as {Urziceni,Vaslui,Bucharest}. Sometimes this can be achieved most easily by insisting that the data structures for states be in some **canonical form**; that is, logically equivalent states should map to the same data structure. In the caseCANONICAL FORM
-
-of states described by sets, for example, a bit-vector representation or a sorted list without repetition would be canonical, whereas an unsorted list would not.
-
-**3.3.2 Measuring problem-solving performance**
+### Measuring problem-solving performance
 
 Before we get into the design of specific search algorithms, we need to consider the criteria that might be used to choose among them. We can evaluate an algorithm’s performance in four ways:
 
-- **Completeness**: Is the algorithm guaranteed to find a solution when there is one?COMPLETENESS
+- **Completeness**: Is the algorithm guaranteed to find a solution when there is one?
 
-- **Optimality**: Does the strategy find the optimal solution, as defined on page 68?OPTIMALITY
+- **Optimality**: Does the strategy find the optimal solution, as defined on page 68?
 
-- **Time complexity**: How long does it take to find a solution?TIME COMPLEXITY
+- **Time complexity**: How long does it take to find a solution?
 
-- **Space complexity**: How much memory is needed to perform the search?SPACE COMPLEXITY
+- **Space complexity**: How much memory is needed to perform the search?
 
-Time and space complexity are always considered with respect to some measure of the problem difficulty. In theoretical computer science, the typical measure is the size of the state space graph, |V | + |E|, where V is the set of vertices (nodes) of the graph and E is the set of edges (links). This is appropriate when the graph is an explicit data structure that is input to the search program. (The map of Romania is an example of this.) In AI, the graph is often represented _implicitly_ by the initial state, actions, and transition model and is frequently infinite. For these reasons, complexity is expressed in terms of three quantities: b, the **branching factor** or maximum number of successors of any node; d, the **depth** of the shallowest goalBRANCHING FACTOR
+Time and space complexity are always considered with respect to some measure of the problem difficulty. In theoretical computer science, the typical measure is the size of the state space graph, |V | + |E|, where V is the set of vertices (nodes) of the graph and E is the set of edges (links). This is appropriate when the graph is an explicit data structure that is input to the search program. (The map of Romania is an example of this.) In AI, the graph is often represented _implicitly_ by the initial state, actions, and transition model and is frequently infinite. For these reasons, complexity is expressed in terms of three quantities: b, the **branching factor** or maximum number of successors of any node; d, the **depth** of the shallowest goal node (i.e., the number of steps along the path from the root); and m, the maximum length of any path in the state space. Time is often measured in terms of the number of nodes generated during the search, and space in terms of the maximum number of nodes stored in memory. For the most part, we describe time and space complexity for search on a tree; for a graph, the answer depends on how “redundant” the paths in the state space are.
 
-DEPTH node (i.e., the number of steps along the path from the root); and m, the maximum length of any path in the state space. Time is often measured in terms of the number of nodes generated during the search, and space in terms of the maximum number of nodes stored in memory. For the most part, we describe time and space complexity for search on a tree; for a graph, the answer depends on how “redundant” the paths in the state space are.
+To assess the effectiveness of a search algorithm, we can consider just the **search cost**— which typically depends on the time complexity but can also include a term for memory usage—or we can use the **total cost**, which combines the search cost and the path cost of the solution found. For the problem of finding a route from Arad to Bucharest, the search cost is the amount of time taken by the search and the solution cost is the total length of the path in kilometers. Thus, to compute the total cost, we have to add milliseconds and kilometers. There is no “official exchange rate” between the two, but it might be reasonable in this case to convert kilometers into milliseconds by using an estimate of the car’s average speed (because time is what the agent cares about). This enables the agent to find an optimal tradeoff point at which further computation to find a shorter path becomes counterproductive. The more general problem of tradeoffs between different goods is taken up in Chapter 16.
 
-To assess the effectiveness of a search algorithm, we can consider just the **search cost**—SEARCH COST
+## UNINFORMED SEARCH STRATEGIES
 
-which typically depends on the time complexity but can also include a term for memory usage—or we can use the **total cost**, which combines the search cost and the path cost of theTOTAL COST
+This section covers several search strategies that come under the heading of **uninformed search** (also called **blind search**). The term means that the strategies have no additional information about states beyond that provided in the problem definition. All they can do is generate successors and distinguish a goal state from a non-goal state. All search strategies are distinguished by the _order_ in which nodes are expanded. Strategies that know whether one non-goal state is “more promising” than another are called **informed search** or **heuristic** **search** strategies; they are covered in Section 3.5.
 
-solution found. For the problem of finding a route from Arad to Bucharest, the search cost is the amount of time taken by the search and the solution cost is the total length of the path  
+### Breadth-first search
 
-Section 3.4. Uninformed Search Strategies 81
-
-in kilometers. Thus, to compute the total cost, we have to add milliseconds and kilometers. There is no “official exchange rate” between the two, but it might be reasonable in this case to convert kilometers into milliseconds by using an estimate of the car’s average speed (because time is what the agent cares about). This enables the agent to find an optimal tradeoff point at which further computation to find a shorter path becomes counterproductive. The more general problem of tradeoffs between different goods is taken up in Chapter 16.
-
-3.4 UNINFORMED SEARCH STRATEGIES
-
-This section covers several search strategies that come under the heading of **uninformed search** (also called **blind search**). The term means that the strategies have no additionalUNINFORMED
-
-SEARCH
-
-BLIND SEARCH information about states beyond that provided in the problem definition. All they can do is generate successors and distinguish a goal state from a non-goal state. All search strategies are distinguished by the _order_ in which nodes are expanded. Strategies that know whether one non-goal state is “more promising” than another are called **informed search** or **heuristic**INFORMED SEARCH
-
-**search** strategies; they are covered in Section 3.5.HEURISTIC SEARCH
-
-**3.4.1 Breadth-first search**
-
-**Breadth-first search** is a simple strategy in which the root node is expanded first, then all theBREADTH-FIRST SEARCH
-
+**Breadth-first search** is a simple strategy in which the root node is expanded first, then all the
 successors of the root node are expanded next, then _their_ successors, and so on. In general, all the nodes are expanded at a given depth in the search tree before any nodes at the next level are expanded.
 
-Breadth-first search is an instance of the general graph-search algorithm (Figure 3.7) in which the _shallowest_ unexpanded node is chosen for expansion. This is achieved very simply by using a FIFO queue for the frontier. Thus, new nodes (which are always deeper than their parents) go to the back of the queue, and old nodes, which are shallower than the new nodes, get expanded first. There is one slight tweak on the general graph-search algorithm, which is that the goal test is applied to each node when it is _generated_ rather than when it is selected for expansion. This decision is explained below, where we discuss time complexity. Note also that the algorithm, following the general template for graph search, discards any new path to a state already in the frontier or explored set; it is easy to see that any such path must be at least as deep as the one already found. Thus, breadth-first search always has the shallowest path to every node on the frontier.
+Breadth-first search is an instance of the general graph-search algorithm (Figure 3.7) in which the _shallowest_ unexpanded node is chosen for expansion. This is achieved very simply by using a FIFO queue for the frontier. Thus, new nodes (which are always deeper than their parents) go to the back of the queue, and old nodes, which are shallower than the new nodes, get expanded first. There is one slight tweak on the general graph-search algorithm, which is that the goal test is applied to each node when it is _generated_ rather than when it is selected for expansion. This decision is explained below, where we discuss time complexity. Note also that the algorithm, following the general template for graph search, discards any new path to a state already in the frontier or explored set; it is easy to see that any such path must be at least as deep as the one already found. Thus, breadth-first search always has the shallowest path to every node on the frontier 
 
 Pseudocode is given in Figure 3.11. Figure 3.12 shows the progress of the search on a simple binary tree.
 
@@ -683,15 +315,21 @@ How does breadth-first search rate according to the four criteria from the previ
 
 
 
-**function** BREADTH-FIRST-SEARCH(problem) **returns** a solution, or failure
+**function** BREADTH-FIRST-SEARCH(problem
+**returns** a solution, or failure
 
-node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 **if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) frontier← a FIFO queue with node as the only element explored← an empty set **loop do**
-
-**if** EMPTY?( frontier ) **then return** failure node← POP( frontier ) /\* chooses the shallowest node in frontier \*/ add node .STATE to explored
-
-**for each** action **in** problem .ACTIONS(node.STATE) **do** child←CHILD-NODE(problem ,node ,action) **if** child .STATE is not in explored or frontier **then**
-
-**if** problem .GOAL-TEST(child .STATE) **then return** SOLUTION(child ) frontier← INSERT(child , frontier )
+node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 
+**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) 
+frontier← a FIFO queue with node as the only element 
+explored← an empty set  
+**loop do**
+  **if** EMPTY?( frontier ) **then return** failure node← POP( frontier ) /\* chooses the shallowest node in frontier \*/ 
+  add node .STATE to explored
+  **for each** action **in** problem .ACTIONS(node.STATE) **do** 
+    child←CHILD-NODE(problem ,node ,action) 
+    **if** child .STATE is not in explored or frontier **then**
+      **if** problem .GOAL-TEST(child .STATE) **then return** SOLUTION(child ) 
+    frontier← INSERT(child , frontier )
 
 **Figure 3.11** Breadth-first search on a graph.
 
@@ -703,57 +341,28 @@ So far, the news about breadth-first search has been good. The news about time a
 
 nodes at the third level, and so on. Now suppose that the solution is at depth d. In the worst case, it is the last node generated at that level. Then the total number of nodes generated is
 
-b + b 2 + b
+b + b^2^ + b^3^ + · · ·+ bd = O(bd ) .
 
-3 + · · ·+ b
+(If the algorithm were to apply the goal test to nodes when selected for expansion, rather than when generated, the whole layer of nodes at depth d would be expanded before the goal was detected and the time complexity would be O(b^d+1^).)
 
-d = O(b
+As for space complexity: for any kind of graph search, which stores every expanded node in the explored set, the space complexity is always within a factor of b of the time complexity. For breadth-first graph search in particular, every node generated remains in memory. There will be O(b^d−1^) nodes in the explored set and O(bd) nodes in the frontier,
 
-d ) .
-
-(If the algorithm were to apply the goal test to nodes when selected for expansion, rather than when generated, the whole layer of nodes at depth d would be expanded before the goal was detected and the time complexity would be O(bd+1).)
-
-As for space complexity: for any kind of graph search, which stores every expanded node in the explored set, the space complexity is always within a factor of b of the time complexity. For breadth-first graph search in particular, every node generated remains in memory. There will be O(bd−1) nodes in the explored set and O(bd) nodes in the frontier,
-
-A
-
-B C
-
-E F GD
-
-A
-
-B
-
-D E F G
-
-C
-
-A
-
-C
-
-D E F G
-
-BB C
-
-D E F G
-
-A
-
-**Figure 3.12** Breadth-first search on a simple binary tree. At each stage, the node to be expanded next is indicated by a marker.  
-
-Section 3.4. Uninformed Search Strategies 83
+![Alt text](3image/figure-3.12.png)
 
 so the space complexity is O(bd), i.e., it is dominated by the size of the frontier. Switching to a tree search would not save much space, and in a state space with many redundant paths, switching could cost a great deal of time.
 
 An exponential complexity bound such as O(bd) is scary. Figure 3.13 shows why. It lists, for various values of the solution depth d, the time and memory required for a breadthfirst search with branching factor b = 10. The table assumes that 1 million nodes can be generated per second and that a node requires 1000 bytes of storage. Many search problems fit roughly within these assumptions (give or take a factor of 100) when run on a modern personal computer.
 
-Depth Nodes Time Memory
-
-2 110 .11 milliseconds 107 kilobytes 4 11,110 11 milliseconds 10.6 megabytes 6 106 1.1 seconds 1 gigabyte 8 108 2 minutes 103 gigabytes
-
-10 1010 3 hours 10 terabytes 12 1012 13 days 1 petabyte 14 1014 3.5 years 99 petabytes 16 1016 350 years 10 exabytes
+| Depth | Nodes | Time |Memory|
+|----|---|-----|----|
+|2 |110 |.11 milliseconds |107 kilobytes |
+|4 |11,110 |11 milliseconds |10.6 megabytes| 
+|6 |10^6^ |1.1 seconds |1 gigabyte |
+|8|10^8^ |2 minutes |103 gigabytes|
+|10 |10^10^ |3 hours |10 terabytes |
+|12| 10^12^ |13 days |1 petabyte |
+|14 |10^14^ |3.5 years |99 petabytes |
+|16 |10^16^ |350 years |10 exabytes|
 
 **Figure 3.13** Time and memory requirements for breadth-first search. The numbers shown assume branching factor b = 10; 1 million nodes/second; 1000 bytes/node.
 
@@ -761,431 +370,118 @@ Two lessons can be learned from Figure 3.13. First, _the memory requirements are
 
 The second lesson is that time is still a major factor. If your problem has a solution at depth 16, then (given our assumptions) it will take about 350 years for breadth-first search (or indeed any uninformed search) to find it. In general, _exponential-complexity search problems cannot be solved by uninformed methods for any but the smallest instances._
 
-**3.4.2 Uniform-cost search**
+### Uniform-cost search
 
-When all step costs are equal, breadth-first search is optimal because it always expands the _shallowest_ unexpanded node. By a simple extension, we can find an algorithm that is optimal with any step-cost function. Instead of expanding the shallowest node, **uniform-cost search**UNIFORM-COST
-
-SEARCH
-
-expands the node n with the _lowest path cost_ g(n). This is done by storing the frontier as a priority queue ordered by g. The algorithm is shown in Figure 3.14.
+When all step costs are equal, breadth-first search is optimal because it always expands the _shallowest_ unexpanded node. By a simple extension, we can find an algorithm that is optimal with any step-cost function. Instead of expanding the shallowest node, **uniform-cost search** expands the node n with the _lowest path cost_ g(n). This is done by storing the frontier as a priority queue ordered by g. The algorithm is shown in Figure 3.14.
 
 In addition to the ordering of the queue by path cost, there are two other significant differences from breadth-first search. The first is that the goal test is applied to a node when it is _selected for expansion_ (as in the generic graph-search algorithm shown in Figure 3.7) rather than when it is first generated. The reason is that the first goal node that is _generated_  
 
 
 
 **function** UNIFORM-COST-SEARCH(problem) **returns** a solution, or failure
-
-node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 frontier← a priority queue ordered by PATH-COST, with node as the only element explored← an empty set **loop do**
-
-**if** EMPTY?( frontier ) **then return** failure node← POP( frontier ) /\* chooses the lowest-cost node in frontier \*/ **if** problem .GOAL-TEST(node.STATE) **then return** SOLUTION(node) add node .STATE to explored
-
-**for each** action **in** problem .ACTIONS(node.STATE) **do** child←CHILD-NODE(problem ,node ,action) **if** child .STATE is not in explored or frontier **then**
-
-frontier← INSERT(child , frontier ) **else if** child .STATE is in frontier with higher PATH-COST **then**
-
+node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 
+frontier← a priority queue ordered by PATH-COST, with node as the only element 
+explored← an empty set 
+**loop do**
+**if** EMPTY?( frontier ) **then return** failure
+node← POP( frontier ) /\* chooses the lowest-cost node in frontier \*/ 
+**if** problem .GOAL-TEST(node.STATE) **then return** SOLUTION(node) 
+add node .STATE to explored
+**for each** action **in** problem .ACTIONS(node.STATE) **do** 
+child←CHILD-NODE(problem ,node ,action) 
+**if** child .STATE is not in explored or frontier **then**
+frontier← INSERT(child , frontier ) 
+**else if** child .STATE is in frontier with higher PATH-COST **then**
 replace that frontier node with child
 
 **Figure 3.14** Uniform-cost search on a graph. The algorithm is identical to the general graph search algorithm in Figure 3.7, except for the use of a priority queue and the addition of an extra check in case a shorter path to a frontier state is discovered. The data structure for frontier needs to support efficient membership testing, so it should combine the capabilities of a priority queue and a hash table.
 
-**Sibiu Fagaras**
-
-**Pitesti**
-
-**Rimnicu Vilcea**
-
-**Bucharest**
-
-99
-
-80
-
-97
-
-101
-
-211
-
-**Figure 3.15** Part of the Romania state space, selected to illustrate uniform-cost search.
+![Alt text](3image/figure-3.15.png)
 
 may be on a suboptimal path. The second difference is that a test is added in case a better path is found to a node currently on the frontier.
 
-Both of these modifications come into play in the example shown in Figure 3.15, where the problem is to get from Sibiu to Bucharest. The successors of Sibiu are Rimnicu Vilcea and Fagaras, with costs 80 and 99, respectively. The least-cost node, Rimnicu Vilcea, is expanded next, adding Pitesti with cost 80 + 97= 177. The least-cost node is now Fagaras, so it is expanded, adding Bucharest with cost 99 + 211= 310. Now a goal node has been generated, but uniform-cost search keeps going, choosing Pitesti for expansion and adding a second path  
+Both of these modifications come into play in the example shown in Figure 3.15, where the problem is to get from Sibiu to Bucharest. The successors of Sibiu are Rimnicu Vilcea and Fagaras, with costs 80 and 99, respectively. The least-cost node, Rimnicu Vilcea, is expanded next, adding Pitesti with cost 80 + 97= 177. The least-cost node is now Fagaras, so it is expanded, adding Bucharest with cost 99 + 211= 310. Now a goal node has been generated, but uniform-cost search keeps going, choosing Pitesti for expansion and adding a second path to Bucharest with cost 80+97+101= 278. Now the algorithm checks to see if this new path is better than the old one; it is, so the old one is discarded. Bucharest, now with g-cost 278, is selected for expansion and the solution is returned.
 
-Section 3.4. Uninformed Search Strategies 85
-
-to Bucharest with cost 80+97+101= 278. Now the algorithm checks to see if this new path is better than the old one; it is, so the old one is discarded. Bucharest, now with g-cost 278, is selected for expansion and the solution is returned.
-
-It is easy to see that uniform-cost search is optimal in general. First, we observe that whenever uniform-cost search selects a node n for expansion, the optimal path to that node has been found. (Were this not the case, there would have to be another frontier node n
-
-′ on the optimal path from the start node to n, by the graph separation property of Figure 3.9; by definition, n
-
-′ would have lower g-cost than n and would have been selected first.) Then, because step costs are nonnegative, paths never get shorter as nodes are added. These two facts together imply that _uniform-cost search expands nodes in order of their optimal path cost._ Hence, the first goal node selected for expansion must be the optimal solution.
+It is easy to see that uniform-cost search is optimal in general. First, we observe that whenever uniform-cost search selects a node n for expansion, the optimal path to that node has been found. (Were this not the case, there would have to be another frontier node n′ on the optimal path from the start node to n, by the graph separation property of Figure 3.9; by definition, n′ would have lower g-cost than n and would have been selected first.) Then, because step costs are nonnegative, paths never get shorter as nodes are added. These two facts together imply that _uniform-cost search expands nodes in order of their optimal path cost._ Hence, the first goal node selected for expansion must be the optimal solution.
 
 Uniform-cost search does not care about the _number_ of steps a path has, but only about their total cost. Therefore, it will get stuck in an infinite loop if there is a path with an infinite sequence of zero-cost actions—for example, a sequence of NoOp actions.6 Completeness is guaranteed provided the cost of every step exceeds some small positive constant ε.
 
-Uniform-cost search is guided by path costs rather than depths, so its complexity is not easily characterized in terms of b and d. Instead, let C
+Uniform-cost search is guided by path costs rather than depths, so its complexity is not easily characterized in terms of b and d. Instead, let C∗ be the cost of the optimal solution,7and assume that every action costs at least ε. Then the algorithm’s worst-case time and space complexity is O(b^1+[C∗ε]^), which can be much greater than bd. This is because uniformcost search can explore large trees of small steps before exploring paths involving large and perhaps useful steps. When all step costs are equal, b^1+[C∗ε]^ is just b^d+1^. When all step costs are the same, uniform-cost search is similar to breadth-first search, except that the latter stops as soon as it generates a goal, whereas uniform-cost search examines all the nodes at the goal’s depth to see if one has a lower cost; thus uniform-cost search does strictly more work by expanding nodes at depth d unnecessarily.
 
-∗ be the cost of the optimal solution,7
+### Depth-first search
 
-and assume that every action costs at least ε. Then the algorithm’s worst-case time and space complexity is O(b1+C∗/ε), which can be much greater than b
-
-d. This is because uniformcost search can explore large trees of small steps before exploring paths involving large and perhaps useful steps. When all step costs are equal, b
-
-1+C∗/ε is just b d+1. When all step
-
-costs are the same, uniform-cost search is similar to breadth-first search, except that the latter stops as soon as it generates a goal, whereas uniform-cost search examines all the nodes at the goal’s depth to see if one has a lower cost; thus uniform-cost search does strictly more work by expanding nodes at depth d unnecessarily.
-
-**3.4.3 Depth-first search**
-
-**Depth-first search** always expands the _deepest_ node in the current frontier of the search tree.DEPTH-FIRST SEARCH
-
+**Depth-first search** always expands the _deepest_ node in the current frontier of the search tree.
 The progress of the search is illustrated in Figure 3.16. The search proceeds immediately to the deepest level of the search tree, where the nodes have no successors. As those nodes are expanded, they are dropped from the frontier, so then the search “backs up” to the next deepest node that still has unexplored successors.
 
 The depth-first search algorithm is an instance of the graph-search algorithm in Figure 3.7; whereas breadth-first-search uses a FIFO queue, depth-first search uses a LIFO queue. A LIFO queue means that the most recently generated node is chosen for expansion. This must be the deepest unexpanded node because it is one deeper than its parent—which, in turn, was the deepest unexpanded node when it was selected.
 
 As an alternative to the GRAPH-SEARCH-style implementation, it is common to implement depth-first search with a recursive function that calls itself on each of its children in turn. (A recursive depth-first algorithm incorporating a depth limit is shown in Figure 3.17.)
 
-6 NoOp, or “no operation,” is the name of an assembly language instruction that does nothing. 7 Here, and throughout the book, the “star” in C
+6 NoOp, or “no operation,” is the name of an assembly language instruction that does nothing. 7 Here, and throughout the book, the “star” in C∗ means an optimal value for C.  
 
-∗ means an optimal value for C.  
-
-
-
-A
-
-C
-
-F G
-
-M N O
-
-A
-
-C
-
-F G
-
-L M N O
-
-A
-
-C
-
-F G
-
-L M N O
-
-C
-
-F G
-
-L M N O
-
-A
-
-B C
-
-E F G
-
-K L M N O
-
-A
-
-C
-
-E F G
-
-J K L M N O
-
-A
-
-C
-
-E F G
-
-J K L M N O
-
-A
-
-B C
-
-D E F G
-
-I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-**Figure 3.16** Depth-first search on a binary tree. The unexplored region is shown in light gray. Explored nodes with no descendants in the frontier are removed from memory. Nodes at depth 3 have no successors and M is the only goal node.
+![Alt text](3image/figure-3.16.png)
 
 The properties of depth-first search depend strongly on whether the graph-search or tree-search version is used. The graph-search version, which avoids repeated states and redundant paths, is complete in finite state spaces because it will eventually expand every node. The tree-search version, on the other hand, is _not_ complete—for example, in Figure 3.6 the algorithm will follow the Arad–Sibiu–Arad–Sibiu loop forever. Depth-first tree search can be modified at no extra memory cost so that it checks new states against those on the path from the root to the current node; this avoids infinite loops in finite state spaces but does not avoid the proliferation of redundant paths. In infinite state spaces, both versions fail if an infinite non-goal path is encountered. For example, in Knuth’s 4 problem, depth-first search would keep applying the factorial operator forever.
 
 For similar reasons, both versions are nonoptimal. For example, in Figure 3.16, depthfirst search will explore the entire left subtree even if node C is a goal node. If node J were also a goal node, then depth-first search would return it as a solution instead of C , which would be a better solution; hence, depth-first search is not optimal.  
 
-Section 3.4. Uninformed Search Strategies 87
-
 The time complexity of depth-first graph search is bounded by the size of the state space (which may be infinite, of course). A depth-first tree search, on the other hand, may generate all of the O(bm) nodes in the search tree, where m is the maximum depth of any node; this can be much greater than the size of the state space. Note that m itself can be much larger than d (the depth of the shallowest solution) and is infinite if the tree is unbounded.
 
 So far, depth-first search seems to have no clear advantage over breadth-first search, so why do we include it? The reason is the space complexity. For a graph search, there is no advantage, but a depth-first tree search needs to store only a single path from the root to a leaf node, along with the remaining unexpanded sibling nodes for each node on the path. Once a node has been expanded, it can be removed from memory as soon as all its descendants have been fully explored. (See Figure 3.16.) For a state space with branching factor b and maximum depth m, depth-first search requires storage of only O(bm) nodes. Using the same assumptions as for Figure 3.13 and assuming that nodes at the same depth as the goal node have no successors, we find that depth-first search would require 156 kilobytes instead of 10 exabytes at depth d = 16, a factor of 7 trillion times less space. This has led to the adoption of depth-first tree search as the basic workhorse of many areas of AI, including constraint satisfaction (Chapter 6), propositional satisfiability (Chapter 7), and logic programming (Chapter 9). For the remainder of this section, we focus primarily on the treesearch version of depth-first search.
 
-A variant of depth-first search called **backtracking search** uses still less memory. (SeeBACKTRACKING SEARCH
+A variant of depth-first search called **backtracking search** uses still less memory. (See Chapter 6 for more details.) In backtracking, only one successor is generated at a time rather than all successors; each partially expanded node remembers which successor to generate next. In this way, only O(m) memory is needed rather than O(bm). Backtracking search facilitates yet another memory-saving (and time-saving) trick: the idea of generating a successor by _modifying_ the current state description directly rather than copying it first. This reduces the memory requirements to just one state description and O(m) actions. For this to work, we must be able to undo each modification when we go back to generate the next successor. For problems with large state descriptions, such as robotic assembly, these techniques are critical to success.
 
-Chapter 6 for more details.) In backtracking, only one successor is generated at a time rather than all successors; each partially expanded node remembers which successor to generate next. In this way, only O(m) memory is needed rather than O(bm). Backtracking search facilitates yet another memory-saving (and time-saving) trick: the idea of generating a successor by _modifying_ the current state description directly rather than copying it first. This reduces the memory requirements to just one state description and O(m) actions. For this to work, we must be able to undo each modification when we go back to generate the next successor. For problems with large state descriptions, such as robotic assembly, these techniques are critical to success.
+### Depth-limited search
 
-**3.4.4 Depth-limited search**
+The embarrassing failure of depth-first search in infinite state spaces can be alleviated by supplying depth-first search with a predetermined depth limit λ. That is, nodes at depth λ are treated as if they have no successors. This approach is called **depth-limited search**. The depth limit solves the infinite-path problem. Unfortunately, it also introduces an additional source of incompleteness if we choose λ < d, that is, the shallowest goal is beyond the depth limit. (This is likely when d is unknown.) Depth-limited search will also be nonoptimal if we choose λ > d. Its time complexity is O(bλ) and its space complexity is O(bλ). Depth-first search can be viewed as a special case of depth-limited search with λ=∞.
 
-The embarrassing failure of depth-first search in infinite state spaces can be alleviated by supplying depth-first search with a predetermined depth limit . That is, nodes at depth  are treated as if they have no successors. This approach is called **depth-limited search**. TheDEPTH-LIMITED
-
-SEARCH
-
-depth limit solves the infinite-path problem. Unfortunately, it also introduces an additional source of incompleteness if we choose  < d, that is, the shallowest goal is beyond the depth limit. (This is likely when d is unknown.) Depth-limited search will also be nonoptimal if we choose  > d. Its time complexity is O(b) and its space complexity is O(b). Depth-first search can be viewed as a special case of depth-limited search with =∞.
-
-Sometimes, depth limits can be based on knowledge of the problem. For example, on the map of Romania there are 20 cities. Therefore, we know that if there is a solution, it must be of length 19 at the longest, so  = 19 is a possible choice. But in fact if we studied the  
+Sometimes, depth limits can be based on knowledge of the problem. For example, on the map of Romania there are 20 cities. Therefore, we know that if there is a solution, it must be of length 19 at the longest, so λ = 19 is a possible choice. But in fact if we studied the  
 
 
 
 **function** DEPTH-LIMITED-SEARCH(problem , limit ) **returns** a solution, or failure/cutoff **return** RECURSIVE-DLS(MAKE-NODE(problem .INITIAL-STATE),problem , limit )
 
-**function** RECURSIVE-DLS(node,problem , limit ) **returns** a solution, or failure/cutoff **if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) **else if** limit = 0 **then return** cutoff
+**function** RECURSIVE-DLS(node,problem , limit ) **returns** a solution, or failure/cutoff 
+**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) 
+**else if** limit = 0 **then return** cutoff
 
-**else** cutoff occurred?← false **for each** action **in** problem .ACTIONS(node.STATE) **do**
+**else** 
+cutoff occurred?← false 
+**for each** action **in** problem .ACTIONS(node.STATE) **do**
 
-child←CHILD-NODE(problem ,node ,action) result←RECURSIVE-DLS(child ,problem , limit − 1) **if** result = cutoff **then** cutoff occurred?← true **else if** result = failure **then return** result
+child←CHILD-NODE(problem ,node ,action
+result←RECURSIVE-DLS(child ,problem , limit − 1
+**if** result = cutoff **then** cutoff occurred?← true 
+**else if** result ≠ failure **then return** result
 
 **if** cutoff occurred? **then return** cutoff **else return** failure
 
 **Figure 3.17** A recursive implementation of depth-limited tree search.
 
-map carefully, we would discover that any city can be reached from any other city in at most 9 steps. This number, known as the **diameter** of the state space, gives us a better depth limit,DIAMETER
 
-which leads to a more efficient depth-limited search. For most problems, however, we will not know a good depth limit until we have solved the problem.
+map carefully, we would discover that any city can be reached from any other city in at most 9 steps. This number, known as the **diameter** of the state space, gives us a better depth limit,which leads to a more efficient depth-limited search. For most problems, however, we will not know a good depth limit until we have solved the problem.
 
 Depth-limited search can be implemented as a simple modification to the general treeor graph-search algorithm. Alternatively, it can be implemented as a simple recursive algorithm as shown in Figure 3.17. Notice that depth-limited search can terminate with two kinds of failure: the standard failure value indicates no solution; the cutoff value indicates no solution within the depth limit.
 
-**3.4.5 Iterative deepening depth-first search**
+### Iterative deepening depth-first search
 
-**Iterative deepening search** (or iterative deepening depth-first search) is a general strategy,ITERATIVE DEEPENING SEARCH
-
-often used in combination with depth-first tree search, that finds the best depth limit. It does this by gradually increasing the limit—first 0, then 1, then 2, and so on—until a goal is found. This will occur when the depth limit reaches d, the depth of the shallowest goal node. The algorithm is shown in Figure 3.18. Iterative deepening combines the benefits of depth-first and breadth-first search. Like depth-first search, its memory requirements are modest: O(bd)
-
-to be precise. Like breadth-first search, it is complete when the branching factor is finite and optimal when the path cost is a nondecreasing function of the depth of the node. Figure 3.19 shows four iterations of ITERATIVE-DEEPENING-SEARCH on a binary search tree, where the solution is found on the fourth iteration.
+**Iterative deepening search** (or iterative deepening depth-first search) is a general strategy often used in combination with depth-first tree search, that finds the best depth limit. It does this by gradually increasing the limit—first 0, then 1, then 2, and so on—until a goal is found. This will occur when the depth limit reaches d, the depth of the shallowest goal node. The algorithm is shown in Figure 3.18. Iterative deepening combines the benefits of depth-first and breadth-first search. Like depth-first search, its memory requirements are modest: O(bd) to be precise. Like breadth-first search, it is complete when the branching factor is finite and optimal when the path cost is a nondecreasing function of the depth of the node. Figure 3.19 shows four iterations of ITERATIVE-DEEPENING-SEARCH on a binary search tree, where the solution is found on the fourth iteration.
 
 Iterative deepening search may seem wasteful because states are generated multiple times. It turns out this is not too costly. The reason is that in a search tree with the same (or nearly the same) branching factor at each level, most of the nodes are in the bottom level, so it does not matter much that the upper levels are generated multiple times. In an iterative deepening search, the nodes on the bottom level (depth d) are generated once, those on the  
 
-Section 3.4. Uninformed Search Strategies 89
 
-**function** ITERATIVE-DEEPENING-SEARCH(problem) **returns** a solution, or failure **for** depth = 0 **to**∞ **do**
-
-result←DEPTH-LIMITED-SEARCH(problem ,depth) **if** result = cutoff **then return** result
+**function** ITERATIVE-DEEPENING-SEARCH(problem) **returns** a solution, or failure 
+**for** depth = 0 **to**∞ **do**
+result←DEPTH-LIMITED-SEARCH(problem ,depth) 
+**if** result ≠ cutoff **then return** result
 
 **Figure 3.18** The iterative deepening search algorithm, which repeatedly applies depthlimited search with increasing limits. It terminates when a solution is found or if the depthlimited search returns failure , meaning that no solution exists.
 
-Limit = 3
-
-Limit = 2
-
-Limit = 1
-
-Limit = 0 A A
-
-A
-
-B C
-
-A
-
-B C
-
-A
-
-B C
-
-A
-
-B C
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-A
-
-B C
-
-D E F G
-
-H J K L M N OI
-
-A
-
-B C
-
-D E F G
-
-H I J K L M N O
-
-**Figure 3.19** Four iterations of iterative deepening search on a binary tree.  
-
-
+![Alt text](3image/figure-3.19.png)
 
 next-to-bottom level are generated twice, and so on, up to the children of the root, which are generated d times. So the total number of nodes generated in the worst case is
 
-N(IDS) = (d)b + (d− 1)b 2 + · · ·+ (1)b
-
-d ,
+N(IDS) = (d)b + (d− 1)b^2^ + · · ·+ (1)b^d^ ,
 
 which gives a time complexity of O(bd)—asymptotically the same as breadth-first search. There is some extra cost for generating the upper levels multiple times, but it is not large. For example, if b = 10 and d = 5, the numbers are
 
@@ -1195,163 +491,56 @@ N(BFS) = 10 + 100 + 1, 000 + 10, 000 + 100, 000 = 111, 110 .
 
 If you are really concerned about repeating the repetition, you can use a hybrid approach that runs breadth-first search until almost all the available memory is consumed, and then runs iterative deepening from all the nodes in the frontier. _In general, iterative deepening is the preferred uninformed search method when the search space is large and the depth of the solution is not known._
 
-Iterative deepening search is analogous to breadth-first search in that it explores a complete layer of new nodes at each iteration before going on to the next layer. It would seem worthwhile to develop an iterative analog to uniform-cost search, inheriting the latter algorithm’s optimality guarantees while avoiding its memory requirements. The idea is to use increasing path-cost limits instead of increasing depth limits. The resulting algorithm, called **iterative lengthening search**, is explored in Exercise 3.17. It turns out, unfortunately, that
+Iterative deepening search is analogous to breadth-first search in that it explores a complete layer of new nodes at each iteration before going on to the next layer. It would seem worthwhile to develop an iterative analog to uniform-cost search, inheriting the latter algorithm’s optimality guarantees while avoiding its memory requirements. The idea is to use increasing path-cost limits instead of increasing depth limits. The resulting algorithm, called **iterative lengthening search**, is explored in Exercise 3.17. It turns out, unfortunately, that iterative lengthening incurs substantial overhead compared to uniform-cost search.
 
-ITERATIVE LENGTHENING SEARCH
+### Bidirectional search
 
-iterative lengthening incurs substantial overhead compared to uniform-cost search.
-
-**3.4.6 Bidirectional search**
-
-The idea behind bidirectional search is to run two simultaneous searches—one forward from the initial state and the other backward from the goal—hoping that the two searches meet in the middle (Figure 3.20). The motivation is that b
-
-d/2 + b d/2 is much less than b
-
-d, or in the figure, the area of the two small circles is less than the area of one big circle centered on the start and reaching to the goal.
+The idea behind bidirectional search is to run two simultaneous searches—one forward from the initial state and the other backward from the goal—hoping that the two searches meet in the middle (Figure 3.20). The motivation is that b^d/2^+ b^d/2^is much less than b^d^, or in the figure, the area of the two small circles is less than the area of one big circle centered on the start and reaching to the goal.
 
 Bidirectional search is implemented by replacing the goal test with a check to see whether the frontiers of the two searches intersect; if they do, a solution has been found. (It is important to realize that the first such solution found may not be optimal, even if the two searches are both breadth-first; some additional search is required to make sure there isn’t another short-cut across the gap.) The check can be done when each node is generated or selected for expansion and, with a hash table, will take constant time. For example, if a problem has solution depth d= 6, and each direction runs breadth-first search one node at a time, then in the worst case the two searches meet when they have generated all of the nodes at depth 3. For b= 10, this means a total of 2,220 node generations, compared with 1,111,110 for a standard breadth-first search. Thus, the time complexity of bidirectional search using breadth-first searches in both directions is O(bd/2). The space complexity is also O(bd/2). We can reduce this by roughly half if one of the two searches is done by iterative deepening, but at least one of the frontiers must be kept in memory so that the intersection check can be done. This space requirement is the most significant weakness of bidirectional search.  
 
-Section 3.4. Uninformed Search Strategies 91
+![Alt text](3image/figure-3.20.png)
 
-**GoalStart**
-
-**Figure 3.20** A schematic view of a bidirectional search that is about to succeed when a branch from the start node meets a branch from the goal node.
-
-The reduction in time complexity makes bidirectional search attractive, but how do we search backward? This is not as easy as it sounds. Let the **predecessors** of a state x be allPREDECESSOR
-
-those states that have x as a successor. Bidirectional search requires a method for computing predecessors. When all the actions in the state space are reversible, the predecessors of x are just its successors. Other cases may require substantial ingenuity.
+The reduction in time complexity makes bidirectional search attractive, but how do we search backward? This is not as easy as it sounds. Let the **predecessors** of a state x be all those states that have x as a successor. Bidirectional search requires a method for computing predecessors. When all the actions in the state space are reversible, the predecessors of x are just its successors. Other cases may require substantial ingenuity.
 
 Consider the question of what we mean by “the goal” in searching “backward from the goal.” For the 8-puzzle and for finding a route in Romania, there is just one goal state, so the backward search is very much like the forward search. If there are several _explicitly listed_ goal states—for example, the two dirt-free goal states in Figure 3.3—then we can construct a new dummy goal state whose immediate predecessors are all the actual goal states. But if the goal is an abstract description, such as the goal that “no queen attacks another queen” in the n-queens problem, then bidirectional search is difficult to use.
 
-**3.4.7 Comparing uninformed search strategies**
+### Comparing uninformed search strategies
 
 Figure 3.21 compares search strategies in terms of the four evaluation criteria set forth in Section 3.3.2. This comparison is for tree-search versions. For graph searches, the main differences are that depth-first search is complete for finite state spaces and that the space and time complexities are bounded by the size of the state space.
 
-Criterion BreadthUniformDepthDepthIterative Bidirectional
+![Alt text](3image/figure-3.21.png)
 
-First Cost First Limited Deepening (if applicable)
+## INFORMED (HEURISTIC) SEARCH STRATEGIES
 
-Complete? Yesa Yesa,b No No Yesa Yesa,d
+This section shows how an **informed search** strategy—one that uses problem-specific knowledge beyond the definition of the problem itself—can find solutions more efficiently than can an uninformed strategy.
 
-Time O(bd) O(b1+C∗/ε) O(bm) O(b) O(bd) O(bd/2)
+The general approach we consider is called **best-first search**. Best-first search is an instance of the general TREE-SEARCH or GRAPH-SEARCH algorithm in which a node is selected for expansion based on an **evaluation function**, f(n). The evaluation function is construed as a cost estimate, so the node with the _lowest_ evaluation is expanded first. The implementation of best-first graph search is identical to that for uniform-cost search (Figure 3.14), except for the use of f instead of g to order the priority queue.
 
-Space O(bd) O(b1+C∗/ε) O(bm) O(b) O(bd) O(bd/2)
-
-Optimal? Yesc Yes No No Yesc Yesc,d
-
-**Figure 3.21** Evaluation of tree-search strategies. b is the branching factor; d is the depth of the shallowest solution; m is the maximum depth of the search tree; l is the depth limit. Superscript caveats are as follows: a complete if b is finite; b complete if step costs ≥ ε for positive ε; c optimal if step costs are all identical; d if both directions use breadth-first search.  
-
-
-
-3.5 INFORMED (HEURISTIC) SEARCH STRATEGIES
-
-This section shows how an **informed search** strategy—one that uses problem-specific knowl-INFORMED SEARCH
-
-edge beyond the definition of the problem itself—can find solutions more efficiently than can an uninformed strategy.
-
-The general approach we consider is called **best-first search**. Best-first search is anBEST-FIRST SEARCH
-
-instance of the general TREE-SEARCH or GRAPH-SEARCH algorithm in which a node is selected for expansion based on an **evaluation function**, f(n). The evaluation function isEVALUATION
-
-FUNCTION
-
-construed as a cost estimate, so the node with the _lowest_ evaluation is expanded first. The implementation of best-first graph search is identical to that for uniform-cost search (Figure 3.14), except for the use of f instead of g to order the priority queue.
-
-The choice of f determines the search strategy. (For example, as Exercise 3.21 shows, best-first tree search includes depth-first search as a special case.) Most best-first algorithms include as a component of f a **heuristic function**, denoted h(n):HEURISTIC
-
-FUNCTION
-
-h(n) = estimated cost of the cheapest path from the state at node _n_ to a goal state.
-
-(Notice that h(n) takes a _node_ as input, but, unlike g(n), it depends only on the _state_ at that node.) For example, in Romania, one might estimate the cost of the cheapest path from Arad to Bucharest via the straight-line distance from Arad to Bucharest.
+The choice of f determines the search strategy. (For example, as Exercise 3.21 shows, best-first tree search includes depth-first search as a special case.) Most best-first algorithms include as a component of f a **heuristic function**, denoted h(n):
+h(n) = estimated cost of the cheapest path from the state at node _n_ to a goal state.(Notice that h(n) takes a _node_ as input, but, unlike g(n), it depends only on the _state_ at that node.) For example, in Romania, one might estimate the cost of the cheapest path from Arad to Bucharest via the straight-line distance from Arad to Bucharest.
 
 Heuristic functions are the most common form in which additional knowledge of the problem is imparted to the search algorithm. We study heuristics in more depth in Section 3.6. For now, we consider them to be arbitrary, nonnegative, problem-specific functions, with one constraint: if n is a goal node, then h(n)= 0. The remainder of this section covers two ways to use heuristic information to guide search.
 
-**3.5.1 Greedy best-first search**
+### Greedy best-first search
 
-**Greedy best-first search**8 tries to expand the node that is closest to the goal, on the groundsGREEDY BEST-FIRST SEARCH
+**Greedy best-first search**8 tries to expand the node that is closest to the goal, on the grounds that this is likely to lead to a solution quickly. Thus, it evaluates nodes by using just the heuristic function; that is, f(n) = h(n).
 
-that this is likely to lead to a solution quickly. Thus, it evaluates nodes by using just the heuristic function; that is, f(n) = h(n).
-
-Let us see how this works for route-finding problems in Romania; we use the **straightline distance** heuristic, which we will call hSLD . If the goal is Bucharest, we need toSTRAIGHT-LINE
-
-DISTANCE
-
-know the straight-line distances to Bucharest, which are shown in Figure 3.22. For example, hSLD(In(Arad))= 366. Notice that the values of hSLD cannot be computed from the problem description itself. Moreover, it takes a certain amount of experience to know that hSLD is correlated with actual road distances and is, therefore, a useful heuristic.
+Let us see how this works for route-finding problems in Romania; we use the **straightline distance** heuristic, which we will call hSLD . If the goal is Bucharest, we need to know the straight-line distances to Bucharest, which are shown in Figure 3.22. For example, hSLD(In(Arad))= 366. Notice that the values of hSLD cannot be computed from the problem description itself. Moreover, it takes a certain amount of experience to know that hSLD is correlated with actual road distances and is, therefore, a useful heuristic.
 
 Figure 3.23 shows the progress of a greedy best-first search using hSLD to find a path from Arad to Bucharest. The first node to be expanded from Arad will be Sibiu because it is closer to Bucharest than either Zerind or Timisoara. The next node to be expanded will be Fagaras because it is closest. Fagaras in turn generates Bucharest, which is the goal. For this particular problem, greedy best-first search using hSLD finds a solution without ever
 
 8 Our first edition called this **greedy search**; other authors have called it **best-first search**. Our more general usage of the latter term follows Pearl (1984).  
 
-Section 3.5. Informed (Heuristic) Search Strategies 93
-
-**Urziceni**
-
-**Neamt Oradea**
-
-**Zerind**
-
-**Timisoara**
-
-**Mehadia**
-
-**Sibiu**
-
-**Pitesti Rimnicu Vilcea**
-
-**Vaslui**
-
-**Bucharest**
-
-**Giurgiu Hirsova**
-
-**Eforie**
-
-**Arad**
-
-**Lugoj**
-
-**Drobeta Craiova**
-
-**Fagaras**
-
-**Iasi**
-
-0 160 242 161
-
-77 151
-
-366
-
-244 226
-
-176
-
-241
-
-253 329 80
-
-199
-
-380 234
-
-374
-
-100 193
-
-**Figure 3.22** Values of hSLD—straight-line distances to Bucharest.
+![Alt text](3image/figure-3.22.png)
 
 expanding a node that is not on the solution path; hence, its search cost is minimal. It is not optimal, however: the path via Sibiu and Fagaras to Bucharest is 32 kilometers longer than the path through Rimnicu Vilcea and Pitesti. This shows why the algorithm is called “greedy”—at each step it tries to get as close to the goal as it can.
 
 Greedy best-first tree search is also incomplete even in a finite state space, much like depth-first search. Consider the problem of getting from Iasi to Fagaras. The heuristic suggests that Neamt be expanded first because it is closest to Fagaras, but it is a dead end. The solution is to go first to Vaslui—a step that is actually farther from the goal according to the heuristic—and then to continue to Urziceni, Bucharest, and Fagaras. The algorithm will never find this solution, however, because expanding Neamt puts Iasi back into the frontier, Iasi is closer to Fagaras than Vaslui is, and so Iasi will be expanded again, leading to an infinite loop. (The graph search version _is_ complete in finite spaces, but not in infinite ones.) The worst-case time and space complexity for the tree version is O(bm), where m is the maximum depth of the search space. With a good heuristic function, however, the complexity can be reduced substantially. The amount of the reduction depends on the particular problem and on the quality of the heuristic.
 
-**3.5.2 A\* search: Minimizing the total estimated solution cost**
+### A\* search: Minimizing the total estimated solution cost
 
-The most widely known form of best-first search is called **A**∗ **search** (pronounced “A-starA ∗
-
-SEARCH
-
-search”). It evaluates nodes by combining g(n), the cost to reach the node, and h(n), the cost to get from the node to the goal:
+The most widely known form of best-first search is called **A**∗ **search** (pronounced “A-starA search”). It evaluates nodes by combining g(n), the cost to reach the node, and h(n), the cost to get from the node to the goal:
 
 f(n) = g(n) + h(n) .
 
@@ -1361,541 +550,83 @@ f(n) = estimated cost of the cheapest solution through n .
 
 Thus, if we are trying to find the cheapest solution, a reasonable thing to try first is the node with the lowest value of g(n) + h(n). It turns out that this strategy is more than just reasonable: provided that the heuristic function h(n) satisfies certain conditions, A∗ search is both complete and optimal. The algorithm is identical to UNIFORM-COST-SEARCH except that A∗ uses g + h instead of g.  
 
-
-
-Rimnicu Vilcea
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad Fagaras Oradea
-
-Timisoara
-
-Sibiu Bucharest
-
-329 374
-
-366 380 193
-
-253 0
-
-Rimnicu Vilcea
-
-Arad
-
-Sibiu
-
-Arad Fagaras Oradea
-
-Timisoara
-
-329
-
-Zerind
-
-374
-
-366 176 380 193
-
-Zerind
-
-Arad
-
-Sibiu Timisoara
-
-253 329 374
-
-Arad
-
-366
-
-**(a) The initial state**
-
-**(b) After expanding Arad**
-
-**(c) After expanding Sibiu**
-
-**(d) After expanding Fagaras**
-
-**Figure 3.23** Stages in a greedy best-first tree search for Bucharest with the straight-line distance heuristic hSLD . Nodes are labeled with their h-values.
+![Alt text](3image/figure-3.23.png)
 
 **Conditions for optimality: Admissibility and consistency**
 
-The first condition we require for optimality is that h(n) be an **admissible heuristic**. AnADMISSIBLE HEURISTIC
+The first condition we require for optimality is that h(n) be an **admissible heuristic**. An admissible heuristic is one that _never overestimates_ the cost to reach the goal. Because g(n) is the actual cost to reach n along the current path, and f(n)= g(n) + h(n), we have as an immediate consequence that f(n) never overestimates the true cost of a solution along the current path through n.
 
-admissible heuristic is one that _never overestimates_ the cost to reach the goal. Because g(n)
+Admissible heuristics are by nature optimistic because they think the cost of solving the problem is less than it actually is. An obvious example of an admissible heuristic is the straight-line distance hSLD that we used in getting to Bucharest. Straight-line distance is admissible because the shortest path between any two points is a straight line, so the straight line cannot be an overestimate. In Figure 3.24, we show the progress of an A∗ tree search for Bucharest. The values of g are computed from the step costs in Figure 3.2, and the values of hSLD are given in Figure 3.22. Notice in particular that Bucharest first appears on the frontier at step (e), but it is not selected for expansion because its f -cost (450) is higher than that of Pitesti (417). Another way to say this is that there _might_ be a solution through Pitesti whose cost is as low as 417, so the algorithm will not settle for a solution that costs 450.
 
-is the actual cost to reach n along the current path, and f(n)= g(n) + h(n), we have as an immediate consequence that f(n) never overestimates the true cost of a solution along the current path through n.
+A second, slightly stronger condition called **consistency** (or sometimes **monotonicity**)is required only for applications of A∗ to graph search.9 A heuristic h(n) is consistent if, for every node n and every successor n′ of n generated by any action a, the estimated cost of reaching the goal from n is no greater than the step cost of getting to n′ plus the estimated cost of reaching the goal from n′:
 
-Admissible heuristics are by nature optimistic because they think the cost of solving the problem is less than it actually is. An obvious example of an admissible heuristic is the straight-line distance hSLD that we used in getting to Bucharest. Straight-line distance is admissible because the shortest path between any two points is a straight line, so the straight  
+h(n) ≤ c(n, a, n ′) + h(n ′) .
 
-Section 3.5. Informed (Heuristic) Search Strategies 95
+This is a form of the general **triangle inequality**, which stipulates that each side of a triangle cannot be longer than the sum of the other two sides. Here, the triangle is formed by n, n ′,and the goal G~n~ closest to n. For an admissible heuristic, the inequality makes perfect sense: if there were a route from n toG~n~via n′ that was cheaper than h(n), that would violate the property that h(n) is a lower bound on the cost to reach G~n~.
 
-line cannot be an overestimate. In Figure 3.24, we show the progress of an A∗ tree search for Bucharest. The values of g are computed from the step costs in Figure 3.2, and the values of hSLD are given in Figure 3.22. Notice in particular that Bucharest first appears on the frontier at step (e), but it is not selected for expansion because its f -cost (450) is higher than that of Pitesti (417). Another way to say this is that there _might_ be a solution through Pitesti whose cost is as low as 417, so the algorithm will not settle for a solution that costs 450.
-
-A second, slightly stronger condition called **consistency** (or sometimes **monotonicity**)CONSISTENCY
-
-MONOTONICITY is required only for applications of A∗ to graph search.9 A heuristic h(n) is consistent if, for every node n and every successor n
-
-′ of n generated by any action a, the estimated cost of reaching the goal from n is no greater than the step cost of getting to n
-
-′ plus the estimated cost of reaching the goal from n
-
-′:
-
-h(n) ≤ c(n, a, n ′
-
-) + h(n ′
-
-) .
-
-This is a form of the general **triangle inequality**, which stipulates that each side of a triangleTRIANGLE INEQUALITY
-
-cannot be longer than the sum of the other two sides. Here, the triangle is formed by n, n ′,
-
-and the goal Gn closest to n. For an admissible heuristic, the inequality makes perfect sense: if there were a route from n to Gn via n
-
-′ that was cheaper than h(n), that would violate the property that h(n) is a lower bound on the cost to reach Gn.
-
-It is fairly easy to show (Exercise 3.29) that every consistent heuristic is also admissible. Consistency is therefore a stricter requirement than admissibility, but one has to work quite hard to concoct heuristics that are admissible but not consistent. All the admissible heuristics we discuss in this chapter are also consistent. Consider, for example, hSLD . We know that the general triangle inequality is satisfied when each side is measured by the straight-line distance and that the straight-line distance between n and n
-
-′ is no greater than c(n, a, n ′).
-
-Hence, hSLD is a consistent heuristic.
+It is fairly easy to show (Exercise 3.29) that every consistent heuristic is also admissible. Consistency is therefore a stricter requirement than admissibility, but one has to work quite hard to concoct heuristics that are admissible but not consistent. All the admissible heuristics we discuss in this chapter are also consistent. Consider, for example, hSLD . We know that the general triangle inequality is satisfied when each side is measured by the straight-line distance and that the straight-line distance between n and n′ is no greater than c(n, a, n ′).Hence, hSLD is a consistent heuristic.
 
 **Optimality of A\***
 
-As we mentioned earlier, A∗ has the following properties: _the tree-search version of_ A ∗ _is_
+As we mentioned earlier, A∗ has the following properties: _the tree-search version of_ A ∗ _is_ _optimal if_ h(n) _is admissible, while the graph-search version is optimal if_ h(n) _is consistent._ 
+We show the second of these two claims since it is more useful. The argument essentially mirrors the argument for the optimality of uniform-cost search, with g replaced by f—just as in the A∗ algorithm itself.
 
-_optimal if_ h(n) _is admissible, while the graph-search version is optimal if_ h(n) _is consistent._ We show the second of these two claims since it is more useful. The argument es-
+The first step is to establish the following: _if_ h(n) _is consistent, then the values of_ f(n) _along any path are nondecreasing._ The proof follows directly from the definition of consistency. Suppose n ′ is a successor of n; then g(n′)= g(n) + c(n, a, n ′) for some action a, and we have
 
-sentially mirrors the argument for the optimality of uniform-cost search, with g replaced by f—just as in the A∗ algorithm itself.
+f(n ′) = g(n ′) + h(n ′) = g(n) + c(n, a, n ′) + h(n ′) ≥ g(n) + h(n) = f(n) .
 
-The first step is to establish the following: _if_ h(n) _is consistent, then the values of_ f(n) _along any path are nondecreasing._ The proof follows directly from the definition of consistency. Suppose n
-
-′ is a successor of n; then g(n′)= g(n) + c(n, a, n ′) for some action
-
-a, and we have
-
-f(n ′
-
-) = g(n ′
-
-) + h(n ′
-
-) = g(n) + c(n, a, n ′
-
-) + h(n ′
-
-) ≥ g(n) + h(n) = f(n) .
-
-The next step is to prove that _whenever_ A ∗ _selects a node_ n _for expansion, the optimal path_
-
-_to that node has been found._ Were this not the case, there would have to be another frontier node n
-
-′ on the optimal path from the start node to n, by the graph separation property of
+The next step is to prove that _whenever_ A ∗ _selects a node_ n _for expansion, the optimal path_ _to that node has been found._ Were this not the case, there would have to be another frontier node n′ on the optimal path from the start node to n, by the graph separation property of
 
 9 With an admissible but inconsistent heuristic, A∗ requires some extra bookkeeping to ensure optimality.  
 
+![Alt text](3image/figure-3.24a.png)
+![Alt text](3image/figure-3.24b.png)
 
+![Alt text](3image/figure-3.25.png)
 
-**(a) The initial state**
+Figure 3.9; because f is nondecreasing along any path, n ′ would have lower f -cost than n and would have been selected first. 
 
-**(b) After expanding Arad**
+From the two preceding observations, it follows that the sequence of nodes expanded by A∗ using GRAPH-SEARCH is in nondecreasing order of f(n). Hence, the first goal node selected for expansion must be an optimal solution because f is the true cost for goal nodes (which have h= 0) and all later goal nodes will be at least as expensive.
 
-**(c) After expanding Sibiu**
+The fact that f -costs are nondecreasing along any path also means that we can draw **contours** in the state space, just like the contours in a topographic map. Figure 3.25 shows an example. Inside the contour labeled 400, all nodes have f(n) less than or equal to 400, and so on. Then, because A∗ expands the frontier node of lowest f -cost, we can see that an A∗ search fans out from the start node, adding nodes in concentric bands of increasing f -cost.
 
-Arad
-
-Sibiu Timisoara
-
-447=118+329
-
-Zerind
-
-449=75+374393=140+253
-
-Arad
-
-366=0+366
-
-**(d) After expanding Rimnicu Vilcea**
-
-**(e) After expanding Fagaras**
-
-**(f) After expanding Pitesti**
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad
-
-Timisoara
-
-Rimnicu VilceaFagaras Oradea
-
-447=118+329 449=75+374
-
-646=280+366 413=220+193415=239+176 671=291+380
-
-Zerind
-
-Arad
-
-Sibiu Timisoara
-
-447=118+329 449=75+374
-
-Rimnicu Vilcea
-
-Craiova Pitesti Sibiu
-
-526=366+160 553=300+253417=317+100
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad
-
-Timisoara
-
-Sibiu Bucharest
-
-Fagaras Oradea
-
-Craiova Pitesti Sibiu
-
-447=118+329 449=75+374
-
-646=280+366
-
-591=338+253 450=450+0 526=366+160 553=300+253417=317+100
-
-671=291+380
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad
-
-Timisoara
-
-Sibiu Bucharest
-
-Oradea
-
-Craiova Pitesti Sibiu
-
-Bucharest Craiova Rimnicu Vilcea
-
-418=418+0
-
-447=118+329 449=75+374
-
-646=280+366
-
-591=338+253 450=450+0 526=366+160 553=300+253
-
-615=455+160 607=414+193
-
-671=291+380
-
-Rimnicu Vilcea
-
-Fagaras Rimnicu Vilcea
-
-Arad Fagaras Oradea
-
-646=280+366 415=239+176 671=291+380
-
-**Figure 3.24** Stages in an A∗ search for Bucharest. Nodes are labeled with f = g +h. The h values are the straight-line distances to Bucharest taken from Figure 3.22.  
-
-Section 3.5. Informed (Heuristic) Search Strategies 97
-
-O
-
-Z
-
-A
-
-T
-
-L
-
-M
-
-D C
-
-R
-
-F
-
-P
-
-G
-
-B U
-
-H
-
-E
-
-V
-
-I
-
-N
-
-**380**
-
-**400**
-
-**420**
-
-S
-
-**Figure 3.25** Map of Romania showing contours at f = 380, f = 400, and f = 420, with Arad as the start state. Nodes inside a given contour have f -costs less than or equal to the contour value.
-
-Figure 3.9; because f is nondecreasing along any path, n ′ would have lower f -cost than n
-
-and would have been selected first. From the two preceding observations, it follows that the sequence of nodes expanded
-
-by A∗ using GRAPH-SEARCH is in nondecreasing order of f(n). Hence, the first goal node selected for expansion must be an optimal solution because f is the true cost for goal nodes (which have h= 0) and all later goal nodes will be at least as expensive.
-
-The fact that f -costs are nondecreasing along any path also means that we can draw **contours** in the state space, just like the contours in a topographic map. Figure 3.25 showsCONTOUR
-
-an example. Inside the contour labeled 400, all nodes have f(n) less than or equal to 400, and so on. Then, because A∗ expands the frontier node of lowest f -cost, we can see that an A∗ search fans out from the start node, adding nodes in concentric bands of increasing f -cost.
-
-With uniform-cost search (A∗ search using h(n) = 0), the bands will be “circular” around the start state. With more accurate heuristics, the bands will stretch toward the goal state and become more narrowly focused around the optimal path. If C
-
-∗ is the cost of the optimal solution path, then we can say the following:
+With uniform-cost search (A∗ search using h(n) = 0), the bands will be “circular” around the start state. With more accurate heuristics, the bands will stretch toward the goal state and become more narrowly focused around the optimal path. If C∗ is the cost of the optimal solution path, then we can say the following:
 
 - A∗ expands all nodes with f(n) < C ∗.
 
-- A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C ∗)
+- A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C ∗) before selecting a goal node.
 
-before selecting a goal node.
+Completeness requires that there be only finitely many nodes with cost less than or equal to C∗, a condition that is true if all step costs exceed some finite ε and if b is finite. 
 
-Completeness requires that there be only finitely many nodes with cost less than or equal to C
+Notice that A∗ expands no nodes with f(n) > C∗—for example, Timisoara is not expanded in Figure 3.24 even though it is a child of the root. We say that the subtree below Timisoara is **pruned**; because hSLD is admissible, the algorithm can safely ignore this subtree while still guaranteeing optimality. The concept of pruning—eliminating possibilities from consideration without having to examine them—is important for many areas of AI.
 
-∗, a condition that is true if all step costs exceed some finite ε and if b is finite. Notice that A∗ expands no nodes with f(n) > C
+One final observation is that among optimal algorithms of this type—algorithms that extend search paths from the root and use the same heuristic information—A∗ is **optimally efficient** for any given consistent heuristic. That is, no other optimal algorithm is guaranteed to expand fewer nodes than A∗ (except possibly through tie-breaking among nodes with f(n)= C∗). This is because any algorithm that _does not_ expand all nodes with f(n) < C ∗runs the risk of missing the optimal solution. 
 
-∗—for example, Timisoara is not expanded in Figure 3.24 even though it is a child of the root. We say that the subtree below  
+That A∗ search is complete, optimal, and optimally efficient among all such algorithmsis rather satisfying. Unfortunately, it does not mean that A∗ is the answer to all our searching needs. The catch is that, for most problems, the number of states within the goal contour search space is still exponential in the length of the solution. The details of the analysis are beyond the scope of this book, but the basic results are as follows. For problems with constant step costs, the growth in run time as a function of the optimal solution depth d is analyzed in terms of the the **absolute error** or the **relative error** of the heuristic. The absolute error is  defined as Δ ≡ h ∗ − h, where h^∗^ is the actual cost of getting from the root to the goal, and the relative error is defined as ε ≡ (h^∗^ − h)/h^∗^.
 
+The complexity results depend very strongly on the assumptions made about the state space. The simplest model studied is a state space that has a single goal and is essentially a tree with reversible actions. (The 8-puzzle satisfies the first and third of these assumptions.) In this case, the time complexity of A∗ is exponential in the maximum absolute error, that is, O(b^Δ^). For constant step costs, we can write this as O(b^εd^), where d is the solution depth. For almost all heuristics in practical use, the absolute error is at least proportional to the path cost h^∗^, so ε is constant or growing and the time complexity is exponential in d. We can also see the effect of a more accurate heuristic: O(b^εd^)= O((b^ε^)^d^), so the effective branching factor (defined more formally in the next section) is b^ε^. 
 
-
-Timisoara is **pruned**; because hSLD is admissible, the algorithm can safely ignore this subtreePRUNING
-
-while still guaranteeing optimality. The concept of pruning—eliminating possibilities from consideration without having to examine them—is important for many areas of AI.
-
-One final observation is that among optimal algorithms of this type—algorithms that extend search paths from the root and use the same heuristic information—A∗ is **optimally efficient** for any given consistent heuristic. That is, no other optimal algorithm is guaran-OPTIMALLY
-
-EFFICIENT
-
-teed to expand fewer nodes than A∗ (except possibly through tie-breaking among nodes with f(n)= C
-
-∗). This is because any algorithm that _does not_ expand all nodes with f(n) < C ∗
-
-runs the risk of missing the optimal solution. That A∗ search is complete, optimal, and optimally efficient among all such algorithms
-
-is rather satisfying. Unfortunately, it does not mean that A∗ is the answer to all our searching needs. The catch is that, for most problems, the number of states within the goal contour search space is still exponential in the length of the solution. The details of the analysis are beyond the scope of this book, but the basic results are as follows. For problems with constant step costs, the growth in run time as a function of the optimal solution depth d is analyzed in terms of the the **absolute error** or the **relative error** of the heuristic. The absolute error isABSOLUTE ERROR
-
-RELATIVE ERROR defined as Δ ≡ h ∗ − h, where h
-
-∗ is the actual cost of getting from the root to the goal, and the relative error is defined as ε ≡ (h∗ − h)/h∗.
-
-The complexity results depend very strongly on the assumptions made about the state space. The simplest model studied is a state space that has a single goal and is essentially a tree with reversible actions. (The 8-puzzle satisfies the first and third of these assumptions.) In this case, the time complexity of A∗ is exponential in the maximum absolute error, that is, O(bΔ). For constant step costs, we can write this as O(bεd), where d is the solution depth. For almost all heuristics in practical use, the absolute error is at least proportional to the path cost h
-
-∗, so ε is constant or growing and the time complexity is exponential in d. We can also see the effect of a more accurate heuristic: O(bεd)= O((bε)d), so the effective branching factor (defined more formally in the next section) is b
-
-ε. When the state space has many goal states—particularly _near-optimal_ goal states—the
-
-search process can be led astray from the optimal path and there is an extra cost proportional to the number of goals whose cost is within a factor ε of the optimal cost. Finally, in the general case of a graph, the situation is even worse. There can be exponentially many states with f(n) < C
-
-∗ even if the absolute error is bounded by a constant. For example, consider a version of the vacuum world where the agent can clean up any square for unit cost without even having to visit it: in that case, squares can be cleaned in any order. With N initially dirty squares, there are 2N states where some subset has been cleaned and all of them are on an optimal solution path—and hence satisfy f(n) < C
-
-∗—even if the heuristic has an error of 1. The complexity of A∗ often makes it impractical to insist on finding an optimal solution.
+When the state space has many goal states—particularly _near-optimal_ goal states—the search process can be led astray from the optimal path and there is an extra cost proportional to the number of goals whose cost is within a factor ε of the optimal cost. Finally, in the general case of a graph, the situation is even worse. There can be exponentially many states with f(n) < C∗ even if the absolute error is bounded by a constant. For example, consider a version of the vacuum world where the agent can clean up any square for unit cost without even having to visit it: in that case, squares can be cleaned in any order. With N initially dirty squares, there are 2N states where some subset has been cleaned and all of them are on an optimal solution path—and hence satisfy f(n) < C∗—even if the heuristic has an error of 1. The complexity of A∗ often makes it impractical to insist on finding an optimal solution.
 
 One can use variants of A∗ that find suboptimal solutions quickly, or one can sometimes design heuristics that are more accurate but not strictly admissible. In any case, the use of a good heuristic still provides enormous savings compared to the use of an uninformed search. In Section 3.6, we look at the question of designing good heuristics.
 
 Computation time is not, however, A∗’s main drawback. Because it keeps all generated nodes in memory (as do all GRAPH-SEARCH algorithms), A∗ usually runs out of space long  
 
-Section 3.5. Informed (Heuristic) Search Strategies 99
-
-**function** RECURSIVE-BEST-FIRST-SEARCH(problem) **returns** a solution, or failure **return** RBFS(problem , MAKE-NODE(problem .INITIAL-STATE),∞)
-
-**function** RBFS(problem ,node , f limit ) **returns** a solution, or failure and a new f -cost limit **if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) successors← \[ \] **for each** action **in** problem .ACTIONS(node.STATE) **do**
-
-add CHILD-NODE(problem ,node ,action) into successors
-
-**if** successors is empty **then return** failure ,∞ **for each** s **in** successors **do** /\* update f with value from previous search, if any \*/
-
-s .f ←max(s .g + s .h, node.f )) **loop do**
-
-best← the lowest f -value node in successors
-
-**if** best .f > f limit **then return** failure , best .f alternative← the second-lowest f -value among successors
-
-result , best .f ←RBFS(problem , best , min( f limit , alternative)) **if** result = failure **then return** result
-
-**Figure 3.26** The algorithm for recursive best-first search.
+![Alt text](3image/figure-3.26.png)
 
 before it runs out of time. For this reason, A∗ is not practical for many large-scale problems. There are, however, algorithms that overcome the space problem without sacrificing optimality or completeness, at a small cost in execution time. We discuss these next.
 
-**3.5.3 Memory-bounded heuristic search**
+### Memory-bounded heuristic search
 
-The simplest way to reduce memory requirements for A∗ is to adapt the idea of iterative deepening to the heuristic search context, resulting in the **iterative-deepening A**∗ (IDA∗) al-
+The simplest way to reduce memory requirements for A∗ is to adapt the idea of iterative deepening to the heuristic search context, resulting in the **iterative-deepening A**∗ (IDA∗) algorithm. The main difference between IDA∗ and standard iterative deepening is that the cutoff used is the f -cost (g +h) rather than the depth; at each iteration, the cutoff value is the smallest f -cost of any node that exceeded the cutoff on the previous iteration. IDA∗ is practical for many problems with unit step costs and avoids the substantial overhead associated with keeping a sorted queue of nodes. Unfortunately, it suffers from the same difficulties with realvalued costs as does the iterative version of uniform-cost search described in Exercise 3.17. This section briefly examines two other memory-bounded algorithms, called RBFS and MA∗.
 
-ITERATIVEDEEPENING A ∗
+**Recursive best-first search** (RBFS) is a simple recursive algorithm that attempts tomimic the operation of standard best-first search, but using only linear space. The algorithm is shown in Figure 3.26. Its structure is similar to that of a recursive depth-first search, but rather than continuing indefinitely down the current path, it uses the f limit variable to keep track of the f -value of the best _alternative_ path available from any ancestor of the current node. If the current node exceeds this limit, the recursion unwinds back to the alternative path. As the recursion unwinds, RBFS replaces the f -value of each node along the path with a **backed-up value**—the best f -value of its children. In this way, RBFS remembers the f -value of the best leaf in the forgotten subtree and can therefore decide whether it’s worth  
 
-gorithm. The main difference between IDA∗ and standard iterative deepening is that the cutoff used is the f -cost (g +h) rather than the depth; at each iteration, the cutoff value is the smallest f -cost of any node that exceeded the cutoff on the previous iteration. IDA∗ is practical for many problems with unit step costs and avoids the substantial overhead associated with keeping a sorted queue of nodes. Unfortunately, it suffers from the same difficulties with realvalued costs as does the iterative version of uniform-cost search described in Exercise 3.17. This section briefly examines two other memory-bounded algorithms, called RBFS and MA∗.
-
-**Recursive best-first search** (RBFS) is a simple recursive algorithm that attempts toRECURSIVE BEST-FIRST SEARCH
-
-mimic the operation of standard best-first search, but using only linear space. The algorithm is shown in Figure 3.26. Its structure is similar to that of a recursive depth-first search, but rather than continuing indefinitely down the current path, it uses the f limit variable to keep track of the f -value of the best _alternative_ path available from any ancestor of the current node. If the current node exceeds this limit, the recursion unwinds back to the alternative path. As the recursion unwinds, RBFS replaces the f -value of each node along the path with a **backed-up value**—the best f -value of its children. In this way, RBFS remembers theBACKED-UP VALUE
-
-f -value of the best leaf in the forgotten subtree and can therefore decide whether it’s worth  
-
-
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad Fagaras Oradea
-
-Craiova Sibiu
-
-Bucharest Craiova Rimnicu Vilcea
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad
-
-Sibiu Bucharest
-
-Rimnicu VilceaOradea
-
-Zerind
-
-Arad
-
-Sibiu
-
-Arad
-
-Timisoara
-
-Timisoara
-
-Timisoara
-
-Fagaras Oradea Rimnicu Vilcea
-
-Craiova Pitesti Sibiu
-
-646 415 671
-
-526 553
-
-646 671
-
-450591
-
-646 671
-
-526 553
-
-418 615 607
-
-447 449
-
-447
-
-447 449
-
-449
-
-366
-
-393
-
-366
-
-393
-
-413
-
-413 417415
-
-366
-
-393
-
-415 450 417 Rimnicu Vilcea
-
-Fagaras
-
-447
-
-415
-
-447
-
-447
-
-417
-
-**(a) After expanding Arad, Sibiu, and Rimnicu Vilcea**
-
-**(c) After switching back to Rimnicu Vilcea and expanding Pitesti**
-
-**(b) After unwinding back to Sibiu and expanding Fagaras**
-
-447
-
-447
-
-∞
-
-∞
-
-∞
-
-417
-
-417
-
-Pitesti
+![Alt text](3image/figure-3.27.png)
 
 **Figure 3.27** Stages in an RBFS search for the shortest route to Bucharest. The f -limit value for each recursive call is shown on top of each current node, and every node is labeled with its f -cost. (a) The path via Rimnicu Vilcea is followed until the current best leaf (Pitesti) has a value that is worse than the best alternative path (Fagaras). (b) The recursion unwinds and the best leaf value of the forgotten subtree (417) is backed up to Rimnicu Vilcea; then Fagaras is expanded, revealing a best leaf value of 450. (c) The recursion unwinds and the best leaf value of the forgotten subtree (450) is backed up to Fagaras; then Rimnicu Vilcea is expanded. This time, because the best alternative path (through Timisoara) costs at least 447, the expansion continues to Bucharest.
 
-reexpanding the subtree at some later time. Figure 3.27 shows how RBFS reaches Bucharest. RBFS is somewhat more efficient than IDA∗, but still suffers from excessive node re-
-
-generation. In the example in Figure 3.27, RBFS follows the path via Rimnicu Vilcea, then  
-
-Section 3.5. Informed (Heuristic) Search Strategies 101
-
-“changes its mind” and tries Fagaras, and then changes its mind back again. These mind changes occur because every time the current best path is extended, its f -value is likely to increase—h is usually less optimistic for nodes closer to the goal. When this happens, the second-best path might become the best path, so the search has to backtrack to follow it. Each mind change corresponds to an iteration of IDA∗ and could require many reexpansions of forgotten nodes to recreate the best path and extend it one more node.
+reexpanding the subtree at some later time. Figure 3.27 shows how RBFS reaches Bucharest. RBFS is somewhat more efficient than IDA∗, but still suffers from excessive node regeneration. In the example in Figure 3.27, RBFS follows the path via Rimnicu Vilcea, then  “changes its mind” and tries Fagaras, and then changes its mind back again. These mind changes occur because every time the current best path is extended, its f -value is likely to increase—h is usually less optimistic for nodes closer to the goal. When this happens, the second-best path might become the best path, so the search has to backtrack to follow it. Each mind change corresponds to an iteration of IDA∗ and could require many reexpansions of forgotten nodes to recreate the best path and extend it one more node.
 
 Like A∗ tree search, RBFS is an optimal algorithm if the heuristic function h(n) is admissible. Its space complexity is linear in the depth of the deepest optimal solution, but its time complexity is rather difficult to characterize: it depends both on the accuracy of the heuristic function and on how often the best path changes as nodes are expanded.
 
@@ -1905,11 +636,7 @@ It seems sensible, therefore, to use all available memory. Two algorithms that d
 
 SMA\* we will describe it. SMA∗ proceeds just like A∗, expanding the best leaf until memory is full. At this point, it cannot add a new node to the search tree without dropping an old one. SMA∗
 
-always drops the _worst_ leaf node—the one with the highest f -value. Like RBFS, SMA∗
-
-then backs up the value of the forgotten node to its parent. In this way, the ancestor of a forgotten subtree knows the quality of the best path in that subtree. With this information, SMA∗ regenerates the subtree only when all other paths have been shown to look worse than the path it has forgotten. Another way of saying this is that, if all the descendants of a node n
-
-are forgotten, then we will not know which way to go from n, but we will still have an idea of how worthwhile it is to go anywhere from n.
+always drops the _worst_ leaf node—the one with the highest f -value. Like RBFS, SMA∗ then backs up the value of the forgotten node to its parent. In this way, the ancestor of a forgotten subtree knows the quality of the best path in that subtree. With this information, SMA∗ regenerates the subtree only when all other paths have been shown to look worse than the path it has forgotten. Another way of saying this is that, if all the descendants of a node n are forgotten, then we will not know which way to go from n, but we will still have an idea of how worthwhile it is to go anywhere from n.
 
 The complete algorithm is too complicated to reproduce here,10 but there is one subtlety worth mentioning. We said that SMA∗ expands the best leaf and deletes the worst leaf. What if _all_ the leaf nodes have the same f -value? To avoid selecting the same node for deletion and expansion, SMA∗ expands the _newest_ best leaf and deletes the _oldest_ worst leaf. These coincide when there is only one leaf, but in that case, the current search tree must be a single path from root to leaf that fills all of memory. If the leaf is not a goal node, then _even if it is on an optimal solution path_, that solution is not reachable with the available memory. Therefore, the node can be discarded exactly as if it had no successors.
 
@@ -1918,154 +645,58 @@ SMA∗ is complete if there is any reachable solution—that is, if d, the depth
 10 A rough sketch appeared in the first edition of this book.  
 
 
+On very hard problems, however, it will often be the case that SMA∗ is forced to switch back and forth continually among many candidate solution paths, only a small subset of which can fit in memory. (This resembles the problem of **thrashing** in disk paging systems.) Then the extra time required for repeated regeneration of the same nodes means that problems that would be practically solvable by A∗, given unlimited memory, become intractable for SMA∗. That is to say, _memory limitations can make a problem intractable from the point of view of computation time._ Although no current theory explains the tradeoff between time and memory, it seems that this is an inescapable problem. The only way out is to drop the optimality requirement.
 
-On very hard problems, however, it will often be the case that SMA∗ is forced to switch back and forth continually among many candidate solution paths, only a small subset of which can fit in memory. (This resembles the problem of **thrashing** in disk paging systems.) ThenTHRASHING
+### Learning to search better
 
-the extra time required for repeated regeneration of the same nodes means that problems that would be practically solvable by A∗, given unlimited memory, become intractable for SMA∗. That is to say, _memory limitations can make a problem intractable from the point of view of computation time._ Although no current theory explains the tradeoff between time and memory, it seems that this is an inescapable problem. The only way out is to drop the optimality requirement.
+We have presented several fixed strategies—breadth-first, greedy best-first, and so on—that have been designed by computer scientists. Could an agent _learn_ how to search better? The answer is yes, and the method rests on an important concept called the **metalevel state space**.
 
-**3.5.4 Learning to search better**
+Each state in a metalevel state space captures the internal (computational) state of a program that is searching in an **object-level state space** such as Romania. For example, the internal state of the A∗ algorithm consists of the current search tree. Each action in the metalevel state space is a computation step that alters the internal state; for example, each computation step in A∗ expands a leaf node and adds its successors to the tree. Thus, Figure 3.24, which shows a sequence of larger and larger search trees, can be seen as depicting a path in the metalevel state space where each state on the path is an object-level search tree.
 
-We have presented several fixed strategies—breadth-first, greedy best-first, and so on—that have been designed by computer scientists. Could an agent _learn_ how to search better? The answer is yes, and the method rests on an important concept called the **metalevel state space**.METALEVEL STATE
+Now, the path in Figure 3.24 has five steps, including one step, the expansion of Fagaras, that is not especially helpful. For harder problems, there will be many such missteps, and a **metalevel learning** algorithm can learn from these experiences to avoid exploring unpromising subtrees. The techniques used for this kind of learning are described in Chapter 21. The goal of learning is to minimize the **total cost** of problem solving, trading off computational expense and path cost.
 
-SPACE
-
-Each state in a metalevel state space captures the internal (computational) state of a program that is searching in an **object-level state space** such as Romania. For example, the internalOBJECT-LEVEL STATE
-
-SPACE
-
-state of the A∗ algorithm consists of the current search tree. Each action in the metalevel state space is a computation step that alters the internal state; for example, each computation step in A∗ expands a leaf node and adds its successors to the tree. Thus, Figure 3.24, which shows a sequence of larger and larger search trees, can be seen as depicting a path in the metalevel state space where each state on the path is an object-level search tree.
-
-Now, the path in Figure 3.24 has five steps, including one step, the expansion of Fagaras, that is not especially helpful. For harder problems, there will be many such missteps, and a **metalevel learning** algorithm can learn from these experiences to avoid exploring unpromis-METALEVEL
-
-LEARNING
-
-ing subtrees. The techniques used for this kind of learning are described in Chapter 21. The goal of learning is to minimize the **total cost** of problem solving, trading off computational expense and path cost.
-
-3.6 HEURISTIC FUNCTIONS
+## HEURISTIC FUNCTIONS
 
 In this section, we look at heuristics for the 8-puzzle, in order to shed light on the nature of heuristics in general.
 
 The 8-puzzle was one of the earliest heuristic search problems. As mentioned in Section 3.2, the object of the puzzle is to slide the tiles horizontally or vertically into the empty space until the configuration matches the goal configuration (Figure 3.28).
 
-The average solution cost for a randomly generated 8-puzzle instance is about 22 steps. The branching factor is about 3. (When the empty tile is in the middle, four moves are possible; when it is in a corner, two; and when it is along an edge, three.) This means that an exhaustive tree search to depth 22 would look at about 322 ≈ 3.1× 1010 states. A graph search would cut this down by a factor of about 170,000 because only 9!/2 =
+The average solution cost for a randomly generated 8-puzzle instance is about 22 steps. The branching factor is about 3. (When the empty tile is in the middle, four moves are possible; when it is in a corner, two; and when it is along an edge, three.) This means that an exhaustive tree search to depth 22 would look at about 322 ≈ 3.1× 1010 states. A graph search would cut this down by a factor of about 170,000 because only 9!/2 =181, 440 distinct states are reachable. (See Exercise 3.4.) This is a manageable number, but  
 
-181, 440 distinct states are reachable. (See Exercise 3.4.) This is a manageable number, but  
-
-Section 3.6. Heuristic Functions 103
-
-2
-
-Start State Goal State
-
-1
-
-3 4
-
-6 7
-
-5
-
-1
-
-2
-
-3
-
-4
-
-6
-
-7
-
-8
-
-5
-
-8
-
-**Figure 3.28** A typical instance of the 8-puzzle. The solution is 26 steps long.
+![Alt text](3image/figure-3.28.png)
 
 the corresponding number for the 15-puzzle is roughly 1013, so the next order of business is to find a good heuristic function. If we want to find the shortest solutions by using A∗, we need a heuristic function that never overestimates the number of steps to the goal. There is a long history of such heuristics for the 15-puzzle; here are two commonly used candidates:
 
-- h1 = the number of misplaced tiles. For Figure 3.28, all of the eight tiles are out of position, so the start state would have h1 = 8. h1 is an admissible heuristic because it is clear that any tile that is out of place must be moved at least once.
+- h~1~ = the number of misplaced tiles. For Figure 3.28, all of the eight tiles are out of position, so the start state would have h~1~ = 8. h~1~ is an admissible heuristic because it is clear that any tile that is out of place must be moved at least once.
 
-- h2 = the sum of the distances of the tiles from their goal positions. Because tiles cannot move along diagonals, the distance we will count is the sum of the horizontal and vertical distances. This is sometimes called the **city block distance** or **Manhattan distance**. h2 is also admissible because all any move can do is move one tile one stepMANHATTAN
+- h~2~ = the sum of the distances of the tiles from their goal positions. Because tiles cannot move along diagonals, the distance we will count is the sum of the horizontal and vertical distances. This is sometimes called the **city block distance** or **Manhattan distance**. h~2~ is also admissible because all any move can do is move one tile one step closer to the goal. Tiles 1 to 8 in the start state give a Manhattan distance of
 
-DISTANCE
-
-closer to the goal. Tiles 1 to 8 in the start state give a Manhattan distance of
-
-h2 = 3 + 1 + 2 + 2 + 2 + 3 + 3 + 2 = 18 .
+h~2~ = 3 + 1 + 2 + 2 + 2 + 3 + 3 + 2 = 18 .
 
 As expected, neither of these overestimates the true solution cost, which is 26.
 
-**3.6.1 The effect of heuristic accuracy on performance**
+### The effect of heuristic accuracy on performance
 
-One way to characterize the quality of a heuristic is the **effective branching factor** b ∗. If theEFFECTIVE
+One way to characterize the quality of a heuristic is the **effective branching factor** b ∗. If the total number of nodes generated by A∗ for a particular problem is N and the solution depth is d, then b∗ is the branching factor that a uniform tree of depth d would have to have in order to contain N + 1 nodes. Thus,
 
-BRANCHING FACTOR
+N + 1 = 1 + b ∗\+ (b ∗) 2 + · · ·+ (b∗) d .
 
-total number of nodes generated by A∗ for a particular problem is N and the solution depth is d, then b
-
-∗ is the branching factor that a uniform tree of depth d would have to have in order to contain N + 1 nodes. Thus,
-
-N + 1 = 1 + b ∗
-
-\+ (b ∗
-
-) 2 + · · ·+ (b
-
-∗
-
-) d
-
-.
-
-For example, if A∗ finds a solution at depth 5 using 52 nodes, then the effective branching factor is 1.92. The effective branching factor can vary across problem instances, but usually it is fairly constant for sufficiently hard problems. (The existence of an effective branching factor follows from the result, mentioned earlier, that the number of nodes expanded by A∗
-
-grows exponentially with solution depth.) Therefore, experimental measurements of b ∗ on a
-
-small set of problems can provide a good guide to the heuristic’s overall usefulness. A welldesigned heuristic would have a value of b
-
-∗ close to 1, allowing fairly large problems to be solved at reasonable computational cost.  
+For example, if A∗ finds a solution at depth 5 using 52 nodes, then the effective branching factor is 1.92. The effective branching factor can vary across problem instances, but usually it is fairly constant for sufficiently hard problems. (The existence of an effective branching factor follows from the result, mentioned earlier, that the number of nodes expanded by A∗ grows exponentially with solution depth.) Therefore, experimental measurements of b ∗ on a small set of problems can provide a good guide to the heuristic’s overall usefulness. A welldesigned heuristic would have a value of b ∗ close to 1, allowing fairly large problems to be solved at reasonable computational cost.  
 
 
+To test the heuristic functions h~1~ and h~2~, we generated 1200 random problems with solution lengths from 2 to 24 (100 for each even number) and solved them with iterative deepening search and with A∗ tree search using both h~1~ and h~2~. Figure 3.29 gives the average number of nodes generated by each strategy and the effective branching factor. The results suggest that h~2~ is better than h~1~, and is far better than using iterative deepening search. Even for small problems with d= 12, A∗ with h~2~ is 50,000 times more efficient than uninformed iterative deepening search.
 
-To test the heuristic functions h1 and h2, we generated 1200 random problems with solution lengths from 2 to 24 (100 for each even number) and solved them with iterative deepening search and with A∗ tree search using both h1 and h2. Figure 3.29 gives the average number of nodes generated by each strategy and the effective branching factor. The results suggest that h2 is better than h1, and is far better than using iterative deepening search. Even for small problems with d= 12, A∗ with h2 is 50,000 times more efficient than uninformed iterative deepening search.
+![Alt text](3image/figure-3.29.png)
 
-Search Cost (nodes generated) Effective Branching Factor
+One might ask whether h~2~ is _always_ better than h~1~. The answer is “Essentially, yes.” It is easy to see from the definitions of the two heuristics that, for any node n, h~2~(n) ≥ h~1~(n). We thus say that h~2~ **dominates** h~1~. Domination translates directly into efficiency: A∗ using h~2~ will never expand more nodes than A∗ using h~1~ (except possibly for some nodes with f(n)= C∗). The argument is simple. Recall the observation on page 97 that every node with f(n) < C∗ will surely be expanded. This is the same as saying that every node with h(n) < C∗ − g(n) will surely be expanded. But because h~2~ is at least as big as h~1~ for all nodes, every node that is surely expanded by A∗ search with h~2~ will also surely be expanded with h~1~, and h~1~ might cause other nodes to be expanded as well. Hence, it is generally better to use a heuristic function with higher values, provided it is consistent and that the computation time for the heuristic is not too long.
 
-d IDS A∗(h1) A∗(h2) IDS A∗(h1) A∗(h2)
+### Generating admissible heuristics from relaxed problems
 
-2 10 6 6 2.45 1.79 1.79 4 112 13 12 2.87 1.48 1.45 6 680 20 18 2.73 1.34 1.30 8 6384 39 25 2.80 1.33 1.24
+We have seen that both h~1~ (misplaced tiles) and h~2~ (Manhattan distance) are fairly good heuristics for the 8-puzzle and that h~2~ is better. How might one have come up with h~2~? Is it possible for a computer to invent such a heuristic mechanically?
 
-10 47127 93 39 2.79 1.38 1.22 12 3644035 227 73 2.78 1.42 1.24 14 – 539 113 – 1.44 1.23 16 – 1301 211 – 1.45 1.25 18 – 3056 363 – 1.46 1.26 20 – 7276 676 – 1.47 1.27 22 – 18094 1219 – 1.48 1.28 24 – 39135 1641 – 1.48 1.26
+h~1~ and h~2~ are estimates of the remaining path length for the 8-puzzle, but they are also perfectly accurate path lengths for _simplified_ versions of the puzzle. If the rules of the puzzle were changed so that a tile could move anywhere instead of just to the adjacent empty square, then h~1~ would give the exact number of steps in the shortest solution. Similarly, if a tile could move one square in any direction, even onto an occupied square, then h~2~ would give the exact number of steps in the shortest solution. A problem with fewer restrictions on the actions is called a **relaxed problem**. The state-space graph of the relaxed problem is a _supergraph_ of the original state space because the removal of restrictions creates added edges in the graph. 
 
-**Figure 3.29** Comparison of the search costs and effective branching factors for the ITERATIVE-DEEPENING-SEARCH and A∗ algorithms with h1, h2. Data are averaged over 100 instances of the 8-puzzle for each of various solution lengths d.
-
-One might ask whether h2 is _always_ better than h1. The answer is “Essentially, yes.” It is easy to see from the definitions of the two heuristics that, for any node n, h2(n) ≥ h1(n). We thus say that h2 **dominates** h1. Domination translates directly into efficiency: A∗ usingDOMINATION
-
-h2 will never expand more nodes than A∗ using h1 (except possibly for some nodes with f(n)= C
-
-∗). The argument is simple. Recall the observation on page 97 that every node with f(n) < C
-
-∗ will surely be expanded. This is the same as saying that every node with h(n) < C
-
-∗ − g(n) will surely be expanded. But because h2 is at least as big as h1 for all nodes, every node that is surely expanded by A∗ search with h2 will also surely be expanded with h1, and h1 might cause other nodes to be expanded as well. Hence, it is generally better to use a heuristic function with higher values, provided it is consistent and that the computation time for the heuristic is not too long.
-
-**3.6.2 Generating admissible heuristics from relaxed problems**
-
-We have seen that both h1 (misplaced tiles) and h2 (Manhattan distance) are fairly good heuristics for the 8-puzzle and that h2 is better. How might one have come up with h2? Is it possible for a computer to invent such a heuristic mechanically?
-
-h1 and h2 are estimates of the remaining path length for the 8-puzzle, but they are also perfectly accurate path lengths for _simplified_ versions of the puzzle. If the rules of the puzzle  
-
-Section 3.6. Heuristic Functions 105
-
-were changed so that a tile could move anywhere instead of just to the adjacent empty square, then h1 would give the exact number of steps in the shortest solution. Similarly, if a tile could move one square in any direction, even onto an occupied square, then h2 would give the exact number of steps in the shortest solution. A problem with fewer restrictions on the actions is called a **relaxed problem**. The state-space graph of the relaxed problem is a _supergraph_ ofRELAXED PROBLEM
-
-the original state space because the removal of restrictions creates added edges in the graph. Because the relaxed problem adds edges to the state space, any optimal solution in the
-
-original problem is, by definition, also a solution in the relaxed problem; but the relaxed problem may have _better_ solutions if the added edges provide short cuts. Hence, _the cost of an optimal solution to a relaxed problem is an admissible heuristic for the original problem._ Furthermore, because the derived heuristic is an exact cost for the relaxed problem, it must obey the triangle inequality and is therefore **consistent** (see page 95).
+Because the relaxed problem adds edges to the state space, any optimal solution in the original problem is, by definition, also a solution in the relaxed problem; but the relaxed problem may have _better_ solutions if the added edges provide short cuts. Hence, _the cost of an optimal solution to a relaxed problem is an admissible heuristic for the original problem._ Furthermore, because the derived heuristic is an exact cost for the relaxed problem, it must obey the triangle inequality and is therefore **consistent** (see page 95).
 
 If a problem definition is written down in a formal language, it is possible to construct relaxed problems automatically.11 For example, if the 8-puzzle actions are described as
 
@@ -2075,87 +706,49 @@ we can generate three relaxed problems by removing one or both of the conditions
 
 (a) A tile can move from square A to square B if A is adjacent to B. (b) A tile can move from square A to square B if B is blank. (c) A tile can move from square A to square B.
 
-From (a), we can derive h2 (Manhattan distance). The reasoning is that h2 would be the proper score if we moved each tile in turn to its destination. The heuristic derived from (b) is discussed in Exercise 3.31. From (c), we can derive h1 (misplaced tiles) because it would be the proper score if tiles could move to their intended destination in one step. Notice that it is crucial that the relaxed problems generated by this technique can be solved essentially _without search_, because the relaxed rules allow the problem to be decomposed into eight independent subproblems. If the relaxed problem is hard to solve, then the values of the corresponding heuristic will be expensive to obtain.12
+From (a), we can derive h~2~ (Manhattan distance). The reasoning is that h~2~ would be the proper score if we moved each tile in turn to its destination. The heuristic derived from (b) is discussed in Exercise 3.31. From (c), we can derive h~1~ (misplaced tiles) because it would be the proper score if tiles could move to their intended destination in one step. Notice that it is crucial that the relaxed problems generated by this technique can be solved essentially _without search_, because the relaxed rules allow the problem to be decomposed into eight independent subproblems. If the relaxed problem is hard to solve, then the values of the corresponding heuristic will be expensive to obtain.12
 
 A program called ABSOLVER can generate heuristics automatically from problem definitions, using the “relaxed problem” method and various other techniques (Prieditis, 1993). ABSOLVER generated a new heuristic for the 8-puzzle that was better than any preexisting heuristic and found the first useful heuristic for the famous Rubik’s Cube puzzle.
 
-One problem with generating new heuristic functions is that one often fails to get a single “clearly best” heuristic. If a collection of admissible heuristics h1 . . . hm is available for a problem and none of them dominates any of the others, which should we choose? As it turns out, we need not make a choice. We can have the best of all worlds, by defining
+One problem with generating new heuristic functions is that one often fails to get a single “clearly best” heuristic. If a collection of admissible heuristics h~1~ . . . h~m~ is available for a problem and none of them dominates any of the others, which should we choose? As it turns out, we need not make a choice. We can have the best of all worlds, by defining
 
-h(n) = max{h1(n), . . . , hm(n)} .
+h(n) = max{h~1~(n), . . . , h~m~(n)} .
 
 11 In Chapters 8 and 10, we describe formal languages suitable for this task; with formal descriptions that can be manipulated, the construction of relaxed problems can be automated. For now, we use English. 12 Note that a perfect heuristic can be obtained simply by allowing h to run a full breadth-first search “on the sly.” Thus, there is a tradeoff between accuracy and computation time for heuristic functions.  
 
-
-
-Start State Goal State
-
-1
-
-2
-
-3
-
-4
-
-6
-
-8
-
-5
-
-21
-
-3 6
-
-7 8
-
-54
-
-**Figure 3.30** A subproblem of the 8-puzzle instance given in Figure 3.28. The task is to get tiles 1, 2, 3, and 4 into their correct positions, without worrying about what happens to the other tiles.
+![Alt text](3image/figure-3.30.png)
 
 This composite heuristic uses whichever function is most accurate on the node in question. Because the component heuristics are admissible, h is admissible; it is also easy to prove that h is consistent. Furthermore, h dominates all of its component heuristics.
 
-**3.6.3 Generating admissible heuristics from subproblems: Pattern databases**
+### Generating admissible heuristics from subproblems: Pattern databases
 
-Admissible heuristics can also be derived from the solution cost of a **subproblem** of a givenSUBPROBLEM
+Admissible heuristics can also be derived from the solution cost of a **subproblem** of a given problem. For example, Figure 3.30 shows a subproblem of the 8-puzzle instance in Figure 3.28. The subproblem involves getting tiles 1, 2, 3, 4 into their correct positions. Clearly, the cost of the optimal solution of this subproblem is a lower bound on the cost of the complete problem. It turns out to be more accurate than Manhattan distance in some cases.
 
-problem. For example, Figure 3.30 shows a subproblem of the 8-puzzle instance in Figure 3.28. The subproblem involves getting tiles 1, 2, 3, 4 into their correct positions. Clearly, the cost of the optimal solution of this subproblem is a lower bound on the cost of the complete problem. It turns out to be more accurate than Manhattan distance in some cases.
-
-The idea behind **pattern databases** is to store these exact solution costs for every pos-PATTERN DATABASE
-
-sible subproblem instance—in our example, every possible configuration of the four tiles and the blank. (The locations of the other four tiles are irrelevant for the purposes of solving the subproblem, but moves of those tiles do count toward the cost.) Then we compute an admissible heuristic hDB for each complete state encountered during a search simply by looking up the corresponding subproblem configuration in the database. The database itself is constructed by searching back13 from the goal and recording the cost of each new pattern encountered; the expense of this search is amortized over many subsequent problem instances.
+The idea behind **pattern databases** is to store these exact solution costs for every possible subproblem instance—in our example, every possible configuration of the four tiles and the blank. (The locations of the other four tiles are irrelevant for the purposes of solving the subproblem, but moves of those tiles do count toward the cost.) Then we compute an admissible heuristic hDB for each complete state encountered during a search simply by looking up the corresponding subproblem configuration in the database. The database itself is constructed by searching back13 from the goal and recording the cost of each new pattern encountered; the expense of this search is amortized over many subsequent problem instances.
 
 The choice of 1-2-3-4 is fairly arbitrary; we could also construct databases for 5-6-7-8, for 2-4-6-8, and so on. Each database yields an admissible heuristic, and these heuristics can be combined, as explained earlier, by taking the maximum value. A combined heuristic of this kind is much more accurate than the Manhattan distance; the number of nodes generated when solving random 15-puzzles can be reduced by a factor of 1000.
 
-One might wonder whether the heuristics obtained from the 1-2-3-4 database and the 5-6-7-8 could be _added_, since the two subproblems seem not to overlap. Would this still give an admissible heuristic? The answer is no, because the solutions of the 1-2-3-4 subproblem and the 5-6-7-8 subproblem for a given state will almost certainly share some moves—it is
+One might wonder whether the heuristics obtained from the 1-2-3-4 database and the 5-6-7-8 could be _added_, since the two subproblems seem not to overlap. Would this still give an admissible heuristic? The answer is no, because the solutions of the 1-2-3-4 subproblem and the 5-6-7-8 subproblem for a given state will almost certainly share some moves—it is 
 
 13 By working backward from the goal, the exact solution cost of every instance encountered is immediately available. This is an example of **dynamic programming**, which we discuss further in Chapter 17.  
 
-Section 3.6. Heuristic Functions 107
-
-unlikely that 1-2-3-4 can be moved into place without touching 5-6-7-8, and vice versa. But what if we don’t count those moves? That is, we record not the total cost of solving the 1-23-4 subproblem, but just the number of moves involving 1-2-3-4. Then it is easy to see that the sum of the two costs is still a lower bound on the cost of solving the entire problem. This is the idea behind **disjoint pattern databases**. With such databases, it is possible to solveDISJOINT PATTERN
-
-DATABASES
-
-random 15-puzzles in a few milliseconds—the number of nodes generated is reduced by a factor of 10,000 compared with the use of Manhattan distance. For 24-puzzles, a speedup of roughly a factor of a million can be obtained.
+unlikely that 1-2-3-4 can be moved into place without touching 5-6-7-8, and vice versa. But what if we don’t count those moves? That is, we record not the total cost of solving the 1-23-4 subproblem, but just the number of moves involving 1-2-3-4. Then it is easy to see that the sum of the two costs is still a lower bound on the cost of solving the entire problem. This is the idea behind **disjoint pattern databases**. With such databases, it is possible to solve random 15-puzzles in a few milliseconds—the number of nodes generated is reduced by a factor of 10,000 compared with the use of Manhattan distance. For 24-puzzles, a speedup of roughly a factor of a million can be obtained.
 
 Disjoint pattern databases work for sliding-tile puzzles because the problem can be divided up in such a way that each move affects only one subproblem—because only one tile is moved at a time. For a problem such as Rubik’s Cube, this kind of subdivision is difficult because each move affects 8 or 9 of the 26 cubies. More general ways of defining additive, admissible heuristics have been proposed that do apply to Rubik’s cube (Yang _et al._, 2008), but they have not yielded a heuristic better than the best nonadditive heuristic for the problem.
 
-**3.6.4 Learning heuristics from experience**
+### Learning heuristics from experience
 
 A heuristic function h(n) is supposed to estimate the cost of a solution beginning from the state at node n. How could an agent construct such a function? One solution was given in the preceding sections—namely, to devise relaxed problems for which an optimal solution can be found easily. Another solution is to learn from experience. “Experience” here means solving lots of 8-puzzles, for instance. Each optimal solution to an 8-puzzle problem provides examples from which h(n) can be learned. Each example consists of a state from the solution path and the actual cost of the solution from that point. From these examples, a learning algorithm can be used to construct a function h(n) that can (with luck) predict solution costs for other states that arise during search. Techniques for doing just this using neural nets, decision trees, and other methods are demonstrated in Chapter 18. (The reinforcement learning methods described in Chapter 21 are also applicable.)
 
-Inductive learning methods work best when supplied with **features** of a state that areFEATURE
+Inductive learning methods work best when supplied with **features** of a state that are relevant to predicting the state’s value, rather than with just the raw state description. For example, the feature “number of misplaced tiles” might be helpful in predicting the actual distance of a state from the goal. Let’s call this feature x~1~(n). We could take 100 randomly generated 8-puzzle configurations and gather statistics on their actual solution costs. We might find that when x~1~(n) is 5, the average solution cost is around 14, and so on. Given these data, the value of x~1~ can be used to predict h(n). Of course, we can use several features. A second feature x~2~(n) might be “number of pairs of adjacent tiles that are not adjacent in the goal state.” How should x~1~(n) and x~2~(n) be combined to predict h(n)? A common approach is to use a linear combination:
 
-relevant to predicting the state’s value, rather than with just the raw state description. For example, the feature “number of misplaced tiles” might be helpful in predicting the actual distance of a state from the goal. Let’s call this feature x1(n). We could take 100 randomly generated 8-puzzle configurations and gather statistics on their actual solution costs. We might find that when x1(n) is 5, the average solution cost is around 14, and so on. Given these data, the value of x1 can be used to predict h(n). Of course, we can use several features. A second feature x2(n) might be “number of pairs of adjacent tiles that are not adjacent in the goal state.” How should x1(n) and x2(n) be combined to predict h(n)? A common approach is to use a linear combination:
+h(n) = c~1~x~1~(n) + c~2~x~2~(n) .
 
-h(n) = c1x1(n) + c2x2(n) .
-
-The constants c1 and c2 are adjusted to give the best fit to the actual data on solution costs. One expects both c1 and c2 to be positive because misplaced tiles and incorrect adjacent pairs make the problem harder to solve. Notice that this heuristic does satisfy the condition that h(n)= 0 for goal states, but it is not necessarily admissible or consistent.  
+The constants c~1~ and c~2~ are adjusted to give the best fit to the actual data on solution costs. One expects both c~1~ and c~2~ to be positive because misplaced tiles and incorrect adjacent pairs make the problem harder to solve. Notice that this heuristic does satisfy the condition that h(n)= 0 for goal states, but it is not necessarily admissible or consistent.  
 
 
 
-3.7 SUMMARY
+## SUMMARY
 
 This chapter has introduced methods that an agent can use to select actions in environments that are deterministic, observable, static, and completely known. In such cases, the agent can construct sequences of actions that achieve its goals; this process is called **search**.
 
@@ -2195,7 +788,7 @@ Bibliographical and Historical Notes 109
 
 - The performance of heuristic search algorithms depends on the quality of the heuristic function. One can sometimes construct good heuristics by relaxing the problem definition, by storing precomputed solution costs for subproblems in a pattern database, or by learning from experience with the problem class.
 
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+**BIBLIOGRAPHICAL AND HISTORICAL NOTES**
 
 The topic of state-space search originated in more or less its current form in the early years of AI. Newell and Simon’s work on the Logic Theorist (1957) and GPS (1961) led to the establishment of search algorithms as the primary weapons in the armory of 1960s AI researchers and to the establishment of problem solving as the canonical AI task. Work in operations research by Richard Bellman (1957) showed the importance of additive path costs in simplifying optimization algorithms. The text on _Automated Problem Solving_ by Nils Nilsson (1971) established the area on a solid theoretical footing.
 
@@ -2221,8 +814,6 @@ The original A∗ paper introduced the consistency condition on heuristic functi
 
 Pohl (1977) pioneered the study of the relationship between the error in heuristic functions and the time complexity of A∗. Basic results were obtained for tree search with unit step  
 
-Bibliographical and Historical Notes 111
-
 costs and a single goal node (Pohl, 1977; Gaschnig, 1979; Huyn _et al._, 1980; Pearl, 1984) and with multiple goal nodes (Dinh _et al._, 2007). The “effective branching factor” was proposed by Nilsson (1971) as an empirical measure of the efficiency; it is equivalent to assuming a time cost of O((b∗)d). For tree search applied to a graph, Korf _et al._ (2001) argue that the time cost is better modeled as O(bd−k), where k depends on the heuristic accuracy; this analysis has elicited some controversy, however. For graph search, Helmert and Röger (2008) noted that several well-known problems contained exponentially many nodes on optimal solution paths, implying exponential time complexity for A∗ even with constant absolute error in h.
 
 There are many variations on the A∗ algorithm. Pohl (1973) proposed the use of _dynamic weighting_, which uses a weighted sum fw(n)= wgg(n) + whh(n) of the current path length and the heuristic function as an evaluation function, rather than the simple sum f(n)= g(n)+
@@ -2239,15 +830,7 @@ A∗ and other state-space search algorithms are closely related to the _branch-
 
 Because computers in the late 1950s and early 1960s had at most a few thousand words of main memory, memory-bounded heuristic search was an early research topic. The Graph Traverser (Doran and Michie, 1966), one of the earliest search programs, commits to an operator after searching best-first up to the memory limit. IDA∗ (Korf, 1985a, 1985b) was the first widely used optimal, memory-bounded heuristic search algorithm, and a large number of variants have been developed. An analysis of the efficiency of IDA∗ and of its difficulties with real-valued heuristics appears in Patrick _et al._ (1992).
 
-RBFS (Korf, 1993) is actually somewhat more complicated than the algorithm shown in Figure 3.26, which is closer to an independently developed algorithm called **iterative expansion** (Russell, 1992). RBFS uses a lower bound as well as the upper bound; the two al-ITERATIVE
-
-EXPANSION
-
-gorithms behave identically with admissible heuristics, but RBFS expands nodes in best-first  
-
-
-
-order even with an inadmissible heuristic. The idea of keeping track of the best alternative path appeared earlier in Bratko’s (1986) elegant Prolog implementation of A∗ and in the DTA∗
+RBFS (Korf, 1993) is actually somewhat more complicated than the algorithm shown in Figure 3.26, which is closer to an independently developed algorithm called **iterative expansion** (Russell, 1992). RBFS uses a lower bound as well as the upper bound; the two algorithms behave identically with admissible heuristics, but RBFS expands nodes in best-first order even with an inadmissible heuristic. The idea of keeping track of the best alternative path appeared earlier in Bratko’s (1986) elegant Prolog implementation of A∗ and in the DTA∗
 
 algorithm (Russell and Wefald, 1991). The latter work also discusses metalevel state spaces and metalevel learning.
 
@@ -2263,15 +846,11 @@ The topic of **parallel search** algorithms was not covered in the chapter, part
 
 it requires a lengthy discussion of parallel computer architectures. Parallel search became a popular topic in the 1990s in both AI and theoretical computer science (Mahanti and Daniels, 1993; Grama and Kumar, 1995; Crauser _et al._, 1998) and is making a comeback in the era of new multicore and cluster architectures (Ralphs _et al._, 2004; Korf and Schultze, 2005). Also of increasing importance are search algorithms for very large graphs that require disk storage (Korf, 2008).
 
-EXERCISES
+**EXERCISES**
 
 **3.1** Explain why problem formulation must follow goal formulation.
 
-**3.2** Your goal is to navigate a robot out of a maze. The robot starts in the center of the maze  
-
-Exercises 113
-
-facing north. You can turn the robot to face north, east, south, or west. You can direct the robot to move forward a certain distance, although it will stop before hitting a wall.
+**3.2** Your goal is to navigate a robot out of a maze. The robot starts in the center of the maze facing north. You can turn the robot to face north, east, south, or west. You can direct the robot to move forward a certain distance, although it will stop before hitting a wall.
 
 **a**. Formulate this problem. How large is the state space?
 
@@ -2305,13 +884,7 @@ which exhaustive exploration is feasible. (_Hint_: Derive a lower bound on the b
 
 **b**. A 3-foot-tall monkey is in a room where some bananas are suspended from the 8-foot ceiling. He would like to get the bananas. The room contains two stackable, movable, climbable 3-foot-high crates.  
 
-
-
-**S**
-
-**G**
-
-**Figure 3.31** A scene with polygonal obstacles. S and G are the start and goal states.
+![Alt text](3image/figure-3.31.png)
 
 **c**. You have a program that outputs the message “illegal input record” when fed a certain file of input records. You know that processing of each record is independent of the other records. You want to discover what record is illegal.
 
@@ -2332,8 +905,6 @@ function that takes a vertex as input and returns a set of vectors, each of whic
 **3.8** On page 68, we said that we would not consider problems with negative path costs. In this exercise, we explore this decision in more depth.
 
 **a**. Suppose that actions can have arbitrarily large negative costs; explain why this possibility would force any optimal algorithm to explore the entire state space.  
-
-Exercises 115
 
 **b**. Does it help if we insist that step costs must be greater than or equal to some negative constant c? Consider both trees and graphs.
 
@@ -2359,15 +930,7 @@ Exercises 115
 
 **3.13** Prove that GRAPH-SEARCH satisfies the graph separation property illustrated in Figure 3.9. (_Hint_: Begin by showing that the property holds at the start, then show that if it holds before an iteration of the algorithm, it holds afterwards.) Describe a search algorithm that violates the property.  
 
-
-
-x 12
-
-x 16
-
-x 2 x 2
-
-**Figure 3.32** The track pieces in a wooden railway set; each is labeled with the number of copies in the set. Note that curved pieces and “fork” pieces (“switches” or “points”) can be flipped over so they can curve in either direction. Each curve subtends 45 degrees.
+![Alt text](3image/figure-3.32.png)
 
 **3.14** Which of the following are true and which are false? Explain your answers.
 
@@ -2401,7 +964,6 @@ x 2 x 2
 
 **c**. Explain why removing any one of the “fork” pieces makes the problem unsolvable.  
 
-Exercises 117
 
 **d**. Give an upper bound on the total size of the state space defined by your formulation. (_Hint_: think about the maximum branching factor for the construction process and the maximum depth, ignoring the problem of overlapping pieces and loose ends. Begin by pretending that every piece is unique.)
 
@@ -2449,9 +1011,7 @@ world whose initial state has dirt in the three top squares and the agent in the
 
 **3.24** Devise a state space in which A∗ using GRAPH-SEARCH returns a suboptimal solution with an h(n) function that is admissible but inconsistent.
 
-**3.25** The **heuristic path algorithm** (Pohl, 1977) is a best-first search in which the evalu-HEURISTIC PATH ALGORITHM
-
-ation function is f(n) = (2 − w)g(n) + wh(n). For what values of w is this complete? For what values is it optimal, assuming that h is admissible? What kind of search does this perform for w = 0, w = 1, and w = 2?
+**3.25** The **heuristic path algorithm** (Pohl, 1977) is a best-first search in which the evaluation function is f(n) = (2 − w)g(n) + wh(n). For what values of w is this complete? For what values is it optimal, assuming that h is admissible? What kind of search does this perform for w = 0, w = 1, and w = 2?
 
 **3.26** Consider the unbounded version of the regular 2D grid shown in Figure 3.9. The start state is at the origin, (0,0), and the goal state is at (x, y).
 
@@ -2481,13 +1041,11 @@ ation function is f(n) = (2 − w)g(n) + wh(n). For what values of w is this com
 
 **d**. Which of the following heuristics are admissible for the problem of moving all n vehicles to their destinations? Explain.
 
-(i) ∑n
+(i) ∑^n^~i=1~ h~i~.
 
-i = 1 hi.
+(ii) max{h~1~, . . . , hn}. 
+(iii) min{h~1~, . . . , h~n~}.  
 
-(ii) max{h1, . . . , hn}. (iii) min{h1, . . . , hn}.  
-
-Exercises 119
 
 **3.28** Invent a heuristic function for the 8-puzzle that sometimes overestimates, and show how it can lead to a suboptimal solution on a particular problem. (You can use a computer to help if you want.) Prove that if h never overestimates by more than c, A∗ using h returns a solution whose cost exceeds that of the optimal solution by no more than c.
 
@@ -2505,13 +1063,15 @@ Exercises 119
 
 graph search to solve instances of the TSP.
 
-**3.31** On page 105, we defined the relaxation of the 8-puzzle in which a tile can move from square A to square B if B is blank. The exact solution of this problem defines **Gaschnig’s heuristic** (Gaschnig, 1979). Explain why Gaschnig’s heuristic is at least as accurate as h1
+**3.31** On page 105, we defined the relaxation of the 8-puzzle in which a tile can move from square A to square B if B is blank. The exact solution of this problem defines **Gaschnig’s heuristic** (Gaschnig, 1979). Explain why Gaschnig’s heuristic is at least as accurate as h~1~
 
-(misplaced tiles), and show cases where it is more accurate than both h1 and h2 (Manhattan distance). Explain how to calculate Gaschnig’s heuristic efficiently.
+(misplaced tiles), and show cases where it is more accurate than both h~1~ and h~2~ (Manhattan distance). Explain how to calculate Gaschnig’s heuristic efficiently.
 
 **3.32** We gave two simple heuristics for the 8-puzzle: Manhattan distance and misplaced tiles. Several heuristics in the literature purport to improve on this—see, for example, Nilsson (1971), Mostow and Prieditis (1989), and Hansson _et al._ (1992). Test these claims by implementing the heuristics and comparing the performance of the resulting algorithms.  
 
-4 BEYOND CLASSICAL SEARCH
+
+
+# BEYOND CLASSICAL SEARCH
 
 _In which we relax the simplifying assumptions of the previous chapter, thereby getting closer to the real world._
 
@@ -2971,11 +1531,11 @@ Section 4.2. Local Search in Continuous Spaces 131
 
 originated in the 17th century, after the development of calculus by Newton and Leibniz.6 We find uses for these techniques at several places in the book, including the chapters on learning, vision, and robotics.
 
-We begin with an example. Suppose we want to place three new airports anywhere in Romania, such that the sum of squared distances from each city on the map (Figure 3.2) to its nearest airport is minimized. The state space is then defined by the coordinates of the airports: (x1, y1), (x2, y2), and (x3, y3). This is a _six-dimensional_ space; we also say that states are defined by six **variables**. (In general, states are defined by an n-dimensionalVARIABLE
+We begin with an example. Suppose we want to place three new airports anywhere in Romania, such that the sum of squared distances from each city on the map (Figure 3.2) to its nearest airport is minimized. The state space is then defined by the coordinates of the airports: (x~1~, y1), (x~2~, y2), and (x3, y3). This is a _six-dimensional_ space; we also say that states are defined by six **variables**. (In general, states are defined by an n-dimensionalVARIABLE
 
-vector of variables, **x**.) Moving around in this space corresponds to moving one or more of the airports on the map. The objective function f(x1, y1, x2, y2, x3, y3) is relatively easy to compute for any particular state once we compute the closest cities. Let Ci be the set of cities whose closest airport (in the current state) is airport i. Then, _in the neighborhood of the current state_, where the Cis remain constant, we have
+vector of variables, **x**.) Moving around in this space corresponds to moving one or more of the airports on the map. The objective function f(x~1~, y1, x~2~, y2, x3, y3) is relatively easy to compute for any particular state once we compute the closest cities. Let Ci be the set of cities whose closest airport (in the current state) is airport i. Then, _in the neighborhood of the current state_, where the Cis remain constant, we have
 
-f(x1, y1, x2, y2, x3, y3) =
+f(x~1~, y1, x~2~, y2, x3, y3) =
 
 3∑
 
@@ -3003,7 +1563,7 @@ gradient of the objective function is a vector ∇f that gives the magnitude and
 
 ( ∂f
 
-∂x1
+∂x~1~
 
 ,
 
@@ -3015,7 +1575,7 @@ gradient of the objective function is a vector ∇f that gives the magnitude and
 
 ∂f
 
-∂x2
+∂x~2~
 
 ,
 
@@ -3043,13 +1603,13 @@ In some cases, we can find a maximum by solving the equation ∇f = 0. (This cou
 
 ∂f
 
-∂x1
+∂x~1~
 
 \= 2
 
 ∑
 
-c∈C1
+c∈c~1~
 
 (xi − xc) . (4.2)
 
@@ -3235,7 +1795,7 @@ OR-SEARCH(problem .INITIAL-STATE,problem , \[ \])
 
 **if** problem .GOAL-TEST(state) **then return** the empty plan **if** state is on path **then return** failure
 
-**for each** action **in** problem .ACTIONS(state) **do** plan←AND-SEARCH(RESULTS(state,action),problem , \[state | path\]) **if** plan = failure **then return** \[action | plan \]
+**for each** action **in** problem .ACTIONS(state) **do** plan←AND-SEARCH(RESULTS(state,action),problem , \[state | path\]) **if** plan ≠ failure **then return** \[action | plan \]
 
 **return** failure
 
@@ -3323,7 +1883,7 @@ It is instructive to see how the belief-state search problem is constructed. Sup
 
 - **Initial state**: Typically the set of all states in P , although in some cases the agent will have more knowledge than this.
 
-- **Actions**: This is slightly tricky. Suppose the agent is in belief state b= {s1, s2}, but ACTIONSP (s1) = ACTIONSP (s2); then the agent is unsure of which actions are legal. If we assume that illegal actions have no effect on the environment, then it is safe to take the _union_ of all the actions in any of the physical states in the current belief state b:
+- **Actions**: This is slightly tricky. Suppose the agent is in belief state b= {s1, s2}, but ACTIONSP (s1) ≠ ACTIONSP (s2); then the agent is unsure of which actions are legal. If we assume that illegal actions have no effect on the environment, then it is safe to take the _union_ of all the actions in any of the physical states in the current belief state b:
 
 ACTIONS(b) =
 
@@ -4641,7 +3201,7 @@ SEARCH
 
 as capture moves, that will quickly resolve the uncertainties in the position. The **horizon effect** is more difficult to eliminate. It arises when the program is facingHORIZON EFFECT
 
-an opponent’s move that causes serious damage and is ultimately unavoidable, but can be temporarily avoided by delaying tactics. Consider the chess game in Figure 5.9. It is clear that there is no way for the black bishop to escape. For example, the white rook can capture it by moving to h1, then a1, then a2; a capture at depth 6 ply. But Black does have a sequence of moves that pushes the capture of the bishop “over the horizon.” Suppose Black searches to depth 8 ply. Most moves by Black will lead to the eventual capture of the bishop, and thus will be marked as “bad” moves. But Black will consider checking the white king with the pawn at e4. This will lead to the king capturing the pawn. Now Black will consider checking again, with the pawn at f5, leading to another pawn capture. That takes up 4 ply, and from there the remaining 4 ply is not enough to capture the bishop. Black thinks that the line of play has saved the bishop at the price of two pawns, when actually all it has done is push the inevitable capture of the bishop beyond the horizon that Black can see.
+an opponent’s move that causes serious damage and is ultimately unavoidable, but can be temporarily avoided by delaying tactics. Consider the chess game in Figure 5.9. It is clear that there is no way for the black bishop to escape. For example, the white rook can capture it by moving to h~1~, then a1, then a2; a capture at depth 6 ply. But Black does have a sequence of moves that pushes the capture of the bishop “over the horizon.” Suppose Black searches to depth 8 ply. Most moves by Black will lead to the eventual capture of the bishop, and thus will be marked as “bad” moves. But Black will consider checking the white king with the pawn at e4. This will lead to the king capturing the pawn. Now Black will consider checking again, with the pawn at f5, leading to another pawn capture. That takes up 4 ply, and from there the remaining 4 ply is not enough to capture the bishop. Black thinks that the line of play has saved the bishop at the price of two pawns, when actually all it has done is push the inevitable capture of the bishop beyond the horizon that Black can see.
 
 One strategy to mitigate the horizon effect is the **singular extension**, a move that isSINGULAR EXTENSION
 
@@ -5277,7 +3837,7 @@ boxes. Since their value is unclear, annotate each with a “?” in a circle.
 
 
 
-with exactly n X’s and no O’s. Similarly, On is the number of rows, columns, or diagonals with just n O’s. The utility function assigns +1 to any position with X3 = 1 and −1 to any position with O3 = 1. All other terminal positions have utility 0. For nonterminal positions, we use a linear evaluation function defined as Eval(s) = 3X2(s)+X1(s)−(3O2(s)+O1(s)).
+with exactly n X’s and no O’s. Similarly, On is the number of rows, columns, or diagonals with just n O’s. The utility function assigns +1 to any position with X3 = 1 and −1 to any position with O3 = 1. All other terminal positions have utility 0. For nonterminal positions, we use a linear evaluation function defined as Eval(s) = 3x~2~(s)+x~1~(s)−(3O2(s)+O1(s)).
 
 **a**. Approximately how many possible games of tic-tac-toe are there?
 
@@ -5421,15 +3981,15 @@ CSP search algorithms take advantage of the structure of states and use _general
 
 6.1 DEFINING CONSTRAINT SATISFACTION PROBLEMS
 
-A constraint satisfaction problem consists of three components, X,D, and C: X is a set of variables, {X1, . . . ,Xn}. D is a set of domains, {D1, . . . ,Dn}, one for each variable. C is a set of constraints that specify allowable combinations of values.
+A constraint satisfaction problem consists of three components, X,D, and C: X is a set of variables, {x~1~, . . . ,Xn}. D is a set of domains, {D1, . . . ,Dn}, one for each variable. C is a set of constraints that specify allowable combinations of values.
 
-Each domain Di consists of a set of allowable values, {v1, . . . , vk} for variable Xi. Each constraint Ci consists of a pair 〈scope , rel 〉, where scope is a tuple of variables that participate in the constraint and rel is a relation that defines the values that those variables can take on. A relation can be represented as an explicit list of all tuples of values that satisfy the constraint, or as an abstract relation that supports two operations: testing if a tuple is a member of the relation and enumerating the members of the relation. For example, if X1 and X2 both have
+Each domain Di consists of a set of allowable values, {v1, . . . , vk} for variable Xi. Each constraint Ci consists of a pair 〈scope , rel 〉, where scope is a tuple of variables that participate in the constraint and rel is a relation that defines the values that those variables can take on. A relation can be represented as an explicit list of all tuples of values that satisfy the constraint, or as an abstract relation that supports two operations: testing if a tuple is a member of the relation and enumerating the members of the relation. For example, if x~1~ and x~2~ both have
 
 202  
 
 Section 6.1. Defining Constraint Satisfaction Problems 203
 
-the domain {A,B}, then the constraint saying the two variables must have different values can be written as 〈(X1,X2), \[(A,B), (B,A)\]〉 or as 〈(X1,X2),X1 = X2〉.
+the domain {A,B}, then the constraint saying the two variables must have different values can be written as 〈(x~1~,x~2~), \[(A,B), (B,A)\]〉 or as 〈(x~1~,x~2~),x~1~ ≠ x~2~〉.
 
 To solve a CSP, we need to define a state space and the notion of a solution. Each state in a CSP is defined by an **assignment** of values to some or all of the variables, {Xi =ASSIGNMENT
 
@@ -5449,11 +4009,11 @@ X = {WA,NT , Q,NSW , V,SA, T} .
 
 The domain of each variable is the set Di = {red , green , blue}. The constraints require neighboring regions to have distinct colors. Since there are nine places where regions border, there are nine constraints:
 
-C = {SA = WA,SA = NT ,SA = Q,SA = NSW ,SA = V,
+C = {SA ≠ WA,SA ≠ NT ,SA ≠ Q,SA ≠ NSW ,SA ≠ V,
 
-WA = NT ,NT = Q,Q = NSW ,NSW = V } .
+WA ≠ NT ,NT ≠ Q,Q ≠ NSW ,NSW ≠ V } .
 
-Here we are using abbreviations; SA = WA is a shortcut for 〈(SA,WA),SA = WA〉, where SA = WA can be fully enumerated in turn as
+Here we are using abbreviations; SA ≠ WA is a shortcut for 〈(SA,WA),SA ≠ WA〉, where SA ≠ WA can be fully enumerated in turn as
 
 {(red , green), (red , blue), (green , red), (green , blue), (blue, red ), (blue, green)} .
 
@@ -5585,9 +4145,9 @@ world and are widely studied in the field of operations research. For example, t
 
 In addition to examining the types of variables that can appear in CSPs, it is useful to look at the types of constraints. The simplest type is the **unary constraint**, which restrictsUNARY CONSTRAINT
 
-the value of a single variable. For example, in the map-coloring problem it could be the case that South Australians won’t tolerate the color green; we can express that with the unary constraint 〈(SA),SA = green〉
+the value of a single variable. For example, in the map-coloring problem it could be the case that South Australians won’t tolerate the color green; we can express that with the unary constraint 〈(SA),SA ≠ green〉
 
-A **binary constraint** relates two variables. For example, SA = NSW is a binaryBINARY CONSTRAINT
+A **binary constraint** relates two variables. For example, SA ≠ NSW is a binaryBINARY CONSTRAINT
 
 constraint. A binary CSP is one with only binary constraints; it can be represented as a constraint graph, as in Figure 6.1(b).
 
@@ -5599,15 +4159,15 @@ A constraint involving an arbitrary number of variables is called a **global con
 
 cryptarithmetic puzzle represents a different digit. For the case in Figure 6.2(a), this would be represented as the global constraint Alldiff (F, T,U,W,R,O). The addition constraints on the four columns of the puzzle can be written as the following n-ary constraints:
 
-O + O = R + 10 · C10
+O + O = R + 10 · c~1~0
 
-C10 + W + W = U + 10 · C100
+c~1~0 + W + W = U + 10 · c~1~00
 
-C100 + T + T = O + 10 · C1000
+c~1~00 + T + T = O + 10 · c~1~000
 
-C1000 = F ,
+c~1~000 = F ,
 
-where C10, C100, and C1000 are auxiliary variables representing the digit carried over into the tens, hundreds, or thousands column. These constraints can be represented in a **constraint hypergraph**, such as the one shown in Figure 6.2(b). A hypergraph consists of ordinary nodesCONSTRAINT
+where c~1~0, c~1~00, and c~1~000 are auxiliary variables representing the digit carried over into the tens, hundreds, or thousands column. These constraints can be represented in a **constraint hypergraph**, such as the one shown in Figure 6.2(b). A hypergraph consists of ordinary nodesCONSTRAINT
 
 HYPERGRAPH
 
@@ -5649,9 +4209,9 @@ _R_
 
 _C_3 _C_1_C_2
 
-**Figure 6.2** (a) A cryptarithmetic problem. Each letter stands for a distinct digit; the aim is to find a substitution of digits for letters such that the resulting sum is arithmetically correct, with the added restriction that no leading zeroes are allowed. (b) The constraint hypergraph for the cryptarithmetic problem, showing the Alldiff constraint (square box at the top) as well as the column addition constraints (four square boxes in the middle). The variables C1, C2, and C3 represent the carry digits for the three columns.
+**Figure 6.2** (a) A cryptarithmetic problem. Each letter stands for a distinct digit; the aim is to find a substitution of digits for letters such that the resulting sum is arithmetically correct, with the added restriction that no leading zeroes are allowed. (b) The constraint hypergraph for the cryptarithmetic problem, showing the Alldiff constraint (square box at the top) as well as the column addition constraints (four square boxes in the middle). The variables c~1~, c~2~, and C3 represent the carry digits for the three columns.
 
-one binary constraint for each pair of constraints in the original graph that share variables. For example, if the original graph has variables {X,Y,Z} and constraints 〈(X,Y,Z), C1〉 and 〈(X,Y ), C2〉 then the dual graph would have variables {C1, C2} with the binary constraint 〈(X,Y ), R1〉, where (X,Y ) are the shared variables and R1 is a new relation that defines the constraint between the shared variables, as specified by the original C1 and C2.
+one binary constraint for each pair of constraints in the original graph that share variables. For example, if the original graph has variables {X,Y,Z} and constraints 〈(X,Y,Z), c~1~〉 and 〈(X,Y ), c~2~〉 then the dual graph would have variables {c~1~, c~2~} with the binary constraint 〈(X,Y ), R1〉, where (X,Y ) are the shared variables and R1 is a new relation that defines the constraint between the shared variables, as specified by the original c~1~ and c~2~.
 
 There are however two reasons why we might prefer a global constraint such as Alldiff
 
@@ -5777,11 +4337,11 @@ k-consistent if, for any set of k − 1 variables and for any consistent assignm
 
 A CSP is **strongly** k**\-consistent** if it is k-consistent and is also (k − 1)-consistent,STRONGLY K-CONSISTENT
 
-(k − 2)-consistent, . . . all the way down to 1-consistent. Now suppose we have a CSP with n nodes and make it strongly n-consistent (i.e., strongly k-consistent for k = n). We can then solve the problem as follows: First, we choose a consistent value for X1. We are then guaranteed to be able to choose a value for X2 because the graph is 2-consistent, for X3
+(k − 2)-consistent, . . . all the way down to 1-consistent. Now suppose we have a CSP with n nodes and make it strongly n-consistent (i.e., strongly k-consistent for k = n). We can then solve the problem as follows: First, we choose a consistent value for x~1~. We are then guaranteed to be able to choose a value for x~2~ because the graph is 2-consistent, for X3
 
 because it is 3-consistent, and so on. For each variable Xi, we need only search through the d
 
-values in the domain to find a value consistent with X1, . . . ,Xi−1. We are guaranteed to find a solution in time O(n2
+values in the domain to find a value consistent with x~1~, . . . ,Xi−1. We are guaranteed to find a solution in time O(n2
 
 d). Of course, there is no free lunch: any algorithm for establishing n-consistency must take time exponential in n in the worst case. Worse, n-consistency also requires space that is exponential in n. The memory issue is even more severe than the time. In practice, determining the appropriate level of consistency checking is mostly an empirical science. It can be said practitioners commonly compute 2-consistency and less commonly 3-consistency.
 
@@ -5939,19 +4499,19 @@ Alldiff (B1, B2, B3, B4, B5, B6, B7, B8, B9)
 
 · · ·
 
-Alldiff (A1, B1, C1,D1, E1, F1, G1,H1, I1)
+Alldiff (A1, B1, c~1~,D1, E1, F1, G1,h~1~, I1)
 
-Alldiff (A2, B2, C2,D2, E2, F2, G2,H2, I2)
+Alldiff (A2, B2, c~2~,D2, E2, F2, G2,h~2~, I2)
 
 · · ·
 
-Alldiff (A1, A2, A3, B1, B2, B3, C1, C2, C3)
+Alldiff (A1, A2, A3, B1, B2, B3, c~1~, c~2~, C3)
 
 Alldiff (A4, A5, A6, B4, B5, B6, C4, C5, C6)
 
 · · ·
 
-Let us see how far arc consistency can take us. Assume that the Alldiff constraints have been expanded into binary constraints (such as A1 = A2 ) so that we can apply the AC-3 algorithm directly. Consider variable E6 from Figure 6.4(a)—the empty square between the 2 and the 8 in the middle box. From the constraints in the box, we can remove not only 2 and 8 but also 1 and 7 from E6 ’s domain. From the constraints in its column, we can eliminate 5, 6, 2, 8, 9, and 3. That leaves E6 with a domain of {4}; in other words, we know the answer for E6 . Now consider variable I6—the square in the bottom middle box surrounded by 1, 3, and 3. Applying arc consistency in its column, we eliminate 5, 6, 2, 4 (since we now know E6 must be 4), 8, 9, and 3. We eliminate 1 by arc consistency with I5 , and we are left with only the value 7 in the domain of I6 . Now there are 8 known values in column 6, so arc consistency can infer that A6 must be 1. Inference continues along these lines, and eventually, AC-3 can solve the entire puzzle—all the variables have their domains reduced to a single value, as shown in Figure 6.4(b).
+Let us see how far arc consistency can take us. Assume that the Alldiff constraints have been expanded into binary constraints (such as A1 ≠ A2 ) so that we can apply the AC-3 algorithm directly. Consider variable E6 from Figure 6.4(a)—the empty square between the 2 and the 8 in the middle box. From the constraints in the box, we can remove not only 2 and 8 but also 1 and 7 from E6 ’s domain. From the constraints in its column, we can eliminate 5, 6, 2, 8, 9, and 3. That leaves E6 with a domain of {4}; in other words, we know the answer for E6 . Now consider variable I6—the square in the bottom middle box surrounded by 1, 3, and 3. Applying arc consistency in its column, we eliminate 5, 6, 2, 4 (since we now know E6 must be 4), 8, 9, and 3. We eliminate 1 by arc consistency with I5 , and we are left with only the value 7 in the domain of I6 . Now there are 8 known values in column 6, so arc consistency can infer that A6 must be 1. Inference continues along these lines, and eventually, AC-3 can solve the entire puzzle—all the variables have their domains reduced to a single value, as shown in Figure 6.4(b).
 
 Of course, Sudoku would soon lose its appeal if every puzzle could be solved by a  
 
@@ -5987,11 +4547,11 @@ var← SELECT-UNASSIGNED-VARIABLE(csp) **for each** value **in** ORDER-DOMAIN-VA
 
 **if** value is consistent with assignment **then** add {var = value} to assignment
 
-inferences← INFERENCE(csp, var , value) **if** inferences = failure **then**
+inferences← INFERENCE(csp, var , value) **if** inferences ≠ failure **then**
 
 add inferences to assignment
 
-result←BACKTRACK(assignment , csp) **if** result = failure **then**
+result←BACKTRACK(assignment , csp) **if** result ≠ failure **then**
 
 **return** result
 
@@ -6037,7 +4597,7 @@ The backtracking algorithm contains the line
 
 var← SELECT-UNASSIGNED-VARIABLE(csp) .
 
-The simplest strategy for SELECT-UNASSIGNED-VARIABLE is to choose the next unassigned variable in order, {X1,X2, . . .}. This static variable ordering seldom results in the most efficient search. For example, after the assignments for WA= red and NT = green in Figure 6.6, there is only one possible value for SA, so it makes sense to assign SA= blue next rather than assigning Q. In fact, after SA is assigned, the choices for Q, NSW , and V are all forced. This intuitive idea—choosing the variable with the fewest “legal” values—is called the **minimumremaining-values** (MRV) heuristic. It also has been called the “most constrained variable” orMINIMUM-
+The simplest strategy for SELECT-UNASSIGNED-VARIABLE is to choose the next unassigned variable in order, {x~1~,x~2~, . . .}. This static variable ordering seldom results in the most efficient search. For example, after the assignments for WA= red and NT = green in Figure 6.6, there is only one possible value for SA, so it makes sense to assign SA= blue next rather than assigning Q. In fact, after SA is assigned, the choices for Q, NSW , and V are all forced. This intuitive idea—choosing the variable with the fewest “legal” values—is called the **minimumremaining-values** (MRV) heuristic. It also has been called the “most constrained variable” orMINIMUM-
 
 REMAINING-VALUES
 
@@ -6301,7 +4861,7 @@ Completely independent subproblems are delicious, then, but rare. Fortunately, s
 
 CONSISTENCY
 
-an ordering of variables X1,X2, . . . ,Xn if and only if every Xi is arc-consistent with each Xj for j > i.
+an ordering of variables x~1~,x~2~, . . . ,Xn if and only if every Xi is arc-consistent with each Xj for j > i.
 
 To solve a tree-structured CSP, first pick any variable to be the root of the tree, and choose an ordering of the variables such that each variable appears after its parent in the tree. Such an ordering is called a **topological sort**. Figure 6.10(a) shows a sample tree and (b)TOPOLOGICAL SORT
 
