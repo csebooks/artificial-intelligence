@@ -5,7 +5,7 @@ weight: 9
 
   
 
-22 NATURAL LANGUAGE PROCESSING
+# NATURAL LANGUAGE PROCESSING
 
 _In which we see how to make use of the copious knowledge that is expressed in natural language._
 
@@ -13,121 +13,61 @@ _Homo sapiens_ is set apart from other species by the capacity for language. Som
 
 Of course, there are other attributes that are uniquely human: no other species wears clothes, creates representational art, or watches three hours of television a day. But when Alan Turing proposed his Test (see Section 1.1.1), he based it on language, not art or TV. There are two main reasons why we want our computer agents to be able to process natural languages: first, to communicate with humans, a topic we take up in Chapter 23, and second, to acquire information from written language, the focus of this chapter.
 
-There are over a trillion pages of information on the Web, almost all of it in natural language. An agent that wants to do **knowledge acquisition** needs to understand (at leastKNOWLEDGE
+There are over a trillion pages of information on the Web, almost all of it in natural language. An agent that wants to do **knowledge acquisition** needs to understand (at leastKNOWLEDGE ACQUISITION
+partially) the ambiguous, messy languages that humans use. We examine the problem from the point of view of specific information-seeking tasks: text classification, information re- trieval, and information extraction. One common factor in addressing these tasks is the use of **language models**: models that predict the probability distribution of language expressions.
 
-ACQUISITION
+## 22.1 LANGUAGE MODELS
 
-partially) the ambiguous, messy languages that humans use. We examine the problem from the point of view of specific information-seeking tasks: text classification, information re- trieval, and information extraction. One common factor in addressing these tasks is the use of **language models**: models that predict the probability distribution of language expressions.LANGUAGE MODEL
+Formal languages, such as the programming languages Java or Python, have precisely defined language models. A **language** can be defined as a set of strings; “print(2 + 2)” is a legal program in the language Python, whereas “2)+(2 print” is not. Since there are an infinite number of legal programs, they cannot be enumerated; instead they are specified by a set of rules called a *grammar**. Formal languages also have rules that define the meaning or **semantics** of a program; for example, the rules say that the “meaning” of “2 + 2” is 4, and the meaning of “1/0” is that an error is signaled.
 
-22.1 LANGUAGE MODELS
-
-Formal languages, such as the programming languages Java or Python, have precisely defined language models. A **language** can be defined as a set of strings; “print(2 + 2)” is aLANGUAGE
-
-legal program in the language Python, whereas “2)+(2 print” is not. Since there are an infinite number of legal programs, they cannot be enumerated; instead they are specified by a set of rules called a **grammar**. Formal languages also have rules that define the meaning orGRAMMAR
-
-**semantics** of a program; for example, the rules say that the “meaning” of “2 + 2” is 4, andSEMANTICS
-
-the meaning of “1/0” is that an error is signaled.
-
-860  
-
-Section 22.1. Language Models 861
 
 Natural languages, such as English or Spanish, cannot be characterized as a definitive set of sentences. Everyone agrees that “Not to be invited is sad” is a sentence of English, but people disagree on the grammaticality of “To be not invited is sad.” Therefore, it is more fruitful to define a natural language model as a probability distribution over sentences rather than a definitive set. That is, rather than asking if a string of _words_ is or is not a member of the set defining the language, we instead ask for P (S =words)—what is the probability that a random sentence would be _words_.
 
-Natural languages are also **ambiguous**. “He saw her duck” can mean either that he sawAMBIGUITY
-
-a waterfowl belonging to her, or that he saw her move to evade something. Thus, again, we cannot speak of a single meaning for a sentence, but rather of a probability distribution over possible meanings.
+Natural languages are also **ambiguous**. “He saw her duck” can mean either that he saw a waterfowl belonging to her, or that he saw her move to evade something. Thus, again, we cannot speak of a single meaning for a sentence, but rather of a probability distribution over possible meanings.
 
 Finally, natural languages are difficult to deal with because they are very large, and constantly changing. Thus, our language models are, at best, an approximation. We start with the simplest possible approximations and move up from there.
 
-**22.1.1 _N_\-gram character models**
+### 22.1.1 _N_\-gram character models
 
-Ultimately, a written text is composed of **characters**—letters, digits, punctuation, and spacesCHARACTERS
-
-in English (and more exotic characters in some other languages). Thus, one of the simplest language models is a probability distribution over sequences of characters. As in Chapter 15, we write P (c1:N ) for the probability of a sequence of N characters, c1 through cN . In one Web collection, P (“the”)= 0.027 and P (“zgq”)= 0.000000002. A sequence of written sym- bols of length n is called an n-gram (from the Greek root for writing or letters), with special case “unigram” for 1-gram, “bigram” for 2-gram, and “trigram” for 3-gram. A model of the probability distribution of n-letter sequences is thus called an n**\-gram model**. (But be care-N -GRAM MODEL
+Ultimately, a written text is composed of letters, digits, punctuation, and spaces
+in English (and more exotic characters in some other languages). Thus, one of the simplest language models is a probability distribution over sequences of characters. As in Chapter 15, we write P (c~1:N~ ) for the probability of a sequence of N characters, C~1~ through c~N~ . In one Web collection, P (“the”)= 0.027 and P (“zgq”)= 0.000000002. A sequence of written sym- bols of length n is called an n-gram (from the Greek root for writing or letters), with special case “unigram” for 1-gram, “bigram” for 2-gram, and “trigram” for 3-gram. A model of the probability distribution of n-letter sequences is thus called an n-**gram model**. (But be care-N -GRAM MODEL
 
 ful: we can have n-gram models over sequences of words, syllables, or other units; not just over characters.)
 
 An n-gram model is defined as a **Markov chain** of order n − 1. Recall from page 568 that in a Markov chain the probability of character ci depends only on the immediately pre- ceding characters, not on any other characters. So in a trigram model (Markov chain of order 2) we have
 
-P (ci | c1:i−1) = P (ci | ci−2:i−1) .
+P (ci | C~1:i−1~) = P (c~i~ | c~i−2:i−1~) .
 
-We can define the probability of a sequence of characters P (c1:N ) under the trigram model by first factoring with the chain rule and then using the Markov assumption:
+We can define the probability of a sequence of characters P (C~1~:N ) under the trigram model by first factoring with the chain rule and then using the Markov assumption:
 
-P (c1:N ) =
+![Alt text](image.png)
 
-N∏
-
-i= 1
-
-P (ci | c1:i−1) =
-
-N∏
-
-i = 1
-
-P (ci | ci−2:i−1) .
-
-For a trigram character model in a language with 100 characters, **P**(Ci|Ci−2:i−1) has a million entries, and can be accurately estimated by counting character sequences in a body of text of 10 million characters or more. We call a body of text a **corpus** (plural _corpora_), from theCORPUS
+For a trigram character model in a language with 100 characters, **P**(C~i~|C~i−2:i−1~) has a million entries, and can be accurately estimated by counting character sequences in a body of text of 10 million characters or more. We call a body of text a **corpus** (plural _corpora_), from theCORPUS
 
 Latin word for _body_.  
 
 
+What can we do with n-gram character models? One task for which they are well suited is **language identification:** given a text, determine what natural language it is written in. This is a relatively easy task; even with short texts such as “Hello, world” or “Wie geht es dir,” it is easy to identify the first as English and the second as German. Computer systems identify languages with greater than 99% accuracy; occasionally, closely related languages, such as Swedish and Norwegian, are confused.
 
-What can we do with n-gram character models? One task for which they are well suited is **language identification:** given a text, determine what natural language it is written in. ThisLANGUAGE
+One approach to language identification is to first build a trigram character model of each candidate language, P (c~i~ | c~i−2:i−1~, ), where the variable  ranges over languages. For each  the model is built by counting trigrams in a corpus of that language. (About 100,000 characters of each language are needed.) That gives us a model of **P**(Text |Language), but we want to select the most probable language given the text, so we apply Bayes’ rule followed by the Markov assumption to get the most probable language:
 
-IDENTIFICATION
+![Alt text](image-1.png)
 
-is a relatively easy task; even with short texts such as “Hello, world” or “Wie geht es dir,” it is easy to identify the first as English and the second as German. Computer systems identify languages with greater than 99% accuracy; occasionally, closely related languages, such as Swedish and Norwegian, are confused.
-
-One approach to language identification is to first build a trigram character model of each candidate language, P (ci | ci−2:i−1, ), where the variable  ranges over languages. For each  the model is built by counting trigrams in a corpus of that language. (About 100,000 characters of each language are needed.) That gives us a model of **P**(Text |Language), but we want to select the most probable language given the text, so we apply Bayes’ rule followed by the Markov assumption to get the most probable language:
-
- ∗
-
-\= argmax 
-
-P ( | c1:N )
-
-\= argmax 
-
-P ()P (c1:N | )
-
-\= argmax 
-
-P ()
-
-N∏
-
-i = 1
-
-P (ci | ci−2:i−1, )
-
-The trigram model can be learned from a corpus, but what about the prior probability P ()? We may have some estimate of these values; for example, if we are selecting a random Web page we know that English is the most likely language and that the probability of Macedonian will be less than 1%. The exact number we select for these priors is not critical because the trigram model usually selects one language that is several orders of magnitude more probable than any other.
+The trigram model can be learned from a corpus, but what about the prior probability P ()? We may have some estimate of these values; for example, if we are selecting a random Web page we know that English is the most likely language and that the probability of Macedonian will be less than 1%. The exact number we select for these priors is not critical because the trigram model usually selects one language that is several orders of magnitude more probable than any other.
 
 Other tasks for character models include spelling correction, genre classification, and named-entity recognition. Genre classification means deciding if a text is a news story, a legal document, a scientific article, etc. While many features help make this classification, counts of punctuation and other character n-gram features go a long way (Kessler _et al._, 1997). Named-entity recognition is the task of finding names of things in a document and deciding what class they belong to. For example, in the text “Mr. Sopersteen was prescribed aciphex,” we should recognize that “Mr. Sopersteen” is the name of a person and “aciphex” is the name of a drug. Character-level models are good for this task because they can associate the character sequence “ex ” (“ex” followed by a space) with a drug name and “steen ” with a person name, and thereby identify words that they have never seen before.
 
-**22.1.2 Smoothing _n_\-gram models**
+### 22.1.2 Smoothing _n_\-gram models
 
-The major complication of n-gram models is that the training corpus provides only an esti- mate of the true probability distribution. For common character sequences such as “ th” any English corpus will give a good estimate: about 1.5% of all trigrams. On the other hand, “ ht” is very uncommon—no dictionary words start with ht. It is likely that the sequence would have a count of zero in a training corpus of standard English. Does that mean we should as- sign P (“ th”)= 0? If we did, then the text “The program issues an http request” would have  
+The major complication of n-gram models is that the training corpus provides only an esti- mate of the true probability distribution. For common character sequences such as “ th” any English corpus will give a good estimate: about 1.5% of all trigrams. On the other hand, “ ht” is very uncommon—no dictionary words start with ht. It is likely that the sequence would have a count of zero in a training corpus of standard English. Does that mean we should as- sign P (“ th”)= 0? If we did, then the text “The program issues an http request” would have an English probability of zero, which seems wrong. We have a problem in generalization: we want our language models to generalize well to texts they haven’t seen yet. Just because we have never seen “ http” before does not mean that our model should claim that it is impossi- ble. Thus, we will adjust our language model so that sequences that have a count of zero in the training corpus will be assigned a small nonzero probability (and the other counts will be adjusted downward slightly so that the probability still sums to 1). The process od adjusting the probability of low-frequency counts is called **smoothing**.
 
-Section 22.1. Language Models 863
+The simplest type of smoothing was suggested by Pierre-Simon Laplace in the 18th cen- tury: he said that, in the lack of further information, if a random Boolean variable X has been false in all n observations so far then the estimate for P (X = true) should be 1/(n+2). That is, he assumes that with two more trials, one might be true and one false. Laplace smoothing (also called add-one smoothing) is a step in the right direction, but performs relatively poorly. A better approach is a **backoff model**, in which we start by estimating n-gram counts, but for any particular sequence that has a low (or zero) count, we back off to (n− 1)-grams. **Linear interpolation smoothing** is a backoff model that combines trigram, bigram, and unigram models by linear interpolation. It defines the probability estimate as
 
-an English probability of zero, which seems wrong. We have a problem in generalization: we want our language models to generalize well to texts they haven’t seen yet. Just because we have never seen “ http” before does not mean that our model should claim that it is impossi- ble. Thus, we will adjust our language model so that sequences that have a count of zero in the training corpus will be assigned a small nonzero probability (and the other counts will be adjusted downward slightly so that the probability still sums to 1). The process od adjusting the probability of low-frequency counts is called **smoothing**.SMOOTHING
+P̂ (c~i~|c~i−2:i−1~) = λ3P (c~i~|c~i−2:i−1~) + λ2P (c~i|ci−1~) + λ1P (c~i~) ,
 
-The simplest type of smoothing was suggested by Pierre-Simon Laplace in the 18th cen- tury: he said that, in the lack of further information, if a random Boolean variable X has been false in all n observations so far then the estimate for P (X = true) should be 1/(n+2). That is, he assumes that with two more trials, one might be true and one false. Laplace smoothing (also called add-one smoothing) is a step in the right direction, but performs relatively poorly. A better approach is a **backoff model**, in which we start by estimating n-gram counts, but forBACKOFF MODEL
+where λ~3~ + λ~2~ + λ~1~ =1. The parameter values λi can be fixed, or they can be trained with an expectation–maximization algorithm. It is also possible to have the values of λi depend on the counts: if we have a high count of trigrams, then we weigh them relatively more; if only a low count, then we put more weight on the bigram and unigram models. One camp of researchers has developed ever more sophisticated smoothing models, while the other camp suggests gathering a larger corpus so that even simple smoothing models work well. Both are getting at the same goal: reducing the variance in the language model.
 
-any particular sequence that has a low (or zero) count, we back off to (n− 1)-grams. **Linear interpolation smoothing** is a backoff model that combines trigram, bigram, and unigram
-
-LINEAR INTERPOLATION SMOOTHING
-
-models by linear interpolation. It defines the probability estimate as
-
-P̂ (ci|ci−2:i−1) = λ3P (ci|ci−2:i−1) + λ2P (ci|ci−1) + λ1P (ci) ,
-
-where λ3 + λ2 + λ1 =1. The parameter values λi can be fixed, or they can be trained with an expectation–maximization algorithm. It is also possible to have the values of λi depend on the counts: if we have a high count of trigrams, then we weigh them relatively more; if only a low count, then we put more weight on the bigram and unigram models. One camp of researchers has developed ever more sophisticated smoothing models, while the other camp suggests gathering a larger corpus so that even simple smoothing models work well. Both are getting at the same goal: reducing the variance in the language model.
-
-One complication: note that the expression P (ci | ci−2:i−1) asks for P (c1 | c-1:0) when i = 1, but there are no characters before c1. We can introduce artificial characters, for example, defining c0 to be a space character or a special “begin text” character. Or we can fall back on lower-order Markov models, in effect defining c-1:0 to be the empty sequence and thus P (c1 | c-1:0)= P (c1).
+One complication: note that the expression P (c~i~ | c~i−2:i−1~) asks for P (C~1~ | c~-1:0~) when i = 1, but there are no characters before C~1~. We can introduce artificial characters, for example, defining c~0~ to be a space character or a special “begin text” character. Or we can fall back on lower-order Markov models, in effect defining c-1:0 to be the empty sequence and thus P (C~1~ | c~-1:0~)= P (C~1~).
 
 **22.1.3 Model evaluation**
 
@@ -137,23 +77,15 @@ The evaluation can be a task-specific metric, such as measuring accuracy on lang
 
 
 
-Perplexity(c1:N ) = P (c1:N ) −
-
-1
-
-N .
+Perplexity(C~1~:N ) = P (C~1~:N )^1/N^
 
 Perplexity can be thought of as the reciprocal of probability, normalized by sequence length. It can also be thought of as the weighted average branching factor of a model. Suppose there are 100 characters in our language, and our model says they are all equally likely. Then for a sequence of any length, the perplexity will be 100. If some characters are more likely than others, and the model reflects that, then the model will have a perplexity less than 100.
 
-**22.1.4 _N_\-gram word models**
+### 22.1.4 _N_\-gram word models
 
-Now we turn to n-gram models over words rather than characters. All the same mechanism applies equally to word and character models. The main difference is that the **vocabulary**—VOCABULARY
+Now we turn to n-gram models over words rather than characters. All the same mechanism applies equally to word and character models. The main difference is that the **vocabulary** the set of symbols that make up the corpus and the model—is larger. There are only about 100 characters in most languages, and sometimes we build character models that are even more restrictive, for example by treating “A” and “a” as the same symbol or by treating all punctuation as the same symbol. But with word models we have at least tens of thousands of symbols, and sometimes millions. The wide range is because it is not clear what constitutes a word. In English a sequence of letters surrounded by spaces is a word, but in some languages, like Chinese, words are not separated by spaces, and even in English many decisions must be made to have a clear policy on word boundaries: how many words are in “ne’er-do-well”? Or in “(Tel:1-800-960-5660x123)”?
 
-the set of symbols that make up the corpus and the model—is larger. There are only about 100 characters in most languages, and sometimes we build character models that are even more restrictive, for example by treating “A” and “a” as the same symbol or by treating all punctuation as the same symbol. But with word models we have at least tens of thousands of symbols, and sometimes millions. The wide range is because it is not clear what constitutes a word. In English a sequence of letters surrounded by spaces is a word, but in some languages, like Chinese, words are not separated by spaces, and even in English many decisions must be made to have a clear policy on word boundaries: how many words are in “ne’er-do-well”? Or in “(Tel:1-800-960-5660x123)”?
-
-Word n-gram models need to deal with **out of vocabulary** words. With character mod-OUT OF VOCABULARY
-
-els, we didn’t have to worry about someone inventing a new letter of the alphabet.1 But with word models there is always the chance of a new word that was not seen in the training corpus, so we need to model that explicitly in our language model. This can be done by adding just one new word to the vocabulary: <UNK>, standing for the unknown word. We can estimate n-gram counts for <UNK> by this trick: go through the training corpus, and the first time any individual word appears it is previously unknown, so replace it with the symbol <UNK>. All subsequent appearances of the word remain unchanged. Then compute n-gram counts for the corpus as usual, treating <UNK> just like any other word. Then when an unknown word appears in a test set, we look up its probability under <UNK>. Sometimes multiple unknown-word symbols are used, for different classes. For example, any string of digits might be replaced with <NUM>, or any email address with <EMAIL>.
+Word n-gram models need to deal with **out of vocabulary** words. With character models, we didn’t have to worry about someone inventing a new letter of the alphabet.1 But with word models there is always the chance of a new word that was not seen in the training corpus, so we need to model that explicitly in our language model. This can be done by adding just one new word to the vocabulary: <UNK>, standing for the unknown word. We can estimate n-gram counts for <UNK> by this trick: go through the training corpus, and the first time any individual word appears it is previously unknown, so replace it with the symbol <UNK>. All subsequent appearances of the word remain unchanged. Then compute n-gram counts for the corpus as usual, treating <UNK> just like any other word. Then when an unknown word appears in a test set, we look up its probability under <UNK>. Sometimes multiple unknown-word symbols are used, for different classes. For example, any string of digits might be replaced with <NUM>, or any email address with <EMAIL>.
 
 To get a feeling for what word models can do, we built unigram, bigram, and trigram models over the words in this book and then randomly sampled sequences of words from the models. The results are
 
@@ -163,27 +95,23 @@ _Bigram:_ systems are very similar computational approach would be represented .
 
 _Trigram:_ planning and scheduling are integrated the success of naive bayes model is . . .
 
-Even with this small sample, it should be clear that the unigram model is a poor approximation of either English or the content of an AI textbook, and that the bigram and trigram models are
-
-1 With the possible exception of the groundbreaking work of T. Geisel (1955).  
-
-Section 22.2. Text Classification 865
-
-much better. The models agree with this assessment: the perplexity was 891 for the unigram model, 142 for the bigram model and 91 for the trigram model.
+Even with this small sample, it should be clear that the unigram model is a poor approximation of either English or the content of an AI textbook, and that the bigram and trigram models are much better. The models agree with this assessment: the perplexity was 891 for the unigram model, 142 for the bigram model and 91 for the trigram model.
 
 With the basics of n-gram models—both character- and word-based—established, we can turn now to some language tasks.
 
-22.2 TEXT CLASSIFICATION
+## 22.2 TEXT CLASSIFICATION
 
-We now consider in depth the task of **text classification,** also known as **categorization**: givenTEXT CLASSIFICATION
+We now consider in depth the task of **text classification,** also known as **categorization**: given a text of some kind, decide which of a predefined set of classes it belongs to. Language iden- tification and genre classification are examples of text classification, as is sentiment analysis (classifying a movie or product review as positive or negative) and **spam detection** (classifying an email message as spam or not-spam). Since “not-spam” is awkward, researchers have coined the term **ham** for not-spam. We can treat spam detection as a problem in supervised learning. A training set is readily available: the positive (spam) examples are in my spam folder, the negative (ham) examples are in my inbox. Here is an excerpt:
 
-a text of some kind, decide which of a predefined set of classes it belongs to. Language iden- tification and genre classification are examples of text classification, as is sentiment analysis (classifying a movie or product review as positive or negative) and **spam detection** (classify-SPAM DETECTION
+Spam: Wholesale Fashion Watches -57% today. Designer watches for cheap ... 
+Spam: You can buy ViagraFr$1.85 All Medications at unbeatable prices! ... 
+Spam: WE CAN TREAT ANYTHING YOU SUFFER FROM JUST TRUST US ... 
+Spam: Sta.rt earn\*ing the salary yo,u d-eserve by o’btaining the prope,r crede’ntials!
 
-ing an email message as spam or not-spam). Since “not-spam” is awkward, researchers have coined the term **ham** for not-spam. We can treat spam detection as a problem in supervised learning. A training set is readily available: the positive (spam) examples are in my spam folder, the negative (ham) examples are in my inbox. Here is an excerpt:
-
-Spam: Wholesale Fashion Watches -57% today. Designer watches for cheap ... Spam: You can buy ViagraFr$1.85 All Medications at unbeatable prices! ... Spam: WE CAN TREAT ANYTHING YOU SUFFER FROM JUST TRUST US ... Spam: Sta.rt earn\*ing the salary yo,u d-eserve by o’btaining the prope,r crede’ntials!
-
-Ham: The practical significance of hypertree width in identifying more ... Ham: Abstract: We will motivate the problem of social identity clustering: ... Ham: Good to see you my friend. Hey Peter, It was good to hear from you. ... Ham: PDS implies convexity of the resulting optimization problem (Kernel Ridge ...
+Ham: The practical significance of hypertree width in identifying more ... 
+Ham: Abstract: We will motivate the problem of social identity clustering: ... 
+Ham: Good to see you my friend. Hey Peter, It was good to hear from you. ... 
+Ham: PDS implies convexity of the resulting optimization problem (Kernel Ridge ...
 
 From this excerpt we can start to get an idea of what might be good features to include in the supervised learning model. Word n-grams such as “for cheap” and “You can buy” seem to be indicators of spam (although they would have a nonzero probability in ham as well). Character-level features also seem important: spam is more likely to be all uppercase and to have punctuation embedded in words. Apparently the spammers thought that the word bigram “you deserve” would be too indicative of spam, and thus wrote “yo,u d-eserve” instead. A character model should detect this. We could either create a full character n-gram model of spam and ham, or we could handcraft features such as “number of punctuation marks embedded in words.”
 
@@ -191,245 +119,121 @@ Note that we have two complementary ways of talking about classification. In the
 
 by training on the spam folder, and one model for **P**(Message | ham) by training on the inbox. Then we can classify a new message with an application of Bayes’ rule:
 
-argmax c∈{spam ,ham}
-
-P (c |message) = argmax c∈{spam,ham}
-
-P (message | c)P (c) .
+![Alt text](image-2.png)
 
 where P (c) is estimated just by counting the total number of spam and ham messages. This approach works well for spam detection, just as it did for language identification.  
 
-
-
-In the machine-learning approach we represent the message as a set of feature/value pairs and apply a classification algorithm h to the feature vector **X**. We can make the language-modeling and machine-learning approaches compatible by thinking of the n-grams as features. This is easiest to see with a unigram model. The features are the words in the vocabulary: “a,” “aardvark,” . . ., and the values are the number of times each word appears in the message. That makes the feature vector large and sparse. If there are 100,000 words in the language model, then the feature vector has length 100,000, but for a short email message almost all the features will have count zero. This unigram representation has been called the **bag of words** model. You can think of the model as putting the words of the training corpusBAG OF WORDS
-
-in a bag and then selecting words one at a time. The notion of order of the words is lost; a unigram model gives the same probability to any permutation of a text. Higher-order n-gram models maintain some local notion of word order.
+In the machine-learning approach we represent the message as a set of feature/value pairs and apply a classification algorithm h to the feature vector **X**. We can make the language-modeling and machine-learning approaches compatible by thinking of the n-grams as features. This is easiest to see with a unigram model. The features are the words in the vocabulary: “a,” “aardvark,” . . ., and the values are the number of times each word appears in the message. That makes the feature vector large and sparse. If there are 100,000 words in the language model, then the feature vector has length 100,000, but for a short email message almost all the features will have count zero. This unigram representation has been called the **bag of words** model. You can think of the model as putting the words of the training corpusin a bag and then selecting words one at a time. The notion of order of the words is lost; a unigram model gives the same probability to any permutation of a text. Higher-order n-gram models maintain some local notion of word order.
 
 With bigrams and trigrams the number of features is squared or cubed, and we can add in other, non-n-gram features: the time the message was sent, whether a URL or an image is part of the message, an ID number for the sender of the message, the sender’s number of previous spam and ham messages, and so on. The choice of features is the most important part of creating a good spam detector—more important than the choice of algorithm for processing the features. In part this is because there is a lot of training data, so if we can propose a feature, the data can accurately determine if it is good or not. It is necessary to constantly update features, because spam detection is an **adversarial task**; the spammers modify their spam in response to the spam detector’s changes.
 
-It can be expensive to run algorithms on a very large feature vector, so often a process of **feature selection** is used to keep only the features that best discriminate between spam andFEATURE SELECTION
-
-ham. For example, the bigram “of the” is frequent in English, and may be equally frequent in spam and ham, so there is no sense in counting it. Often the top hundred or so features do a good job of discriminating between classes.
+It can be expensive to run algorithms on a very large feature vector, so often a process of **feature selection** is used to keep only the features that best discriminate between spam and ham. For example, the bigram “of the” is frequent in English, and may be equally frequent in spam and ham, so there is no sense in counting it. Often the top hundred or so features do a good job of discriminating between classes.
 
 Once we have chosen a set of features, we can apply any of the supervised learning techniques we have seen; popular ones for text categorization include k-nearest-neighbors, support vector machines, decision trees, naive Bayes, and logistic regression. All of these have been applied to spam detection, usually with accuracy in the 98%–99% range. With a carefully designed feature set, accuracy can exceed 99.9%.
 
-**22.2.1 Classification by data compression**
+### 22.2.1 Classification by data compression
 
-Another way to think about classification is as a problem in **data compression**. A losslessDATA COMPRESSION
+Another way to think about classification is as a problem in **data compression**. A lossless compression algorithm takes a sequence of symbols, detects repeated patterns in it, and writes a description of the sequence that is more compact than the original. For example, the text “0.142857142857142857” might be compressed to “0.[142857\]*3.” Compression algorithms work by building dictionaries of subsequences of the text, and then referring to entries in the dictionary. The example here had only one dictionary entry, “142857.”
 
-compression algorithm takes a sequence of symbols, detects repeated patterns in it, and writes a description of the sequence that is more compact than the original. For example, the text “0.142857142857142857” might be compressed to “0.\[142857\]\*3.” Compression algorithms work by building dictionaries of subsequences of the text, and then referring to entries in the dictionary. The example here had only one dictionary entry, “142857.”
-
-In effect, compression algorithms are creating a language model. The LZW algorithm in particular directly models a maximum-entropy probability distribution. To do classification by compression, we first lump together all the spam training messages and compress them as  
-
-Section 22.3. Information Retrieval 867
-
-a unit. We do the same for the ham. Then when given a new message to classify, we append it to the spam messages and compress the result. We also append it to the ham and compress that. Whichever class compresses better—adds the fewer number of additional bytes for the new message—is the predicted class. The idea is that a spam message will tend to share dictionary entries with other spam messages and thus will compress better when appended to a collection that already contains the spam dictionary.
+In effect, compression algorithms are creating a language model. The LZW algorithm in particular directly models a maximum-entropy probability distribution. To do classification by compression, we first lump together all the spam training messages and compress them as a unit. We do the same for the ham. Then when given a new message to classify, we append it to the spam messages and compress the result. We also append it to the ham and compress that. Whichever class compresses better—adds the fewer number of additional bytes for the new message—is the predicted class. The idea is that a spam message will tend to share dictionary entries with other spam messages and thus will compress better when appended to a collection that already contains the spam dictionary.
 
 Experiments with compression-based classification on some of the standard corpora for text classification—the 20-Newsgroups data set, the Reuters-10 Corpora, the Industry Sector corpora—indicate that whereas running off-the-shelf compression algorithms like gzip, RAR, and LZW can be quite slow, their accuracy is comparable to traditional classification algo- rithms. This is interesting in its own right, and also serves to point out that there is promise for algorithms that use character n-grams directly with no preprocessing of the text or feature selection: they seem to be captiring some real patterns.
 
-22.3 INFORMATION RETRIEVAL
+## 22.3 INFORMATION RETRIEVAL
 
-**Information retrieval** is the task of finding documents that are relevant to a user’s need forINFORMATION RETRIEVAL
+**Information retrieval** is the task of finding documents that are relevant to a user’s need for information. The best-known examples of information retrieval systems are search engines on the World Wide Web. A Web user can type a query such as [AI book] into a search engine and see a list of relevant pages. In this section, we will see how such systems are built. An information retrieval (henceforth **IR**) system can be characterized by
 
-information. The best-known examples of information retrieval systems are search engines on the World Wide Web. A Web user can type a query such as \[AI book\]2 into a search engine and see a list of relevant pages. In this section, we will see how such systems are built. An information retrieval (henceforth **IR**) system can be characterized byIR
+1. **A corpus of documents.** Each system must decide what it wants to treat as a document: a paragraph, a page, or a multipage text.
 
-1\. **A corpus of documents.** Each system must decide what it wants to treat as a document: a paragraph, a page, or a multipage text.
+2. **Queries posed in a query language**. A query specifies what the user wants to know.The query language can be just a list of words, such as YHN8[AI bookYHN8]; or it can specify a phrase of words that must be adjacent, as in [“AI book”]; it can contain Boolean operators as in [AI AND book]; it can include non-Boolean operators such as [AI NEAR book] or [AI book site:www.aaai.org].
 
-2\. **Queries posed in a query language**. A query specifies what the user wants to know.QUERY LANGUAGE
+3. **A result set.** This is the subset of documents that the IR system judges to be **relevant** to the query. By _relevant_, we mean likely to be of use to the person who posed the query, for the particular information need expressed in the query.
 
-The query language can be just a list of words, such as \[AI book\]; or it can specify a phrase of words that must be adjacent, as in \[“AI book”\]; it can contain Boolean operators as in \[AI AND book\]; it can include non-Boolean operators such as \[AI NEAR book\] or \[AI book site:www.aaai.org\].
+4. **A presentation of the result set.** This can be as simple as a ranked list of document titles or as complex as a rotating color map of the result set projected onto a three- dimensional space, rendered as a two-dimensional display.
 
-3\. **A result set.** This is the subset of documents that the IR system judges to be **relevant** toRESULT SET
+The earliest IR systems worked on a **Boolean keyword model**. Each word in the document collection is treated as a Boolean feature that is true of a document if the word occurs in the document and false if it does not. So the feature “retrieval” is true for the current chapter but false for Chapter 15. The query language is the language of Boolean expressions over features. A document is relevant only if the expression evaluates to true. For example, the query [information AND retrieval] is true for the current chapter and false for Chapter 15.
 
-RELEVANT the query. By _relevant_, we mean likely to be of use to the person who posed the query, for the particular information need expressed in the query.
+This model has the advantage of being simple to explain and implement. However, it has some disadvantages. First, the degree of relevance of a document is a single bit, so there is no guidance as to how to order the relevant documents for presentation. Second, Boolean expressions are unfamiliar to users who are not programmers or logicians. Users find it unintuitive that when they want to know about farming in the states of Kansas _and_ Nebraska they need to issue the query [farming (Kansas OR Nebraska)]. Third, it can be hard to formulate an appropriate query, even for a skilled user. Suppose we try [information AND retrieval AND models AND optimization] and get an empty result set. We could try [information OR retrieval OR models OR optimization], but if that returns too many results, it is difficult to know what to try next.
 
-4\. **A presentation of the result set.** This can be as simple as a ranked list of documentPRESENTATION
+### 22.3.1 IR scoring functions
 
-titles or as complex as a rotating color map of the result set projected onto a three- dimensional space, rendered as a two-dimensional display.
+Most IR systems have abandoned the Boolean model and use models based on the statistics of word counts. We describe the **BM25 scoring function**, which comes from the Okapi project of Stephen Robertson and Karen Sparck Jones at London’s City College, and has been used in search engines such as the open-source Lucene project.
 
-The earliest IR systems worked on a **Boolean keyword model**. Each word in the documentBOOLEAN KEYWORD MODEL
-
-collection is treated as a Boolean feature that is true of a document if the word occurs in the document and false if it does not. So the feature “retrieval” is true for the current chapter but false for Chapter 15. The query language is the language of Boolean expressions over
-
-2 We denote a search query as \[_query_\]. Square brackets are used rather than quotation marks so that we can distinguish the query \[“two words”\] from \[two words\].  
-
-
-
-features. A document is relevant only if the expression evaluates to true. For example, the query \[information AND retrieval\] is true for the current chapter and false for Chapter 15.
-
-This model has the advantage of being simple to explain and implement. However, it has some disadvantages. First, the degree of relevance of a document is a single bit, so there is no guidance as to how to order the relevant documents for presentation. Second, Boolean expressions are unfamiliar to users who are not programmers or logicians. Users find it unintuitive that when they want to know about farming in the states of Kansas _and_ Nebraska they need to issue the query \[farming (Kansas OR Nebraska)\]. Third, it can be hard to formulate an appropriate query, even for a skilled user. Suppose we try \[information AND retrieval AND models AND optimization\] and get an empty result set. We could try \[information OR retrieval OR models OR optimization\], but if that returns too many results, it is difficult to know what to try next.
-
-**22.3.1 IR scoring functions**
-
-Most IR systems have abandoned the Boolean model and use models based on the statistics of word counts. We describe the **BM25 scoring function**, which comes from the Okapi projectBM25 SCORING
-
-FUNCTION
-
-of Stephen Robertson and Karen Sparck Jones at London’s City College, and has been used in search engines such as the open-source Lucene project.
-
-A scoring function takes a document and a query and returns a numeric score; the most relevant documents have the highest scores. In the BM25 function, the score is a linear weighted combination of scores for each of the words that make up the query. Three factors affect the weight of a query term: First, the frequency with which a query term appears in a document (also known as TF for term frequency). For the query \[farming in Kansas\], documents that mention “farming” frequently will have higher scores. Second, the inverse document frequency of the term, or IDF . The word “in” appears in almost every document, so it has a high document frequency, and thus a low inverse document frequency, and thus it is not as important to the query as “farming” or “Kansas.” Third, the length of the document. A million-word document will probably mention all the query words, but may not actually be about the query. A short document that mentions all the words is a much better candidate.
+A scoring function takes a document and a query and returns a numeric score; the most relevant documents have the highest scores. In the BM25 function, the score is a linear weighted combination of scores for each of the words that make up the query. Three factors affect the weight of a query term: First, the frequency with which a query term appears in a document (also known as TF for term frequency). For the query [farming in Kansas], documents that mention “farming” frequently will have higher scores. Second, the inverse document frequency of the term, or IDF . The word “in” appears in almost every document, so it has a high document frequency, and thus a low inverse document frequency, and thus it is not as important to the query as “farming” or “Kansas.” Third, the length of the document. A million-word document will probably mention all the query words, but may not actually be about the query. A short document that mentions all the words is a much better candidate.
 
 The BM25 function takes all three of these into account. We assume we have created an index of the N documents in the corpus so that we can look up TF (qi, dj), the count of the number of times word qi appears in document dj . We also assume a table of document frequency counts, DF (qi), that gives the number of documents that contain the word qi. Then, given a document dj and a query consisting of the words q1:N , we have
 
-BM25(dj , q1:N ) =
+![Alt text](image-3.png)
 
-N∑
-
-i=1
-
-IDF (qi) · TF (qi, dj) · (k + 1)
-
-TF (qi, dj) + k · (1− b + b · |dj |
-
-L )
-
-,
-
-where |dj | is the length of document dj in words, and L is the average document length in the corpus: L =
-
-∑ i |di|/N . We have two parameters, k and b, that can be tuned by
-
-cross-validation; typical values are k = 2.0 and b = 0.75. IDF (qi) is the inverse document  
-
-Section 22.3. Information Retrieval 869
+where |dj | is the length of document dj in words, and L is the average document length in the corpus: L = ∑ i |di|/N . We have two parameters, k and b, that can be tuned by cross-validation; typical values are k = 2.0 and b = 0.75. IDF (qi) is the inverse document  
 
 frequency of word qi, given by
 
-IDF (qi) = log N −DF (qi) + 0.5
+![Alt text](image-4.png)
 
-DF (qi) + 0.5 .
+Of course, it would be impractical to apply the BM25 scoring function to every document in the corpus. Instead, systems create an **index** ahead of time that lists, for each vocabulary word, the documents that contain the word. This is called the **hit list** for the word. Then when given a query, we intersect the hit lists of the query words and only score the documents in the intersection.
 
-Of course, it would be impractical to apply the BM25 scoring function to every document in the corpus. Instead, systems create an **index** ahead of time that lists, for each vocabularyINDEX
-
-word, the documents that contain the word. This is called the **hit list** for the word. Then whenHIT LIST
-
-given a query, we intersect the hit lists of the query words and only score the documents in the intersection.
-
-**22.3.2 IR system evaluation**
+### 22.3.2 IR system evaluation
 
 How do we know whether an IR system is performing well? We undertake an experiment in which the system is given a set of queries and the result sets are scored with respect to human relevance judgments. Traditionally, there have been two measures used in the scoring: recall and precision. We explain them with the help of an example. Imagine that an IR system has returned a result set for a single query, for which we know which documents are and are not relevant, out of a corpus of 100 documents. The document counts in each category are given in the following table:
 
-In result set Not in result set Relevant 30 20
+|  | In result set  |Not in result set |
+| ----------- | ----------- |----------- |
+| Relevant | 30 |20 |
+| Not relevant | 10 |40 |
 
-Not relevant 10 40
-
-**Precision** measures the proportion of documents in the result set that are actually relevant.PRECISION
-
-In our example, the precision is 30/(30 + 10)= .75. The false positive rate is 1− .75 = .25. **Recall** measures the proportion of all the relevant documents in the collection that are inRECALL
-
-the result set. In our example, recall is 30/(30 + 20)= .60. The false negative rate is 1 −
-
-.60 = .40. In a very large document collection, such as the World Wide Web, recall is difficult to compute, because there is no easy way to examine every page on the Web for relevance. All we can do is either estimate recall by sampling or ignore recall completely and just judge precision. In the case of a Web search engine, there may be thousands of documents in the result set, so it makes more sense to measure precision for several different sizes, such as “P@10” (precision in the top 10 results) or “P@50,” rather than to estimate precision in the entire result set.
+**Precision** measures the proportion of documents in the result set that are actually relevant. In our example, the precision is 30/(30 + 10)= .75. The false positive rate is 1− .75 = .25. **Recall** measures the proportion of all the relevant documents in the collection that are in the result set. In our example, recall is 30/(30 + 20)= .60. The false negative rate is 1 −.60 = .40. In a very large document collection, such as the World Wide Web, recall is difficult to compute, because there is no easy way to examine every page on the Web for relevance. All we can do is either estimate recall by sampling or ignore recall completely and just judge precision. In the case of a Web search engine, there may be thousands of documents in the result set, so it makes more sense to measure precision for several different sizes, such as “P@10” (precision in the top 10 results) or “P@50,” rather than to estimate precision in the entire result set.
 
 It is possible to trade off precision against recall by varying the size of the result set returned. In the extreme, a system that returns every document in the document collection is guaranteed a recall of 100%, but will have low precision. Alternately, a system could return a single document and have low recall, but a decent chance at 100% precision. A summary of both measures is the F1 score, a single number that is the harmonic mean of precision and recall, 2PR/(P + R).
 
-**22.3.3 IR refinements**
+### 22.3.3 IR refinements
 
 There are many possible refinements to the system described here, and indeed Web search engines are continually updating their algorithms as they discover new approaches and as the Web grows and changes.  
-
-
 
 One common refinement is a better model of the effect of document length on relevance. Singhal _et al._ (1996) observed that simple document length normalization schemes tend to favor short documents too much and long documents not enough. They propose a _pivoted_ document length normalization scheme; the idea is that the pivot is the document length at which the old-style normalization is correct; documents shorter than that get a boost and longer ones get a penalty.
 
 The BM25 scoring function uses a word model that treats all words as completely in- dependent, but we know that some words are correlated: “couch” is closely related to both “couches” and “sofa.” Many IR systems attempt to account for these correlations.
 
-For example, if the query is \[couch\], it would be a shame to exclude from the result set those documents that mention “COUCH” or “couches” but not “couch.” Most IR systems do **case folding** of “COUCH” to “couch,” and some use a **stemming** algorithm to reduceCASE FOLDING
+For example, if the query is [couch], it would be a shame to exclude from the result set those documents that mention “COUCH” or “couches” but not “couch.” Most IR systems do **case folding** of “COUCH” to “couch,” and some use a **stemming** algorithm to reduce  “couches” to the stem form “couch,” both in the query and the documents. This typically yields a small increase in recall (on the order of 2% for English). However, it can harm precision. For example, stemming “stocking” to “stock” will tend to decrease precision for queries about either foot coverings or financial instruments, although it could improve recall for queries about warehousing. Stemming algorithms based on rules (e.g., remove “-ing”) cannot avoid this problem, but algorithms based on dictionaries (don’t remove “-ing” if the word is already listed in the dictionary) can. While stemming has a small effect in English, it is more important in other languages. In German, for example, it is not uncommon to see words like “Lebensversicherungsgesellschaftsangestellter” (life insurance company em- ployee). Languages such as Finnish, Turkish, Inuit, and Yupik have recursive morphological rules that in principle generate words of unbounded length.
 
-STEMMING “couches” to the stem form “couch,” both in the query and the documents. This typically yields a small increase in recall (on the order of 2% for English). However, it can harm precision. For example, stemming “stocking” to “stock” will tend to decrease precision for queries about either foot coverings or financial instruments, although it could improve recall for queries about warehousing. Stemming algorithms based on rules (e.g., remove “-ing”) cannot avoid this problem, but algorithms based on dictionaries (don’t remove “-ing” if the word is already listed in the dictionary) can. While stemming has a small effect in English, it is more important in other languages. In German, for example, it is not uncommon to see words like “Lebensversicherungsgesellschaftsangestellter” (life insurance company em- ployee). Languages such as Finnish, Turkish, Inuit, and Yupik have recursive morphological rules that in principle generate words of unbounded length.
+The next step is to recognize **synonyms**, such as “sofa” for “couch.” As with stemming,this has the potential for small gains in recall, but can hurt precision. A user who gives the query [Tim Couch] wants to see results about the football player, not sofas. The problem is that “languages abhor absolute synonyms just as nature abhors a vacuum” (Cruse, 1986). That is, anytime there are two words that mean the same thing, speakers of the language conspire to evolve the meanings to remove the confusion. Related words that are not synonyms also play an important role in ranking—terms like “leather”, “wooden,” or “modern” can serve to confirm that the document really is about “couch.” Synonyms and related words can be found in dictionaries or by looking for correlations in documents or in queries—if we find that many users who ask the query [new sofa] follow it up with the query [new couch], we can in the future alter [new sofa] to be [new sofa OR new couch].
 
-The next step is to recognize **synonyms**, such as “sofa” for “couch.” As with stemming,SYNONYM
+As a final refinement, IR can be improved by considering **metadata**—data outside of the text of the document. Examples include human-supplied keywords and publication data. On the Web, hypertext **links** between documents are a crucial source of information.
 
-this has the potential for small gains in recall, but can hurt precision. A user who gives the query \[Tim Couch\] wants to see results about the football player, not sofas. The problem is that “languages abhor absolute synonyms just as nature abhors a vacuum” (Cruse, 1986). That is, anytime there are two words that mean the same thing, speakers of the language conspire to evolve the meanings to remove the confusion. Related words that are not synonyms also play an important role in ranking—terms like “leather”, “wooden,” or “modern” can serve to confirm that the document really is about “couch.” Synonyms and related words can be found in dictionaries or by looking for correlations in documents or in queries—if we find that many users who ask the query \[new sofa\] follow it up with the query \[new couch\], we can in the future alter \[new sofa\] to be \[new sofa OR new couch\].
+### 22.3.4 The PageRank algorithm
 
-As a final refinement, IR can be improved by considering **metadata**—data outside ofMETADATA
+**PageRank**^3^ was one of the two original ideas that set Google’s search apart from other Web search engines when it was introduced in 1997. (The other innovation was the use of anchor
 
-the text of the document. Examples include human-supplied keywords and publication data. On the Web, hypertext **links** between documents are a crucial source of information.LINKS
+![Alt text](image-5.png)
 
-**22.3.4 The PageRank algorithm**
+text—the underlined text in a hyperlink—to index a page, even though the anchor text was on a _different_ page than the one being indexed.) PageRank was invented to solve the problem of the tyranny of TF scores: if the query is [IBM], how do we make sure that IBM’s home page, ibm.com, is the first result, even if another page mentions the term “IBM” more frequently? The idea is that ibm.com has many in-links (links to the page), so it should be ranked higher: each in-link is a vote for the quality of the linked-to page. But if we only counted in-links, then it would be possible for a Web spammer to create a network of pages and have them all point to a page of his choosing, increasing the score of that page. Therefore, the PageRank algorithm is designed to weight links from high-quality sites more heavily. What is a high- quality site? One that is linked to by other high-quality sites. The definition is recursive, but we will see that the recursion bottoms out properly. The PageRank for a page p is defined as:
 
-**PageRank**3 was one of the two original ideas that set Google’s search apart from other WebPAGERANK
+![Alt text](image-6.png)
 
-search engines when it was introduced in 1997. (The other innovation was the use of anchor
-
-3 The name stands both for Web pages and for coinventor Larry Page (Brin and Page, 1998).  
-
-Section 22.3. Information Retrieval 871
-
-**function** HITS(query) **returns** pages with hub and authority numbers
-
-pages← EXPAND-PAGES(RELEVANT-PAGES(query)) **for each** p **in** pages **do**
-
-p.AUTHORITY← 1 p.HUB← 1
-
-**repeat until** convergence **do for each** p **in** pages **do**
-
-p.AUTHORITY← ∑
-
-i INLINKi(p).HUB
-
-p.HUB← ∑
-
-i OUTLINKi(p).AUTHORITY
-
-NORMALIZE(pages) **return** pages
-
-**Figure 22.1** The HITS algorithm for computing hubs and authorities with respect to a query. RELEVANT-PAGES fetches the pages that match the query, and EXPAND-PAGES adds in every page that links to or is linked from one of the relevant pages. NORMALIZE divides each page’s score by the sum of the squares of all pages’ scores (separately for both the authority and hubs scores).
-
-text—the underlined text in a hyperlink—to index a page, even though the anchor text was on a _different_ page than the one being indexed.) PageRank was invented to solve the problem of the tyranny of TF scores: if the query is \[IBM\], how do we make sure that IBM’s home page, ibm.com, is the first result, even if another page mentions the term “IBM” more frequently? The idea is that ibm.com has many in-links (links to the page), so it should be ranked higher: each in-link is a vote for the quality of the linked-to page. But if we only counted in-links, then it would be possible for a Web spammer to create a network of pages and have them all point to a page of his choosing, increasing the score of that page. Therefore, the PageRank algorithm is designed to weight links from high-quality sites more heavily. What is a high- quality site? One that is linked to by other high-quality sites. The definition is recursive, but we will see that the recursion bottoms out properly. The PageRank for a page p is defined as:
-
-PR(p) = 1− d
-
-N
-
-\+ d
-
-∑
-
-i
-
-PR(ini)
-
-C(ini) ,
-
-where PR(p) is the PageRank of page p, N is the total number of pages in the corpus, ini
-
-are the pages that link in to p, and C(ini) is the count of the total number of out-links on page ini. The constant d is a damping factor. It can be understood through the **random surfer model**: imagine a Web surfer who starts at some random page and begins exploring.RANDOM SURFER
-
-MODEL
-
+where PR(p) is the PageRank of page p, N is the total number of pages in the corpus, in~i~ are the pages that link in to p, and C(ini) is the count of the total number of out-links on page ini. The constant d is a damping factor. It can be understood through the **random surfer model**: imagine a Web surfer who starts at some random page and begins exploring.
 With probability d (we’ll assume d= 0.85) the surfer clicks on one of the links on the page (choosing uniformly among them), and with probability 1 − d she gets bored with the page and restarts on a random page anywhere on the Web. The PageRank of page p is then the probability that the random surfer will be at page p at any point in time. PageRank can be computed by an iterative procedure: start with all pages having PR(p)= 1, and iterate the algorithm, updating ranks until they converge.  
 
 
 
-**22.3.5 The HITS algorithm**
+### 22.3.5 The HITS algorithm
 
 The Hyperlink-Induced Topic Search algorithm, also known as “Hubs and Authorities” or HITS, is another influential link-analysis algorithm (see Figure 22.1). HITS differs from PageRank in several ways. First, it is a query-dependent measure: it rates pages with respect to a query. That means that it must be computed anew for each query—a computational burden that most search engines have elected not to take on. Given a query, HITS first finds a set of pages that are relevant to the query. It does that by intersecting hit lists of query words, and then adding pages in the link neighborhood of these pages—pages that link to or are linked from one of the pages in the original relevant set.
 
-Each page in this set is considered an **authority** on the query to the degree that otherAUTHORITY
-
-pages in the relevant set point to it. A page is considered a **hub** to the degree that it pointsHUB
-
-to other authoritative pages in the relevant set. Just as with PageRank, we don’t want to merely count the number of links; we want to give more value to the high-quality hubs and authorities. Thus, as with PageRank, we iterate a process that updates the authority score of a page to be the sum of the hub scores of the pages that point to it, and the hub score to be the sum of the authority scores of the pages it points to. If we then normalize the scores and repeat k times, the process will converge.
+Each page in this set is considered an **authority** on the query to the degree that other pages in the relevant set point to it. A page is considered a **hub** to the degree that it points to other authoritative pages in the relevant set. Just as with PageRank, we don’t want to merely count the number of links; we want to give more value to the high-quality hubs and authorities. Thus, as with PageRank, we iterate a process that updates the authority score of a page to be the sum of the hub scores of the pages that point to it, and the hub score to be the sum of the authority scores of the pages it points to. If we then normalize the scores and repeat k times, the process will converge.
 
 Both PageRank and HITS played important roles in developing our understanding of Web information retrieval. These algorithms and their extensions are used in ranking billions of queries daily as search engines steadily develop better ways of extracting yet finer signals of search relevance.
 
-**22.3.6 Question answering**
+### 22.3.6 Question answering
 
-Information retrieval is the task of finding documents that are relevant to a query, where the query may be a question, or just a topic area or concept. **Question answering** is a somewhatQUESTION
+Information retrieval is the task of finding documents that are relevant to a query, where the query may be a question, or just a topic area or concept. **Question answering** is a somewhat different task, in which the query really is a question, and the answer is not a ranked list of documents but rather a short response—a sentence, or even just a phrase. There have been question-answering NLP (natural language processing) systems since the 1960s, but only since 2001 have such systems used Web information retrieval to radically increase their breadth of coverage.
 
-ANSWERING
-
-different task, in which the query really is a question, and the answer is not a ranked list of documents but rather a short response—a sentence, or even just a phrase. There have been question-answering NLP (natural language processing) systems since the 1960s, but only since 2001 have such systems used Web information retrieval to radically increase their breadth of coverage.
-
-The ASKMSR system (Banko _et al._, 2002) is a typical Web-based question-answering system. It is based on the intuition that most questions will be answered many times on the Web, so question answering should be thought of as a problem in precision, not recall. We don’t have to deal with all the different ways that an answer might be phrased—we only have to find one of them. For example, consider the query \[Who killed Abraham Lincoln?\] Suppose a system had to answer that question with access only to a single encyclopedia, whose entry on Lincoln said
+The ASKMSR system (Banko _et al._, 2002) is a typical Web-based question-answering system. It is based on the intuition that most questions will be answered many times on the Web, so question answering should be thought of as a problem in precision, not recall. We don’t have to deal with all the different ways that an answer might be phrased—we only have to find one of them. For example, consider the query [Who killed Abraham Lincoln?] Suppose a system had to answer that question with access only to a single encyclopedia, whose entry on Lincoln said
 
 John Wilkes Booth altered history with a bullet. He will forever be known as the man who ended Abraham Lincoln’s life.
 
 To use this passage to answer the question, the system would have to know that ending a life can be a killing, that “He” refers to Booth, and several other linguistic and semantic facts.  
 
-Section 22.4. Information Extraction 873
-
-ASKMSR does not attempt this kind of sophistication—it knows nothing about pronoun reference, or about killing, or any other verb. It does know 15 different kinds of questions, and how they can be rewritten as queries to a search engine. It knows that \[Who killed Abraham Lincoln\] can be rewritten as the query \[\* killed Abraham Lincoln\] and as \[Abraham Lincoln was killed by \*\]. It issues these rewritten queries and examines the results that come back— not the full Web pages, just the short summaries of text that appear near the query terms. The results are broken into 1-, 2-, and 3-grams and tallied for frequency in the result sets and for weight: an n-gram that came back from a very specific query rewrite (such as the exact phrase match query \[“Abraham Lincoln was killed by \*”\]) would get more weight than one from a general query rewrite, such as \[Abraham OR Lincoln OR killed\]. We would expect that “John Wilkes Booth” would be among the highly ranked n-grams retrieved, but so would “Abraham Lincoln” and “the assassination of” and “Ford’s Theatre.”
+ASKMSR does not attempt this kind of sophistication—it knows nothing about pronoun reference, or about killing, or any other verb. It does know 15 different kinds of questions, and how they can be rewritten as queries to a search engine. It knows that [Who killed Abraham Lincoln] can be rewritten as the query [* killed Abraham Lincoln] and as [Abraham Lincoln was killed by *]. It issues these rewritten queries and examines the results that come back— not the full Web pages, just the short summaries of text that appear near the query terms. The results are broken into 1-, 2-, and 3-grams and tallied for frequency in the result sets and for weight: an n-gram that came back from a very specific query rewrite (such as the exact phrase match query [“Abraham Lincoln was killed by *”]) would get more weight than one from a general query rewrite, such as [Abraham OR Lincoln OR killed]. We would expect that “John Wilkes Booth” would be among the highly ranked n-grams retrieved, but so would “Abraham Lincoln” and “the assassination of” and “Ford’s Theatre.”
 
 Once the n-grams are scored, they are filtered by expected type. If the original query starts with “who,” then we filter on names of people; for “how many” we filter on numbers, for “when,” on a date or time. There is also a filter that says the answer should not be part of the question; together these should allow us to return “John Wilkes Booth” (and not “Abraham Lincoln”) as the highest-scoring response.
 
@@ -437,59 +241,48 @@ In some cases the answer will be longer than three words; since the components r
 
 At the Text Retrieval Evaluation Conference (TREC), ASKMSR was rated as one of the top systems, beating out competitors with the ability to do far more complex language understanding. ASKMSR relies upon the breadth of the content on the Web rather than on its own depth of understanding. It won’t be able to handle complex inference patterns like associating “who killed” with “ended the life of.” But it knows that the Web is so vast that it can afford to ignore passages like that and wait for a simple passage it can handle.
 
-22.4 INFORMATION EXTRACTION
+## 22.4 INFORMATION EXTRACTION
 
-**Information extraction** is the process of acquiring knowledge by skimming a text and look-INFORMATION EXTRACTION
-
-ing for occurrences of a particular class of object and for relationships among objects. A typical task is to extract instances of addresses from Web pages, with database fields for street, city, state, and zip code; or instances of storms from weather reports, with fields for temperature, wind speed, and precipitation. In a limited domain, this can be done with high accuracy. As the domain gets more general, more complex linguistic models and more com- plex learning techniques are necessary. We will see in Chapter 23 how to define complex language models of the phrase structure (noun phrases and verb phrases) of English. But so far there are no complete models of this kind, so for the limited needs of information ex- traction, we define limited models that approximate the full English model, and concentrate on just the parts that are needed for the task at hand. The models we describe in this sec-  
-
-
-
-tion are approximations in the same way that the simple 1-CNF logical model in Figure 7.21 (page 271) is an approximations of the full, wiggly, logical model.
+**Information extraction** is the process of acquiring knowledge by skimming a text and looking for occurrences of a particular class of object and for relationships among objects. A typical task is to extract instances of addresses from Web pages, with database fields for street, city, state, and zip code; or instances of storms from weather reports, with fields for temperature, wind speed, and precipitation. In a limited domain, this can be done with high accuracy. As the domain gets more general, more complex linguistic models and more com- plex learning techniques are necessary. We will see in Chapter 23 how to define complex language models of the phrase structure (noun phrases and verb phrases) of English. But so far there are no complete models of this kind, so for the limited needs of information ex- traction, we define limited models that approximate the full English model, and concentrate on just the parts that are needed for the task at hand. The models we describe in this section are approximations in the same way that the simple 1-CNF logical model in Figure 7.21 (page 271) is an approximations of the full, wiggly, logical model.
 
 In this section we describe six different approaches to information extraction, in order of increasing complexity on several dimensions: deterministic to stochastic, domain-specific to general, hand-crafted to learned, and small-scale to large-scale.
 
-**22.4.1 Finite-state automata for information extraction**
+### 22.4.1 Finite-state automata for information extraction
 
-The simplest type of information extraction system is an **attribute-based extraction** systemATTRIBUTE-BASED EXTRACTION
+The simplest type of information extraction system is an **attribute-based extraction** system that assumes that the entire text refers to a single object and the task is to extract attributes of that object. For example, we mentioned in Section 12.7 the problem of extracting from the text “IBM ThinkBook 970. Our price: \$399.00” the set of attributes { Manufacturer=IBM, Model=ThinkBook970, Price=$399.00 }. We can address this problem by defining a **tem- plate** (also known as a pattern) for each attribute we would like to extract. The template is defined by a finite state automaton, the simplest example of which is the **regular expression**, or regex. Regular expressions are used in Unix commands such as grep, in programming languages such as Perl, and in word processors such as Microsoft Word. The details vary slightly from one tool to another and so are best learned from the appropriate manual, but here we show how to build up a regular expression template for prices in dollars:
 
-that assumes that the entire text refers to a single object and the task is to extract attributes of that object. For example, we mentioned in Section 12.7 the problem of extracting from the text “IBM ThinkBook 970. Our price: $399.00” the set of attributes {Manufacturer=IBM, Model=ThinkBook970, Price=$399.00}. We can address this problem by defining a **tem- plate** (also known as a pattern) for each attribute we would like to extract. The template isTEMPLATE
 
-defined by a finite state automaton, the simplest example of which is the **regular expression**,REGULAR EXPRESSION
-
-or regex. Regular expressions are used in Unix commands such as grep, in programming languages such as Perl, and in word processors such as Microsoft Word. The details vary slightly from one tool to another and so are best learned from the appropriate manual, but here we show how to build up a regular expression template for prices in dollars:
-
-\[0-9\] matches any digit from 0 to 9 \[0-9\]+ matches one or more digits \[.\]\[0-9\]\[0-9\] matches a period followed by two digits (\[.\]\[0-9\]\[0-9\])? matches a period followed by two digits, or nothing \[$\]\[0-9\]+(\[.\]\[0-9\]\[0-9\])? matches $249.99 or $1.23 or $1000000 or . . .
+[0-9] matches any digit from 0 to 9
+[0-9]+ matches one or more digits
+[.][0-9][0-9] matches a period followed by two digits
+([.][0-9][0-9])? matches a period followed by two digits, or nothing
+[$][0-9]+([.][0-9][0-9])? matches $249.99 or $1.23 or $1000000 or . . .
 
 Templates are often defined with three parts: a prefix regex, a target regex, and a postfix regex. For prices, the target regex is as above, the prefix would look for strings such as “price:” and the postfix could be empty. The idea is that some clues about an attribute come from the attribute value itself and some come from the surrounding text.
 
-If a regular expression for an attribute matches the text exactly once, then we can pull out the portion of the text that is the value of the attribute. If there is no match, all we can do is give a default value or leave the attribute missing; but if there are several matches, we need a process to choose among them. One strategy is to have several templates for each attribute, ordered by priority. So, for example, the top-priority template for price might look for the prefix “our price:”; if that is not found, we look for the prefix “price:” and if that is not found, the empty prefix. Another strategy is to take all the matches and find some way to choose among them. For example, we could take the lowest price that is within 50% of the highest price. That will select $78.00 as the target from the text “List price $99.00, special sale price $78.00, shipping $3.00.”
+If a regular expression for an attribute matches the text exactly once, then we can pull out the portion of the text that is the value of the attribute. If there is no match, all we can do is give a default value or leave the attribute missing; but if there are several matches, we need a process to choose among them. One strategy is to have several templates for each attribute, ordered by priority. So, for example, the top-priority template for price might look for the prefix “our price:”; if that is not found, we look for the prefix “price:” and if that is not found, the empty prefix. Another strategy is to take all the matches and find some way to choose among them. For example, we could take the lowest price that is within 50% of the highest price. That will select \$78.00 as the target from the text “List price $99.00, special sale price $78.00, shipping $3.00.”
 
-One step up from attribute-based extraction systems are **relational extraction** systems,RELATIONAL EXTRACTION
-
-which deal with multiple objects and the relations among them. Thus, when these systems see the text “$249.99,” they need to determine not just that it is a price, but also which object has that price. A typical relational-based extraction system is FASTUS, which handles news stories about corporate mergers and acquisitions. It can read the story  
-
-Section 22.4. Information Extraction 875
-
-Bridgestone Sports Co. said Friday it has set up a joint venture in Taiwan with a local concern and a Japanese trading house to produce golf clubs to be shipped to Japan.
+One step up from attribute-based extraction systems are **relational extraction** systems,which deal with multiple objects and the relations among them. Thus, when these systems see the text “$249.99,” they need to determine not just that it is a price, but also which object has that price. A typical relational-based extraction system is FASTUS, which handles news stories about corporate mergers and acquisitions. It can read the story Bridgestone Sports Co. said Friday it has set up a joint venture in Taiwan with a local concern and a Japanese trading house to produce golf clubs to be shipped to Japan.
 
 and extract the relations:
 
-e∈ JointVentures ∧ Product(e, “_golf_ clubs”) ∧Date(e, “Friday”) ∧Member(e, “Bridgestone Sports Co”) ∧Member(e, “a local concern”) ∧Member(e, “a Japanese trading house”) .
+```
+e∈ JointVentures ∧ Product(e, “golf clubs”) ∧Date(e, “Friday”) 
+    ∧Member(e, “Bridgestone Sports Co”) 
+    ∧Member(e, “a local concern”) ∧Member(e, “a Japanese trading house”) .
+```
 
-A relational extraction system can be built as a series of **cascaded finite-state transducers**. CASCADED FINITE-STATE TRANSDUCERS
+A relational extraction system can be built as a series of **cascaded finite-state transducers**. That is, the system consists of a series of small, efficient finite-state automata (FSAs), where each automaton receives text as input, transduces the text into a different format, and passes it along to the next automaton. FASTUS consists of five stages:
 
-That is, the system consists of a series of small, efficient finite-state automata (FSAs), where each automaton receives text as input, transduces the text into a different format, and passes it along to the next automaton. FASTUS consists of five stages:
+1. Tokenization
 
-1\. Tokenization
+2. Complex-word handling
 
-2\. Complex-word handling
+3. Basic-group handling
 
-3\. Basic-group handling
+4. Complex-phrase handling
 
-4\. Complex-phrase handling
-
-5\. Structure merging
+5. Structure merging
 
 FASTUS’s first stage is **tokenization**, which segments the stream of characters into tokens (words, numbers, and punctuation). For English, tokenization can be fairly simple; just sep- arating characters at white space or punctuation does a fairly good job. Some tokenizers also deal with markup languages such as HTML, SGML, and XML.
 
@@ -499,11 +292,25 @@ CapitalizedWord+ (“Company” | “Co” | “Inc” | “Ltd”)
 
 The third stage handles **basic groups**, meaning noun groups and verb groups. The idea is to chunk these into units that will be managed by the later stages. We will see how to write a complex description of noun and verb phrases in Chapter 23, but here we have simple rules that only approximate the complexity of English, but have the advantage of being rep- resentable by finite state automata. The example sentence would emerge from this stage as the following sequence of tagged groups:
 
-1 NG: Bridgestone Sports Co. 10 NG: a local concern 2 VG: said 11 CJ: and 3 NG: Friday 12 NG: a Japanese trading house 4 NG: it 13 VG: to produce 5 VG: had set up 14 NG: golf clubs 6 NG: a joint venture 15 VG: to be shipped 7 PR: in 16 PR: to 8 NG: Taiwan 17 NG: Japan 9 PR: with
+1. NG: Bridgestone Sports Co. 
+2. VG: said 
+3. NG: Friday 
+4. NG: it  
+5. VG: had set up 
+6. NG: a joint venture 
+7. PR: in 
+8. NG: Taiwan
+9. PR: with
+10. NG: a local concern
+11. CJ: and 
+12. NG: a Japanese trading house 
+13. VG: to produce
+14. NG: golf clubs 
+15. VG: to be shipped 
+16. PR: to 
+17. NG: Japan 
 
 Here NG means noun group, VG is verb group, PR is preposition, and CJ is conjunction.  
-
-
 
 The fourth stage combines the basic groups into **complex phrases**. Again, the aim is to have rules that are finite-state and thus can be processed quickly, and that result in unambiguous (or nearly unambiguous) output phrases. One type of combination rule deals with domain-specific events. For example, the rule
 
@@ -513,51 +320,19 @@ captures one way to describe the formation of a joint venture. This stage is the
 
 In general, finite-state template-based information extraction works well for a restricted domain in which it is possible to predetermine what subjects will be discussed, and how they will be mentioned. The cascaded transducer model helps modularize the necessary knowl- edge, easing construction of the system. These systems work especially well when they are reverse-engineering text that has been generated by a program. For example, a shopping site on the Web is generated by a program that takes database entries and formats them into Web pages; a template-based extractor then recovers the original database. Finite-state informa- tion extraction is less successful at recovering information in highly variable format, such as text written by humans on a variety of subjects.
 
-**22.4.2 Probabilistic models for information extraction**
+### 22.4.2 Probabilistic models for information extraction
 
 When information extraction must be attempted from noisy or varied input, simple finite-state approaches fare poorly. It is too hard to get all the rules and their priorities right; it is better to use a probabilistic model rather than a rule-based model. The simplest probabilistic model for sequences with hidden state is the hidden Markov model, or HMM.
 
 Recall from Section 15.3 that an HMM models a progression through a sequence of hidden states, **x**t, with an observation **e**t at each step. To apply HMMs to information ex- traction, we can either build one big HMM for all the attributes or build a separate HMM for each attribute. We’ll do the second. The observations are the words of the text, and the hidden states are whether we are in the target, prefix, or postfix part of the attribute template, or in the background (not part of a template). For example, here is a brief text and the most probable (Viterbi) path for that text for two HMMs, one trained to recognize the speaker in a talk announcement, and one trained to recognize dates. The “-” indicates a background state:
 
-Text: There will be a seminar by Dr. Andrew McCallum on Friday Speaker: - - - - PRE PRE TARGET TARGET TARGET POST - Date: - - - - - - - - - PRE TARGET
+Text: There will be a seminar by Dr. Andrew McCallum on Friday 
+Speaker: - - - - PRE PRE TARGET TARGET TARGET POST - 
+Date: - - - - - - - - - PRE TARGET
 
 HMMs have two big advantages over FSAs for extraction. First, HMMs are probabilistic, and thus tolerant to noise. In a regular expression, if a single expected character is missing, the regex fails to match; with HMMs there is graceful degradation with missing characters/words, and we get a probability indicating the degree of match, not just a Boolean match/fail. Second,  
 
-Section 22.4. Information Extraction 877
-
-that by speakers / here
-
-will ( received has is
-
-1.0
-
-1.0
-
-0.99
-
-0.76
-
-0.24
-
-0.99
-
-0.44
-
-0.56
-
-: with ; about how
-
-who speaker speak 5409 appointment
-
-seminar reminder theater artist additionally
-
-dr professor robert michael mr
-
-w cavalier stevens christel l
-
-Prefix Target Postfix
-
-**Figure 22.2** Hidden Markov model for the **speaker** of a talk announcement. The two square states are the target (note the second target state has a self-loop, so the target can match a string of any length), the four circles to the left are the prefix, and the one on the right is the postfix. For each state, only a few of the high-probability words are shown. From Freitag and McCallum (2000).
+![Alt text](image-7.png)
 
 HMMs can be trained from data; they don’t require laborious engineering of templates, and thus they can more easily be kept up to date as text changes over time.
 
@@ -567,85 +342,51 @@ With sufficient training data, the HMM automatically learns a structure of dates
 
 Once the HMMs have been learned, we can apply them to a text, using the Viterbi algorithm to find the most likely path through the HMM states. One approach is to apply each attribute HMM separately; in this case you would expect most of the HMMs to spend most of their time in background states. This is appropriate when the extraction is sparse— when the number of extracted words is small compared to the length of the text.  
 
-
-
 The other approach is to combine all the individual attributes into one big HMM, which would then find a path that wanders through different target attributes, first finding a speaker target, then a date target, etc. Separate HMMs are better when we expect just one of each attribute in a text and one big HMM is better when the texts are more free-form and dense with attributes. With either approach, in the end we have a collection of target attribute observations, and have to decide what to do with them. If every expected attribute has one target filler then the decision is easy: we have an instance of the desired relation. If there are multiple fillers, we need to decide which to choose, as we discussed with template-based systems. HMMs have the advantage of supplying probability numbers that can help make the choice. If some targets are missing, we need to decide if this is an instance of the desired relation at all, or if the targets found are false positives. A machine learning algorithm can be trained to make this choice.
 
-**22.4.3 Conditional random fields for information extraction**
+### 22.4.3 Conditional random fields for information extraction
 
 One issue with HMMs for the information extraction task is that they model a lot of prob- abilities that we don’t really need. An HMM is a generative model; it models the full joint probability of observations and hidden states, and thus can be used to generate samples. That is, we can use the HMM model not only to parse a text and recover the speaker and date, but also to generate a random instance of a text containing a speaker and a date. Since we’re not interested in that task, it is natural to ask whether we might be better off with a model that doesn’t bother modeling that possibility. All we need in order to understand a text is a **discriminative model**, one that models the conditional probability of the hidden attributes given the observations (the text). Given a text **e**1:N , the conditional model finds the hidden state sequence **X**1:N that maximizes P (**X**1:N | **e**1:N ).
 
-Modeling this directly gives us some freedom. We don’t need the independence as- sumptions of the Markov model—we can have an **x**t that is dependent on **x**1\. A framework for this type of model is the **conditional random field,** or CRF, which models a conditionalCONDITIONAL
-
-RANDOM FIELD
-
-probability distribution of a set of target variables given a set of observed variables. Like Bayesian networks, CRFs can represent many different structures of dependencies among the variables. One common structure is the **linear-chain conditional random field** for repre-
-
-LINEAR-CHAIN CONDITIONAL RANDOM FIELD
-
-senting Markov dependencies among variables in a temporal sequence. Thus, HMMs are the temporal version of naive Bayes models, and linear-chain CRFs are the temporal version of logistic regression, where the predicted target is an entire state sequence rather than a single binary variable.
+Modeling this directly gives us some freedom. We don’t need the independence as- sumptions of the Markov model—we can have an **x**t that is dependent on **x**1\. A framework for this type of model is the **conditional random field,** or CRF, which models a conditional probability distribution of a set of target variables given a set of observed variables. Like Bayesian networks, CRFs can represent many different structures of dependencies among the variables. One common structure is the **linear-chain conditional random field** for representing Markov dependencies among variables in a temporal sequence. Thus, HMMs are the temporal version of naive Bayes models, and linear-chain CRFs are the temporal version of logistic regression, where the predicted target is an entire state sequence rather than a single binary variable.
 
 Let **e**1:N be the observations (e.g., words in a document), and **x**1:N be the sequence of hidden states (e.g., the prefix, target, and postfix states). A linear-chain conditional random field defines a conditional probability distribution:
 
-**P**(**x**1:N |**e**1:N ) = α e \[ P
-
-N
-
-i=1 F (**x**i−1,**x**i,**e**,i)\]
-
-,
+![Alt text](image-8.png)
 
 where α is a normalization factor (to make sure the probabilities sum to 1), and F is a feature function defined as the weighted sum of a collection of k component feature functions:
 
-F (**x**i−1, **x**i, **e**, i) =
+![Alt text](image-9.png)
 
-∑
+The λ~k~ parameter values are learned with a MAP (maximum a posteriori) estimation proce- dure that maximizes the conditional likelihood of the training data. The feature functions are the key components of a CRF. The function fk has access to a pair of adjacent states, **x**~i−1~ and **x**~i~, but also the entire observation (word) sequence **e**, and the current position in the temporal sequence, i. This gives us a lot of flexibility in defining features. We can define a simple feature function, for example one that produces a value of 1 if the current word is ANDREW and the current state is SPEAKER:
 
-k
+![Alt text](image-10.png)
 
-λk fk(**x**i−1, **x**i, **e**, i) .  
+How are features like these used? It depends on their corresponding weights. If λ1 > 0, then whenever f1 is true, it increases the probability of the hidden state sequence **x**~1:N~ . This is another way of saying “the CRF model should prefer the target state SPEAKER for the word ANDREW.” If on the other hand λ~1~ < 0, the CRF model will try to avoid this association, and if λ~1~ = 0, this feature is ignored. Parameter values can be set manually or can be learned from data. Now consider a second feature function:
 
-Section 22.4. Information Extraction 879
+![Alt text](image-11.png)
 
-The λk parameter values are learned with a MAP (maximum a posteriori) estimation proce- dure that maximizes the conditional likelihood of the training data. The feature functions are the key components of a CRF. The function fk has access to a pair of adjacent states, **x**i−1 and **x**i, but also the entire observation (word) sequence **e**, and the current position in the temporal sequence, i. This gives us a lot of flexibility in defining features. We can define a simple feature function, for example one that produces a value of 1 if the current word is ANDREW
+This feature is true if the current state is SPEAKER and the next word is “said.” One would therefore expect a positive λ~2~ value to go with the feature. More interestingly, note that both f1 and f2 can hold at the same time for a sentence like “Andrew said . . . .” In this case, the two features overlap each other and both boost the belief in **x**~1~ = SPEAKER. Because of the independence assumption, HMMs cannot use overlapping features; CRFs can. Furthermore, a feature in a CRF can use any part of the sequence **e**~1:N~ . Features can also be defined over transitions between states. The features we defined here were binary, but in general, a feature function can be any real-valued function. For domains where we have some knowledge about the types of features we would like to include, the CRF formalism gives us a great deal of flexibility in defining them. This flexibility can lead to accuracies that are higher than with less flexible models such as HMMs.
 
-and the current state is SPEAKER:
-
-f1(**x**i−1, **x**i, **e**, i) =
-
-{ 1 if **x**i = SPEAKER and **e**i = ANDREW
-
-0 otherwise
-
-How are features like these used? It depends on their corresponding weights. If λ1 > 0, then whenever f1 is true, it increases the probability of the hidden state sequence **x**1:N . This is another way of saying “the CRF model should prefer the target state SPEAKER for the word ANDREW.” If on the other hand λ1 < 0, the CRF model will try to avoid this association, and if λ1 = 0, this feature is ignored. Parameter values can be set manually or can be learned from data. Now consider a second feature function:
-
-f2(**x**i−1, **x**i, **e**, i) =
-
-{ 1 if **x**i = SPEAKER and **e**i+1 = SAID
-
-0 otherwise
-
-This feature is true if the current state is SPEAKER and the next word is “said.” One would therefore expect a positive λ2 value to go with the feature. More interestingly, note that both f1 and f2 can hold at the same time for a sentence like “Andrew said . . . .” In this case, the two features overlap each other and both boost the belief in **x**1 = SPEAKER. Because of the independence assumption, HMMs cannot use overlapping features; CRFs can. Furthermore, a feature in a CRF can use any part of the sequence **e**1:N . Features can also be defined over transitions between states. The features we defined here were binary, but in general, a feature function can be any real-valued function. For domains where we have some knowledge about the types of features we would like to include, the CRF formalism gives us a great deal of flexibility in defining them. This flexibility can lead to accuracies that are higher than with less flexible models such as HMMs.
-
-**22.4.4 Ontology extraction from large corpora**
+### 22.4.4 Ontology extraction from large corpora
 
 So far we have thought of information extraction as finding a specific set of relations (e.g., speaker, time, location) in a specific text (e.g., a talk announcement). A different applica- tion of extraction technology is building a large knowledge base or ontology of facts from a corpus. This is different in three ways: First it is open-ended—we want to acquire facts about all types of domains, not just one specific domain. Second, with a large corpus, this task is dominated by precision, not recall—just as with question answering on the Web (Sec- tion 22.3.6). Third, the results can be statistical aggregates gathered from multiple sources, rather than being extracted from one specific text.
 
-For example, Hearst (1992) looked at the problem of learning an ontology of concept categories and subcategories from a large corpus. (In 1992, a large corpus was a 1000-page encyclopedia; today it would be a 100-million-page Web corpus.) The work concentrated on templates that are very general (not tied to a specific domain) and have high precision (are  
-
-
-
-almost always correct when they match) but low recall (do not always match). Here is one of the most productive templates:
+For example, Hearst (1992) looked at the problem of learning an ontology of concept categories and subcategories from a large corpus. (In 1992, a large corpus was a 1000-page encyclopedia; today it would be a 100-million-page Web corpus.) The work concentrated on templates that are very general (not tied to a specific domain) and have high precision (are almost always correct when they match) but low recall (do not always match). Here is one of the most productive templates:
 
 NP **such as** NP (**,** NP )\* (**,**)? ((**and** | **or**) NP)? .
 
 Here the bold words and commas must appear literally in the text, but the parentheses are for grouping, the asterisk means _repetition of zero or more_, and the question mark means _optional._ NP is a variable standing for a noun phrase; Chapter 23 describes how to identify noun phrases; for now just assume that we know some words are nouns and other words (such as verbs) that we can reliably assume are not part of a simple noun phrase. This template matches the texts “diseases such as rabies affect your dog” and “supports network protocols such as DNS,” concluding that rabies is a disease and DNS is a network protocol. Similar templates can be constructed with the key words “including,” “especially,” and “or other.” Of course these templates will fail to match many relevant passages, like “Rabies is a disease.” That is intentional. The “NP is a NP” template does indeed sometimes denote a subcategory relation, but it often means something else, as in “There is a God” or “She is a little tired.” With a large corpus we can afford to be picky; to use only the high-precision templates. We’ll miss many statements of a subcategory relationship, but most likely we’ll find a paraphrase of the statement somewhere else in the corpus in a form we can use.
 
-**22.4.5 Automated template construction**
+### 22.4.5 Automated template construction
 
 The _subcategory_ relation is so fundamental that is worthwhile to handcraft a few templates to help identify instances of it occurring in natural language text. But what about the thousands of other relations in the world? There aren’t enough AI grad students in the world to create and debug templates for all of them. Fortunately, it is possible to _learn_ templates from a few examples, then use the templates to learn more examples, from which more templates can be learned, and so on. In one of the first experiments of this kind, Brin (1999) started with a data set of just five examples:
 
-(“Isaac Asimov”, “The Robots of Dawn”) (“David Brin”, “Startide Rising”) (“James Gleick”, “Chaos—Making a New Science”) (“Charles Dickens”, “Great Expectations”) (“William Shakespeare”, “The Comedy of Errors”)
+(“Isaac Asimov”, “The Robots of Dawn”) 
+(“David Brin”, “Startide Rising”) 
+(“James Gleick”, “Chaos—Making a New Science”) 
+(“Charles Dickens”, “Great Expectations”) 
+(“William Shakespeare”, “The Comedy of Errors”)
 
 Clearly these are examples of the author–title relation, but the learning system had no knowl- edge of authors or titles. The words in these examples were used in a search over a Web corpus, resulting in 199 matches. Each match is defined as a tuple of seven strings,
 
@@ -653,63 +394,50 @@ Clearly these are examples of the author–title relation, but the learning syst
 
 where _Order_ is true if the author came first and false if the title came first, _Middle_ is the characters between the author and title, _Prefix_ is the 10 characters before the match, _Suffix_ is the 10 characters after the match, and _URL_ is the Web address where the match was made.
 
-Given a set of matches, a simple template-generation scheme can find templates to explain the matches. The language of templates was designed to have a close mapping to the matches themselves, to be amenable to automated learning, and to emphasize high precision  
-
-Section 22.4. Information Extraction 881
-
-(possibly at the risk of lower recall). Each template has the same seven components as a match. The Author and Title are regexes consisting of any characters (but beginning and ending in letters) and constrained to have a length from half the minimum length of the examples to twice the maximum length. The prefix, middle, and postfix are restricted to literal strings, not regexes. The middle is the easiest to learn: each distinct middle string in the set of matches is a distinct candidate template. For each such candidate, the template’s _Prefix_ is then defined as the longest common suffix of all the prefixes in the matches, and the _Postfix_ is defined as the longest common prefix of all the postfixes in the matches. If either of these is of length zero, then the template is rejected. The _URL_ of the template is defined as the longest prefix of the URLs in the matches.
+Given a set of matches, a simple template-generation scheme can find templates to explain the matches. The language of templates was designed to have a close mapping to the matches themselves, to be amenable to automated learning, and to emphasize high precision (possibly at the risk of lower recall). Each template has the same seven components as a match. The Author and Title are regexes consisting of any characters (but beginning and ending in letters) and constrained to have a length from half the minimum length of the examples to twice the maximum length. The prefix, middle, and postfix are restricted to literal strings, not regexes. The middle is the easiest to learn: each distinct middle string in the set of matches is a distinct candidate template. For each such candidate, the template’s _Prefix_ is then defined as the longest common suffix of all the prefixes in the matches, and the _Postfix_ is defined as the longest common prefix of all the postfixes in the matches. If either of these is of length zero, then the template is rejected. The _URL_ of the template is defined as the longest prefix of the URLs in the matches.
 
 In the experiment run by Brin, the first 199 matches generated three templates. The most productive template was
 
-<LI><B> _Title_ </B> by _Author_ ( _URL_: www.sff.net/locus/c
+```
+ <LI> <B> Title </B> 
+ by Author ( URL: www.sff.net/locus/c
+```
 
 The three templates were then used to retrieve 4047 more (author, title) examples. The exam- ples were then used to generate more templates, and so on, eventually yielding over 15,000 titles. Given a good set of templates, the system can collect a good set of examples. Given a good set of examples, the system can build a good set of templates.
 
 The biggest weakness in this approach is the sensitivity to noise. If one of the first few templates is incorrect, errors can propagate quickly. One way to limit this problem is to not accept a new example unless it is verified by multiple templates, and not accept a new template unless it discovers multiple examples that are also found by other templates.
 
-**22.4.6 Machine reading**
+### 22.4.6 Machine reading
 
-Automated template construction is a big step up from handcrafted template construction, but it still requires a handful of labeled examples of each relation to get started. To build a large ontology with many thousands of relations, even that amount of work would be onerous; we would like to have an extraction system with _no_ human input of any kind—a system that could read on its own and build up its own database. Such a system would be relation-independent; would work for any relation. In practice, these systems work on _all_ relations in parallel, because of the I/O demands of large corpora. They behave less like a traditional information- extraction system that is targeted at a few relations and more like a human reader who learns from the text itself; because of this the field has been called **machine reading**.MACHINE READING
-
-A representative machine-reading system is TEXTRUNNER (Banko and Etzioni, 2008). TEXTRUNNER uses cotraining to boost its performance, but it needs something to bootstrap from. In the case of Hearst (1992), specific patterns (e.g., _such as_) provided the bootstrap, and for Brin (1998), it was a set of five author–title pairs. For TEXTRUNNER, the original inspi- ration was a taxonomy of eight very general syntactic templates, as shown in Figure 22.3. It was felt that a small number of templates like this could cover most of the ways that relation- ships are expressed in English. The actual bootsrapping starts from a set of labelled examples that are extracted from the Penn Treebank, a corpus of parsed sentences. For example, from the parse of the sentence “Einstein received the Nobel Prize in 1921,” TEXTRUNNER is able  
-
-
-
-to extract the relation (“Einstein,” “received,” “Nobel Prize”). Given a set of labeled examples of this type, TEXTRUNNER trains a linear-chain CRF
-
-to extract further examples from unlabeled text. The features in the CRF include function words like “to” and “of” and “the,” but not nouns and verbs (and not noun phrases or verb phrases). Because TEXTRUNNER is domain-independent, it cannot rely on predefined lists of nouns and verbs.
+Automated template construction is a big step up from handcrafted template construction, but it still requires a handful of labeled examples of each relation to get started. To build a large ontology with many thousands of relations, even that amount of work would be onerous; we would like to have an extraction system with _no_ human input of any kind—a system that could read on its own and build up its own database. Such a system would be relation-independent; would work for any relation. In practice, these systems work on _all_ relations in parallel, because of the I/O demands of large corpora. They behave less like a traditional information- extraction system that is targeted at a few relations and more like a human reader who learns from the text itself; because of this the field has been called **machine reading**.A representative machine-reading system is TEXTRUNNER (Banko and Etzioni, 2008). TEXTRUNNER uses cotraining to boost its performance, but it needs something to bootstrap from. In the case of Hearst (1992), specific patterns (e.g., _such as_) provided the bootstrap, and for Brin (1998), it was a set of five author–title pairs. For TEXTRUNNER, the original inspi- ration was a taxonomy of eight very general syntactic templates, as shown in Figure 22.3. It was felt that a small number of templates like this could cover most of the ways that relation- ships are expressed in English. The actual bootsrapping starts from a set of labelled examples that are extracted from the Penn Treebank, a corpus of parsed sentences. For example, from the parse of the sentence “Einstein received the Nobel Prize in 1921,” TEXTRUNNER is able to extract the relation (“Einstein,” “received,” “Nobel Prize”). Given a set of labeled examples of this type, TEXTRUNNER trains a linear-chain CRF to extract further examples from unlabeled text. The features in the CRF include function words like “to” and “of” and “the,” but not nouns and verbs (and not noun phrases or verb phrases). Because TEXTRUNNER is domain-independent, it cannot rely on predefined lists of nouns and verbs.
 
 **Type Template Example Frequency**
 
-Verb NP1 Verb NP2 X established Y 38% Noun–Prep NP1 NP Prep NP2 X settlement with Y 23% Verb–Prep NP1 Verb Prep NP2 X moved to Y 16% Infinitive NP1 **to** Verb NP2 X plans to acquire Y 9% Modifier NP1 Verb NP2 Noun X is Y winner 5% Noun-Coordinate NP1 (**,** | **and** | **\-** | **:**) NP2 NP X-Y deal 2% Verb-Coordinate NP1 (**,**| **and**) NP2 Verb X, Y merge 1% Appositive NP1 NP (**:**| **,**)? NP2 X hometown : Y 1%
-
-**Figure 22.3** Eight general templates that cover about 95% of the ways that relations are expressed in English.
+![Alt text](image-12.png)
 
 TEXTRUNNER achieves a precision of 88% and recall of 45% (F1 of 60%) on a large Web corpus. TEXTRUNNER has extracted hundreds of millions of facts from a corpus of a half-billion Web pages. For example, even though it has no predefined medical knowledge, it has extracted over 2000 answers to the query \[what kills bacteria\]; correct answers include antibiotics, ozone, chlorine, Cipro, and broccoli sprouts. Questionable answers include “wa- ter,” which came from the sentence “Boiling water for at least 10 minutes will kill bacteria.” It would be better to attribute this to “boiling water” rather than just “water.”
 
 With the techniques outlined in this chapter and continual new inventions, we are start- ing to get closer to the goal of machine reading.
 
-22.5 SUMMARY
+## 22.5 SUMMARY
 
 The main points of this chapter are as follows:
 
-• Probabilistic language models based on n-grams recover a surprising amount of infor- mation about a language. They can perform well on such diverse tasks as language identification, spelling correction, genre classification, and named-entity recognition.
+- Probabilistic language models based on n-grams recover a surprising amount of infor- mation about a language. They can perform well on such diverse tasks as language identification, spelling correction, genre classification, and named-entity recognition.
 
-• These language models can have millions of features, so feature selection and prepro- cessing of the data to reduce noise is important.
+- These language models can have millions of features, so feature selection and prepro- cessing of the data to reduce noise is important.
 
-• **Text classification** can be done with naive Bayes n-gram models or with any of the classification algorithms we have previously discussed. Classification can also be seen as a problem in data compression.  
+- **Text classification** can be done with naive Bayes n-gram models or with any of the classification algorithms we have previously discussed. Classification can also be seen as a problem in data compression.  
 
-Bibliographical and Historical Notes 883
+- **Information retrieval** systems use a very simple language model based on bags of words, yet still manage to perform well in terms of **recall** and **precision** on very large corpora of text. On Web corpora, link-analysis algorithms improve performance.
 
-• **Information retrieval** systems use a very simple language model based on bags of words, yet still manage to perform well in terms of **recall** and **precision** on very large corpora of text. On Web corpora, link-analysis algorithms improve performance.
+- **Question answering** can be handled by an approach based on information retrieval, for questions that have multiple answers in the corpus. When more answers are available in the corpus, we can use techniques that emphasize precision rather than recall.
 
-• **Question answering** can be handled by an approach based on information retrieval, for questions that have multiple answers in the corpus. When more answers are available in the corpus, we can use techniques that emphasize precision rather than recall.
+- **Information-extraction** systems use a more complex model that includes limited no- tions of syntax and semantics in the form of templates. They can be built from finite- state automata, HMMs, or conditional random fields, and can be learned from examples.
 
-• **Information-extraction** systems use a more complex model that includes limited no- tions of syntax and semantics in the form of templates. They can be built from finite- state automata, HMMs, or conditional random fields, and can be learned from examples.
+- In building a statistical language system, it is best to devise a model that can make good use of available **data**, even if the model seems overly simplistic.
 
-• In building a statistical language system, it is best to devise a model that can make good use of available **data**, even if the model seems overly simplistic.
-
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+### BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
 N -gram letter models for language modeling were proposed by Markov (1913). Claude Shannon (Shannon and Weaver, 1949) was the first to generate n-gram word models of En- glish. Chomsky (1956, 1957) pointed out the limitations of finite-state models compared with context-free models, concluding, “Probabilistic models give no particular insight into some of the basic problems of syntactic structure.” This is true, but probabilistic models _do_ provide insight into some _other_ basic problems—problems that context-free models ignore. Chom- sky’s remarks had the unfortunate effect of scaring many people away from statistical models for two decades, until these models reemerged for use in speech recognition (Jelinek, 1976).
 
@@ -717,9 +445,7 @@ Kessler _et al._ (1997) show how to apply character n-gram models to genre class
 
 Add-one smoothing, first suggested by Pierre-Simon Laplace (1816), was formalized by Jeffreys (1948), and interpolation smoothing is due to Jelinek and Mercer (1980), who used it for speech recognition. Other techniques include Witten–Bell smoothing (1991), Good– Turing smoothing (Church and Gale, 1991) and Kneser–Ney smoothing (1995). Chen and Goodman (1996) and Goodman (2001) survey smoothing techniques.
 
-Simple n-gram letter and word models are not the only possible probabilistic models. Blei _et al._ (2001) describe a probabilistic text model called **latent Dirichlet allocation** that views a document as a mixture of topics, each with its own distribution of words. This model can be seen as an extension and rationalization of the **latent semantic indexing** model of (Deerwester _et al._, 1990) (see also Papadimitriou _et al._ (1998)) and is also related to the multiple-cause mixture model of (Sahami _et al._, 1996).  
-
-
+Simple n-gram letter and word models are not the only possible probabilistic models. Blei _et al._ (2001) describe a probabilistic text model called **latent Dirichlet allocation** that views a document as a mixture of topics, each with its own distribution of words. This model can be seen as an extension and rationalization of the **latent semantic indexing** model of (Deerwester _et al._, 1990) (see also Papadimitriou _et al._ (1998)) and is also related to the multiple-cause mixture model of (Sahami _et al._, 1996).   
 
 Manning and Schütze (1999) and Sebastiani (2002) survey text-classification techniques. Joachims (2001) uses statistical learning theory and support vector machines to give a theo- retical analysis of when classification will be successful. Apté _et al._ (1994) report an accuracy of 96% in classifying Reuters news articles into the “Earnings” category. Koller and Sahami (1997) report accuracy up to 95% with a naive Bayes classifier, and up to 98.6% with a Bayes classifier that accounts for some dependencies among features. Lewis (1998) surveys forty years of application of naive Bayes techniques to text classification and retrieval. Schapire and Singer (2000) show that simple linear classifiers can often achieve accuracy almost as good as more complex models and are more efficient to evaluate. Nigam _et al._ (2000) show how to use the EM algorithm to label unlabeled documents, thus learning a better classifi- cation model. Witten _et al._ (1999) describe compression algorithms for classification, and show the deep connection between the LZW compression algorithm and maximum-entropy language models.
 
@@ -733,11 +459,7 @@ Brin and Page (1998) describe the PageRank algorithm and the implementation of a
 
 Early information extraction programs include GUS (Bobrow _et al._, 1977) and FRUMP
 
-(DeJong, 1982). Recent information extraction has been pushed forward by the annual Mes- sage Understand Conferences (MUC), sponsored by the U.S. government. The FASTUS finite-state system was done by Hobbs _et al._ (1997). It was based in part on the idea from Pereira and Wright (1991) of using FSAs as approximations to phrase-structure grammars. Surveys of template-based systems are given by Roche and Schabes (1997), Appelt (1999),  
-
-Exercises 885
-
-and Muslea (1999). Large databases of facts were extracted by Craven _et al._ (2000), Pasca _et al._ (2006), Mitchell (2007), and Durme and Pasca (2008).
+(DeJong, 1982). Recent information extraction has been pushed forward by the annual Mes- sage Understand Conferences (MUC), sponsored by the U.S. government. The FASTUS finite-state system was done by Hobbs _et al._ (1997). It was based in part on the idea from Pereira and Wright (1991) of using FSAs as approximations to phrase-structure grammars. Surveys of template-based systems are given by Roche and Schabes (1997), Appelt (1999), and Muslea (1999). Large databases of facts were extracted by Craven _et al._ (2000), Pasca _et al._ (2006), Mitchell (2007), and Durme and Pasca (2008).
 
 Freitag and McCallum (2000) discuss HMMs for Information Extraction. CRFs were introduced by Lafferty _et al._ (2001); an example of their use for information extraction is described in (McCallum, 2003) and a tutorial with practical guidance is given by (Sutton and McCallum, 2007). Sarawagi (2007) gives a comprehensive survey.
 
@@ -749,7 +471,7 @@ This chapter has focused on natural language text, but it is also possible to do
 
 The Association for Computational Linguistics (ACL) holds regular conferences and publishes the journal _Computational Linguistics_. There is also an International Conference on Computational Linguistics (COLING). The textbook by Manning and Schütze (1999) cov- ers statistical language processing, while Jurafsky and Martin (2008) give a comprehensive introduction to speech and natural language processing.
 
-EXERCISES
+### EXERCISES
 
 **22.1** This exercise explores the quality of the n-gram model of language. Find or create a monolingual corpus of 100,000 words or more. Segment it into words, and compute the fre- quency of each word. How many distinct words are there? Also count frequencies of bigrams (two consecutive words) and trigrams (three consecutive words). Now use those frequencies to generate language: from the unigram, bigram, and trigram models, in turn, generate a 100- word text by making random choices according to the frequency counts. Compare the three generated texts with actual language. Finally, calculate the perplexity of each model.  
 
@@ -787,371 +509,198 @@ relevant to her query. (E.g., a lawyer wants to be sure that she has found _all_
 
 **f**. The searcher wants to collect as many relevant documents as possible, but needs steady encouragement. She looks through the documents in order. If the documents she has looked at so far are mostly good, she will continue; otherwise, she will stop.  
 
-23 NATURAL LANGUAGE FOR COMMUNICATION
+# 23 NATURAL LANGUAGE FOR COMMUNICATION
 
 _In which we see how humans communicate with one another in natural language, and how computer agents might join in the conversation._
 
-**Communication** is the intentional exchange of information brought about by the productionCOMMUNICATION
-
-and perception of **signs** drawn from a shared system of conventional signs. Most animals useSIGN
+**Communication** is the intentional exchange of information brought about by the production and perception of **signs** drawn from a shared system of conventional signs. Most animals useSIGN
 
 signs to represent important messages: food here, predator nearby, approach, withdraw, let’s mate. In a partially observable world, communication can help agents be successful because they can learn information that is observed or inferred by others. Humans are the most chatty of all species, and if computer agents are to be helpful, they’ll need to learn to speak the language. In this chapter we look at language models for communication. Models aimed at deep understanding of a conversation necessarily need to be more complex than the simple models aimed at, say, spam classification. We start with grammatical models of the phrase structure of sentences, add semantics to the model, and then apply it to machine translation and speech recognition.
 
-23.1 PHRASE STRUCTURE GRAMMARS
+## 23.1 PHRASE STRUCTURE GRAMMARS
 
-The n-gram language models of Chapter 22 were based on sequences of words. The big issue for these models is **data sparsity**—with a vocabulary of, say, 105 words, there are 1015
+The n-gram language models of Chapter 22 were based on sequences of words. The big issue for these models is **data sparsity**—with a vocabulary of, say, 10^5^ words, there are 10^15^ trigram probabilities to estimate, and so a corpus of even a trillion words will not be able to supply reliable estimates for all of them. We can address the problem of sparsity through generalization. From the fact that “black dog” is more frequent than “dog black” and similar observations, we can form the generalization that adjectives tend to come before nouns in English (whereas they tend to follow nouns in French: “chien noir” is more frequent). Of course there are always exceptions; “galore” is an adjective that follows the noun it modifies. Despite the exceptions, the notion of a **lexical category** (also known as a **part of speech**) such as _noun_ or _adjective_ is a useful generalization—useful in its own right, but more so when we string together lexical categories to form **syntactic categories** such as _noun phrase_ or _verb_ _phrase_, and combine these syntactic categories into trees representing the **phrase structure** of sentences: nested phrases, each marked with a category.
 
-trigram probabilities to estimate, and so a corpus of even a trillion words will not be able to supply reliable estimates for all of them. We can address the problem of sparsity through generalization. From the fact that “black dog” is more frequent than “dog black” and similar observations, we can form the generalization that adjectives tend to come before nouns in English (whereas they tend to follow nouns in French: “chien noir” is more frequent). Of course there are always exceptions; “galore” is an adjective that follows the noun it modifies. Despite the exceptions, the notion of a **lexical category** (also known as a **part of speech**) suchLEXICAL CATEGORY
 
-as _noun_ or _adjective_ is a useful generalization—useful in its own right, but more so when we string together lexical categories to form **syntactic categories** such as _noun phrase_ or _verb_SYNTACTIC
-
-CATEGORIES
-
-_phrase_, and combine these syntactic categories into trees representing the **phrase structure**PHRASE STRUCTURE
-
-of sentences: nested phrases, each marked with a category.
-
-888  
-
-Section 23.1. Phrase Structure Grammars 889
-
-GENERATIVE CAPACITY
+### GENERATIVE CAPACITY
 
 Grammatical formalisms can be classified by their **generative capacity**: the set of languages they can represent. Chomsky (1957) describes four classes of grammat- ical formalisms that differ only in the form of the rewrite rules. The classes can be arranged in a hierarchy, where each class can be used to describe all the lan- guages that can be described by a less powerful class, as well as some additional languages. Here we list the hierarchy, most powerful class first:
 
 **Recursively enumerable** grammars use unrestricted rules: both sides of the rewrite rules can have any number of terminal and nonterminal symbols, as in the rule A B C → D E . These grammars are equivalent to Turing machines in their expressive power.
 
-**Context-sensitive grammars** are restricted only in that the right-hand side must contain at least as many symbols as the left-hand side. The name “context- sensitive” comes from the fact that a rule such as A X B → A Y B says that an X can be rewritten as a Y in the context of a preceding A and a following B. Context-sensitive grammars can represent languages such as a
+**Context-sensitive grammars** are restricted only in that the right-hand side must contain at least as many symbols as the left-hand side. The name “context- sensitive” comes from the fact that a rule such as A X B → A Y B says that an X can be rewritten as a Y in the context of a preceding A and a following B. Context-sensitive grammars can represent languages such as 
+a ^n^ b ^n^ c ^n^ (a sequence of n copies of a followed by the same number of bs and then cs). 
 
-n b n c n (a sequence
+In **context-free grammars** (or **CFG**s), the left-hand side consists of a single nonterminal symbol. Thus, each rule licenses rewriting the nonterminal as the right-hand side in _any_ context. CFGs are popular for natural-language and programming-language grammars, although it is now widely accepted that at least some natural languages have constructions that are not context-free (Pullum, 1991). Context-free grammars can represent 
+a ^n^ b ^n^, but not a ^n^ b ^n^ c ^n^.
 
-of n copies of a followed by the same number of bs and then cs). In **context-free grammars** (or **CFG**s), the left-hand side consists of a sin-
-
-gle nonterminal symbol. Thus, each rule licenses rewriting the nonterminal as the right-hand side in _any_ context. CFGs are popular for natural-language and programming-language grammars, although it is now widely accepted that at least some natural languages have constructions that are not context-free (Pullum, 1991). Context-free grammars can represent a
-
-n b n, but not a
-
-n b n c n.
-
-**Regular** grammars are the most restricted class. Every rule has a single non- terminal on the left-hand side and a terminal symbol optionally followed by a non- terminal on the right-hand side. Regular grammars are equivalent in power to finite- state machines. They are poorly suited for programming languages, because they cannot represent constructs such as balanced opening and closing parentheses (a variation of the a
-
-n b n language). The closest they can come is representing a
-
-∗
-
-b ∗, a
-
-sequence of any number of as followed by any number of bs.
+**Regular** grammars are the most restricted class. Every rule has a single non- terminal on the left-hand side and a terminal symbol optionally followed by a non- terminal on the right-hand side. Regular grammars are equivalent in power to finite- state machines. They are poorly suited for programming languages, because they cannot represent constructs such as balanced opening and closing parentheses (a variation of the a ^n^ b ^n^ language). The closest they can come is representing 
+a∗b ∗, a sequence of any number of as followed by any number of bs.
 
 The grammars higher up in the hierarchy have more expressive power, but the algorithms for dealing with them are less efficient. Up to the 1980s, linguists focused on context-free and context-sensitive languages. Since then, there has been renewed interest in regular grammars, brought about by the need to process and learn from gigabytes or terabytes of online text very quickly, even at the cost of a less complete analysis. As Fernando Pereira put it, “The older I get, the further down the Chomsky hierarchy I go.” To see what he means, compare Pereira and Warren (1980) with Mohri, Pereira, and Riley (2002) (and note that these three authors all now work on large text corpora at Google).  
 
 
-
-There have been many competing language models based on the idea of phrase struc- ture; we will describe a popular model called the **probabilistic context-free grammar**, or
-
-PROBABILISTIC CONTEXT-FREE GRAMMAR
-
-PCFG.1 A **grammar** is a collection of rules that defines a **language** as a set of allowableGRAMMAR
+There have been many competing language models based on the idea of phrase struc- ture; we will describe a popular model called the **probabilistic context-free grammar**, or PCFG.^1^ A **grammar** is a collection of rules that defines a **language** as a set of allowableGRAMMAR
 
 LANGUAGE strings of words. “Context-free” is described in the sidebar on page 889, and “probabilistic” means that the grammar assigns a probability to every string. Here is a PCFG rule:
 
-VP → Verb \[0.70\]
+VP → Verb [0.70]
 
-| VP NP \[0.30\] .
+| VP NP [0.30] .
 
-Here VP (_verb phrase_) and NP (_noun phrase_) are **non-terminal symbols**. The grammarNON-TERMINAL SYMBOLS
+Here VP (_verb phrase_) and NP (_noun phrase_) are **non-terminal symbols**. The grammar also refers to actual words, which are called **terminal symbols**. This rule is saying that with probability 0.70 a verb phrase consists solely of a verb, and with probability 0.30 it is a VP followed by an NP . Appendix B describes non-probabilistic context-free grammars. 
 
-also refers to actual words, which are called **terminal symbols**. This rule is saying that withTERMINAL SYMBOL
+We now define a grammar for a tiny fragment of English that is suitable for communication between agents exploring the wumpus world. We call this language E0. Later sections improve on E0 to make it slightly closer to real English. We are unlikely ever to devise a complete grammar for English, if only because no two persons would agree entirely on what constitutes valid English.
 
-probability 0.70 a verb phrase consists solely of a verb, and with probability 0.30 it is a VP
+### 23.1.1 The lexicon of E0
 
-followed by an NP . Appendix B describes non-probabilistic context-free grammars. We now define a grammar for a tiny fragment of English that is suitable for communi-
+First we define the **lexicon**, or list of allowable words. The words are grouped into the lexical categories familiar to dictionary users: nouns, pronouns, and names to denote things; verbs to denote events; adjectives to modify nouns; adverbs to modify verbs; and function words: articles (such as _the_), prepositions (_in_), and conjunctions (_and_). Figure 23.1 shows a small lexicon for the language E0.
 
-cation between agents exploring the wumpus world. We call this language E0. Later sections improve on E0 to make it slightly closer to real English. We are unlikely ever to devise a complete grammar for English, if only because no two persons would agree entirely on what constitutes valid English.
+Each of the categories ends in . . . to indicate that there are other words in the category. For nouns, names, verbs, adjectives, and adverbs, it is infeasible even in principle to list all the words. Not only are there tens of thousands of members in each class, but new ones– like _iPod_ or _biodiesel_—are being added constantly. These five categories are called **open classes**. For the categories of pronoun, relative pronoun, article, preposition, and conjunction we could have listed all the words with a little more work. These are called **closed classes**; they have a small number of words (a dozen or so). Closed classes change over the course of centuries, not months. For example, “thee” and “thou” were commonly used pronouns in the 17th century, were on the decline in the 19th, and are seen today only in poetry and some regional dialects.
 
-**23.1.1 The lexicon of** E0
+### 23.1.2 The Grammar of E0
 
-First we define the **lexicon**, or list of allowable words. The words are grouped into the lexicalLEXICON
-
-categories familiar to dictionary users: nouns, pronouns, and names to denote things; verbs to denote events; adjectives to modify nouns; adverbs to modify verbs; and function words: articles (such as _the_), prepositions (_in_), and conjunctions (_and_). Figure 23.1 shows a small lexicon for the language E0.
-
-Each of the categories ends in . . . to indicate that there are other words in the category. For nouns, names, verbs, adjectives, and adverbs, it is infeasible even in principle to list all the words. Not only are there tens of thousands of members in each class, but new ones– like _iPod_ or _biodiesel_—are being added constantly. These five categories are called **open classes**. For the categories of pronoun, relative pronoun, article, preposition, and conjunctionOPEN CLASS
-
-we could have listed all the words with a little more work. These are called **closed classes**;CLOSED CLASS
-
-they have a small number of words (a dozen or so). Closed classes change over the course of centuries, not months. For example, “thee” and “thou” were commonly used pronouns in the 17th century, were on the decline in the 19th, and are seen today only in poetry and some regional dialects.
-
-**23.1.2 The Grammar of** E0
-
-The next step is to combine the words into phrases. Figure 23.2 shows a grammar for E0, with rules for each of the six syntactic categories and an example for each rewrite rule.2
-
-Figure 23.3 shows a **parse tree** for the sentence “Every wumpus smells.” The parse treePARSE TREE
-
-1 PCFGs are also known as stochastic context-free grammars, or SCFGs. 2 A relative clause follows and modifies a noun phrase. It consists of a relative pronoun (such as “who” or “that”) followed by a verb phrase. An example of a relative clause is _that stinks_ in “The wumpus _that stinks_ is in 2 2.” Another kind of relative clause has no relative pronoun, e.g., _I know_ in “the man _I know_.”  
-
-Section 23.1. Phrase Structure Grammars 891
-
-Noun → **stench** \[0.05\] | **breeze** \[0.10\] | **wumpus** \[0.15\] | **pits** \[0.05\] | . . .
-
-Verb → **is** \[0.10\] | **feel** \[0.10\] | **smells** \[0.10\] | **stinks** \[0.05\] | . . .
-
-Adjective → **right** \[0.10\] | **dead** \[0.05\] | **smelly** \[0.02\] | **breezy** \[0.02\] . . .
-
-Adverb → **here** \[0.05\] | **ahead** \[0.05\] | **nearby** \[0.02\] | . . .
-
-Pronoun → **me** \[0.10\] | **you** \[0.03\] | **I** \[0.10\] | **it** \[0.10\] | . . .
-
-RelPro → **that** \[0.40\] | **which** \[0.15\] | **who** \[0.20\] | **whom** \[0.02\] ∨ . . .
-
-Name → **John** \[0.01\] | **Mary** \[0.01\] | **Boston** \[0.01\] | . . .
-
-Article → **the** \[0.40\] | **a** \[0.30\] | **an** \[0.10\] | **every** \[0.05\] | . . .
-
-Prep → **to** \[0.20\] | **in** \[0.10\] | **on** \[0.05\] | **near** \[0.10\] | . . .
-
-Conj → **and** \[0.50\] | **or** \[0.10\] | **but** \[0.20\] | **yet** \[0.02\] ∨ . . .
-
-Digit → **0** \[0.20\] | **1** \[0.20\] | **2** \[0.20\] | **3** \[0.20\] | **4** \[0.20\] | . . .
-
-**Figure 23.1** The lexicon for E0. RelPro is short for relative pronoun, Prep for preposition, and Conj for conjunction. The sum of the probabilities for each category is 1.
-
-E0 : S → NP VP \[0.90\] I + feel a breeze | S Conj S \[0.10\] I feel a breeze + and + It stinks
-
-NP → Pronoun \[0.30\] I | Name \[0.10\] John | Noun \[0.10\] pits | Article Noun \[0.25\] the + wumpus | Article Adjs Noun \[0.05\] the + smelly dead + wumpus | Digit Digit \[0.05\] 3 4 | NP PP \[0.10\] the wumpus + in 1 3 | NP RelClause \[0.05\] the wumpus + that is smelly
-
-VP → Verb \[0.40\] stinks | VP NP \[0.35\] feel + a breeze | VP Adjective \[0.05\] smells + dead | VP PP \[0.10\] is + in 1 3 | VP Adverb \[0.10\] go + ahead
-
-Adjs → Adjective \[0.80\] smelly | Adjective Adjs \[0.20\] smelly + dead
-
-PP → Prep NP \[1.00\] to + the east RelClause → RelPro VP \[1.00\] that + is smelly
-
-**Figure 23.2** The grammar for E0, with example phrases for each rule. The syntactic cat- egories are sentence (S ), noun phrase (NP ), verb phrase (VP), list of adjectives (Adjs), prepositional phrase (PP ), and relative clause (RelClause).  
+The next step is to combine the words into phrases. Figure 23.2 shows a grammar for E0, with rules for each of the six syntactic categories and an example for each rewrite rule.^2^ Figure 23.3 shows a **parse tree** for the sentence “Every wumpus smells.”   
 
 
+![Alt text](image-13.png)
 
-_Article Noun_
+![Alt text](image-14.png)
 
-**wumpus**
+![Alt text](image-15.png)
 
-_Verb_
 
-_NP VP_
-
-_S_
-
-**Every smells**
-
-0.25
-
-0.90
-
-0.05 0.15 0.10
-
-0.40
-
-**Figure 23.3** Parse tree for the sentence “Every wumpus smells” according to the grammar E0. Each interior node of the tree is labeled with its probability. The probability of the tree as a whole is 0.9× 0.25× 0.05× 0.15× 0.40× 0.10=0.0000675. Since this tree is the only parse of the sentence, that number is also the probability of the sentence. The tree can also be written in linear form as \[S \[NP \[Article **every**\] \[Noun **wumpus**\]\]\[VP \[Verb **smells**\]\]\].
-
-gives a constructive proof that the string of words is indeed a sentence according to the rules of E0. The E0 grammar generates a wide range of English sentences such as the following:
+gives a constructive proof that the string of words is indeed a sentence according to the rules of E~0~. The E~0~ grammar generates a wide range of English sentences such as the following:
 
 John is in the pit The wumpus that stinks is in 2 2 Mary is in Boston and the wumpus is near 3 2
 
-Unfortunately, the grammar **overgenerates**: that is, it generates sentences that are not gram-OVERGENERATION
-
-matical, such as “Me go Boston” and “I smell pits wumpus John.” It also **undergenerates**:UNDERGENERATION
-
-there are many sentences of English that it rejects, such as “I think the wumpus is smelly.” We will see how to learn a better grammar later; for now we concentrate on what we can do with the grammar we have.
+Unfortunately, the grammar **overgenerates**: that is, it generates sentences that are not grammatical, such as “Me go Boston” and “I smell pits wumpus John.” It also **undergenerates**:there are many sentences of English that it rejects, such as “I think the wumpus is smelly.” We will see how to learn a better grammar later; for now we concentrate on what we can do with the grammar we have.
 
 23.2 SYNTACTIC ANALYSIS (PARSING)
 
-**Parsing** is the process of analyzing a string of words to uncover its phrase structure, accordingPARSING
+**Parsing** is the process of analyzing a string of words to uncover its phrase structure, according to the rules of a grammar. Figure 23.4 shows that we can start with the S symbol and search top down for a tree that has the words as its leaves, or we can start with the words and search bottom up for a tree that culminates in an S . Both top-down and bottom-up parsing can be inefficient, however, because they can end up repeating effort in areas of the search space that lead to dead ends. Consider the following two sentences:
 
-to the rules of a grammar. Figure 23.4 shows that we can start with the S symbol and search top down for a tree that has the words as its leaves, or we can start with the words and search bottom up for a tree that culminates in an S . Both top-down and bottom-up parsing can be inefficient, however, because they can end up repeating effort in areas of the search space that lead to dead ends. Consider the following two sentences:
-
-Have the students in section 2 of Computer Science 101 take the exam. Have the students in section 2 of Computer Science 101 taken the exam?
+Have the students in section 2 of Computer Science 101 take the exam. 
+Have the students in section 2 of Computer Science 101 taken the exam?
 
 Even though they share the first 10 words, these sentences have very different parses, because the first is a command and the second is a question. A left-to-right parsing algorithm would have to guess whether the first word is part of a command or a question and will not be able to tell if the guess is correct until at least the eleventh word, _take_ or _taken._ If the algorithm guesses wrong, it will have to backtrack all the way to the first word and reanalyze the whole sentence under the other interpretation.  
 
-Section 23.2. Syntactic Analysis (Parsing) 893
+![Alt text](image-16.png)
 
-_List of items Rule_
+To avoid this source of inefficiency we can use dynamic programming: _every time we analyze a substring, store the results so we won’t have to reanalyze it later._ For example, once we discover that “the students in section 2 of Computer Science 101” is an NP , we can record that result in a data structure known as a **chart**. Algorithms that do this are called **chart** **parsers**. Because we are dealing with context-free grammars, any phrase that was found in the context of one branch of the search space can work just as well in any other branch of the search space. There are many types of chart parsers; we describe a bottom-up version called the **CYK algorithm**, after its inventors, John Cocke, Daniel Younger, and Tadeo Kasami.The CYK algorithm is shown in Figure 23.5. Note that it requires a grammar with all rules in one of two very specific formats: lexical rules of the form X → **word**, and syntactic rules of the form X → Y Z . This grammar format, called **Chomsky Normal Form**, may seem restrictive, but it is not: any context-free grammar can be automatically transformed into Chomsky Normal Form. Exercise 23.8 leads you through the process.
 
-S
-
-NP VP S → NP VP
-
-NP VP Adjective VP → VP Adjective
-
-NP Verb Adjective VP → Verb
-
-NP Verb **dead** Adjective → **dead** NP **is dead** Verb → **is** Article Noun **is dead** NP → Article Noun
-
-Article **wumpus is dead** Noun → **wumpus the wumpus is dead** Article → **the**
-
-**Figure 23.4** Trace of the process of finding a parse for the string “The wumpus is dead” as a sentence, according to the grammar E0. Viewed as a top-down parse, we start with the list of items being S and, on each step, match an item X with a rule of the form (X → . . . ) and replace X in the list of items with (. . . ). Viewed as a bottom-up parse, we start with the list of items being the words of the sentence, and, on each step, match a string of tokens (. . . ) in the list against a rule of the form (X → . . . ) and replace (. . . ) with X .
-
-To avoid this source of inefficiency we can use dynamic programming: _every time we analyze a substring, store the results so we won’t have to reanalyze it later._ For example, once we discover that “the students in section 2 of Computer Science 101” is an NP , we can record that result in a data structure known as a **chart**. Algorithms that do this are called **chart**CHART
-
-**parsers**. Because we are dealing with context-free grammars, any phrase that was found in the context of one branch of the search space can work just as well in any other branch of the search space. There are many types of chart parsers; we describe a bottom-up version called the **CYK algorithm**, after its inventors, John Cocke, Daniel Younger, and Tadeo Kasami.CYK ALGORITHM
-
-The CYK algorithm is shown in Figure 23.5. Note that it requires a grammar with all rules in one of two very specific formats: lexical rules of the form X → **word**, and syntactic rules of the form X → Y Z . This grammar format, called **Chomsky Normal Form**, mayCHOMSKY NORMAL
-
-FORM
-
-seem restrictive, but it is not: any context-free grammar can be automatically transformed into Chomsky Normal Form. Exercise 23.8 leads you through the process.
-
-The CYK algorithm uses space of O(n2 m) for the P table, where n is the number of
-
-words in the sentence, and m is the number of nonterminal symbols in the grammar, and takes time O(n3
-
-m). (Since m is constant for a particular grammar, this is commonly described as O(n3).) No algorithm can do better for general context-free grammars, although there are faster algorithms on more restricted grammars. In fact, it is quite a trick for the algorithm to complete in O(n3) time, given that it is possible for a sentence to have an exponential number of parse trees. Consider the sentence
+The CYK algorithm uses space of O(n2 m) for the P table, where n is the number of words in the sentence, and m is the number of nonterminal symbols in the grammar, and takes time O(n^3^m). (Since m is constant for a particular grammar, this is commonly described as O(n^3^).) No algorithm can do better for general context-free grammars, although there are faster algorithms on more restricted grammars. In fact, it is quite a trick for the algorithm to complete in O(n3) time, given that it is possible for a sentence to have an exponential number of parse trees. Consider the sentence
 
 Fall leaves fall and spring leaves spring.
 
 It is ambiguous because each word (except “and”) can be either a noun or a verb, and “fall” and “spring” can be adjectives as well. (For example, one meaning of “Fall leaves fall” is  
-
-
-
 **function** CYK-PARSE(words , grammar ) **returns** P , a table of probabilities
 
-N ← LENGTH(words) M ← the number of nonterminal symbols in grammar
+N ← LENGTH(words) 
+M ← the number of nonterminal symbols in grammar
+P← an array of size [M , N , N ], initially all 0 
+/* _Insert lexical rules for each word_ */ 
 
-P← an array of size \[M , N , N \], initially all 0 /\* _Insert lexical rules for each word_ \*/ **for** i = 1 **to** N **do**
-
-**for each** rule of form (X → words i \[p\]) **do** P \[X , i , 1\]← p
-
-/\* _Combine first and second parts of right-hand sides of rules, from short to long_ \*/ **for** length = 2 **to** N **do**
-
+**for** i = 1 **to** N **do**
+**for each** rule of form (X → words i [p]) **do** P [X , i , 1]← p
+/* _Combine first and second parts of right-hand sides of rules, from short to long_ */ 
+**for** length = 2 **to** N **do**
 **for** start = 1 **to** N − length + 1 **do for** len1 = 1 **to** N − 1 **do**
-
 len2 ← length − len1
-
-**for each** rule of the form (X → Y Z \[p\]) **do** P \[X , start , length\]←MAX(P \[X , start , length\],
-
-P \[Y , start , len1 \] × P \[Z , start + len1 , len2 \] × p)
-
+**for each** rule of the form (X → Y Z [p]) **do** P [X , start , length]←MAX(P [X , start , length],
+P [Y , start , len1 ] × P [Z , start + len1 , len2 ] × p)
 **return** P
 
-**Figure 23.5** The CYK algorithm for parsing. Given a sequence of words, it finds the most probable derivation for the whole sequence and for each subsequence. It returns the whole table, P , in which an entry P \[X , start , len\] is the probability of the most probable X of length len starting at position start . If there is no X of that size at that location, the probability is 0.
+**Figure 23.5** The CYK algorithm for parsing. Given a sequence of words, it finds the most probable derivation for the whole sequence and for each subsequence. It returns the whole table, P , in which an entry P [X , start , len] is the probability of the most probable X of length len starting at position start . If there is no X of that size at that location, the probability is 0.
 
 equivalent to “Autumn abandons autumn.) With E0 the sentence has four parses:
 
-\[S \[S \[NP Fall leaves\] fall\] and \[S \[NP spring leaves\] spring\] \[S \[S \[NP Fall leaves\] fall\] and \[S spring \[VP leaves spring\]\] \[S \[S Fall \[VP leaves fall\]\] and \[S \[NP spring leaves\] spring\] \[S \[S Fall \[VP leaves fall\]\] and \[S spring \[VP leaves spring\]\] .
+[S [S [NP Fall leaves] fall] and [S [NP spring leaves] spring] 
+[S [S [NP Fall leaves] fall] and [S spring [VP leaves spring]] 
+[S [S Fall [VP leaves fall]] and [S [NP spring leaves] spring] 
+[S [S Fall [VP leaves fall]] and [S spring [VP leaves spring]] .
 
-If we had c two-ways-ambiguous conjoined subsentences, we would have 2c ways of choos- ing parses for the subsentences.3 How does the CYK algorithm process these 2c parse trees in O(c3) time? The answer is that it doesn’t examine all the parse trees; all it has to do is compute the probability of the most probable tree. The subtrees are all represented in the P
+If we had c two-ways-ambiguous conjoined subsentences, we would have 2c ways of choos- ing parses for the subsentences.3 How does the CYK algorithm process these 2c parse trees in O(c3) time? The answer is that it doesn’t examine all the parse trees; all it has to do is compute the probability of the most probable tree. The subtrees are all represented in the P table, and with a little work we could enumerate them all (in exponential time), but the beauty of the CYK algorithm is that we don’t have to enumerate them unless we want to.
 
-table, and with a little work we could enumerate them all (in exponential time), but the beauty of the CYK algorithm is that we don’t have to enumerate them unless we want to.
+In practice we are usually not interested in all parses; just the best one or best few. Think of the CYK algorithm as defining the complete state space defined by the “apply grammar rule” operator. It is possible to search just part of this space using A ∗ search. Each state in this space is a list of items (words or categories), as shown in the bottom-up parse table (Figure 23.4). The start state is a list of words, and a goal state is the single item S . The 
 
-In practice we are usually not interested in all parses; just the best one or best few. Think of the CYK algorithm as defining the complete state space defined by the “apply grammar rule” operator. It is possible to search just part of this space using A
 
-∗ search. Each state in this space is a list of items (words or categories), as shown in the bottom-up parse table (Figure 23.4). The start state is a list of words, and a goal state is the single item S . The
+[ [S [NP-SBJ-2 Her eyes] 
+[VP were
+[VP glazed 
+[NP *-2] 
+[SBAR-ADV as if
+[S [NP-SBJ she] 
+[VP did n’t
+[VP [VP hear [NP *-1]] or 
+[VP [ADVP even] see [NP *-1]] 
+[NP-1 him]]]]]]]]
 
-3 There also would be O(c!) ambiguity in the way the components conjoin—for example, (X and (Y and Z)) versus ((X and Y ) and Z). But that is another story, one told well by Church and Patil (1982).  
+.]
 
-Section 23.2. Syntactic Analysis (Parsing) 895
-
-\[ \[S \[NP-SBJ-2 Her eyes\] \[VP were
-
-\[VP glazed \[NP \*-2\] \[SBAR-ADV as if
-
-\[S \[NP-SBJ she\] \[VP did n’t
-
-\[VP \[VP hear \[NP \*-1\]\] or \[VP \[ADVP even\] see \[NP \*-1\]\] \[NP-1 him\]\]\]\]\]\]\]\]
-
-.\]
-
-**Figure 23.6** Annotated tree for the sentence “Her eyes were glazed as if she didn’t hear or even see him.” from the Penn Treebank. Note that in this grammar there is a distinction between an object noun phrase (_NP_) and a subject noun phrase (_NP-SBJ_). Note also a gram- matical phenomenon we have not covered yet: the movement of a phrase from one part of the tree to another. This tree analyzes the phrase “hear or even see him” as consisting of two constituent VPs, \[VP hear \[NP \*-1\]\] and \[VP \[ADVP even\] see \[NP \*-1\]\], both of which have a missing object, denoted \*-1, which refers to the NP labeled elsewhere in the tree as \[NP-1 him\].
+**Figure 23.6** Annotated tree for the sentence “Her eyes were glazed as if she didn’t hear or even see him.” from the Penn Treebank. Note that in this grammar there is a distinction between an object noun phrase (_NP_) and a subject noun phrase (_NP-SBJ_). Note also a gram- matical phenomenon we have not covered yet: the movement of a phrase from one part of the tree to another. This tree analyzes the phrase “hear or even see him” as consisting of two constituent VPs, [VP hear [NP *-1]] and [VP [ADVP even] see [NP *-1]], both of which have a missing object, denoted *-1, which refers to the NP labeled elsewhere in the tree as [NP-1 him].
 
 cost of a state is the inverse of its probability as defined by the rules applied so far, and there are various heuristics to estimate the remaining distance to the goal; the best heuristics come from machine learning applied to a corpus of sentences. With the A
 
 ∗ algorithm we don’t have to search the entire state space, and we are guaranteed that the first parse found will be the most probable.
 
-**23.2.1 Learning probabilities for PCFGs**
+### 23.2.1 Learning probabilities for PCFGs
 
 A PCFG has many rules, with a probability for each rule. This suggests that **learning** the grammar from data might be better than a knowledge engineering approach. Learning is eas- iest if we are given a corpus of correctly parsed sentences, commonly called a **treebank**. TheTREEBANK
 
 Penn Treebank (Marcus _et al._, 1993) is the best known; it consists of 3 million words which have been annotated with part of speech and parse-tree structure, using human labor assisted by some automated tools. Figure 23.6 shows an annotated tree from the Penn Treebank.
 
-Given a corpus of trees, we can create a PCFG just by counting (and smoothing). In the example above, there are two nodes of the form \[S \[NP . . .\]\[VP . . .\]\]. We would count these, and all the other subtrees with root S in the corpus. If there are 100,000 S nodes of which 60,000 are of this form, then we create the rule:
+Given a corpus of trees, we can create a PCFG just by counting (and smoothing). In the example above, there are two nodes of the form [S [NP . . .][VP . . .]]. We would count these, and all the other subtrees with root S in the corpus. If there are 100,000 S nodes of which 60,000 are of this form, then we create the rule:
 
-S → NP VP \[0.60\] .
+S → NP VP [0.60] .
 
-What if a treebank is not available, but we have a corpus of raw unlabeled sentences? It is still possible to learn a grammar from such a corpus, but it is more difficult. First of all, we actually have two problems: learning the structure of the grammar rules and learning the  
+What if a treebank is not available, but we have a corpus of raw unlabeled sentences? It is still possible to learn a grammar from such a corpus, but it is more difficult. First of all, we actually have two problems: learning the structure of the grammar rules and learning the probabilities associated with each rule. (We have the same distinction in learning Bayes nets.) We’ll assume that we’re given the lexical and syntactic category names. (If not, we can just assume categories X1, . . . Xn and use cross-validation to pick the best value of n.) We can then assume that the grammar includes every possible (X → Y Z ) or (X → _word_) rule, although many of these rules will have probability 0 or close to 0.
 
+We can then use an expectation–maximization (EM) approach, just as we did in learning HMMs. The parameters we are trying to learn are the rule probabilities; we start them off at random or uniform values. The hidden variables are the parse trees: we don’t know whether a string of words wi . . . wj is or is not generated by a rule (X → . . .). The E step estimates the probability that each subsequence is generated by each rule. The M step then estimates the probability of each rule. The whole computation can be done in a dynamic-programming fashion with an algorithm called the **inside–outside algorithm** in analogy to the forward backward algorithm for HMMs. 
 
-
-probabilities associated with each rule. (We have the same distinction in learning Bayes nets.) We’ll assume that we’re given the lexical and syntactic category names. (If not, we can just assume categories X1, . . . Xn and use cross-validation to pick the best value of n.) We can then assume that the grammar includes every possible (X → Y Z ) or (X → _word_) rule, although many of these rules will have probability 0 or close to 0.
-
-We can then use an expectation–maximization (EM) approach, just as we did in learning HMMs. The parameters we are trying to learn are the rule probabilities; we start them off at random or uniform values. The hidden variables are the parse trees: we don’t know whether a string of words wi . . . wj is or is not generated by a rule (X → . . .). The E step estimates the probability that each subsequence is generated by each rule. The M step then estimates the probability of each rule. The whole computation can be done in a dynamic-programming fashion with an algorithm called the **inside–outside algorithm** in analogy to the forward–INSIDE–OUTSIDE
-
-ALGORITHM
-
-backward algorithm for HMMs. The inside–outside algorithm seems magical in that it induces a grammar from unparsed
-
-text. But it has several drawbacks. First, the parses that are assigned by the induced grammars are often difficult to understand and unsatisfying to linguists. This makes it hard to combine handcrafted knowledge with automated induction. Second, it is slow: O(n3
-
-m 3), where n is
+The inside–outside algorithm seems magical in that it induces a grammar from unparsed text. But it has several drawbacks. First, the parses that are assigned by the induced grammars are often difficult to understand and unsatisfying to linguists. This makes it hard to combine handcrafted knowledge with automated induction. Second, it is slow: O(n3m 3), where n is
 
 the number of words in a sentence and m is the number of grammar categories. Third, the space of probability assignments is very large, and empirically it seems that getting stuck in local maxima is a severe problem. Alternatives such as simulated annealing can get closer to the global maximum, at a cost of even more computation. Lari and Young (1990) conclude that inside–outside is “computationally intractable for realistic problems.”
 
 However, progress can be made if we are willing to step outside the bounds of learning solely from unparsed text. One approach is to learn from **prototypes**: to seed the process with a dozen or two rules, similar to the rules in E1. From there, more complex rules can be learned more easily, and the resulting grammar parses English with an overall recall and precision for sentences of about 80% (Haghighi and Klein, 2006). Another approach is to use treebanks, but in addition to learning PCFG rules directly from the bracketings, also learning distinctions that are not in the treebank. For example, not that the tree in Figure 23.6 makes the distinction between NP and NP − SBJ . The latter is used for the pronoun “she,” the former for the pronoun “her.” We will explore this issue in Section 23.6; for now let us just say that there are many ways in which it would be useful to **split** a category like NP—grammar induction systems that use treebanks but automatically split categories do better than those that stick with the original category set (Petrov and Klein, 2007c). The error rates for automatically learned grammars are still about 50% higher than for hand-constructed grammar, but the gap is decreasing.
 
-**23.2.2 Comparing context-free and Markov models**
+### 23.2.2 Comparing context-free and Markov models
 
-The problem with PCFGs is that they are context-free. That means that the difference between P (“eat a banana”) and P (“eat a bandanna”) depends only on P (Noun → “banana”) versus P (Noun → “bandanna”) and not on the relation between “eat” and the respective objects. A Markov model of order two or more, given a sufficiently large corpus, _will_ know that “eat  
-
-Section 23.3. Augmented Grammars and Semantic Interpretation 897
-
-a banana” is more probable. We can combine a PCFG and Markov model to get the best of both. The simplest approach is to estimate the probability of a sentence with the geometric mean of the probabilities computed by both models. Then we would know that “eat a banana” is probable from both the grammatical and lexical point of view. But it still wouldn’t pick up the relation between “eat” and “banana” in “eat a slightly aging but still palatable banana” because here the relation is more than two words away. Increasing the order of the Markov model won’t get at the relation precisely; to do that we can use a **lexicalized** PCFG, as described in the next section.
+The problem with PCFGs is that they are context-free. That means that the difference between P (“eat a banana”) and P (“eat a bandanna”) depends only on P (Noun → “banana”) versus P (Noun → “bandanna”) and not on the relation between “eat” and the respective objects. A Markov model of order two or more, given a sufficiently large corpus, _will_ know that “eat a banana” is more probable. We can combine a PCFG and Markov model to get the best of both. The simplest approach is to estimate the probability of a sentence with the geometric mean of the probabilities computed by both models. Then we would know that “eat a banana” is probable from both the grammatical and lexical point of view. But it still wouldn’t pick up the relation between “eat” and “banana” in “eat a slightly aging but still palatable banana” because here the relation is more than two words away. Increasing the order of the Markov model won’t get at the relation precisely; to do that we can use a **lexicalized** PCFG, as described in the next section.
 
 Another problem with PCFGs is that they tend to have too strong a preference for shorter sentences. In a corpus such as the _Wall Street Journal_, the average length of a sentence is about 25 words. But a PCFG will usually assign fairly high probability to many short sentences, such as “He slept,” whereas in the _Journal_ we’re more likely to see something like “It has been reported by a reliable source that the allegation that he slept is credible.” It seems that the phrases in the _Journal_ really are not context-free; instead the writers have an idea of the expected sentence length and use that length as a soft global constraint on their sentences. This is hard to reflect in a PCFG.
 
-23.3 AUGMENTED GRAMMARS AND SEMANTIC INTERPRETATION
+## 23.3 AUGMENTED GRAMMARS AND SEMANTIC INTERPRETATION
 
 In this section we see how to extend context-free grammars—to say that, for example, not every NP is independent of context, but rather, certain NPs are more likely to appear in one context, and others in another context.
 
-**23.3.1 Lexicalized PCFGs**
+### 23.3.1 Lexicalized PCFGs
 
-To get at the relationship between the verb “eat” and the nouns “banana” versus “bandanna,” we can use a **lexicalized PCFG**, in which the probabilities for a rule depend on the relation-LEXICALIZED PCFG
-
-ship between words in the parse tree, not just on the adjacency of words in a sentence. Of course, we can’t have the probability depend on every word in the tree, because we won’t have enough training data to estimate all those probabilities. It is useful to introduce the no- tion of the **head** of a phrase—the most important word. Thus, “eat” is the head of the VPHEAD
-
-“eat a banana” and “banana” is the head of the NP “a banana.” We use the notation VP(v)
-
-to denote a phrase with category VP whose head word is v. We say that the category VP
-
-is **augmented** with the head variable v. Here is an **augmented grammar** that describes theAUGMENTED GRAMMAR
+To get at the relationship between the verb “eat” and the nouns “banana” versus “bandanna,” we can use a **lexicalized PCFG**, in which the probabilities for a rule depend on the relationship between words in the parse tree, not just on the adjacency of words in a sentence. Of course, we can’t have the probability depend on every word in the tree, because we won’t have enough training data to estimate all those probabilities. It is useful to introduce the no- tion of the **head** of a phrase—the most important word. Thus, “eat” is the head of the “eat a banana” and “banana” is the head of the NP “a banana.” We use the notation VP(v) to denote a phrase with category VP whose head word is v. We say that the category VP is **augmented** with the head variable v. Here is an **augmented grammar** that describes theAUGMENTED GRAMMAR
 
 verb–object relation:
 
-VP(v) → Verb(v) NP(n) \[P1(v, n)\]
+VP(v) → Verb(v) NP(n) [P1(v, n)]
 
-VP(v) → Verb(v) \[P2(v)\]
+VP(v) → Verb(v) [P2(v)]
 
-NP(n) → Article(a) Adjs(j) Noun(n) \[P3(n, a)\]
+NP(n) → Article(a) Adjs(j) Noun(n) [P3(n, a)]
 
-Noun(**banana**) → **banana** \[pn\]
+Noun(**banana**) → **banana** [pn]
 
 . . . . . .
 
 Here the probability P1(v, n) depends on the head words v and n. We would set this proba- bility to be relatively high when v is “eat” and n is “banana,” and low when n is “bandanna.”  
 
-
-
 Note that since we are considering only heads, the distinction between “eat a banana” and “eat a rancid banana” will not be caught by these probabilities. Another issue with this ap- proach is that, in a vocabulary with, say, 20,000 nouns and 5,000 verbs, P1 needs 100 million probability estimates. Only a few percent of these can come from a corpus; the rest will have to come from smoothing (see Section 22.1.2). For example, we can estimateP1(v, n) for a (v, n) pair that we have not seen often (or at all) by backing off to a model that depends only on v. These objectless probabilities are still very useful; they can capture the distinction between a transitive verb like “eat”—which will have a high value for P1 and a low value for P2—and an intransitive verb like “sleep,” which will have the reverse. It is quite feasible to learn these probabilities from a treebank.
 
-**23.3.2 Formal definition of augmented grammar rules**
+### 23.3.2 Formal definition of augmented grammar rules
 
-Augmented rules are complicated, so we will give them a formal definition by showing how an augmented rule can be translated into a logical sentence. The sentence will have the form of a definite clause (see page 256), so the result is called a **definite clause grammar**, or DCG.DEFINITE CLAUSE
-
-GRAMMAR
-
-We’ll use as an example a version of a rule from the lexicalized grammar for NP with one new piece of notation:
+Augmented rules are complicated, so we will give them a formal definition by showing how an augmented rule can be translated into a logical sentence. The sentence will have the form of a definite clause (see page 256), so the result is called a **definite clause grammar**, or DCG.We’ll use as an example a version of a rule from the lexicalized grammar for NP with one new piece of notation:
 
 NP(n) → Article(a) Adjs(j) Noun(n) {Compatible(j, n)} .
 
-The new aspect here is the notation {constraint} to denote a logical constraint on some of the variables; the rule only holds when the constraint is true. Here the predicate Compatible(j, n)
-
-is meant to test whether adjective j and noun n are compatible; it would be defined by a series of assertions such as Compatible(**black**, **dog**). We can convert this grammar rule into a def- inite clause by (1) reversing the order of right- and left-hand sides, (2) making a conjunction of all the constituents and constraints, (3) adding a variable si to the list of arguments for each constituent to represent the sequence of words spanned by the constituent, (4) adding a term for the concatenation of words, Append (s1, . . .), to the list of arguments for the root of the tree. That gives us
+The new aspect here is the notation {constraint} to denote a logical constraint on some of the variables; the rule only holds when the constraint is true. Here the predicate Compatible(j, n) is meant to test whether adjective j and noun n are compatible; it would be defined by a series of assertions such as Compatible(**black**, **dog**). We can convert this grammar rule into a def- inite clause by (1) reversing the order of right- and left-hand sides, (2) making a conjunction of all the constituents and constraints, (3) adding a variable si to the list of arguments for each constituent to represent the sequence of words spanned by the constituent, (4) adding a term for the concatenation of words, Append (s1, . . .), to the list of arguments for the root of the tree. That gives us
 
 Article(a, s1) ∧ Adjs(j, s2) ∧ Noun(n, s3) ∧ Compatible(j, n)
 
@@ -1161,17 +710,9 @@ This definite clause says that if the predicate Article is true of a head word a
 
 The DCG translation left out the probabilities, but we could put them back in: just aug- ment each constituent with one more variable representing the probability of the constituent, and augment the root with a variable that is the product of the constituent probabilities times the rule probability.
 
-The translation from grammar rule to definite clause allows us to talk about parsing as logical inference. This makes it possible to reason about languages and strings in many different ways. For example, it means we can do bottom-up parsing using forward chaining or top-down parsing using backward chaining. In fact, parsing natural language with DCGs was  
+The translation from grammar rule to definite clause allows us to talk about parsing as logical inference. This makes it possible to reason about languages and strings in many different ways. For example, it means we can do bottom-up parsing using forward chaining or top-down parsing using backward chaining. In fact, parsing natural language with DCGs was one of the first applications of (and motivations for) the Prolog logic programming language. It is sometimes possible to run the process backward and do **language generation** as well as parsing. For example, skipping ahead to Figure 23.10 (page 903), a logic program could be given the semantic form Loves(John ,Mary) and apply the definite-clause rules to deduce
 
-Section 23.3. Augmented Grammars and Semantic Interpretation 899
-
-one of the first applications of (and motivations for) the Prolog logic programming language. It is sometimes possible to run the process backward and do **language generation** as well asLANGUAGE
-
-GENERATION
-
-parsing. For example, skipping ahead to Figure 23.10 (page 903), a logic program could be given the semantic form Loves(John ,Mary) and apply the definite-clause rules to deduce
-
-S(Loves(John ,Mary), \[**John**, **loves**, **Mary**\]) .
+S(Loves(John ,Mary), [**John**, **loves**, **Mary**]) .
 
 This works for toy examples, but serious language-generation systems need more control over the process than is afforded by the DCG rules alone.
 
@@ -1207,21 +748,9 @@ Pronoun(Obj , 3P , **them**) → **them**
 
 **Figure 23.7** Top: part of a grammar for the language E1, which handles subjective and objective cases in noun phrases and thus does not overgenerate quite as badly as E0. The portions that are identical to E0 have been omitted. Bottom: part of an augmented grammar for E2, with three augmentations: case agreement, subject–verb agreement, and head word. _Sbj, Obj, 1S, 1P_ and _3P_ are constants, and lowercase names are variables.
 
-**23.3.3 Case agreement and subject–verb agreement**
+### 23.3.3 Case agreement and subject–verb agreement
 
-We saw in Section 23.1 that the simple grammar for E0 overgenerates, producing nonsen- tences such as “Me smell a stench.” To avoid this problem, our grammar would have to know that “me” is not a valid NP when it is the subject of a sentence. Linguists say that the pronoun “I” is in the subjective case, and “me” is in the objective case.4 We can account for this by
-
-4 The subjective case is also sometimes called the nominative case and the objective case is sometimes called the accusative case. Many languages also have a dative case for words in the indirect object position.  
-
-
-
-splitting NP into two categories, NPS and NPO, to stand for noun phrases in the subjective and objective case, respectively. We would also need to split the category Pronoun into the two categories PronounS (which includes “I”) and PronounO (which includes “me”). The top part of Figure 23.7 shows the grammar for **case agreement**; we call the resulting languageCASE AGREEMENT
-
-E1. Notice that all the NP rules must be duplicated, once for NPS and once for NPO. Unfortunately, E1 still overgenerates. English requires **subject–verb agreement** forSUBJECT–VERB
-
-AGREEMENT
-
-person and number of the subject and main verb of a sentence. For example, if “I” is the subject, then “I smell” is grammatical, but “I smells” is not. If “it” is the subject, we get the reverse. In English, the agreement distinctions are minimal: most verbs have one form for third-person singular subjects (he, she, or it), and a second form for all other combinations of person and number. There is one exception: the verb “to be” has three forms, “I am / you are / he is.” So one distinction (case) splits NP two ways, another distinction (person and number) splits NP three ways, and as we uncover other distinctions we would end up with an exponential number of subscripted NP forms if we took the approach of E1. Augmentations are a better approach: they can represent an exponential number of forms as a single rule.
+We saw in Section 23.1 that the simple grammar for E0 overgenerates, producing nonsen- tences such as “Me smell a stench.” To avoid this problem, our grammar would have to know that “me” is not a valid NP when it is the subject of a sentence. Linguists say that the pronoun “I” is in the subjective case, and “me” is in the objective case.4 We can account for this by splitting NP into two categories, NPS and NPO, to stand for noun phrases in the subjective and objective case, respectively. We would also need to split the category Pronoun into the two categories PronounS (which includes “I”) and PronounO (which includes “me”). The top part of Figure 23.7 shows the grammar for **case agreement**; we call the resulting language E1. Notice that all the NP rules must be duplicated, once for NPS and once for NPO. Unfortunately, E1 still overgenerates. English requires **subject–verb agreement** for person and number of the subject and main verb of a sentence. For example, if “I” is the subject, then “I smell” is grammatical, but “I smells” is not. If “it” is the subject, we get the reverse. In English, the agreement distinctions are minimal: most verbs have one form for third-person singular subjects (he, she, or it), and a second form for all other combinations of person and number. There is one exception: the verb “to be” has three forms, “I am / you are / he is.” So one distinction (case) splits NP two ways, another distinction (person and number) splits NP three ways, and as we uncover other distinctions we would end up with an exponential number of subscripted NP forms if we took the approach of E1. Augmentations are a better approach: they can represent an exponential number of forms as a single rule.
 
 In the bottom of Figure 23.7 we see (part of) an augmented grammar for the language E2, which handles case agreement, subject–verb agreement, and head words. We have just one NP category, but NP(c, pn , head) has three augmentations: c is a parameter for case, pn is a parameter for person and number, and head is a parameter for the head word of the phrase. The other categories also are augmented with heads and other arguments. Let’s consider one rule in detail:
 
@@ -1233,11 +762,9 @@ Pronoun(Sbj , 1S , **I**) → **I**
 
 says that “I” can be interpreted as a _Pronoun_ in the subjective case, first-person singular, with head “I.” For simplicity we have omitted the probabilities for these rules, but augmentation does work with probabilities. Augmentation can also work with automated learning mecha- nisms. Petrov and Klein (2007c) show how a learning algorithm can automatically split the NP category into NPS and NPO.
 
-**23.3.4 Semantic interpretation**
+### 23.3.4 Semantic interpretation
 
 To show how to add semantics to a grammar, we start with an example that is simpler than English: the semantics of arithmetic expressions. Figure 23.8 shows a grammar for arithmetic expressions, where each rule is augmented with a variable indicating the semantic interpreta- tion of the phrase. The semantics of a digit such as “3” is the digit itself. The semantics of an expression such as “3 + 4” is the operator “+” applied to the semantics of the phrase “3” and  
-
-Section 23.3. Augmented Grammars and Semantic Interpretation 901
 
 Exp(x) → Exp(x1) Operator (op) Exp(x2) {x=Apply(op, x1, x2)}
 
@@ -1253,41 +780,13 @@ Operator (x) → x {x∈ {+,−,÷,×}}
 
 **Figure 23.8** A grammar for arithmetic expressions, augmented with semantics. Each vari- able xi represents the semantics of a constituent. Note the use of the {test} notation to define logical predicates that must be satisfied, but that are not constituents.
 
-_Operator_(**÷**)
+![Alt text](image-17.png)
 
-**3 ( )4 2+**
+**Figure 23.9** Parse tree with semantic interpretations for the string “3 +(4÷ 2)”.
 
-_Number_(2)
+the phrase “4.” The rules obey the principle of **compositional semantics**—the semantics of a phrase is a function of the semantics of the subphrases. Figure 23.9 shows the parse tree for 3 + (4 ÷ 2) according to this grammar. The root of the parse tree is Exp(5), an expression whose semantic interpretation is 5.
 
-_Digit_(2)
-
-_Number_(4)
-
-_Digit_(4)_Operator_(**+**)_Digit_(3)
-
-_Number_(3)
-
-_Exp_(5)
-
-_Exp_(2)
-
-_Exp_(2)
-
-_Exp_(4) _Exp_(2)_Exp_(3)
-
-**÷**
-
-**Figure 23.9** Parse tree with semantic interpretations for the string “3 + (4÷ 2)”.
-
-the phrase “4.” The rules obey the principle of **compositional semantics**—the semantics ofCOMPOSITIONAL SEMANTICS
-
-a phrase is a function of the semantics of the subphrases. Figure 23.9 shows the parse tree for 3 + (4 ÷ 2) according to this grammar. The root of the parse tree is Exp(5), an expression whose semantic interpretation is 5.
-
-Now let’s move on to the semantics of English, or at least of E0. We start by determin- ing what semantic representations we want to associate with what phrases. We use the simple example sentence “John loves Mary.” The NP “John” should have as its semantic interpreta- tion the logical term John , and the sentence as a whole should have as its interpretation the logical sentence Loves(John ,Mary). That much seems clear. The complicated part is the VP “loves Mary.” The semantic interpretation of this phrase is neither a logical term nor a complete logical sentence. Intuitively, “loves Mary” is a description that might or might not  
-
-
-
-apply to a particular person. (In this case, it applies to John.) This means that “loves Mary” is a **predicate** that, when combined with a term that represents a person (the person doing the loving), yields a complete logical sentence. Using the λ-notation (see page 294), we can represent “loves Mary” as the predicate
+Now let’s move on to the semantics of English, or at least of E0. We start by determin- ing what semantic representations we want to associate with what phrases. We use the simple example sentence “John loves Mary.” The NP “John” should have as its semantic interpreta- tion the logical term John , and the sentence as a whole should have as its interpretation the logical sentence Loves(John ,Mary). That much seems clear. The complicated part is the VP “loves Mary.” The semantic interpretation of this phrase is neither a logical term nor a complete logical sentence. Intuitively, “loves Mary” is a description that might or might not apply to a particular person. (In this case, it applies to John.) This means that “loves Mary” is a **predicate** that, when combined with a term that represents a person (the person doing the loving), yields a complete logical sentence. Using the λ-notation (see page 294), we can represent “loves Mary” as the predicate
 
 λx Loves(x,Mary) .
 
@@ -1299,71 +798,45 @@ The rule tells us that the semantic interpretation of “John loves Mary” is
 
 (λx Loves(x,Mary))(John) ,
 
-which is equivalent to Loves(John ,Mary). The rest of the semantics follows in a straightforward way from the choices we have
-
-made so far. Because VPs are represented as predicates, it is a good idea to be consistent and represent verbs as predicates as well. The verb “loves” is represented as λy λx Loves(x, y), the predicate that, when given the argument Mary , returns the predicate λx Loves(x,Mary). We end up with the grammar shown in Figure 23.10 and the parse tree shown in Figure 23.11. We could just as easily have added semantics to E2; we chose to work with E0 so that the reader can focus on one type of augmentation at a time.
+which is equivalent to Loves(John ,Mary). The rest of the semantics follows in a straightforward way from the choices we have made so far. Because VPs are represented as predicates, it is a good idea to be consistent and represent verbs as predicates as well. The verb “loves” is represented as λy λx Loves(x, y), the predicate that, when given the argument Mary , returns the predicate λx Loves(x,Mary). We end up with the grammar shown in Figure 23.10 and the parse tree shown in Figure 23.11. We could just as easily have added semantics to E2; we chose to work with E0 so that the reader can focus on one type of augmentation at a time.
 
 Adding semantic augmentations to a grammar by hand is laborious and error prone. Therefore, there have been several projects to learn semantic augmentations from examples. CHILL (Zelle and Mooney, 1996) is an inductive logic programming (ILP) program that learns a grammar and a specialized parser for that grammar from examples. The target domain is natural language database queries. The training examples consist of pairs of word strings and corresponding semantic forms—for example;
 
-What is the capital of the state with the largest population? Answer(c,Capital (s, c) ∧ Largest(p,State(s) ∧ Population(s, p)))
+What is the capital of the state with the largest population? 
+Answer(c,Capital (s, c) ∧ Largest(p,State(s) ∧ Population(s, p)))
 
-CHILL’s task is to learn a predicate Parse(words , semantics) that is consistent with the ex- amples and, hopefully, generalizes well to other examples. Applying ILP directly to learn this predicate results in poor performance: the induced parser has only about 20% accuracy. Fortunately, ILP learners can improve by adding knowledge. In this case, most of the Parse
+CHILL’s task is to learn a predicate Parse(words , semantics) that is consistent with the ex- amples and, hopefully, generalizes well to other examples. Applying ILP directly to learn this predicate results in poor performance: the induced parser has only about 20% accuracy. Fortunately, ILP learners can improve by adding knowledge. In this case, most of the Parse predicate was defined as a logic program, and CHILL’s task was reduced to inducing the control rules that guide the parser to select one parse over another. With this additional back- ground knowledge, CHILL can learn to achieve 70% to 85% accuracy on various database query tasks.
 
-predicate was defined as a logic program, and CHILL’s task was reduced to inducing the control rules that guide the parser to select one parse over another. With this additional back- ground knowledge, CHILL can learn to achieve 70% to 85% accuracy on various database query tasks.
+### 23.3.5 Complications
 
-**23.3.5 Complications**
-
-The grammar of real English is endlessly complex. We will briefly mention some examples. **Time and tense**: Suppose we want to represent the difference between “John lovesTIME AND TENSE
-
-Mary” and “John loved Mary.” English uses verb tenses (past, present, and future) to indicate  
-
-Section 23.3. Augmented Grammars and Semantic Interpretation 903
+The grammar of real English is endlessly complex. We will briefly mention some examples. **Time and tense**: Suppose we want to represent the difference between “John loves Mary” and “John loved Mary.” English uses verb tenses (past, present, and future) to indicate  
 
 S(pred (obj )) → NP(obj ) VP(pred )
-
 VP(pred(obj )) → Verb(pred ) NP(obj )
-
 NP(obj ) → Name(obj )
 
-Name(John) → **John** Name(Mary) → **Mary** Verb(λy λx Loves(x, y)) → **loves**
+Name(John) → **John** Name(Mary) → **Mary** 
+Verb(λy λx Loves(x, y)) → **loves**
 
 **Figure 23.10** A grammar that can derive a parse tree and semantic interpretation for “John loves Mary” (and three other sentences). Each category is augmented with a single argument representing the semantics.
 
-**John loves Mary**
-
-_Name_(_John_) _Name_(_Mary_)
-
-_NP_(_Mary_)_NP_(_John_)
-
-_S_(_Loves_(_John,Mary_))
-
-_Verb_(λ_y_ λ_x Loves_(_x,y_))
-
-_VP_(λ_x Loves_(_x,Mary_))
+![Alt text](image-18.png)
 
 **Figure 23.11** A parse tree with semantic interpretations for the string “John loves Mary”.
 
 the relative time of an event. One good choice to represent the time of events is the event calculus notation of Section 12.3. In event calculus we have
 
 John loves mary: E1 ∈Loves(John ,Mary) ∧During(Now ,Extent(E1))
-
 John loved mary: E2 ∈Loves(John ,Mary) ∧After(Now ,Extent(E2)) .
 
 This suggests that our two lexical rules for the words “loves” and “loved” should be these:
 
-Verb(λy λx e∈Loves(x, y) ∧During(Now , e)) → **loves** Verb(λy λx e∈Loves(x, y) ∧ After(Now , e)) → **loved** .
+Verb(λy λx e∈Loves(x, y) ∧During(Now , e)) → **loves** 
+Verb(λy λx e∈Loves(x, y) ∧ After(Now , e)) → **loved** .
 
-Other than this change, everything else about the grammar remains the same, which is en- couraging news; it suggests we are on the right track if we can so easily add a complication like the tense of verbs (although we have just scratched the surface of a complete grammar for time and tense). It is also encouraging that the distinction between processes and discrete events that we made in our discussion of knowledge representation in Section 12.3.1 is actu- ally reflected in language use. We can say “John slept a lot last night,” where Sleeping is a process category, but it is odd to say “John found a unicorn a lot last night,” where Finding
+Other than this change, everything else about the grammar remains the same, which is en- couraging news; it suggests we are on the right track if we can so easily add a complication like the tense of verbs (although we have just scratched the surface of a complete grammar for time and tense). It is also encouraging that the distinction between processes and discrete events that we made in our discussion of knowledge representation in Section 12.3.1 is actu- ally reflected in language use. We can say “John slept a lot last night,” where Sleeping is a process category, but it is odd to say “John found a unicorn a lot last night,” where Finding is a discrete event category. A grammar would reflect that fact by having a low probability for adding the adverbial phrase “a lot” to discrete events.
 
-is a discrete event category. A grammar would reflect that fact by having a low probability for adding the adverbial phrase “a lot” to discrete events.
-
-**Quantification:** Consider the sentence “Every agent feels a breeze.” The sentence hasQUANTIFICATION
-
-only one syntactic parse under E0, but it is actually semantically ambiguous; the preferred  
-
-
-
-meaning is “For every agent there exists a breeze that the agent feels,” but an acceptable alternative meaning is “There exists a breeze that every agent feels.” 5 The two interpretations can be represented as
+**Quantification:** Consider the sentence “Every agent feels a breeze.” The sentence has only one syntactic parse under E0, but it is actually semantically ambiguous; the preferred meaning is “For every agent there exists a breeze that the agent feels,” but an acceptable alternative meaning is “There exists a breeze that every agent feels.” 5 The two interpretations can be represented as
 
 ∀ a a∈Agents ⇒
 
@@ -1373,29 +846,17 @@ meaning is “For every agent there exists a breeze that the agent feels,” but
 
 ∃ e e∈Feel(a, b) ∧During(Now , e) .
 
-The standard approach to quantification is for the grammar to define not an actual logical semantic sentence, but rather a **quasi-logical form** that is then turned into a logical sentenceQUASI-LOGICAL
+The standard approach to quantification is for the grammar to define not an actual logical semantic sentence, but rather a **quasi-logical form** that is then turned into a logical sentence by algorithms outside of the parsing process. Those algorithms can have preference rules for preferring one quantifier scope over another—preferences that need not be reflected directly in the grammar.
 
-FORM
+**Pragmatics**: We have shown how an agent can perceive a string of words and use a grammar to derive a set of possible semantic interpretations. Now we address the problem of completing the interpretation by adding context-dependent information about the current situation. The most obvious need for pragmatic information is in resolving the meaning of **indexicals**, which are phrases that refer directly to the current situation. For example, in the sentence “I am in Boston today,” both “I” and “today” are indexicals. The word “I” would be represented by the fluent Speaker , and it would be up to the hearer to resolve the meaning of the fluent—that is not considered part of the grammar but rather an issue of pragmatics; of using the context of the current situation to interpret fluents.
 
-by algorithms outside of the parsing process. Those algorithms can have preference rules for preferring one quantifier scope over another—preferences that need not be reflected directly in the grammar.
-
-**Pragmatics**: We have shown how an agent can perceive a string of words and use aPRAGMATICS
-
-grammar to derive a set of possible semantic interpretations. Now we address the problem of completing the interpretation by adding context-dependent information about the current situation. The most obvious need for pragmatic information is in resolving the meaning of **indexicals**, which are phrases that refer directly to the current situation. For example, in theINDEXICAL
-
-sentence “I am in Boston today,” both “I” and “today” are indexicals. The word “I” would be represented by the fluent Speaker , and it would be up to the hearer to resolve the meaning of the fluent—that is not considered part of the grammar but rather an issue of pragmatics; of using the context of the current situation to interpret fluents.
-
-Another part of pragmatics is interpreting the speaker’s intent. The speaker’s action is considered a **speech act**, and it is up to the hearer to decipher what type of action it is—aSPEECH ACT
-
-question, a statement, a promise, a warning, a command, and so on. A command such as “go to 2 2” implicitly refers to the hearer. So far, our grammar for S covers only declarative sentences. We can easily extend it to cover commands. A command can be formed from a VP , where the subject is implicitly the hearer. We need to distinguish commands from statements, so we alter the rules for S to include the type of speech act:
+Another part of pragmatics is interpreting the speaker’s intent. The speaker’s action is considered a **speech act**, and it is up to the hearer to decipher what type of action it is—a question, a statement, a promise, a warning, a command, and so on. A command such as “go to 2 2” implicitly refers to the hearer. So far, our grammar for S covers only declarative sentences. We can easily extend it to cover commands. A command can be formed from a VP , where the subject is implicitly the hearer. We need to distinguish commands from statements, so we alter the rules for S to include the type of speech act:
 
 S(Statement (Speaker , pred (obj ))) → NP(obj ) VP(pred)
 
 S(Command (Speaker , pred (Hearer ))) → VP(pred ) .
 
-**Long-distance dependencies**: Questions introduce a new grammatical complexity. InLONG-DISTANCE DEPENDENCIES
-
-“Who did the agent tell you to give the gold to?” the final word “to” should be parsed as \[PP to \], where the “ ” denotes a gap or **trace** where an NP is missing; the missing NPTRACE
+**Long-distance dependencies**: Questions introduce a new grammatical complexity. In “Who did the agent tell you to give the gold to?” the final word “to” should be parsed as [PP to ], where the “ ” denotes a gap or **trace** where an NP is missing; the missing NPTRACE
 
 is licensed by the first word of the sentence, “who.” A complex system of augmentations is used to make sure that the missing NPs match up with the licensing words in just the right way, and prohibit gaps in the wrong places. For example, you can’t have a gap in one branch of an NP conjunction: “What did he play \[NP Dungeons and \]?” is ungrammatical. But you can have the same gap in both branches of a VP conjunction: “What did you \[VP \[VP
 
@@ -1765,7 +1226,7 @@ FINAL 0.7
 
 Mid EndOnset
 
-**Figure 23.16** An HMM for the three-state phone \[m\]. Each state has several possible outputs, each with its own probability. The MFCC feature labels C1 through C7 are arbitrary, standing for some combination of feature values.
+**Figure 23.16** An HMM for the three-state phone \[m\]. Each state has several possible outputs, each with its own probability. The MFCC feature labels C~1~ through C7 are arbitrary, standing for some combination of feature values.
 
 0.5
 
@@ -2105,7 +1566,7 @@ iteration give worse results or the same results? Does the choice of intermediat
 
 Which ones could you do? What type of knowledge did you draw upon? Train a bigram model from a training corpus, and use it to find the highest-probability permutation of some sentences from a test corpus. Report on the accuracy of this model.
 
-**23.18** Calculate the most probable path through the HMM in Figure 23.16 for the output sequence \[C1, C2, C3, C4, C4, C6, C7\]. Also give its probability.
+**23.18** Calculate the most probable path through the HMM in Figure 23.16 for the output sequence \[C~1~, C2, C3, C4, C4, C6, C7\]. Also give its probability.
 
 **23.19** We forgot to mention that the text in Exercise 23.1 is entitled “Washing Clothes.” Reread the text and answer the questions in Exercise 23.14. Did you do better this time? Bransford and Johnson (1973) used this text in a controlled experiment and found that the title helped significantly. What does this tell you about how language and memory works?  
 
