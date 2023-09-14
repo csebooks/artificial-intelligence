@@ -3,7 +3,7 @@ title: 'IV: Uncertain knowledge and reasoning'
 weight: 7
 ---
 
-  
+
 
 13 QUANTIFYING UNCERTAINTY
 
@@ -15,15 +15,15 @@ Agents may need to handle **uncertainty**, whether due to partial observability,
 
 ism, or a combination of the two. An agent may never know for certain what state it’s in or where it will end up after a sequence of actions.
 
-We have seen problem-solving agents (Chapter 4) and logical agents (Chapters 7 and 11) designed to handle uncertainty by keeping track of a **belief state**—a representation of the set of all possible world states that it might be in—and generating a contingency plan that han- dles every possible eventuality that its sensors may report during execution. Despite its many virtues, however, this approach has significant drawbacks when taken literally as a recipe for creating agent programs:
+We have seen problem-solving agents (Chapter 4) and logical agents (Chapters 7 and 11) designed to handle uncertainty by keeping track of a **belief state**—a representation of the set of all possible world states that it might be in—and generating a contingency plan that handles every possible eventuality that its sensors may report during execution. Despite its many virtues, however, this approach has significant drawbacks when taken literally as a recipe for creating agent programs:
 
-• When interpreting partial sensor information, a logical agent must consider _every log- ically possible_ explanation for the observations, no matter how unlikely. This leads to impossible large and complex belief-state representations.
+- When interpreting partial sensor information, a logical agent must consider _every logically possible_ explanation for the observations, no matter how unlikely. This leads to impossible large and complex belief-state representations.
 
-• A correct contingent plan that handles every eventuality can grow arbitrarily large and must consider arbitrarily unlikely contingencies.
+- A correct contingent plan that handles every eventuality can grow arbitrarily large and must consider arbitrarily unlikely contingencies.
 
-• Sometimes there is no plan that is guaranteed to achieve the goal—yet the agent must act. It must have some way to compare the merits of plans that are not guaranteed.
+- Sometimes there is no plan that is guaranteed to achieve the goal—yet the agent must act. It must have some way to compare the merits of plans that are not guaranteed.
 
-Suppose, for example, that an automated taxi!automated has the goal of delivering a pas- senger to the airport on time. The agent forms a plan, A90, that involves leaving home 90 minutes before the flight departs and driving at a reasonable speed. Even though the airport is only about 5 miles away, a logical taxi agent will not be able to conclude with certainty that “Plan A90 will get us to the airport in time.” Instead, it reaches the weaker conclusion “Plan A90 will get us to the airport in time, as long as the car doesn’t break down or run out of gas, and I don’t get into an accident, and there are no accidents on the bridge, and the plane doesn’t leave early, and no meteorite hits the car, and . . . .” None of these conditions can be
+Suppose, for example, that an automated taxi!automated has the goal of delivering a passenger to the airport on time. The agent forms a plan, A90, that involves leaving home 90 minutes before the flight departs and driving at a reasonable speed. Even though the airport is only about 5 miles away, a logical taxi agent will not be able to conclude with certainty that “Plan A90 will get us to the airport in time.” Instead, it reaches the weaker conclusion “Plan A90 will get us to the airport in time, as long as the car doesn’t break down or run out of gas, and I don’t get into an accident, and there are no accidents on the bridge, and the plane doesn’t leave early, and no meteorite hits the car, and . . . .” None of these conditions can be
 
 480  
 
@@ -31,7 +31,7 @@ Section 13.1. Acting under Uncertainty 481
 
 deduced for sure, so the plan’s success cannot be inferred. This is the **qualification problem** (page 268), for which we so far have seen no real solution.
 
-Nonetheless, in some sense A90 _is_ in fact the right thing to do. What do we mean by this? As we discussed in Chapter 2, we mean that out of all the plans that could be executed, A90 is expected to maximize the agent’s performance measure (where the expectation is rel- ative to the agent’s knowledge about the environment). The performance measure includes getting to the airport in time for the flight, avoiding a long, unproductive wait at the airport, and avoiding speeding tickets along the way. The agent’s knowledge cannot guarantee any of these outcomes for A90, but it can provide some degree of belief that they will be achieved. Other plans, such as A180, might increase the agent’s belief that it will get to the airport on time, but also increase the likelihood of a long wait. _The right thing to do—the **rational decision**—therefore depends on both the relative importance of various goals and the likeli- hood that, and degree to which, they will be achieved._ The remainder of this section hones these ideas, in preparation for the development of the general theories of uncertain reasoning and rational decisions that we present in this and subsequent chapters.
+Nonetheless, in some sense A90 _is_ in fact the right thing to do. What do we mean by this? As we discussed in Chapter 2, we mean that out of all the plans that could be executed, A90 is expected to maximize the agent’s performance measure (where the expectation is relative to the agent’s knowledge about the environment). The performance measure includes getting to the airport in time for the flight, avoiding a long, unproductive wait at the airport, and avoiding speeding tickets along the way. The agent’s knowledge cannot guarantee any of these outcomes for A90, but it can provide some degree of belief that they will be achieved. Other plans, such as A180, might increase the agent’s belief that it will get to the airport on time, but also increase the likelihood of a long wait. _The right thing to do—the **rational decision**—therefore depends on both the relative importance of various goals and the likelihood that, and degree to which, they will be achieved._ The remainder of this section hones these ideas, in preparation for the development of the general theories of uncertain reasoning and rational decisions that we present in this and subsequent chapters.
 
 **13.1.1 Summarizing uncertainty**
 
@@ -49,13 +49,13 @@ Cavity ⇒ Toothache .
 
 But this rule is not right either; not all cavities cause pain. The only way to fix the rule is to make it logically exhaustive: to augment the left-hand side with all the qualifications required for a cavity to cause a toothache. Trying to use logic to cope with a domain like medical diagnosis thus fails for three main reasons:
 
-• **Laziness**: It is too much work to list the complete set of antecedents or consequentsLAZINESS
+- **Laziness**: It is too much work to list the complete set of antecedents or consequentsLAZINESS
 
 needed to ensure an exceptionless rule and too hard to use such rules.
 
-• **Theoretical ignorance**: Medical science has no complete theory for the domain.THEORETICAL IGNORANCE
+- **Theoretical ignorance**: Medical science has no complete theory for the domain.THEORETICAL IGNORANCE
 
-• **Practical ignorance**: Even if we know all the rules, we might be uncertain about aPRACTICAL IGNORANCE
+- **Practical ignorance**: Even if we know all the rules, we might be uncertain about aPRACTICAL IGNORANCE
 
 particular patient because not all the necessary tests have been or can be run.
 
@@ -69,7 +69,7 @@ dealing with degrees of belief is **probability theory**. In the terminology of 
 
 **ontological commitments** of logic and probability theory are the same—that the world is composed of facts that do or do not hold in any particular case—but the **epistemological commitments** are different: a logical agent believes each sentence to be true or false or has no opinion, whereas a probabilistic agent may have a numerical degree of belief between 0 (for sentences that are certainly false) and 1 (certainly true).
 
-_Probability provides a way of_ **summarizing** _the uncertainty that comes from our lazi- ness and ignorance,_ thereby solving the qualification problem. We might not know for sure what afflicts a particular patient, but we believe that there is, say, an 80% chance—that is, a probability of 0.8—that the patient who has a toothache has a cavity. That is, we expect that out of all the situations that are indistinguishable from the current situation as far as our knowledge goes, the patient will have a cavity in 80% of them. This belief could be derived from statistical data—80% of the toothache patients seen so far have had cavities—or from some general dental knowledge, or from a combination of evidence sources.
+_Probability provides a way of_ **summarizing** _the uncertainty that comes from our laziness and ignorance,_ thereby solving the qualification problem. We might not know for sure what afflicts a particular patient, but we believe that there is, say, an 80% chance—that is, a probability of 0.8—that the patient who has a toothache has a cavity. That is, we expect that out of all the situations that are indistinguishable from the current situation as far as our knowledge goes, the patient will have a cavity in 80% of them. This belief could be derived from statistical data—80% of the toothache patients seen so far have had cavities—or from some general dental knowledge, or from a combination of evidence sources.
 
 One confusing point is that at the time of our diagnosis, there is no uncertainty in the actual world: the patient either has a cavity or doesn’t. So what does it mean to say the probability of a cavity is 0.8? Shouldn’t it be either 0 or 1? The answer is that probability statements are made with respect to a knowledge state, not with respect to the real world. We say “The probability that the patient has a cavity, _given that she has a toothache_, is 0.8.” If we later learn that the patient has a history of gum disease, we can make a different statement: “The probability that the patient has a cavity, given that she has a toothache and a history of gum disease, is 0.4.” If we gather further conclusive evidence against a cavity, we can say “The probability that the patient has a cavity, given all we now know, is almost 0.” Note that these statements do not contradict each other; each is a separate assertion about a different knowledge state.
 
@@ -103,7 +103,7 @@ Figure 13.1 sketches the structure of an agent that uses decision theory to sele
 
 13.2 BASIC PROBABILITY NOTATION
 
-For our agent to represent and use probabilistic information, we need a formal language. The language of probability theory has traditionally been informal, written by human math- ematicians to other human mathematicians. Appendix A includes a standard introduction to elementary probability theory; here, we take an approach more suited to the needs of AI and more consistent with the concepts of formal logic.  
+For our agent to represent and use probabilistic information, we need a formal language. The language of probability theory has traditionally been informal, written by human mathematicians to other human mathematicians. Appendix A includes a standard introduction to elementary probability theory; here, we take an approach more suited to the needs of AI and more consistent with the concepts of formal logic.  
 
 
 
@@ -175,11 +175,11 @@ PROBABILITY POSTERIOR PROBABILITY doubles _given that the first die is a 5_. Thi
 
 the “ | ” is pronounced “given.” Similarly, if I am going to the dentist for a regular checkup, the probability P (cavity)= 0.2 might be of interest; but if I go to the dentist because I have a toothache, it’s P (cavity | toothache)= 0.6 that matters. Note that the precedence of “ | ” is such that any expression of the form P (. . . | . . .) always means P ((. . .)|(. . .)).
 
-It is important to understand that P (cavity)= 0.2 is still _valid_ after toothache is ob- served; it just isn’t especially useful. When making decisions, an agent needs to condition on _all_ the evidence it has observed. It is also important to understand the difference be- tween conditioning and logical implication. The assertion that P (cavity | toothache)= 0.6
+It is important to understand that P (cavity)= 0.2 is still _valid_ after toothache is observed; it just isn’t especially useful. When making decisions, an agent needs to condition on _all_ the evidence it has observed. It is also important to understand the difference between conditioning and logical implication. The assertion that P (cavity | toothache)= 0.6
 
-does not mean “Whenever toothache is true, conclude that cavity is true with probabil- ity 0.6” rather it means “Whenever toothache is true _and we have no further information_, conclude that cavity is true with probability 0.6.” The extra condition is important; for ex- ample, if we had the further information that the dentist found no cavities, we definitely would not want to conclude that cavity is true with probability 0.6; instead we need to use P (cavity |toothache ∧ ¬cavity)= 0.
+does not mean “Whenever toothache is true, conclude that cavity is true with probability 0.6” rather it means “Whenever toothache is true _and we have no further information_, conclude that cavity is true with probability 0.6.” The extra condition is important; for example, if we had the further information that the dentist found no cavities, we definitely would not want to conclude that cavity is true with probability 0.6; instead we need to use P (cavity |toothache ∧ ¬cavity)= 0.
 
-Mathematically speaking, conditional probabilities are defined in terms of uncondi- tional probabilities as follows: for any propositions a and b, we have
+Mathematically speaking, conditional probabilities are defined in terms of unconditional probabilities as follows: for any propositions a and b, we have
 
 P (a | b) = P (a ∧ b)
 
@@ -209,11 +209,11 @@ Variables in probability theory are called **random variables** and their names 
 
 an uppercase letter. Thus, in the dice example, Total and Die1 are random variables. Every random variable has a **domain**—the set of possible values it can take on. The domain ofDOMAIN
 
-Total for two dice is the set {2, . . . , 12} and the domain of Die1 is {1, . . . , 6}. A Boolean random variable has the domain {true , false} (notice that values are always lowercase); for example, the proposition that doubles are rolled can be written as Doubles = true . By con- vention, propositions of the form A= true are abbreviated simply as a, while A= false is abbreviated as ¬a. (The uses of doubles , cavity , and toothache in the preceding section are abbreviations of this kind.) As in CSPs, domains can be sets of arbitrary tokens; we might choose the domain of Age to be {juvenile, teen , adult} and the domain of Weather might be {sunny , rain , cloudy , snow}. When no ambiguity is possible, it is common to use a value by itself to stand for the proposition that a particular variable has that value; thus, sunny can stand for Weather = sunny .
+Total for two dice is the set {2, . . . , 12} and the domain of Die1 is {1, . . . , 6}. A Boolean random variable has the domain {true , false} (notice that values are always lowercase); for example, the proposition that doubles are rolled can be written as Doubles = true . By convention, propositions of the form A= true are abbreviated simply as a, while A= false is abbreviated as ¬a. (The uses of doubles , cavity , and toothache in the preceding section are abbreviations of this kind.) As in CSPs, domains can be sets of arbitrary tokens; we might choose the domain of Age to be {juvenile, teen , adult} and the domain of Weather might be {sunny , rain , cloudy , snow}. When no ambiguity is possible, it is common to use a value by itself to stand for the proposition that a particular variable has that value; thus, sunny can stand for Weather = sunny .
 
 The preceding examples all have finite domains. Variables can have infinite domains, too—either discrete (like the integers) or continuous (like the reals). For any variable with an ordered domain, inequalities are also allowed, such as NumberOfAtomsInUniverse ≥ 1070.
 
-Finally, we can combine these sorts of elementary propositions (including the abbre- viated forms for Boolean variables) by using the connectives of propositional logic. For example, we can express “The probability that the patient has a cavity, given that she is a teenager with no toothache, is 0.1” as follows:
+Finally, we can combine these sorts of elementary propositions (including the abbreviated forms for Boolean variables) by using the connectives of propositional logic. For example, we can express “The probability that the patient has a cavity, given that she is a teenager with no toothache, is 0.1” as follows:
 
 P (cavity | ¬toothache ∧ teen) = 0.1 .
 
@@ -233,7 +233,7 @@ but as an abbreviation we will allow
 
 Section 13.2. Basic Probability Notation 487
 
-where the bold **P** indicates that the result is a vector of numbers, and where we assume a pre- defined ordering 〈sunny , rain , cloudy , snow 〉 on the domain of Weather . We say that the **P** statement defines a **probability distribution** for the random variable Weather . The **P** nota-PROBABILITY
+where the bold **P** indicates that the result is a vector of numbers, and where we assume a predefined ordering 〈sunny , rain , cloudy , snow 〉 on the domain of Weather . We say that the **P** statement defines a **probability distribution** for the random variable Weather . The **P** nota-PROBABILITY
 
 DISTRIBUTION
 
@@ -273,7 +273,7 @@ that 1
 
 8C is not a probability, it is a probability density. The probability that NoonTemp is
 
-_exactly_ 20.18C is zero, because 20.18C is a region of width 0. Some authors use different symbols for discrete distributions and density functions; we use P in both cases, since confu- sion seldom arises and the equations are usually identical. Note that probabilities are unitless numbers, whereas density functions are measured with a unit, in this case reciprocal degrees.
+_exactly_ 20.18C is zero, because 20.18C is a region of width 0. Some authors use different symbols for discrete distributions and density functions; we use P in both cases, since confusion seldom arises and the equations are usually identical. Note that probabilities are unitless numbers, whereas density functions are measured with a unit, in this case reciprocal degrees.
 
 In addition to distributions on single variables, we need notation for distributions on multiple variables. Commas are used for this. For example, **P**(Weather ,Cavity) denotes the probabilities of all combinations of the values of Weather and Cavity . This is a 4× 2
 
@@ -303,7 +303,7 @@ P (W = cloudy ∧C = false) = P (W = cloudy |C = false)P (C = false)
 
 P (W = snow ∧ C = false) = P (W = snow |C = false)P (C = false) .
 
-As a degenerate case, **P**(sunny , cavity) has no variables and thus is a one-element vec- tor that is the probability of a sunny day with a cavity, which could also be written as P (sunny , cavity) or P (sunny ∧ cavity). We will sometimes use **P** notation to derive results about individual P values, and when we say “**P**(sunny)= 0.6” it is really an abbreviation for “**P**(sunny) is the one-element vector 〈0.6〉, which means that P (sunny)= 0.6.”
+As a degenerate case, **P**(sunny , cavity) has no variables and thus is a one-element vector that is the probability of a sunny day with a cavity, which could also be written as P (sunny , cavity) or P (sunny ∧ cavity). We will sometimes use **P** notation to derive results about individual P values, and when we say “**P**(sunny)= 0.6” it is really an abbreviation for “**P**(sunny) is the one-element vector 〈0.6〉, which means that P (sunny)= 0.6.”
 
 Now we have defined a syntax for propositions and probability assertions and we have given part of the semantics: Equation (13.2) defines the probability of a proposition as the sum of the probabilities of worlds in which it holds. To complete the semantics, we need to say what the worlds are and how to determine whether a proposition holds in a world. We borrow this part directly from the semantics of propositional logic, as follows. _A possible world is defined to be an assignment of values to all of the random variables under consideration._ It is easy to see that this definition satisfies the basic requirement that possible worlds be mutually exclusive and exhaustive (Exercise 13.5). For example, if the random variables are Cavity , Toothache , and Weather , then there are 2× 2× 4= 16 possible worlds. Furthermore, the truth of any given proposition, no matter how complex, can be determined easily in such worlds using the same recursive definition of truth as for formulas in propositional logic.
 
@@ -315,7 +315,7 @@ and Weather , then the full joint distribution is given by **P**(Cavity ,Toothac
 
 **13.2.3 Probability axioms and their reasonableness**
 
-The basic axioms of probability (Equations (13.1) and (13.2)) imply certain relationships among the degrees of belief that can be accorded to logically related propositions. For exam- ple, we can derive the familiar relationship between the probability of a proposition and the probability of its negation:
+The basic axioms of probability (Equations (13.1) and (13.2)) imply certain relationships among the degrees of belief that can be accorded to logically related propositions. For example, we can derive the familiar relationship between the probability of a proposition and the probability of its negation:
 
 P (¬a) = ∑
 
@@ -347,7 +347,7 @@ This rule is easily remembered by noting that the cases where a holds, together 
 
 Equations (13.1) and (13.4) are often called **Kolmogorov’s axioms** in honor of the Rus-KOLMOGOROV’S AXIOMS
 
-sian mathematician Andrei Kolmogorov, who showed how to build up the rest of probability theory from this simple foundation and how to handle the difficulties caused by continuous variables.2 While Equation (13.2) has a definitional flavor, Equation (13.4) reveals that the axioms really do constrain the degrees of belief an agent can have concerning logically re- lated propositions. This is analogous to the fact that a logical agent cannot simultaneously believe A, B, and ¬(A ∧ B), because there is no possible world in which all three are true. With probabilities, however, statements refer not to the world directly, but to the agent’s own state of knowledge. Why, then, can an agent not hold the following set of beliefs (even though they violate Kolmogorov’s axioms)?
+sian mathematician Andrei Kolmogorov, who showed how to build up the rest of probability theory from this simple foundation and how to handle the difficulties caused by continuous variables.2 While Equation (13.2) has a definitional flavor, Equation (13.4) reveals that the axioms really do constrain the degrees of belief an agent can have concerning logically related propositions. This is analogous to the fact that a logical agent cannot simultaneously believe A, B, and ¬(A ∧ B), because there is no possible world in which all three are true. With probabilities, however, statements refer not to the world directly, but to the agent’s own state of knowledge. Why, then, can an agent not hold the following set of beliefs (even though they violate Kolmogorov’s axioms)?
 
 P (a) = 0.4 P (a ∧ b) = 0.0
 
@@ -377,7 +377,7 @@ a ∨ b 0.8 ¬(a ∨ b) 2 to 8 2 2 2 –8
 
 **Figure 13.2** Because Agent 1 has inconsistent beliefs, Agent 2 is able to devise a set of bets that guarantees a loss for Agent 1, no matter what the outcome of a and b.
 
-One common objection to de Finetti’s theorem is that this betting game is rather con- trived. For example, what if one refuses to bet? Does that end the argument? The answer is that the betting game is an abstract model for the decision-making situation in which every agent is _unavoidably_ involved at every moment. Every action (including inaction) is a kind of bet, and every outcome can be seen as a payoff of the bet. Refusing to bet is like refusing to allow time to pass.
+One common objection to de Finetti’s theorem is that this betting game is rather contrived. For example, what if one refuses to bet? Does that end the argument? The answer is that the betting game is an abstract model for the decision-making situation in which every agent is _unavoidably_ involved at every moment. Every action (including inaction) is a kind of bet, and every outcome can be seen as a payoff of the bet. Refusing to bet is like refusing to allow time to pass.
 
 Other strong philosophical arguments have been put forward for the use of probabilities, most notably those of Cox (1946), Carnap (1950), and Jaynes (2003). They each construct a set of axioms for reasoning with degrees of beliefs: no contradictions, correspondence with ordinary logic (for example, if belief in A goes up, then belief in ¬A must go down), and so on. The only controversial axiom is that degrees of belief must be numbers, or at least act like numbers in that they must be transitive (if belief in A is greater than belief in B, which is greater than belief in C , then belief in A must be greater than C) and comparable (the belief in A must be one of equal to, greater than, or less than belief in B). It can then be proved that probability is the only approach that satisfies these axioms.
 
@@ -387,7 +387,7 @@ The world being the way it is, however, practical demonstrations sometimes speak
 
 In this section we describe a simple method for **probabilistic inference**—that is, the compu-PROBABILISTIC INFERENCE
 
-tation of posterior probabilities for query propositions given observed evidence. We use the full joint distribution as the “knowledge base” from which answers to all questions may be de- rived. Along the way we also introduce several useful techniques for manipulating equations involving probabilities.  
+tation of posterior probabilities for query propositions given observed evidence. We use the full joint distribution as the “knowledge base” from which answers to all questions may be derived. Along the way we also introduce several useful techniques for manipulating equations involving probabilities.  
 
 Section 13.3. Inference Using Full Joint Distributions 491
 
@@ -395,13 +395,13 @@ WHERE DO PROBABILITIES COME FROM?
 
 There has been endless debate over the source and status of probability numbers. The **frequentist** position is that the numbers can come only from _experiments_: if we test 100 people and find that 10 of them have a cavity, then we can say that the probability of a cavity is approximately 0.1. In this view, the assertion “the probability of a cavity is 0.1” means that 0.1 is the fraction that would be observed in the limit of infinitely many samples. From any finite sample, we can estimate the true fraction and also calculate how accurate our estimate is likely to be.
 
-The **objectivist** view is that probabilities are real aspects of the universe— propensities of objects to behave in certain ways—rather than being just descrip- tions of an observer’s degree of belief. For example, the fact that a fair coin comes up heads with probability 0.5 is a propensity of the coin itself. In this view, fre- quentist measurements are attempts to observe these propensities. Most physicists agree that quantum phenomena are objectively probabilistic, but uncertainty at the macroscopic scale—e.g., in coin tossing—usually arises from ignorance of initial conditions and does not seem consistent with the propensity view.
+The **objectivist** view is that probabilities are real aspects of the universe— propensities of objects to behave in certain ways—rather than being just descriptions of an observer’s degree of belief. For example, the fact that a fair coin comes up heads with probability 0.5 is a propensity of the coin itself. In this view, frequentist measurements are attempts to observe these propensities. Most physicists agree that quantum phenomena are objectively probabilistic, but uncertainty at the macroscopic scale—e.g., in coin tossing—usually arises from ignorance of initial conditions and does not seem consistent with the propensity view.
 
-The **subjectivist** view describes probabilities as a way of characterizing an agent’s beliefs, rather than as having any external physical significance. The sub- jective **Bayesian** view allows any self-consistent ascription of prior probabilities to propositions, but then insists on proper Bayesian updating as evidence arrives.
+The **subjectivist** view describes probabilities as a way of characterizing an agent’s beliefs, rather than as having any external physical significance. The subjective **Bayesian** view allows any self-consistent ascription of prior probabilities to propositions, but then insists on proper Bayesian updating as evidence arrives.
 
-In the end, even a strict frequentist position involves subjective analysis be- cause of the **reference class** problem: in trying to determine the outcome probabil- ity of a _particular_ experiment, the frequentist has to place it in a reference class of “similar” experiments with known outcome frequencies. I. J. Good (1983, p. 27) wrote, “every event in life is unique, and every real-life probability that we esti- mate in practice is that of an event that has never occurred before.” For example, given a particular patient, a frequentist who wants to estimate the probability of a cavity will consider a reference class of other patients who are similar in important ways—age, symptoms, diet—and see what proportion of them had a cavity. If the dentist considers everything that is known about the patient—weight to the nearest gram, hair color, mother’s maiden name—then the reference class becomes empty. This has been a vexing problem in the philosophy of science.
+In the end, even a strict frequentist position involves subjective analysis because of the **reference class** problem: in trying to determine the outcome probability of a _particular_ experiment, the frequentist has to place it in a reference class of “similar” experiments with known outcome frequencies. I. J. Good (1983, p. 27) wrote, “every event in life is unique, and every real-life probability that we estimate in practice is that of an event that has never occurred before.” For example, given a particular patient, a frequentist who wants to estimate the probability of a cavity will consider a reference class of other patients who are similar in important ways—age, symptoms, diet—and see what proportion of them had a cavity. If the dentist considers everything that is known about the patient—weight to the nearest gram, hair color, mother’s maiden name—then the reference class becomes empty. This has been a vexing problem in the philosophy of science.
 
-The **principle of indifference** attributed to Laplace (1816) states that propo- sitions that are syntactically “symmetric” with respect to the evidence should be accorded equal probability. Various refinements have been proposed, culminating in the attempt by Carnap and others to develop a rigorous **inductive logic**, capa- ble of computing the correct probability for any proposition from any collection of observations. Currently, it is believed that no unique inductive logic exists; rather, any such logic rests on a subjective prior probability distribution whose effect is diminished as more observations are collected.  
+The **principle of indifference** attributed to Laplace (1816) states that propositions that are syntactically “symmetric” with respect to the evidence should be accorded equal probability. Various refinements have been proposed, culminating in the attempt by Carnap and others to develop a rigorous **inductive logic**, capable of computing the correct probability for any proposition from any collection of observations. Currently, it is believed that no unique inductive logic exists; rather, any such logic rests on a subjective prior probability distribution whose effect is diminished as more observations are collected.  
 
 
 
@@ -415,7 +415,7 @@ cavity 0.108 0.012 0.072 0.008 ¬cavity 0.016 0.064 0.144 0.576
 
 We begin with a simple example: a domain consisting of just the three Boolean variables Toothache , Cavity , and Catch (the dentist’s nasty steel probe catches in my tooth). The full joint distribution is a 2× 2× 2 table as shown in Figure 13.3.
 
-Notice that the probabilities in the joint distribution sum to 1, as required by the axioms of probability. Notice also that Equation (13.2) gives us a direct way to calculate the probabil- ity of any proposition, simple or complex: simply identify those possible worlds in which the proposition is true and add up their probabilities. For example, there are six possible worlds in which cavity ∨ toothache holds:
+Notice that the probabilities in the joint distribution sum to 1, as required by the axioms of probability. Notice also that Equation (13.2) gives us a direct way to calculate the probability of any proposition, simple or complex: simply identify those possible worlds in which the proposition is true and add up their probabilities. For example, there are six possible worlds in which cavity ∨ toothache holds:
 
 P (cavity ∨ toothache) = 0.108 + 0.012 + 0.072 + 0.008 + 0.016 + 0.064 = 0.28 .
 
@@ -469,7 +469,7 @@ ables, given evidence about others. Conditional probabilities can be found by fi
 
 Section 13.3. Inference Using Full Joint Distributions 493
 
-Equation (13.3) to obtain an expression in terms of unconditional probabilities and then eval- uating the expression from the full joint distribution. For example, we can compute the probability of a cavity, given evidence of a toothache, as follows:
+Equation (13.3) to obtain an expression in terms of unconditional probabilities and then evaluating the expression from the full joint distribution. For example, we can compute the probability of a cavity, given evidence of a toothache, as follows:
 
 P (cavity | toothache) = P (cavity ∧ toothache)
 
@@ -511,7 +511,7 @@ From the example, we can extract a general inference procedure. We begin with th
 
 **P**(X, **e**, **y**) , (13.9)
 
-where the summation is over all possible **y**s (i.e., all possible combinations of values of the unobserved variables **Y**). Notice that together the variables X, **E**, and **Y** constitute the com- plete set of variables for the domain, so **P**(X, **e**, **y**) is simply a subset of probabilities from the full joint distribution.
+where the summation is over all possible **y**s (i.e., all possible combinations of values of the unobserved variables **Y**). Notice that together the variables X, **E**, and **Y** constitute the complete set of variables for the domain, so **P**(X, **e**, **y**) is simply a subset of probabilities from the full joint distribution.
 
 Given the full joint distribution to work with, Equation (13.9) can answer probabilistic queries for discrete variables. It does not scale well, however: for a domain described by n
 
@@ -557,7 +557,7 @@ can be written as follows (again, these are all equivalent):
 
 **P**(X |Y )= **P**(X) or **P**(Y |X)= **P**(Y ) or **P**(X,Y )= **P**(X)**P**(Y ) .
 
-Independence assertions are usually based on knowledge of the domain. As the toothache– weather example illustrates, they can dramatically reduce the amount of information nec- essary to specify the full joint distribution. If the complete set of variables can be divided  
+Independence assertions are usually based on knowledge of the domain. As the toothache– weather example illustrates, they can dramatically reduce the amount of information necessary to specify the full joint distribution. If the complete set of variables can be divided  
 
 Section 13.5. Bayes’ Rule and Its Use 495
 
@@ -581,7 +581,7 @@ _Coin_1 _Coinn_
 
 into independent subsets, then the full joint distribution can be _factored_ into separate joint distributions on those subsets. For example, the full joint distribution on the outcome of n
 
-independent coin flips, **P**(C1, . . . , Cn), has 2n entries, but it can be represented as the prod- uct of n single-variable distributions **P**(Ci). In a more practical vein, the independence of dentistry and meteorology is a good thing, because otherwise the practice of dentistry might require intimate knowledge of meteorology, and vice versa.
+independent coin flips, **P**(C1, . . . , Cn), has 2n entries, but it can be represented as the product of n single-variable distributions **P**(Ci). In a more practical vein, the independence of dentistry and meteorology is a good thing, because otherwise the practice of dentistry might require intimate knowledge of meteorology, and vice versa.
 
 When they are available, then, independence assertions can help in reducing the size of the domain representation and the complexity of the inference problem. Unfortunately, clean separation of entire sets of variables by independence is quite rare. Whenever a connection, however indirect, exists between two variables, independence will fail to hold. Moreover, even independent subsets can be quite large—for example, dentistry might involve dozens of diseases and hundreds of symptoms, all of which are interrelated. To handle such problems, we need more subtle methods than the straightforward concept of independence.
 
@@ -609,7 +609,7 @@ The more general case of Bayes’ rule for multivalued variables can be written 
 
 **P**(X) ,
 
-As before, this is to be taken as representing a set of equations, each dealing with specific val- ues of the variables. We will also have occasion to use a more general version conditionalized on some background evidence **e**:
+As before, this is to be taken as representing a set of equations, each dealing with specific values of the variables. We will also have occasion to use a more general version conditionalized on some background evidence **e**:
 
 **P**(Y |X, **e**) = **P**(X |Y, **e**)**P**(Y | **e**)
 
@@ -627,7 +627,7 @@ The conditional probability P (_effect_ | cause) quantifies the relationship in 
 
 tion, whereas P (cause | _effect_) describes the **diagnostic** direction. In a task such as medicalDIAGNOSTIC
 
-diagnosis, we often have conditional probabilities on causal relationships (that is, the doctor knows P (symptoms | disease)) and want to derive a diagnosis, P (disease | symptoms). For example, a doctor knows that the disease meningitis causes the patient to have a stiff neck, say, 70% of the time. The doctor also knows some unconditional facts: the prior probabil- ity that a patient has meningitis is 1/50,000, and the prior probability that any patient has a stiff neck is 1%. Letting s be the proposition that the patient has a stiff neck and m be the proposition that the patient has meningitis, we have
+diagnosis, we often have conditional probabilities on causal relationships (that is, the doctor knows P (symptoms | disease)) and want to derive a diagnosis, P (disease | symptoms). For example, a doctor knows that the disease meningitis causes the patient to have a stiff neck, say, 70% of the time. The doctor also knows some unconditional facts: the prior probability that a patient has meningitis is 1/50,000, and the prior probability that any patient has a stiff neck is 1%. Letting s be the proposition that the patient has a stiff neck and m be the proposition that the patient has meningitis, we have
 
 P (s |m) = 0.7
 
@@ -659,7 +659,7 @@ Thus, to use this approach we need to estimate P (s | ¬m) instead of P (s). The
 
 where α is the normalization constant needed to make the entries in **P**(Y |X) sum to 1. One obvious question to ask about Bayes’ rule is why one might have available the
 
-conditional probability in one direction, but not the other. In the meningitis domain, perhaps the doctor knows that a stiff neck implies meningitis in 1 out of 5000 cases; that is, the doctor has quantitative information in the **diagnostic** direction from symptoms to causes. Such a doctor has no need to use Bayes’ rule. Unfortunately, _diagnostic knowledge is often more fragile than causal knowledge._ If there is a sudden epidemic of meningitis, the unconditional probability of meningitis, P (m), will go up. The doctor who derived the diagnostic proba- bility P (m | s) directly from statistical observation of patients before the epidemic will have no idea how to update the value, but the doctor who computes P (m | s) from the other three values will see that P (m | s) should go up proportionately with P (m). Most important, the causal information P (s |m) is _unaffected_ by the epidemic, because it simply reflects the way meningitis works. The use of this kind of direct causal or model-based knowledge provides the crucial robustness needed to make probabilistic systems feasible in the real world.
+conditional probability in one direction, but not the other. In the meningitis domain, perhaps the doctor knows that a stiff neck implies meningitis in 1 out of 5000 cases; that is, the doctor has quantitative information in the **diagnostic** direction from symptoms to causes. Such a doctor has no need to use Bayes’ rule. Unfortunately, _diagnostic knowledge is often more fragile than causal knowledge._ If there is a sudden epidemic of meningitis, the unconditional probability of meningitis, P (m), will go up. The doctor who derived the diagnostic probability P (m | s) directly from statistical observation of patients before the epidemic will have no idea how to update the value, but the doctor who computes P (m | s) from the other three values will see that P (m | s) should go up proportionately with P (m). Most important, the causal information P (s |m) is _unaffected_ by the epidemic, because it simply reflects the way meningitis works. The use of this kind of direct causal or model-based knowledge provides the crucial robustness needed to make probabilistic systems feasible in the real world.
 
 **13.5.2 Using Bayes’ rule: Combining evidence**
 
@@ -673,13 +673,13 @@ We know, however, that such an approach does not scale up to larger numbers of v
 
 \= α **P**(toothache ∧ catch |Cavity) **P**(Cavity) . (13.16)
 
-For this reformulation to work, we need to know the conditional probabilities of the conjunc- tion toothache ∧catch for each value of Cavity . That might be feasible for just two evidence variables, but again it does not scale up. If there are n possible evidence variables (X rays, diet, oral hygiene, etc.), then there are 2n possible combinations of observed values for which we would need to know conditional probabilities. We might as well go back to using the full joint distribution. This is what first led researchers away from probability theory toward  
+For this reformulation to work, we need to know the conditional probabilities of the conjunction toothache ∧catch for each value of Cavity . That might be feasible for just two evidence variables, but again it does not scale up. If there are n possible evidence variables (X rays, diet, oral hygiene, etc.), then there are 2n possible combinations of observed values for which we would need to know conditional probabilities. We might as well go back to using the full joint distribution. This is what first led researchers away from probability theory toward  
 
 
 
 approximate methods for evidence combination that, while giving incorrect answers, require fewer numbers to give any answer at all.
 
-Rather than taking this route, we need to find some additional assertions about the domain that will enable us to simplify the expressions. The notion of **independence** in Sec- tion 13.4 provides a clue, but needs refining. It would be nice if Toothache and Catch were independent, but they are not: if the probe catches in the tooth, then it is likely that the tooth has a cavity and that the cavity causes a toothache. These variables _are_ independent, how- ever, _given the presence or the absence of a cavity_. Each is directly caused by the cavity, but neither has a direct effect on the other: toothache depends on the state of the nerves in the tooth, whereas the probe’s accuracy depends on the dentist’s skill, to which the toothache is irrelevant.5 Mathematically, this property is written as
+Rather than taking this route, we need to find some additional assertions about the domain that will enable us to simplify the expressions. The notion of **independence** in Section 13.4 provides a clue, but needs refining. It would be nice if Toothache and Catch were independent, but they are not: if the probe catches in the tooth, then it is likely that the tooth has a cavity and that the cavity causes a toothache. These variables _are_ independent, however, _given the presence or the absence of a cavity_. Each is directly caused by the cavity, but neither has a direct effect on the other: toothache depends on the state of the nerves in the tooth, whereas the probe’s accuracy depends on the dentist’s skill, to which the toothache is irrelevant.5 Mathematically, this property is written as
 
 **P**(toothache ∧ catch |Cavity) = **P**(toothache |Cavity)**P**(catch |Cavity) . (13.17)
 
@@ -691,7 +691,7 @@ We can plug it into Equation (13.16) to obtain the probability of a cavity:
 
 \= α **P**(toothache |Cavity) **P**(catch |Cavity) **P**(Cavity) . (13.18)
 
-Now the information requirements are the same as for inference, using each piece of evi- dence separately: the prior probability **P**(Cavity) for the query variable and the conditional probability of each effect, given its cause.
+Now the information requirements are the same as for inference, using each piece of evidence separately: the prior probability **P**(Cavity) for the query variable and the conditional probability of each effect, given its cause.
 
 The general definition of **conditional independence** of two variables X and Y , given a third variable Z , is
 
@@ -701,11 +701,11 @@ In the dentist domain, for example, it seems reasonable to assert conditional in
 
 **P**(Toothache ,Catch |Cavity) = **P**(Toothache |Cavity)**P**(Catch |Cavity) . (13.19)
 
-Notice that this assertion is somewhat stronger than Equation (13.17), which asserts indepen- dence only for specific values of Toothache and Catch . As with absolute independence in Equation (13.11), the equivalent forms
+Notice that this assertion is somewhat stronger than Equation (13.17), which asserts independence only for specific values of Toothache and Catch . As with absolute independence in Equation (13.11), the equivalent forms
 
 **P**(X |Y,Z)= **P**(X |Z) and **P**(Y |X,Z)= **P**(Y |Z)
 
-can also be used (see Exercise 13.17). Section 13.4 showed that absolute independence as- sertions allow a decomposition of the full joint distribution into much smaller pieces. It turns out that the same is true for conditional independence assertions. For example, given the assertion in Equation (13.19), we can derive a decomposition as follows:
+can also be used (see Exercise 13.17). Section 13.4 showed that absolute independence assertions allow a decomposition of the full joint distribution into much smaller pieces. It turns out that the same is true for conditional independence assertions. For example, given the assertion in Equation (13.19), we can derive a decomposition as follows:
 
 **P**(Toothache ,Catch,Cavity)
 
@@ -719,7 +719,7 @@ can also be used (see Exercise 13.17). Section 13.4 showed that absolute indepen
 
 Section 13.6. The Wumpus World Revisited 499
 
-independent numbers (23 = 8 entries in the table, but they must sum to 1, so 7 are indepen- dent). The smaller tables contain five independent numbers (for a conditional probability distributions such as **P**(T |C there are two rows of two numbers, and each row sums to 1, so that’s two independent numbers; for a prior distribution like **P**(C) there is only one indepen- dent number). Going from seven to five might not seem like a major triumph, but the point is that, for n symptoms that are all conditionally independent given Cavity , the size of the representation grows as O(n) instead of O(2n). That means that _conditional independence assertions can allow probabilistic systems to scale up; moreover, they are much more com- monly available than absolute independence assertions._ Conceptually, Cavity **separates**SEPARATION
+independent numbers (23 = 8 entries in the table, but they must sum to 1, so 7 are independent). The smaller tables contain five independent numbers (for a conditional probability distributions such as **P**(T |C there are two rows of two numbers, and each row sums to 1, so that’s two independent numbers; for a prior distribution like **P**(C) there is only one independent number). Going from seven to five might not seem like a major triumph, but the point is that, for n symptoms that are all conditionally independent given Cavity , the size of the representation grows as O(n) instead of O(2n). That means that _conditional independence assertions can allow probabilistic systems to scale up; moreover, they are much more commonly available than absolute independence assertions._ Conceptually, Cavity **separates**SEPARATION
 
 Toothache and Catch because it is a direct cause of both of them. The decomposition of large probabilistic domains into weakly connected subsets through conditional independence is one of the most important developments in the recent history of AI.
 
@@ -743,7 +743,7 @@ We can combine of the ideas in this chapter to solve probabilistic reasoning pro
 
 Our aim is to calculate the probability that each of the three squares contains a pit. (For this example we ignore the wumpus and the gold.) The relevant properties of the wumpus world are that (1) a pit causes breezes in all neighboring squares, and (2) each square other than \[1,1\] contains a pit with probability 0.2. The first step is to identify the set of random variables we need:
 
-• As in the propositional logic case, we want one Boolean variable Pij for each square, which is true iff square \[i, j\] actually contains a pit.  
+- As in the propositional logic case, we want one Boolean variable Pij for each square, which is true iff square \[i, j\] actually contains a pit.  
 
 
 
@@ -781,9 +781,9 @@ QUERY OTHER
 
 **Figure 13.5** (a) After finding a breeze in both \[1,2\] and \[2,1\], the agent is stuck—there is no safe place to explore. (b) Division of the squares into Known , Frontier , and Other , for a query about \[1,3\].
 
-• We also have Boolean variables Bij that are true iff square \[i, j\] is breezy; we include these variables only for the observed squares—in this case, \[1,1\], \[1,2\], and \[2,1\].
+- We also have Boolean variables Bij that are true iff square \[i, j\] is breezy; we include these variables only for the observed squares—in this case, \[1,1\], \[1,2\], and \[2,1\].
 
-The next step is to specify the full joint distribution, **P**(P1,1, . . . , P4,4, B1,1, B1,2, B2,1). Ap- plying the product rule, we have
+The next step is to specify the full joint distribution, **P**(P1,1, . . . , P4,4, B1,1, B1,2, B2,1). Applying the product rule, we have
 
 **P**(P1,1, . . . , P4,4, B1,1, B1,2, B2,1) =
 
@@ -803,11 +803,11 @@ For a particular configuration with exactly n pits, P (P1,1, . . . , P4,4)= 0.2n
 
 absence) in each square that is visited, combined with the fact that each such square contains no pit. We abbreviate these facts as b=¬b1,1∧b1,2∧b2,1 and known =¬p1,1∧¬p1,2∧¬p2,1. We are interested in answering queries such as **P**(P1,3 | known , b): how likely is it that \[1,3\] contains a pit, given the observations so far?
 
-To answer this query, we can follow the standard approach of Equation (13.9), namely, summing over entries from the full joint distribution. Let Unknown be the set of Pi,j vari-  
+To answer this query, we can follow the standard approach of Equation (13.9), namely, summing over entries from the full joint distribution. Let Unknown be the set of Pi,j vari 
 
 Section 13.6. The Wumpus World Revisited 501
 
-ables for squares other than the Known squares and the query square \[1,3\]. Then, by Equa- tion (13.9), we have
+ables for squares other than the Known squares and the query square \[1,3\]. Then, by Equation (13.9), we have
 
 **P**(P1,3 | known , b) = α
 
@@ -819,7 +819,7 @@ unknown
 
 The full joint probabilities have already been specified, so we are done—that is, unless we care about computation. There are 12 unknown squares; hence the summation contains 212 = 4096 terms. In general, the summation grows exponentially with the number of squares.
 
-Surely, one might ask, aren’t the other squares irrelevant? How could \[4,4\] affect whether \[1,3\] has a pit? Indeed, this intuition is correct. Let Frontier be the pit variables (other than the query variable) that are adjacent to visited squares, in this case just \[2,2\] and \[3,1\]. Also, let Other be the pit variables for the other unknown squares; in this case, there are 10 other squares, as shown in Figure 13.5(b). The key insight is that the observed breezes are _conditionally independent_ of the other variables, given the known, frontier, and query vari- ables. To use the insight, we manipulate the query formula into a form in which the breezes are conditioned on all the other variables, and then we apply conditional independence:
+Surely, one might ask, aren’t the other squares irrelevant? How could \[4,4\] affect whether \[1,3\] has a pit? Indeed, this intuition is correct. Let Frontier be the pit variables (other than the query variable) that are adjacent to visited squares, in this case just \[2,2\] and \[3,1\]. Also, let Other be the pit variables for the other unknown squares; in this case, there are 10 other squares, as shown in Figure 13.5(b). The key insight is that the observed breezes are _conditionally independent_ of the other variables, given the known, frontier, and query variables. To use the insight, we manipulate the query formula into a form in which the breezes are conditioned on all the other variables, and then we apply conditional independence:
 
 **P**(P1,3 | known , b)
 
@@ -1009,13 +1009,13 @@ P (other ) equals 1. Now, there are just four terms in the summation over the fr
 
 P3,1. The use of independence and conditional independence has completely eliminated the other squares from consideration.
 
-Notice that the expression **P**(b | known , P1,3, frontier) is 1 when the frontier is consis- tent with the breeze observations, and 0 otherwise. Thus, for each value of P1,3, we sum over the _logical models_ for the frontier variables that are consistent with the known facts. (Com- pare with the enumeration over models in Figure 7.5 on page 241.) The models and their associated prior probabilities—P (frontier )—are shown in Figure 13.6. We have
+Notice that the expression **P**(b | known , P1,3, frontier) is 1 when the frontier is consistent with the breeze observations, and 0 otherwise. Thus, for each value of P1,3, we sum over the _logical models_ for the frontier variables that are consistent with the known facts. (Compare with the enumeration over models in Figure 7.5 on page 241.) The models and their associated prior probabilities—P (frontier )—are shown in Figure 13.6. We have
 
 **P**(P1,3 | known , b) = α ′ 〈0.2(0.04 + 0.16 + 0.16), 0.8(0.04 + 0.16)〉 ≈ 〈0.31, 0.69〉 .
 
 That is, \[1,3\] (and \[3,1\] by symmetry) contains a pit with roughly 31% probability. A similar calculation, which the reader might wish to perform, shows that \[2,2\] contains a pit with roughly 86% probability. The wumpus agent should definitely avoid \[2,2\]! Note that our logical agent from Chapter 7 did not know that \[2,2\] was worse than the other squares. Logic can tell us that it is unknown whether there is a pit in \[2, 2\], but we need probability to tell us how likely it is.
 
-What this section has shown is that even seemingly complicated problems can be for- mulated precisely in probability theory and solved with simple algorithms. To get _efficient_ solutions, independence and conditional independence relationships can be used to simplify the summations required. These relationships often correspond to our natural understanding of how the problem should be decomposed. In the next chapter, we develop formal represen- tations for such relationships as well as algorithms that operate on those representations to perform probabilistic inference efficiently.  
+What this section has shown is that even seemingly complicated problems can be formulated precisely in probability theory and solved with simple algorithms. To get _efficient_ solutions, independence and conditional independence relationships can be used to simplify the summations required. These relationships often correspond to our natural understanding of how the problem should be decomposed. In the next chapter, we develop formal representations for such relationships as well as algorithms that operate on those representations to perform probabilistic inference efficiently.  
 
 Section 13.7. Summary 503
 
@@ -1023,25 +1023,25 @@ Section 13.7. Summary 503
 
 This chapter has suggested probability theory as a suitable foundation for uncertain reasoning and provided a gentle introduction to its use.
 
-• Uncertainty arises because of both laziness and ignorance. It is inescapable in complex, nondeterministic, or partially observable environments.
+- Uncertainty arises because of both laziness and ignorance. It is inescapable in complex, nondeterministic, or partially observable environments.
 
-• Probabilities express the agent’s inability to reach a definite decision regarding the truth of a sentence. Probabilities summarize the agent’s beliefs relative to the evidence.
+- Probabilities express the agent’s inability to reach a definite decision regarding the truth of a sentence. Probabilities summarize the agent’s beliefs relative to the evidence.
 
-• Decision theory combines the agent’s beliefs and desires, defining the best action as the one that maximizes expected utility.
+- Decision theory combines the agent’s beliefs and desires, defining the best action as the one that maximizes expected utility.
 
-• Basic probability statements include **prior probabilities** and **conditional probabilities** over simple and complex propositions.
+- Basic probability statements include **prior probabilities** and **conditional probabilities** over simple and complex propositions.
 
-• The axioms of probability constrain the possible assignments of probabilities to propo- sitions. An agent that violates the axioms must behave irrationally in some cases.
+- The axioms of probability constrain the possible assignments of probabilities to propositions. An agent that violates the axioms must behave irrationally in some cases.
 
-• The **full joint probability distribution** specifies the probability of each complete as- signment of values to random variables. It is usually too large to create or use in its explicit form, but when it is available it can be used to answer queries simply by adding up entries for the possible worlds corresponding to the query propositions.
+- The **full joint probability distribution** specifies the probability of each complete assignment of values to random variables. It is usually too large to create or use in its explicit form, but when it is available it can be used to answer queries simply by adding up entries for the possible worlds corresponding to the query propositions.
 
-• **Absolute independence** between subsets of random variables allows the full joint dis- tribution to be factored into smaller joint distributions, greatly reducing its complexity. Absolute independence seldom occurs in practice.
+- **Absolute independence** between subsets of random variables allows the full joint distribution to be factored into smaller joint distributions, greatly reducing its complexity. Absolute independence seldom occurs in practice.
 
-• **Bayes’ rule** allows unknown probabilities to be computed from known conditional probabilities, usually in the causal direction. Applying Bayes’ rule with many pieces of evidence runs into the same scaling problems as does the full joint distribution.
+- **Bayes’ rule** allows unknown probabilities to be computed from known conditional probabilities, usually in the causal direction. Applying Bayes’ rule with many pieces of evidence runs into the same scaling problems as does the full joint distribution.
 
-• **Conditional independence** brought about by direct causal relationships in the domain might allow the full joint distribution to be factored into smaller, conditional distri- butions. The **naive Bayes** model assumes the conditional independence of all effect variables, given a single cause variable, and grows linearly with the number of effects.
+- **Conditional independence** brought about by direct causal relationships in the domain might allow the full joint distribution to be factored into smaller, conditional distributions. The **naive Bayes** model assumes the conditional independence of all effect variables, given a single cause variable, and grows linearly with the number of effects.
 
-• A wumpus-world agent can calculate probabilities for unobserved aspects of the world, thereby improving on the decisions of a purely logical agent. Conditional independence makes these calculations tractable.
+- A wumpus-world agent can calculate probabilities for unobserved aspects of the world, thereby improving on the decisions of a purely logical agent. Conditional independence makes these calculations tractable.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
@@ -1051,11 +1051,11 @@ Probability theory was invented as a way of analyzing games of chance. In about 
 
 results established in a famous correspondence between Blaise Pascal and Pierre de Fermat in 1654. As with probability itself, the results were initially motivated by gambling problems (see Exercise 13.9). The first published textbook on probability was _De Ratiociniis in Ludo Aleae_ (Huygens, 1657). The “laziness and ignorance” view of uncertainty was described by John Arbuthnot in the preface of his translation of Huygens (Arbuthnot, 1692): “It is impossible for a Die, with such determin’d force and direction, not to fall on such determin’d side, only I don’t know the force and direction which makes it fall on such determin’d side, and therefore I call it Chance, which is nothing but the want of art...”
 
-Laplace (1816) gave an exceptionally accurate and modern overview of probability; he was the first to use the example “take two urns, A and B, the first containing four white and two black balls, . . . ” The Rev. Thomas Bayes (1702–1761) introduced the rule for reasoning about conditional probabilities that was named after him (Bayes, 1763). Bayes only con- sidered the case of uniform priors; it was Laplace who independently developed the general case. Kolmogorov (1950, first published in German in 1933) presented probability theory in a rigorously axiomatic framework for the first time. Rényi (1970) later gave an axiomatic presentation that took conditional probability, rather than absolute probability, as primitive.
+Laplace (1816) gave an exceptionally accurate and modern overview of probability; he was the first to use the example “take two urns, A and B, the first containing four white and two black balls, . . . ” The Rev. Thomas Bayes (1702–1761) introduced the rule for reasoning about conditional probabilities that was named after him (Bayes, 1763). Bayes only considered the case of uniform priors; it was Laplace who independently developed the general case. Kolmogorov (1950, first published in German in 1933) presented probability theory in a rigorously axiomatic framework for the first time. Rényi (1970) later gave an axiomatic presentation that took conditional probability, rather than absolute probability, as primitive.
 
-Pascal used probability in ways that required both the objective interpretation, as a prop- erty of the world based on symmetry or relative frequency, and the subjective interpretation, based on degree of belief—the former in his analyses of probabilities in games of chance, the latter in the famous “Pascal’s wager” argument about the possible existence of God. How- ever, Pascal did not clearly realize the distinction between these two interpretations. The distinction was first drawn clearly by James Bernoulli (1654–1705).
+Pascal used probability in ways that required both the objective interpretation, as a property of the world based on symmetry or relative frequency, and the subjective interpretation, based on degree of belief—the former in his analyses of probabilities in games of chance, the latter in the famous “Pascal’s wager” argument about the possible existence of God. However, Pascal did not clearly realize the distinction between these two interpretations. The distinction was first drawn clearly by James Bernoulli (1654–1705).
 
-Leibniz introduced the “classical” notion of probability as a proportion of enumerated, equally probable cases, which was also used by Bernoulli, although it was brought to promi- nence by Laplace (1749–1827). This notion is ambiguous between the frequency interpreta- tion and the subjective interpretation. The cases can be thought to be equally probable either because of a natural, physical symmetry between them, or simply because we do not have any knowledge that would lead us to consider one more probable than another. The use of this latter, subjective consideration to justify assigning equal probabilities is known as the **principle of indifference**. The principle is often attributed to Laplace, but he never isolatedPRINCIPLE OF
+Leibniz introduced the “classical” notion of probability as a proportion of enumerated, equally probable cases, which was also used by Bernoulli, although it was brought to prominence by Laplace (1749–1827). This notion is ambiguous between the frequency interpretation and the subjective interpretation. The cases can be thought to be equally probable either because of a natural, physical symmetry between them, or simply because we do not have any knowledge that would lead us to consider one more probable than another. The use of this latter, subjective consideration to justify assigning equal probabilities is known as the **principle of indifference**. The principle is often attributed to Laplace, but he never isolatedPRINCIPLE OF
 
 INDIFFERENCE
 
@@ -1063,7 +1063,7 @@ the principle explicitly. George Boole and John Venn both referred to it as the 
 
 PRINCIPLE OF INSUFFICIENT REASON
 
-The debate between objectivists and subjectivists became sharper in the 20th century. Kolmogorov (1963), R. A. Fisher (1922), and Richard von Mises (1928) were advocates of the relative frequency interpretation. Karl Popper’s (1959, first published in German in 1934) “propensity” interpretation traces relative frequencies to an underlying physical symmetry. Frank Ramsey (1931), Bruno de Finetti (1937), R. T. Cox (1946), Leonard Savage (1954), Richard Jeffrey (1983), and E. T. Jaynes (2003) interpreted probabilities as the degrees of belief of specific individuals. Their analyses of degree of belief were closely tied to utili- ties and to behavior—specifically, to the willingness to place bets. Rudolf Carnap, following Leibniz and Laplace, offered a different kind of subjective interpretation of probability— not as any actual individual’s degree of belief, but as the degree of belief that an idealized individual _should_ have in a particular proposition a, given a particular body of evidence **e**.  
+The debate between objectivists and subjectivists became sharper in the 20th century. Kolmogorov (1963), R. A. Fisher (1922), and Richard von Mises (1928) were advocates of the relative frequency interpretation. Karl Popper’s (1959, first published in German in 1934) “propensity” interpretation traces relative frequencies to an underlying physical symmetry. Frank Ramsey (1931), Bruno de Finetti (1937), R. T. Cox (1946), Leonard Savage (1954), Richard Jeffrey (1983), and E. T. Jaynes (2003) interpreted probabilities as the degrees of belief of specific individuals. Their analyses of degree of belief were closely tied to utilities and to behavior—specifically, to the willingness to place bets. Rudolf Carnap, following Leibniz and Laplace, offered a different kind of subjective interpretation of probability— not as any actual individual’s degree of belief, but as the degree of belief that an idealized individual _should_ have in a particular proposition a, given a particular body of evidence **e**.  
 
 Bibliographical and Historical Notes 505
 
@@ -1071,21 +1071,21 @@ Carnap attempted to go further than Leibniz or Laplace by making this notion of 
 
 relation was intended to constitute a mathematical discipline called **inductive logic**, analo-INDUCTIVE LOGIC
 
-gous to ordinary deductive logic (Carnap, 1948, 1950). Carnap was not able to extend his inductive logic much beyond the propositional case, and Putnam (1963) showed by adversar- ial arguments that some fundamental difficulties would prevent a strict extension to languages capable of expressing arithmetic.
+gous to ordinary deductive logic (Carnap, 1948, 1950). Carnap was not able to extend his inductive logic much beyond the propositional case, and Putnam (1963) showed by adversarial arguments that some fundamental difficulties would prevent a strict extension to languages capable of expressing arithmetic.
 
 Cox’s theorem (1946) shows that any system for uncertain reasoning that meets his set of assumptions is equivalent to probability theory. This gave renewed confidence to those who already favored probability, but others were not convinced, pointing to the assumptions (primarily that belief must be represented by a single number, and thus the belief in ¬p must be a function of the belief in p). Halpern (1999) describes the assumptions and shows some gaps in Cox’s original formulation. Horn (2003) shows how to patch up the difficulties. Jaynes (2003) has a similar argument that is easier to read.
 
-The question of reference classes is closely tied to the attempt to find an inductive logic. The approach of choosing the “most specific” reference class of sufficient size was formally proposed by Reichenbach (1949). Various attempts have been made, notably by Henry Ky- burg (1977, 1983), to formulate more sophisticated policies in order to avoid some obvious fallacies that arise with Reichenbach’s rule, but such approaches remain somewhat _ad hoc_. More recent work by Bacchus, Grove, Halpern, and Koller (1992) extends Carnap’s methods to first-order theories, thereby avoiding many of the difficulties associated with the straight- forward reference-class method. Kyburg and Teng (2006) contrast probabilistic inference with nonmonotonic logic.
+The question of reference classes is closely tied to the attempt to find an inductive logic. The approach of choosing the “most specific” reference class of sufficient size was formally proposed by Reichenbach (1949). Various attempts have been made, notably by Henry Kyburg (1977, 1983), to formulate more sophisticated policies in order to avoid some obvious fallacies that arise with Reichenbach’s rule, but such approaches remain somewhat _ad hoc_. More recent work by Bacchus, Grove, Halpern, and Koller (1992) extends Carnap’s methods to first-order theories, thereby avoiding many of the difficulties associated with the straightforward reference-class method. Kyburg and Teng (2006) contrast probabilistic inference with nonmonotonic logic.
 
-Bayesian probabilistic reasoning has been used in AI since the 1960s, especially in medical diagnosis. It was used not only to make a diagnosis from available evidence, but also to select further questions and tests by using the theory of information value (Section 16.6) when available evidence was inconclusive (Gorry, 1968; Gorry _et al._, 1973). One system outperformed human experts in the diagnosis of acute abdominal illnesses (de Dombal _et al._, 1974). Lucas _et al._ (2004) gives an overview. These early Bayesian systems suffered from a number of problems, however. Because they lacked any theoretical model of the conditions they were diagnosing, they were vulnerable to unrepresentative data occurring in situations for which only a small sample was available (de Dombal _et al._, 1981). Even more fundamen- tally, because they lacked a concise formalism (such as the one to be described in Chapter 14) for representing and using conditional independence information, they depended on the ac- quisition, storage, and processing of enormous tables of probabilistic data. Because of these difficulties, probabilistic methods for coping with uncertainty fell out of favor in AI from the 1970s to the mid-1980s. Developments since the late 1980s are described in the next chapter.
+Bayesian probabilistic reasoning has been used in AI since the 1960s, especially in medical diagnosis. It was used not only to make a diagnosis from available evidence, but also to select further questions and tests by using the theory of information value (Section 16.6) when available evidence was inconclusive (Gorry, 1968; Gorry _et al._, 1973). One system outperformed human experts in the diagnosis of acute abdominal illnesses (de Dombal _et al._, 1974). Lucas _et al._ (2004) gives an overview. These early Bayesian systems suffered from a number of problems, however. Because they lacked any theoretical model of the conditions they were diagnosing, they were vulnerable to unrepresentative data occurring in situations for which only a small sample was available (de Dombal _et al._, 1981). Even more fundamentally, because they lacked a concise formalism (such as the one to be described in Chapter 14) for representing and using conditional independence information, they depended on the acquisition, storage, and processing of enormous tables of probabilistic data. Because of these difficulties, probabilistic methods for coping with uncertainty fell out of favor in AI from the 1970s to the mid-1980s. Developments since the late 1980s are described in the next chapter.
 
-The naive Bayes model for joint distributions has been studied extensively in the pat- tern recognition literature since the 1950s (Duda and Hart, 1973). It has also been used, often unwittingly, in information retrieval, beginning with the work of Maron (1961). The proba- bilistic foundations of this technique, described further in Exercise 13.22, were elucidated by Robertson and Sparck Jones (1976). Domingos and Pazzani (1997) provide an explanation  
+The naive Bayes model for joint distributions has been studied extensively in the pattern recognition literature since the 1950s (Duda and Hart, 1973). It has also been used, often unwittingly, in information retrieval, beginning with the work of Maron (1961). The probabilistic foundations of this technique, described further in Exercise 13.22, were elucidated by Robertson and Sparck Jones (1976). Domingos and Pazzani (1997) provide an explanation  
 
 
 
-for the surprising success of naive Bayesian reasoning even in domains where the indepen- dence assumptions are clearly violated.
+for the surprising success of naive Bayesian reasoning even in domains where the independence assumptions are clearly violated.
 
-There are many good introductory textbooks on probability theory, including those by Bertsekas and Tsitsiklis (2008) and Grinstead and Snell (1997). DeGroot and Schervish (2001) offer a combined introduction to probability and statistics from a Bayesian stand- point. Richard Hamming’s (1991) textbook gives a mathematically sophisticated introduc- tion to probability theory from the standpoint of a propensity interpretation based on physical symmetry. Hacking (1975) and Hald (1990) cover the early history of the concept of proba- bility. Bernstein (1996) gives an entertaining popular account of the story of risk.
+There are many good introductory textbooks on probability theory, including those by Bertsekas and Tsitsiklis (2008) and Grinstead and Snell (1997). DeGroot and Schervish (2001) offer a combined introduction to probability and statistics from a Bayesian standpoint. Richard Hamming’s (1991) textbook gives a mathematically sophisticated introduction to probability theory from the standpoint of a propensity interpretation based on physical symmetry. Hacking (1975) and Hald (1990) cover the early history of the concept of probability. Bernstein (1996) gives an entertaining popular account of the story of risk.
 
 EXERCISES
 
@@ -1155,7 +1155,7 @@ if at most one bit in the entire message (including the parity bit) has been cor
 
 **13.12** Show that the three forms of independence in Equation (13.11) are equivalent.
 
-**13.13** Consider two medical tests, A and B, for a virus. Test A is 95% effective at recog- nizing the virus when it is present, but has a 10% false positive rate (indicating that the virus is present, when it is not). Test B is 90% effective at recognizing the virus, but has a 5% false positive rate. The two tests use independent methods of identifying the virus. The virus is carried by 1% of all people. Say that a person is tested for the virus using only one of the tests, and that test comes back positive for carrying the virus. Which test returning positive is more indicative of someone really carrying the virus? Justify your answer mathematically.
+**13.13** Consider two medical tests, A and B, for a virus. Test A is 95% effective at recognizing the virus when it is present, but has a 10% false positive rate (indicating that the virus is present, when it is not). Test B is 90% effective at recognizing the virus, but has a 5% false positive rate. The two tests use independent methods of identifying the virus. The virus is carried by 1% of all people. Say that a person is tested for the virus using only one of the tests, and that test comes back positive for carrying the virus. Which test returning positive is more indicative of someone really carrying the virus? Justify your answer mathematically.
 
 **13.14** Suppose you are given a coin that lands heads with probability x and tails with probability 1 − x. Are the outcomes of successive flips of the coin independent of each other given that you know the value of x? Are the outcomes of successive flips of the coin independent of each other if you do _not_ know the value of x? Justify your answer.
 
@@ -1191,7 +1191,7 @@ The decision procedure returns fake if all k flips come up heads; otherwise it r
 
 **13.19** In this exercise, you will complete the normalization calculation for the meningitis example. First, make up a suitable value for P (s | ¬m), and use it to calculate unnormalized values for P (m | s) and P (¬m | s) (i.e., ignoring the P (s) term in the Bayes’ rule expression, Equation (13.14)). Now normalize these values so that they add to 1.
 
-**13.20** Let X, Y , Z be Boolean random variables. Label the eight entries in the joint dis- tribution **P**(X,Y,Z) as a through h. Express the statement that X and Y are conditionally independent given Z , as a set of equations relating a through h. How many _nonredundant_ equations are there?
+**13.20** Let X, Y , Z be Boolean random variables. Label the eight entries in the joint distribution **P**(X,Y,Z) as a through h. Express the statement that X and Y are conditionally independent given Z , as a set of equations relating a through h. How many _nonredundant_ equations are there?
 
 **13.21** (Adapted from Pearl (1988).) Suppose you are a witness to a nighttime hit-and-run accident involving a taxi in Athens. All taxis in Athens are blue or green. You swear, under oath, that the taxi was blue. Extensive testing shows that, under the dim lighting conditions, discrimination between blue and green is 75% reliable.
 
@@ -1217,33 +1217,33 @@ now? Redo the calculation for the probabilities of pits in \[1,3\] and \[2,2\].
 
 _In which we explain how to build network models to reason under uncertainty according to the laws of probability theory._
 
-Chapter 13 introduced the basic elements of probability theory and noted the importance of independence and conditional independence relationships in simplifying probabilistic repre- sentations of the world. This chapter introduces a systematic way to represent such relation- ships explicitly in the form of **Bayesian networks**. We define the syntax and semantics of these networks and show how they can be used to capture uncertain knowledge in a natu- ral and efficient way. We then show how probabilistic inference, although computationally intractable in the worst case, can be done efficiently in many practical situations. We also describe a variety of approximate inference algorithms that are often applicable when exact inference is infeasible. We explore ways in which probability theory can be applied to worlds with objects and relations—that is, to _first-order,_ as opposed to _propositional_, representations. Finally, we survey alternative approaches to uncertain reasoning.
+Chapter 13 introduced the basic elements of probability theory and noted the importance of independence and conditional independence relationships in simplifying probabilistic representations of the world. This chapter introduces a systematic way to represent such relationships explicitly in the form of **Bayesian networks**. We define the syntax and semantics of these networks and show how they can be used to capture uncertain knowledge in a natural and efficient way. We then show how probabilistic inference, although computationally intractable in the worst case, can be done efficiently in many practical situations. We also describe a variety of approximate inference algorithms that are often applicable when exact inference is infeasible. We explore ways in which probability theory can be applied to worlds with objects and relations—that is, to _first-order,_ as opposed to _propositional_, representations. Finally, we survey alternative approaches to uncertain reasoning.
 
 14.1 REPRESENTING KNOWLEDGE IN AN UNCERTAIN DOMAIN
 
 In Chapter 13, we saw that the full joint probability distribution can answer any question about the domain, but can become intractably large as the number of variables grows. Furthermore, specifying probabilities for possible worlds one by one is unnatural and tedious.
 
-We also saw that independence and conditional independence relationships among vari- ables can greatly reduce the number of probabilities that need to be specified in order to define the full joint distribution. This section introduces a data structure called a **Bayesian network**1BAYESIAN NETWORK
+We also saw that independence and conditional independence relationships among variables can greatly reduce the number of probabilities that need to be specified in order to define the full joint distribution. This section introduces a data structure called a **Bayesian network**1BAYESIAN NETWORK
 
 to represent the dependencies among variables. Bayesian networks can represent essentially _any_ full joint probability distribution and in many cases can do so very concisely.
 
-1 This is the most common name, but there are many synonyms, including **belief network**, **probabilistic net- work**, **causal network**, and **knowledge map**. In statistics, the term **graphical model** refers to a somewhat broader class that includes Bayesian networks. An extension of Bayesian networks called a **decision network** or **influence diagram** is covered in Chapter 16.
+1 This is the most common name, but there are many synonyms, including **belief network**, **probabilistic network**, **causal network**, and **knowledge map**. In statistics, the term **graphical model** refers to a somewhat broader class that includes Bayesian networks. An extension of Bayesian networks called a **decision network** or **influence diagram** is covered in Chapter 16.
 
 510  
 
 Section 14.1. Representing Knowledge in an Uncertain Domain 511
 
-A Bayesian network is a directed graph in which each node is annotated with quantita- tive probability information. The full specification is as follows:
+A Bayesian network is a directed graph in which each node is annotated with quantitative probability information. The full specification is as follows:
 
 1\. Each node corresponds to a random variable, which may be discrete or continuous.
 
 2\. A set of directed links or arrows connects pairs of nodes. If there is an arrow from node X to node Y , X is said to be a _parent_ of Y. The graph has no directed cycles (and hence is a directed acyclic graph, or DAG.
 
-3\. Each node Xi has a conditional probability distribution **P**(Xi |Parents(Xi)) that quan- tifies the effect of the parents on the node.
+3\. Each node Xi has a conditional probability distribution **P**(Xi |Parents(Xi)) that quantifies the effect of the parents on the node.
 
-The topology of the network—the set of nodes and links—specifies the conditional indepen- dence relationships that hold in the domain, in a way that will be made precise shortly. The _intuitive_ meaning of an arrow is typically that X has a _direct influence_ on Y, which suggests that causes should be parents of effects. It is usually easy for a domain expert to decide what direct influences exist in the domain—much easier, in fact, than actually specifying the prob- abilities themselves. Once the topology of the Bayesian network is laid out, we need only specify a conditional probability distribution for each variable, given its parents. We will see that the combination of the topology and the conditional distributions suffices to specify (implicitly) the full joint distribution for all the variables.
+The topology of the network—the set of nodes and links—specifies the conditional independence relationships that hold in the domain, in a way that will be made precise shortly. The _intuitive_ meaning of an arrow is typically that X has a _direct influence_ on Y, which suggests that causes should be parents of effects. It is usually easy for a domain expert to decide what direct influences exist in the domain—much easier, in fact, than actually specifying the probabilities themselves. Once the topology of the Bayesian network is laid out, we need only specify a conditional probability distribution for each variable, given its parents. We will see that the combination of the topology and the conditional distributions suffices to specify (implicitly) the full joint distribution for all the variables.
 
-Recall the simple world described in Chapter 13, consisting of the variables Toothache , Cavity , Catch , and Weather . We argued that Weather is independent of the other vari- ables; furthermore, we argued that Toothache and Catch are conditionally independent, given Cavity . These relationships are represented by the Bayesian network structure shown in Figure 14.1. Formally, the conditional independence of Toothache and Catch , given Cavity , is indicated by the _absence_ of a link between Toothache and Catch . Intuitively, the network represents the fact that Cavity is a direct cause of Toothache and Catch , whereas no direct causal relationship exists between Toothache and Catch .
+Recall the simple world described in Chapter 13, consisting of the variables Toothache , Cavity , Catch , and Weather . We argued that Weather is independent of the other variables; furthermore, we argued that Toothache and Catch are conditionally independent, given Cavity . These relationships are represented by the Bayesian network structure shown in Figure 14.1. Formally, the conditional independence of Toothache and Catch , given Cavity , is indicated by the _absence_ of a link between Toothache and Catch . Intuitively, the network represents the fact that Cavity is a direct cause of Toothache and Catch , whereas no direct causal relationship exists between Toothache and Catch .
 
 Now consider the following example, which is just a little more complex. You have a new burglar alarm installed at home. It is fairly reliable at detecting a burglary, but also responds on occasion to minor earthquakes. (This example is due to Judea Pearl, a resident of Los Angeles—hence the acute interest in earthquakes.) You also have two neighbors, John and Mary, who have promised to call you at work when they hear the alarm. John nearly always calls when he hears the alarm, but sometimes confuses the telephone ringing with
 
@@ -1307,7 +1307,7 @@ _.7_0
 
 the alarm and calls then, too. Mary, on the other hand, likes rather loud music and often misses the alarm altogether. Given the evidence of who has or has not called, we would like to estimate the probability of a burglary.
 
-A Bayesian network for this domain appears in Figure 14.2. The network structure shows that burglary and earthquakes directly affect the probability of the alarm’s going off, but whether John and Mary call depends only on the alarm. The network thus represents our assumptions that they do not perceive burglaries directly, they do not notice minor earth- quakes, and they do not confer before calling.
+A Bayesian network for this domain appears in Figure 14.2. The network structure shows that burglary and earthquakes directly affect the probability of the alarm’s going off, but whether John and Mary call depends only on the alarm. The network thus represents our assumptions that they do not perceive burglaries directly, they do not notice minor earthquakes, and they do not confer before calling.
 
 The conditional distributions in Figure 14.2 are shown as a **conditional probability table**, or CPT. (This form of table can be used for discrete variables; other representations,CONDITIONAL
 
@@ -1315,7 +1315,7 @@ PROBABILITY TABLE
 
 including those suitable for continuous variables, are described in Section 14.2.) Each row in a CPT contains the conditional probability of each node value for a **conditioning case**.CONDITIONING CASE
 
-A conditioning case is just a possible combination of values for the parent nodes—a minia- ture possible world, if you like. Each row must sum to 1, because the entries represent an exhaustive set of cases for the variable. For Boolean variables, once you know that the prob- ability of a true value is p, the probability of false must be 1 – p, so we often omit the second number, as in Figure 14.2. In general, a table for a Boolean variable with k Boolean parents contains 2k independently specifiable probabilities. A node with no parents has only one row, representing the prior probabilities of each possible value of the variable.
+A conditioning case is just a possible combination of values for the parent nodes—a miniature possible world, if you like. Each row must sum to 1, because the entries represent an exhaustive set of cases for the variable. For Boolean variables, once you know that the probability of a true value is p, the probability of false must be 1 – p, so we often omit the second number, as in Figure 14.2. In general, a table for a Boolean variable with k Boolean parents contains 2k independently specifiable probabilities. A node with no parents has only one row, representing the prior probabilities of each possible value of the variable.
 
 Notice that the network does not have nodes corresponding to Mary’s currently listening to loud music or to the telephone ringing and confusing John. These factors are summarized in the uncertainty associated with the links from Alarm to JohnCalls and MaryCalls . This shows both laziness and ignorance in operation: it would be a lot of work to find out why those factors would be more or less likely in any particular case, and we have no reasonable way to obtain the relevant information anyway. The probabilities actually summarize a _potentially_  
 
@@ -1329,7 +1329,7 @@ The previous section described what a network is, but not what it means. There a
 
 **14.2.1 Representing the full joint distribution**
 
-Viewed as a piece of “syntax,” a Bayesian network is a directed acyclic graph with some numeric parameters attached to each node. One way to define what the network means—its semantics—is to define the way in which it represents a specific joint distribution over all the variables. To do this, we first need to retract (temporarily) what we said earlier about the pa- rameters associated with each node. We said that those parameters correspond to conditional probabilities **P**(Xi |Parents(Xi)); this is a true statement, but until we assign semantics to the network as a whole, we should think of them just as numbers θ(Xi |Parents(Xi)).
+Viewed as a piece of “syntax,” a Bayesian network is a directed acyclic graph with some numeric parameters attached to each node. One way to define what the network means—its semantics—is to define the way in which it represents a specific joint distribution over all the variables. To do this, we first need to retract (temporarily) what we said earlier about the parameters associated with each node. We said that those parameters correspond to conditional probabilities **P**(Xi |Parents(Xi)); this is a true statement, but until we assign semantics to the network as a whole, we should think of them just as numbers θ(Xi |Parents(Xi)).
 
 A generic entry in the joint distribution is the probability of a conjunction of particular assignments to each variable, such as P (X1 = x1 ∧ . . . ∧ Xn = xn). We use the notation P (x1, . . . , xn) as an abbreviation for this. The value of this entry is given by the formula
 
@@ -1353,7 +1353,7 @@ i= 1
 
 P (xi | parents(Xi)) . (14.2)
 
-In other words, the tables we have been calling conditional probability tables really _are_ con- ditional probability tables according to the semantics defined in Equation (14.1).
+In other words, the tables we have been calling conditional probability tables really _are_ conditional probability tables according to the semantics defined in Equation (14.1).
 
 To illustrate this, we can calculate the probability that the alarm has sounded, but neither a burglary nor an earthquake has occurred, and both John and Mary call. We multiply entries  
 
@@ -1399,9 +1399,9 @@ What Equation (14.3) says is that the Bayesian network is a correct representati
 
 2\. _Links:_ For i = 1 to n do:
 
-• Choose, from X1, . . . ,Xi−1, a minimal set of parents for Xi, such that Equa- tion (14.3) is satisfied.
+- Choose, from X1, . . . ,Xi−1, a minimal set of parents for Xi, such that Equation (14.3) is satisfied.
 
-• For each parent insert a link from the parent to Xi. • CPTs: Write down the conditional probability table, **P**(Xi|Parents(Xi)).  
+- For each parent insert a link from the parent to Xi. - CPTs: Write down the conditional probability table, **P**(Xi|Parents(Xi)).  
 
 Section 14.2. The Semantics of Bayesian Networks 515
 
@@ -1415,13 +1415,13 @@ tees that the network is acyclic. Another important property of Bayesian network
 
 **Compactness and node ordering**
 
-As well as being a complete and nonredundant representation of the domain, a Bayesian net- work can often be far more _compact_ than the full joint distribution. This property is what makes it feasible to handle domains with many variables. The compactness of Bayesian net- works is an example of a general property of **locally structured** (also called **sparse**) systems.LOCALLY
+As well as being a complete and nonredundant representation of the domain, a Bayesian network can often be far more _compact_ than the full joint distribution. This property is what makes it feasible to handle domains with many variables. The compactness of Bayesian networks is an example of a general property of **locally structured** (also called **sparse**) systems.LOCALLY
 
 STRUCTURED
 
 SPARSE In a locally structured system, each subcomponent interacts directly with only a bounded number of other components, regardless of the total number of components. Local structure is usually associated with linear rather than exponential growth in complexity. In the case of Bayesian networks, it is reasonable to suppose that in most domains each random variable is directly influenced by at most k others, for some constant k. If we assume n Boolean variables for simplicity, then the amount of information needed to specify each conditional probability table will be at most 2k numbers, and the complete network can be specified by n2k numbers. In contrast, the joint distribution contains 2n numbers. To make this concrete, suppose we have n = 30 nodes, each with five parents (k = 5). Then the Bayesian network requires 960 numbers, but the full joint distribution requires over a billion.
 
-There are domains in which each variable can be influenced directly by all the others, so that the network is fully connected. Then specifying the conditional probability tables re- quires the same amount of information as specifying the joint distribution. In some domains, there will be slight dependencies that should strictly be included by adding a new link. But if these dependencies are tenuous, then it may not be worth the additional complexity in the network for the small gain in accuracy. For example, one might object to our burglary net- work on the grounds that if there is an earthquake, then John and Mary would not call even if they heard the alarm, because they assume that the earthquake is the cause. Whether to add the link from Earthquake to JohnCalls and MaryCalls (and thus enlarge the tables) depends on comparing the importance of getting more accurate probabilities with the cost of specifying the extra information.  
+There are domains in which each variable can be influenced directly by all the others, so that the network is fully connected. Then specifying the conditional probability tables requires the same amount of information as specifying the joint distribution. In some domains, there will be slight dependencies that should strictly be included by adding a new link. But if these dependencies are tenuous, then it may not be worth the additional complexity in the network for the small gain in accuracy. For example, one might object to our burglary network on the grounds that if there is an earthquake, then John and Mary would not call even if they heard the alarm, because they assume that the earthquake is the cause. Whether to add the link from Earthquake to JohnCalls and MaryCalls (and thus enlarge the tables) depends on comparing the importance of getting more accurate probabilities with the cost of specifying the extra information.  
 
 
 
@@ -1449,35 +1449,35 @@ _JohnCalls_
 
 **Figure 14.3** Network structure depends on order of introduction. In each network, we have introduced nodes in top-to-bottom order.
 
-Even in a locally structured domain, we will get a compact Bayesian network only if we choose the node ordering well. What happens if we happen to choose the wrong or- der? Consider the burglary example again. Suppose we decide to add the nodes in the order MaryCalls , JohnCalls , Alarm, Burglary , Earthquake . We then get the somewhat more complicated network shown in Figure 14.3(a). The process goes as follows:
+Even in a locally structured domain, we will get a compact Bayesian network only if we choose the node ordering well. What happens if we happen to choose the wrong order? Consider the burglary example again. Suppose we decide to add the nodes in the order MaryCalls , JohnCalls , Alarm, Burglary , Earthquake . We then get the somewhat more complicated network shown in Figure 14.3(a). The process goes as follows:
 
-• Adding MaryCalls : No parents.
+- Adding MaryCalls : No parents.
 
-• Adding JohnCalls : If Mary calls, that probably means the alarm has gone off, which of course would make it more likely that John calls. Therefore, JohnCalls needs MaryCalls as a parent.
+- Adding JohnCalls : If Mary calls, that probably means the alarm has gone off, which of course would make it more likely that John calls. Therefore, JohnCalls needs MaryCalls as a parent.
 
-• Adding Alarm: Clearly, if both call, it is more likely that the alarm has gone off than if just one or neither calls, so we need both MaryCalls and JohnCalls as parents.
+- Adding Alarm: Clearly, if both call, it is more likely that the alarm has gone off than if just one or neither calls, so we need both MaryCalls and JohnCalls as parents.
 
-• Adding Burglary : If we know the alarm state, then the call from John or Mary might give us information about our phone ringing or Mary’s music, but not about burglary:
+- Adding Burglary : If we know the alarm state, then the call from John or Mary might give us information about our phone ringing or Mary’s music, but not about burglary:
 
 **P**(Burglary |Alarm, JohnCalls ,MaryCalls) = **P**(Burglary |Alarm) .
 
 Hence we need just Alarm as parent.
 
-• Adding Earthquake : If the alarm is on, it is more likely that there has been an earth- quake. (The alarm is an earthquake detector of sorts.) But if we know that there has been a burglary, then that explains the alarm, and the probability of an earthquake would be only slightly above normal. Hence, we need both Alarm and Burglary as parents.
+- Adding Earthquake : If the alarm is on, it is more likely that there has been an earthquake. (The alarm is an earthquake detector of sorts.) But if we know that there has been a burglary, then that explains the alarm, and the probability of an earthquake would be only slightly above normal. Hence, we need both Alarm and Burglary as parents.
 
-The resulting network has two more links than the original network in Figure 14.2 and re- quires three more probabilities to be specified. What’s worse, some of the links represent tenuous relationships that require difficult and unnatural probability judgments, such as as-  
+The resulting network has two more links than the original network in Figure 14.2 and requires three more probabilities to be specified. What’s worse, some of the links represent tenuous relationships that require difficult and unnatural probability judgments, such as as 
 
 Section 14.2. The Semantics of Bayesian Networks 517
 
-sessing the probability of Earthquake , given Burglary and Alarm. This phenomenon is quite general and is related to the distinction between **causal** and **diagnostic** models intro- duced in Section 13.5.1 (see also Exercise 8.13). If we try to build a diagnostic model with links from symptoms to causes (as from MaryCalls to Alarm or Alarm to Burglary), we end up having to specify additional dependencies between otherwise independent causes (and often between separately occurring symptoms as well). _If we stick to a causal model, we end up having to specify fewer numbers, and the numbers will often be easier to come up with._ In the domain of medicine, for example, it has been shown by Tversky and Kahneman (1982) that expert physicians prefer to give probability judgments for causal rules rather than for diagnostic ones.
+sessing the probability of Earthquake , given Burglary and Alarm. This phenomenon is quite general and is related to the distinction between **causal** and **diagnostic** models introduced in Section 13.5.1 (see also Exercise 8.13). If we try to build a diagnostic model with links from symptoms to causes (as from MaryCalls to Alarm or Alarm to Burglary), we end up having to specify additional dependencies between otherwise independent causes (and often between separately occurring symptoms as well). _If we stick to a causal model, we end up having to specify fewer numbers, and the numbers will often be easier to come up with._ In the domain of medicine, for example, it has been shown by Tversky and Kahneman (1982) that expert physicians prefer to give probability judgments for causal rules rather than for diagnostic ones.
 
 Figure 14.3(b) shows a very bad node ordering: MaryCalls , JohnCalls , Earthquake , Burglary , Alarm . This network requires 31 distinct probabilities to be specified—exactly the same number as the full joint distribution. It is important to realize, however, that any of the three networks can represent _exactly the same joint distribution_. The last two versions simply fail to represent all the conditional independence relationships and hence end up specifying a lot of unnecessary numbers instead.
 
 **14.2.2 Conditional independence relations in Bayesian networks**
 
-We have provided a “numerical” semantics for Bayesian networks in terms of the represen- tation of the full joint distribution, as in Equation (14.2). Using this semantics to derive a method for constructing Bayesian networks, we were led to the consequence that a node is conditionally independent of its other predecessors, given its parents. It turns out that we can also go in the other direction. We can start from a “topological” semantics that specifies the conditional independence relationships encoded by the graph structure, and from this we can derive the “numerical” semantics. The topological semantics2 specifies that each vari- able is conditionally independent of its non-**descendants**, given its parents. For example, inDESCENDANT
+We have provided a “numerical” semantics for Bayesian networks in terms of the representation of the full joint distribution, as in Equation (14.2). Using this semantics to derive a method for constructing Bayesian networks, we were led to the consequence that a node is conditionally independent of its other predecessors, given its parents. It turns out that we can also go in the other direction. We can start from a “topological” semantics that specifies the conditional independence relationships encoded by the graph structure, and from this we can derive the “numerical” semantics. The topological semantics2 specifies that each variable is conditionally independent of its non-**descendants**, given its parents. For example, inDESCENDANT
 
-Figure 14.2, JohnCalls is independent of Burglary , Earthquake , and MaryCalls given the value of Alarm . The definition is illustrated in Figure 14.4(a). From these conditional inde- pendence assertions and the interpretation of the network parameters θ(Xi |Parents(Xi))
+Figure 14.2, JohnCalls is independent of Burglary , Earthquake , and MaryCalls given the value of Alarm . The definition is illustrated in Figure 14.4(a). From these conditional independence assertions and the interpretation of the network parameters θ(Xi |Parents(Xi))
 
 as specifications of conditional probabilities **P**(Xi |Parents(Xi)), the full joint distribution given in Equation (14.2) can be reconstructed. In this sense, the “numerical” semantics and the “topological” semantics are equivalent.
 
@@ -1533,9 +1533,9 @@ The simplest example is provided by **deterministic nodes**. A deterministic nod
 
 its value specified exactly by the values of its parents, with no uncertainty. The relationship can be a logical one: for example, the relationship between the parent nodes Canadian , US , Mexican and the child node NorthAmerican is simply that the child is the disjunction of the parents. The relationship can also be numerical: for example, if the parent nodes are the prices of a particular model of car at several dealers and the child node is the price that a bargain hunter ends up paying, then the child node is the minimum of the parent values; or if the parent nodes are a lake’s inflows (rivers, runoff, precipitation) and outflows (rivers, evaporation, seepage) and the child is the change in the water level of the lake, then the value of the child is the sum of the inflow parents minus the sum of the outflow parents.
 
-Uncertain relationships can often be characterized by so-called **noisy** logical relation- ships. The standard example is the **noisy-OR** relation, which is a generalization of the log-NOISY-OR
+Uncertain relationships can often be characterized by so-called **noisy** logical relationships. The standard example is the **noisy-OR** relation, which is a generalization of the log-NOISY-OR
 
-ical OR. In propositional logic, we might say that Fever is true if and only if Cold , Flu , or Malaria is true. The noisy-OR model allows for uncertainty about the ability of each par- ent to cause the child to be true—the causal relationship between parent and child may be  
+ical OR. In propositional logic, we might say that Fever is true if and only if Cold , Flu , or Malaria is true. The noisy-OR model allows for uncertainty about the ability of each parent to cause the child to be true—the causal relationship between parent and child may be  
 
 Section 14.3. Efficient Representation of Conditional Distributions 519
 
@@ -1571,11 +1571,11 @@ T T F 0.88 0.12 = 0.6 × 0.2
 
 T T T 0.988 0.012 = 0.6× 0.2× 0.1
 
-In general, noisy logical relationships in which a variable depends on k parents can be de- scribed using O(k) parameters instead of O(2k) for the full conditional probability table. This makes assessment and learning much easier. For example, the CPCS network (Prad- han _et al._, 1994) uses noisy-OR and noisy-MAX distributions to model relationships among diseases and symptoms in internal medicine. With 448 nodes and 906 links, it requires only 8,254 values instead of 133,931,430 for a network with full CPTs.
+In general, noisy logical relationships in which a variable depends on k parents can be described using O(k) parameters instead of O(2k) for the full conditional probability table. This makes assessment and learning much easier. For example, the CPCS network (Pradhan _et al._, 1994) uses noisy-OR and noisy-MAX distributions to model relationships among diseases and symptoms in internal medicine. With 448 nodes and 906 links, it requires only 8,254 values instead of 133,931,430 for a network with full CPTs.
 
 **Bayesian nets with continuous variables**
 
-Many real-world problems involve continuous quantities, such as height, mass, temperature, and money; in fact, much of statistics deals with random variables whose domains are contin- uous. By definition, continuous variables have an infinite number of possible values, so it is impossible to specify conditional probabilities explicitly for each value. One possible way to handle continuous variables is to avoid them by using **discretization**—that is, dividing up theDISCRETIZATION  
+Many real-world problems involve continuous quantities, such as height, mass, temperature, and money; in fact, much of statistics deals with random variables whose domains are continuous. By definition, continuous variables have an infinite number of possible values, so it is impossible to specify conditional probabilities explicitly for each value. One possible way to handle continuous variables is to avoid them by using **discretization**—that is, dividing up theDISCRETIZATION  
 
 
 
@@ -1587,7 +1587,7 @@ _Cost_
 
 **Figure 14.5** A simple network with discrete variables (Subsidy and Buys) and continuous variables (Harvest and Cost ).
 
-possible values into a fixed set of intervals. For example, temperatures could be divided into (<0oC), (0oC−100oC), and (>100oC). Discretization is sometimes an adequate solution, but often results in a considerable loss of accuracy and very large CPTs. The most com- mon solution is to define standard families of probability density functions (see Appendix A) that are specified by a finite number of **parameters**. For example, a Gaussian (or normal)PARAMETER
+possible values into a fixed set of intervals. For example, temperatures could be divided into (<0oC), (0oC−100oC), and (>100oC). Discretization is sometimes an adequate solution, but often results in a considerable loss of accuracy and very large CPTs. The most common solution is to define standard families of probability density functions (see Appendix A) that are specified by a finite number of **parameters**. For example, a Gaussian (or normal)PARAMETER
 
 distribution N(μ, σ 2)(x) has the mean μ and the variance σ
 
@@ -1697,7 +1697,7 @@ _P_(_c_ | _h_)
 
 and (b) show these two relationships. Notice that in each case the slope is negative, because cost decreases as supply increases. (Of course, the assumption of linearity implies that the cost becomes negative at some point; the linear model is reasonable only if the harvest size is limited to a narrow range.) Figure 14.6(c) shows the distribution P (c | h), averaging over the two possible values of Subsidy and assuming that each has prior probability 0.5. This shows that even with very simple models, quite interesting distributions can be represented.
 
-The linear Gaussian conditional distribution has some special properties. A network containing only continuous variables with linear Gaussian distributions has a joint distribu- tion that is a multivariate Gaussian distribution (see Appendix A) over all the variables (Exer- cise 14.9). Furthermore, the posterior distribution given any evidence also has this property.3
+The linear Gaussian conditional distribution has some special properties. A network containing only continuous variables with linear Gaussian distributions has a joint distribution that is a multivariate Gaussian distribution (see Appendix A) over all the variables (Exercise 14.9). Furthermore, the posterior distribution given any evidence also has this property.3
 
 When discrete variables are added as parents (not as children) of continuous variables, the network defines a **conditional Gaussian**, or CG, distribution: given any assignment to theCONDITIONAL
 
@@ -1705,7 +1705,7 @@ GAUSSIAN
 
 discrete variables, the distribution over the continuous variables is a multivariate Gaussian. Now we turn to the distributions for discrete variables with continuous parents. Con-
 
-sider, for example, the Buys node in Figure 14.5. It seems reasonable to assume that the customer will buy if the cost is low and will not buy if it is high and that the probability of buying varies smoothly in some intermediate region. In other words, the conditional distribu- tion is like a “soft” threshold function. One way to make soft thresholds is to use the _integral_ of the standard normal distribution:
+sider, for example, the Buys node in Figure 14.5. It seems reasonable to assume that the customer will buy if the cost is low and will not buy if it is high and that the probability of buying varies smoothly in some intermediate region. In other words, the conditional distribution is like a “soft” threshold function. One way to make soft thresholds is to use the _integral_ of the standard normal distribution:
 
 Φ(x) =
 
@@ -1719,7 +1719,7 @@ Then the probability of Buys given Cost might be
 
 P (buys |Cost = c) = Φ((−c + μ)/σ) ,
 
-which means that the cost threshold occurs around μ, the width of the threshold region is pro- portional to σ, and the probability of buying decreases as cost increases. This **probit distri-**
+which means that the cost threshold occurs around μ, the width of the threshold region is proportional to σ, and the probability of buying decreases as cost increases. This **probit distri-**
 
 3 It follows that inference in linear Gaussian networks takes only O(n 3 ) time in the worst case, regardless of the
 
@@ -1777,7 +1777,7 @@ Logit Probit
 
 **bution** (pronounced “pro-bit” and short for “probability unit”) is illustrated in Figure 14.7(a).PROBIT DISTRIBUTION
 
-The form can be justified by proposing that the underlying decision process has a hard thresh- old, but that the precise location of the threshold is subject to random Gaussian noise.
+The form can be justified by proposing that the underlying decision process has a hard threshold, but that the precise location of the threshold is subject to random Gaussian noise.
 
 An alternative to the probit model is the **logit distribution** (pronounced “low-jit”). ItLOGIT DISTRIBUTION
 
@@ -1791,13 +1791,13 @@ P (buys |Cost = c) = 1
 
 .
 
-This is illustrated in Figure 14.7(b). The two distributions look similar, but the logit actually has much longer “tails.” The probit is often a better fit to real situations, but the logit is some- times easier to deal with mathematically. It is used widely in neural networks (Chapter 20). Both probit and logit can be generalized to handle multiple continuous parents by taking a linear combination of the parent values.
+This is illustrated in Figure 14.7(b). The two distributions look similar, but the logit actually has much longer “tails.” The probit is often a better fit to real situations, but the logit is sometimes easier to deal with mathematically. It is used widely in neural networks (Chapter 20). Both probit and logit can be generalized to handle multiple continuous parents by taking a linear combination of the parent values.
 
 14.4 EXACT INFERENCE IN BAYESIAN NETWORKS
 
 The basic task for any probabilistic inference system is to compute the posterior probability distribution for a set of **query variables**, given some observed **event**—that is, some assign-EVENT
 
-ment of values to a set of **evidence variables**. To simplify the presentation, we will consider only one query variable at a time; the algorithms can easily be extended to queries with mul- tiple variables. We will use the notation from Chapter 13: X denotes the query variable; **E** denotes the set of evidence variables E1, . . . , Em, and **e** is a particular observed event; **Y** will denotes the nonevidence, nonquery variables Y1, . . . , Yl (called the **hidden variables**). Thus,HIDDEN VARIABLE
+ment of values to a set of **evidence variables**. To simplify the presentation, we will consider only one query variable at a time; the algorithms can easily be extended to queries with multiple variables. We will use the notation from Chapter 13: X denotes the query variable; **E** denotes the set of evidence variables E1, . . . , Em, and **e** is a particular observed event; **Y** will denotes the nonevidence, nonquery variables Y1, . . . , Yl (called the **hidden variables**). Thus,HIDDEN VARIABLE
 
 the complete set of variables is **X** \= {X}∪**E**∪**Y**. A typical query asks for the posterior probability distribution **P**(X | **e**).  
 
@@ -1807,7 +1807,7 @@ In the burglary network, we might observe the event in which JohnCalls = true an
 
 **P**(Burglary | JohnCalls = true,MaryCalls = true) = 〈0.284, 0.716〉 .
 
-In this section we discuss exact algorithms for computing posterior probabilities and will consider the complexity of this task. It turns out that the general case is intractable, so Sec- tion 14.5 covers methods for approximate inference.
+In this section we discuss exact algorithms for computing posterior probabilities and will consider the complexity of this task. It turns out that the general case is intractable, so Section 14.5 covers methods for approximate inference.
 
 **14.4.1 Inference by enumeration**
 
@@ -1821,7 +1821,7 @@ Chapter 13 explained that any conditional probability can be computed by summing
 
 **P**(X, **e**, **y**) .
 
-Now, a Bayesian network gives a complete representation of the full joint distribution. More specifically, Equation (14.2) on page 513 shows that the terms P (x, **e**, **y**) in the joint distri- bution can be written as products of conditional probabilities from the network. Therefore, _a query can be answered using a Bayesian network by computing sums of products of condi- tional probabilities from the network._
+Now, a Bayesian network gives a complete representation of the full joint distribution. More specifically, Equation (14.2) on page 513 shows that the terms P (x, **e**, **y**) in the joint distribution can be written as products of conditional probabilities from the network. Therefore, _a query can be answered using a Bayesian network by computing sums of products of conditional probabilities from the network._
 
 Consider the query **P**(Burglary | JohnCalls = true,MaryCalls = true). The hidden variables for this query are Earthquake and Alarm . From Equation (13.9), using initial letters for the variables to shorten the expressions, we have4
 
@@ -1887,15 +1887,15 @@ values. The structure of this computation is shown in Figure 14.8. Using the num
 
 That is, the chance of a burglary, given calls from both neighbors, is about 28%. The evaluation process for the expression in Equation (14.4) is shown as an expression
 
-tree in Figure 14.8. The ENUMERATION-ASK algorithm in Figure 14.9 evaluates such trees using depth-first recursion. The algorithm is very similar in structure to the backtracking al- gorithm for solving CSPs (Figure 6.5) and the DPLL algorithm for satisfiability (Figure 7.17).
+tree in Figure 14.8. The ENUMERATION-ASK algorithm in Figure 14.9 evaluates such trees using depth-first recursion. The algorithm is very similar in structure to the backtracking algorithm for solving CSPs (Figure 6.5) and the DPLL algorithm for satisfiability (Figure 7.17).
 
-The space complexity of ENUMERATION-ASK is only linear in the number of variables: the algorithm sums over the full joint distribution without ever constructing it explicitly. Un- fortunately, its time complexity for a network with n Boolean variables is always O(2n)— better than the O(n 2n) for the simple approach described earlier, but still rather grim.
+The space complexity of ENUMERATION-ASK is only linear in the number of variables: the algorithm sums over the full joint distribution without ever constructing it explicitly. Unfortunately, its time complexity for a network with n Boolean variables is always O(2n)— better than the O(n 2n) for the simple approach described earlier, but still rather grim.
 
-Note that the tree in Figure 14.8 makes explicit the _repeated subexpressions_ evalu- ated by the algorithm. The products P (j | a)P (m | a) and P (j | ¬a)P (m | ¬a) are computed twice, once for each value of e. The next section describes a general method that avoids such wasted computations.
+Note that the tree in Figure 14.8 makes explicit the _repeated subexpressions_ evaluated by the algorithm. The products P (j | a)P (m | a) and P (j | ¬a)P (m | ¬a) are computed twice, once for each value of e. The next section describes a general method that avoids such wasted computations.
 
 **14.4.2 The variable elimination algorithm**
 
-The enumeration algorithm can be improved substantially by eliminating repeated calcula- tions of the kind illustrated in Figure 14.8. The idea is simple: do the calculation once and save the results for later use. This is a form of dynamic programming. There are several ver- sions of this approach; we present the **variable elimination** algorithm, which is the simplest.VARIABLE
+The enumeration algorithm can be improved substantially by eliminating repeated calculations of the kind illustrated in Figure 14.8. The idea is simple: do the calculation once and save the results for later use. This is a form of dynamic programming. There are several versions of this approach; we present the **variable elimination** algorithm, which is the simplest.VARIABLE
 
 ELIMINATION
 
@@ -2035,13 +2035,13 @@ where **e**y is **e** extended with Y = y
 
 
 
-where the “×” operator is not ordinary matrix multiplication but instead the **pointwise prod- uct** operation, to be described shortly.POINTWISE
+where the “×” operator is not ordinary matrix multiplication but instead the **pointwise product** operation, to be described shortly.POINTWISE
 
 PRODUCT
 
 The process of evaluation is a process of summing out variables (right to left) from pointwise products of factors to produce new factors, eventually yielding a factor that is the solution, i.e., the posterior distribution over the query variable. The steps are as follows:
 
-• First, we sum out A from the product of **f**3, **f**4, and **f**5\. This gives us a new 2× 2 factor **f**6(B,E) whose indices range over just B and E:
+- First, we sum out A from the product of **f**3, **f**4, and **f**5\. This gives us a new 2× 2 factor **f**6(B,E) whose indices range over just B and E:
 
 **f**6(B,E) =
 
@@ -2061,7 +2061,7 @@ e
 
 **f**2(E)× **f**6(B,E) .
 
-• Next, we sum out E from the product of **f**2 and **f**6:
+- Next, we sum out E from the product of **f**2 and **f**6:
 
 **f**7(B) =
 
@@ -2079,7 +2079,7 @@ This leaves the expression
 
 which can be evaluated by taking the pointwise product and normalizing the result.
 
-Examining this sequence, we see that two basic computational operations are required: point- wise product of a pair of factors, and summing out a variable from a product of factors. The next section describes each of these operations.
+Examining this sequence, we see that two basic computational operations are required: pointwise product of a pair of factors, and summing out a variable from a product of factors. The next section describes each of these operations.
 
 **Operations on factors**
 
@@ -2225,7 +2225,7 @@ Evaluating this expression from right to left, we notice something interesting: 
 
 m P (m | a)
 
-is equal to 1 by definition! Hence, there was no need to include it in the first place; the vari- able M is _irrelevant_ to this query. Another way of saying this is that the result of the query P (JohnCalls |Burglary = true) is unchanged if we remove MaryCalls from the network altogether. In general, we can remove any leaf node that is not a query variable or an evidence variable. After its removal, there may be some more leaf nodes, and these too may be irrele- vant. Continuing this process, we eventually find that _every variable that is not an ancestor of a query variable or evidence variable is irrelevant to the query._ A variable elimination algorithm can therefore remove all these variables before evaluating the query.
+is equal to 1 by definition! Hence, there was no need to include it in the first place; the variable M is _irrelevant_ to this query. Another way of saying this is that the result of the query P (JohnCalls |Burglary = true) is unchanged if we remove MaryCalls from the network altogether. In general, we can remove any leaf node that is not a query variable or an evidence variable. After its removal, there may be some more leaf nodes, and these too may be irrelevant. Continuing this process, we eventually find that _every variable that is not an ancestor of a query variable or evidence variable is irrelevant to the query._ A variable elimination algorithm can therefore remove all these variables before evaluating the query.
 
 **14.4.3 The complexity of exact inference**
 
@@ -2305,7 +2305,7 @@ _C t t t f f t f f_
 
 **Figure 14.12** (a) A multiply connected network with conditional probability tables. (b) A clustered equivalent of the multiply connected network.
 
-_includes inference in propositional logic as a special case, inference in Bayesian networks is NP-hard._ In fact, it can be shown (Exercise 14.16) that the problem is as hard as that of com- puting the _number_ of satisfying assignments for a propositional logic formula. This means that it is #P-hard (“number-P hard”)—that is, strictly harder than NP-complete problems.
+_includes inference in propositional logic as a special case, inference in Bayesian networks is NP-hard._ In fact, it can be shown (Exercise 14.16) that the problem is as hard as that of computing the _number_ of satisfying assignments for a propositional logic formula. This means that it is #P-hard (“number-P hard”)—that is, strictly harder than NP-complete problems.
 
 There is a close connection between the complexity of Bayesian network inference and the complexity of constraint satisfaction problems (CSPs). As we discussed in Chapter 6, the difficulty of solving a discrete CSP is related to how “treelike” its constraint graph is. Measures such as **tree width**, which bound the complexity of solving a CSP, can also be applied directly to Bayesian networks. Moreover, the variable elimination algorithm can be generalized to solve CSPs as well as Bayesian networks.
 
@@ -2317,17 +2317,17 @@ The variable elimination algorithm is simple and efficient for answering individ
 
 widely used in commercial Bayesian network tools. The basic idea of clustering is to join individual nodes of the network to form clus-
 
-ter nodes in such a way that the resulting network is a polytree. For example, the multiply connected network shown in Figure 14.12(a) can be converted into a polytree by combin- ing the Sprinkler and Rain node into a cluster node called Sprinkler+Rain , as shown in Figure 14.12(b). The two Boolean nodes are replaced by a “meganode” that takes on four possible values: tt, tf , ft, and ff . The meganode has only one parent, the Boolean variable Cloudy , so there are two conditioning cases. Although this example doesn’t show it, the process of clustering often produces meganodes that share some variables.  
+ter nodes in such a way that the resulting network is a polytree. For example, the multiply connected network shown in Figure 14.12(a) can be converted into a polytree by combining the Sprinkler and Rain node into a cluster node called Sprinkler+Rain , as shown in Figure 14.12(b). The two Boolean nodes are replaced by a “meganode” that takes on four possible values: tt, tf , ft, and ff . The meganode has only one parent, the Boolean variable Cloudy , so there are two conditioning cases. Although this example doesn’t show it, the process of clustering often produces meganodes that share some variables.  
 
 
 
-Once the network is in polytree form, a special-purpose inference algorithm is required, because ordinary inference methods cannot handle meganodes that share variables with each other. Essentially, the algorithm is a form of constraint propagation (see Chapter 6) where the constraints ensure that neighboring meganodes agree on the posterior probability of any vari- ables that they have in common. With careful bookkeeping, this algorithm is able to compute posterior probabilities for all the nonevidence nodes in the network in time _linear_ in the size of the clustered network. However, the NP-hardness of the problem has not disappeared: if a network requires exponential time and space with variable elimination, then the CPTs in the clustered network will necessarily be exponentially large.
+Once the network is in polytree form, a special-purpose inference algorithm is required, because ordinary inference methods cannot handle meganodes that share variables with each other. Essentially, the algorithm is a form of constraint propagation (see Chapter 6) where the constraints ensure that neighboring meganodes agree on the posterior probability of any variables that they have in common. With careful bookkeeping, this algorithm is able to compute posterior probabilities for all the nonevidence nodes in the network in time _linear_ in the size of the clustered network. However, the NP-hardness of the problem has not disappeared: if a network requires exponential time and space with variable elimination, then the CPTs in the clustered network will necessarily be exponentially large.
 
 14.5 APPROXIMATE INFERENCE IN BAYESIAN NETWORKS
 
-Given the intractability of exact inference in large, multiply connected networks, it is essen- tial to consider approximate inference methods. This section describes randomized sampling algorithms, also called **Monte Carlo** algorithms, that provide approximate answers whoseMONTE CARLO
+Given the intractability of exact inference in large, multiply connected networks, it is essential to consider approximate inference methods. This section describes randomized sampling algorithms, also called **Monte Carlo** algorithms, that provide approximate answers whoseMONTE CARLO
 
-accuracy depends on the number of samples generated. Monte Carlo algorithms, of which simulated annealing (page 126) is an example, are used in many branches of science to es- timate quantities that are difficult to calculate exactly. In this section, we are interested in sampling applied to the computation of posterior probabilities. We describe two families of algorithms: direct sampling and Markov chain sampling. Two other approaches—variational methods and loopy propagation—are mentioned in the notes at the end of the chapter.
+accuracy depends on the number of samples generated. Monte Carlo algorithms, of which simulated annealing (page 126) is an example, are used in many branches of science to estimate quantities that are difficult to calculate exactly. In this section, we are interested in sampling applied to the computation of posterior probabilities. We describe two families of algorithms: direct sampling and Markov chain sampling. Two other approaches—variational methods and loopy propagation—are mentioned in the notes at the end of the chapter.
 
 **14.5.1 Direct sampling methods**
 
@@ -2369,7 +2369,7 @@ i =1
 
 P (xi | parents(Xi))
 
-because each sampling step depends only on the parent values. This expression should look familiar, because it is also the probability of the event according to the Bayesian net’s repre- sentation of the joint distribution, as stated in Equation (14.2). That is, we have
+because each sampling step depends only on the parent values. This expression should look familiar, because it is also the probability of the event according to the Bayesian net’s representation of the joint distribution, as stated in Equation (14.2). That is, we have
 
 SPS (x1 . . . xn) = P (x1 . . . xn) .
 
@@ -2407,7 +2407,7 @@ we generate 1000 samples from the sprinkler network, and 511 of them have Rain =
 
 **Rejection sampling** is a general method for producing samples from a hard-to-sample distri-REJECTION SAMPLING
 
-bution given an easy-to-sample distribution. In its simplest form, it can be used to compute conditional probabilities—that is, to determine P (X | **e**). The REJECTION-SAMPLING algo- rithm is shown in Figure 14.14. First, it generates samples from the prior distribution specified by the network. Then, it rejects all those that do not match the evidence. Finally, the estimate P̂ (X = x | **e**) is obtained by counting how often X =x occurs in the remaining samples.
+bution given an easy-to-sample distribution. In its simplest form, it can be used to compute conditional probabilities—that is, to determine P (X | **e**). The REJECTION-SAMPLING algorithm is shown in Figure 14.14. First, it generates samples from the prior distribution specified by the network. Then, it rejects all those that do not match the evidence. Finally, the estimate P̂ (X = x | **e**) is obtained by counting how often X =x occurs in the remaining samples.
 
 Let **P̂(X** | **e**) be the estimated distribution that the algorithm returns. From the definition of the algorithm, we have
 
@@ -2431,9 +2431,9 @@ The true answer is 〈0.3, 0.7〉. As more samples are collected, the estimate w
 
 √ n, where n is the number of samples used in the estimate.
 
-The biggest problem with rejection sampling is that it rejects so many samples! The fraction of samples consistent with the evidence **e** drops exponentially as the number of evi- dence variables grows, so the procedure is simply unusable for complex problems.
+The biggest problem with rejection sampling is that it rejects so many samples! The fraction of samples consistent with the evidence **e** drops exponentially as the number of evidence variables grows, so the procedure is simply unusable for complex problems.
 
-Notice that rejection sampling is very similar to the estimation of conditional probabili- ties directly from the real world. For example, to estimate **P**(Rain |RedSkyAtNight = true), one can simply count how often it rains after a red sky is observed the previous evening— ignoring those evenings when the sky is not red. (Here, the world itself plays the role of the sample-generation algorithm.) Obviously, this could take a long time if the sky is very seldom red, and that is the weakness of rejection sampling.
+Notice that rejection sampling is very similar to the estimation of conditional probabilities directly from the real world. For example, to estimate **P**(Rain |RedSkyAtNight = true), one can simply count how often it rains after a red sky is observed the previous evening— ignoring those evenings when the sky is not red. (Here, the world itself plays the role of the sample-generation algorithm.) Obviously, this could take a long time if the sky is very seldom red, and that is the weakness of rejection sampling.
 
 **Likelihood weighting**
 
@@ -2459,9 +2459,9 @@ Section 14.5. Approximate Inference in Bayesian Networks 533
 
 describing how the algorithm works; then we show that it works correctly—that is, generates consistent probability estimates.
 
-LIKELIHOOD-WEIGHTING (see Figure 14.15) fixes the values for the evidence vari- ables **E** and samples only the nonevidence variables. This guarantees that each event gener- ated is consistent with the evidence. Not all events are equal, however. Before tallying the counts in the distribution for the query variable, each event is weighted by the _likelihood_ that the event accords to the evidence, as measured by the product of the conditional probabilities for each evidence variable, given its parents. Intuitively, events in which the actual evidence appears unlikely should be given less weight.
+LIKELIHOOD-WEIGHTING (see Figure 14.15) fixes the values for the evidence variables **E** and samples only the nonevidence variables. This guarantees that each event generated is consistent with the evidence. Not all events are equal, however. Before tallying the counts in the distribution for the query variable, each event is weighted by the _likelihood_ that the event accords to the evidence, as measured by the product of the conditional probabilities for each evidence variable, given its parents. Intuitively, events in which the actual evidence appears unlikely should be given less weight.
 
-Let us apply the algorithm to the network shown in Figure 14.12(a), with the query **P**(Rain |Cloudy = true,WetGrass = true) and the ordering _Cloudy_, _Sprinkler_, _Rain_, _Wet- Grass_. (Any topological ordering will do.) The process goes as follows: First, the weight w
+Let us apply the algorithm to the network shown in Figure 14.12(a), with the query **P**(Rain |Cloudy = true,WetGrass = true) and the ordering _Cloudy_, _Sprinkler_, _Rain_, _WetGrass_. (Any topological ordering will do.) The process goes as follows: First, the weight w
 
 is set to 1.0. Then an event is generated:
 
@@ -2517,7 +2517,7 @@ i = 1
 
 P (zi | parents(Zi)) . (14.7)
 
-Notice that Parents(Zi) can include both nonevidence variables and evidence variables. Un- like the prior distribution P (**z**), the distribution SWS pays some attention to the evidence: the sampled values for each Zi will be influenced by evidence among Zi’s ancestors. For exam- ple, when sampling Sprinkler the algorithm pays attention to the evidence Cloudy = true in its parent variable. On the other hand, SWS pays less attention to the evidence than does the true posterior distribution P (**z** | **e**), because the sampled values for each Zi _ignore_ evidence among Zi’s non-ancestors.5 For example, when sampling Sprinkler and Rain the algorithm ignores the evidence in the child variable WetGrass = true; this means it will generate many samples with Sprinkler = false and Rain = false despite the fact that the evidence actually rules out this case. 5 Ideally, we would like to use a sampling distribution equal to the true posterior P (**z** | **e**), to take all the evidence into account. This cannot be done efficiently, however. If it could, then we could approximate the desired probability to arbitrary accuracy with a polynomial number of samples. It can be shown that no such polynomial- time approximation scheme can exist.  
+Notice that Parents(Zi) can include both nonevidence variables and evidence variables. Unlike the prior distribution P (**z**), the distribution SWS pays some attention to the evidence: the sampled values for each Zi will be influenced by evidence among Zi’s ancestors. For example, when sampling Sprinkler the algorithm pays attention to the evidence Cloudy = true in its parent variable. On the other hand, SWS pays less attention to the evidence than does the true posterior distribution P (**z** | **e**), because the sampled values for each Zi _ignore_ evidence among Zi’s non-ancestors.5 For example, when sampling Sprinkler and Rain the algorithm ignores the evidence in the child variable WetGrass = true; this means it will generate many samples with Sprinkler = false and Rain = false despite the fact that the evidence actually rules out this case. 5 Ideally, we would like to use a sampling distribution equal to the true posterior P (**z** | **e**), to take all the evidence into account. This cannot be done efficiently, however. If it could, then we could approximate the desired probability to arbitrary accuracy with a polynomial number of samples. It can be shown that no such polynomialtime approximation scheme can exist.  
 
 Section 14.5. Approximate Inference in Bayesian Networks 535
 
@@ -2549,7 +2549,7 @@ P (ei | parents(Ei))
 
 \= P (**z**, **e**) (14.9)
 
-because the two products cover all the variables in the network, allowing us to use Equa- tion (14.2) for the joint probability.
+because the two products cover all the variables in the network, allowing us to use Equation (14.2) for the joint probability.
 
 Now it is easy to show that likelihood weighting estimates are consistent. For any particular value x of X, the estimated posterior probability can be calculated as follows:
 
@@ -2583,17 +2583,17 @@ P (x, **e**) = P (x | **e**) .
 
 Hence, likelihood weighting returns consistent estimates. Because likelihood weighting uses all the samples generated, it can be much more ef-
 
-ficient than rejection sampling. It will, however, suffer a degradation in performance as the number of evidence variables increases. This is because most samples will have very low weights and hence the weighted estimate will be dominated by the tiny fraction of samples that accord more than an infinitesimal likelihood to the evidence. The problem is exacerbated if the evidence variables occur late in the variable ordering, because then the nonevidence variables will have no evidence in their parents and ancestors to guide the generation of sam- ples. This means the samples will be simulations that bear little resemblance to the reality suggested by the evidence.
+ficient than rejection sampling. It will, however, suffer a degradation in performance as the number of evidence variables increases. This is because most samples will have very low weights and hence the weighted estimate will be dominated by the tiny fraction of samples that accord more than an infinitesimal likelihood to the evidence. The problem is exacerbated if the evidence variables occur late in the variable ordering, because then the nonevidence variables will have no evidence in their parents and ancestors to guide the generation of samples. This means the samples will be simulations that bear little resemblance to the reality suggested by the evidence.
 
 **14.5.2 Inference by Markov chain simulation**
 
 **Markov chain Monte Carlo** (MCMC) algorithms work quite differently from rejection sam-MARKOV CHAIN MONTE CARLO
 
-pling and likelihood weighting. Instead of generating each sample from scratch, MCMC al- gorithms generate each sample by making a random change to the preceding sample. It is therefore helpful to think of an MCMC algorithm as being in a particular _current state_ speci- fying a value for every variable and generating a _next state_ by making random changes to the  
+pling and likelihood weighting. Instead of generating each sample from scratch, MCMC algorithms generate each sample by making a random change to the preceding sample. It is therefore helpful to think of an MCMC algorithm as being in a particular _current state_ specifying a value for every variable and generating a _next state_ by making random changes to the  
 
 
 
-current state. (If this reminds you of simulated annealing from Chapter 4 or WALKSAT from Chapter 7, that is because both are members of the MCMC family.) Here we describe a par- ticular form of MCMC called **Gibbs sampling**, which is especially well suited for BayesianGIBBS SAMPLING
+current state. (If this reminds you of simulated annealing from Chapter 4 or WALKSAT from Chapter 7, that is because both are members of the MCMC family.) Here we describe a particular form of MCMC called **Gibbs sampling**, which is especially well suited for BayesianGIBBS SAMPLING
 
 networks. (Other forms, some of them significantly more powerful, are discussed in the notes at the end of the chapter.) We will first describe what the algorithm does, then we will explain why it works.
 
@@ -2601,17 +2601,17 @@ networks. (Other forms, some of them significantly more powerful, are discussed 
 
 The Gibbs sampling algorithm for Bayesian networks starts with an arbitrary state (with the evidence variables fixed at their observed values) and generates a next state by randomly sampling a value for one of the nonevidence variables Xi. The sampling for Xi is done _conditioned on the current values of the variables in the Markov blanket of_ Xi. (Recall from page 517 that the Markov blanket of a variable consists of its parents, children, and children’s parents.) The algorithm therefore wanders randomly around the state space—the space of possible complete assignments—flipping one variable at a time, but keeping the evidence variables fixed.
 
-Consider the query **P**(Rain | Sprinkler = true,WetGrass = true) applied to the net- work in Figure 14.12(a). The evidence variables Sprinkler and WetGrass are fixed to their observed values and the nonevidence variables Cloudy and Rain are initialized randomly— let us say to true and false respectively. Thus, the initial state is \[true, true , false , true\]. Now the nonevidence variables are sampled repeatedly in an arbitrary order. For example:
+Consider the query **P**(Rain | Sprinkler = true,WetGrass = true) applied to the network in Figure 14.12(a). The evidence variables Sprinkler and WetGrass are fixed to their observed values and the nonevidence variables Cloudy and Rain are initialized randomly— let us say to true and false respectively. Thus, the initial state is \[true, true , false , true\]. Now the nonevidence variables are sampled repeatedly in an arbitrary order. For example:
 
 1\. Cloudy is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Cloudy | Sprinkler = true,Rain = false). (Shortly, we will show how to calculate this distribution.) Suppose the result is Cloudy = false . Then the new current state is \[false , true, false , true\].
 
-2\. Rain is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Rain |Cloudy = false ,Sprinkler = true,WetGrass = true). Sup- pose this yields Rain = true . The new current state is \[false, true , true, true \].
+2\. Rain is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Rain |Cloudy = false ,Sprinkler = true,WetGrass = true). Suppose this yields Rain = true . The new current state is \[false, true , true, true \].
 
 Each state visited during this process is a sample that contributes to the estimate for the query variable Rain . If the process visits 20 states where Rain is true and 60 states where Rain is false, then the answer to the query is NORMALIZE(〈20, 60〉) = 〈0.25, 0.75〉. The complete algorithm is shown in Figure 14.16.
 
 **Why Gibbs sampling works**
 
-We will now show that Gibbs sampling returns consistent estimates for posterior probabil- ities. The material in this section is quite technical, but the basic claim is straightforward: _the sampling process settles into a “dynamic equilibrium” in which the long-run fraction of time spent in each state is exactly proportional to its posterior probability._ This remarkable property follows from the specific **transition probability** with which the process moves fromTRANSITION
+We will now show that Gibbs sampling returns consistent estimates for posterior probabilities. The material in this section is quite technical, but the basic claim is straightforward: _the sampling process settles into a “dynamic equilibrium” in which the long-run fraction of time spent in each state is exactly proportional to its posterior probability._ This remarkable property follows from the specific **transition probability** with which the process moves fromTRANSITION
 
 PROBABILITY
 
@@ -2631,7 +2631,7 @@ initialize **x** with random values for the variables in **Z for** j = 1 to N **
 
 **N**\[x \]←**N**\[x \] + 1 where x is the value of X in **x return** NORMALIZE(**N**)
 
-**Figure 14.16** The Gibbs sampling algorithm for approximate inference in Bayesian net- works; this version cycles through the variables, but choosing variables at random also works.
+**Figure 14.16** The Gibbs sampling algorithm for approximate inference in Bayesian networks; this version cycles through the variables, but choosing variables at random also works.
 
 Let q(**x** → **x**′) be the probability that the process makes a transition from state **x** to state **x**′. This transition probability defines what is called a **Markov chain** on the state space.MARKOV CHAIN
 
@@ -2693,7 +2693,7 @@ where the last step follows because a transition from **x**′ is guaranteed to 
 
 actually a special case of the more general definition of Gibbs sampling, according to which each variable is sampled conditionally on the current values of _all_ the other variables. We start by showing that this general definition of Gibbs sampling satisfies the detailed balance equation with a stationary distribution equal to P (**x** | **e**), (the true posterior distribution on the nonevidence variables). Then, we simply observe that, for Bayesian networks, sampling conditionally on all variables is equivalent to sampling conditionally on the variable’s Markov blanket (see page 517).
 
-To analyze the general Gibbs sampler, which samples each Xi in turn with a transition probability qi that conditions on all the other variables, we define **X**i to be these other vari- ables (except the evidence variables); their values in the current state are **x**i. If we sample a new value x
+To analyze the general Gibbs sampler, which samples each Xi in turn with a transition probability qi that conditions on all the other variables, we define **X**i to be these other variables (except the evidence variables); their values in the current state are **x**i. If we sample a new value x
 
 ′
 
@@ -2725,7 +2725,7 @@ i, **x**i | **e**) (using the chain rule backward)
 
 We can think of the loop “**for each** Zi in **Z do**” in Figure 14.16 as defining one large transition probability q that is the sequential composition q1 ◦ q2 ◦ · · · ◦ qn of the transition probabilities for the individual variables. It is easy to show (Exercise 14.19) that if each of qi and qj has π as its stationary distribution, then the sequential composition qi ◦ qj does too; hence the transition probability q for the whole loop has P (**x** | **e**) as its stationary distribution. Finally, unless the CPTs contain probabilities of 0 or 1—which can cause the state space to become disconnected—it is easy to see that q is ergodic. Hence, the samples generated by Gibbs sampling will eventually be drawn from the true posterior distribution.
 
-The final step is to show how to perform the general Gibbs sampling step—sampling Xi from **P**(Xi | **x**i, **e**)—in a Bayesian network. Recall from page 517 that a variable is inde- pendent of all other variables given its Markov blanket; hence,
+The final step is to show how to perform the general Gibbs sampling step—sampling Xi from **P**(Xi | **x**i, **e**)—in a Bayesian network. Recall from page 517 that a variable is independent of all other variables given its Markov blanket; hence,
 
 P (x ′
 
@@ -2745,7 +2745,7 @@ Yj∈Children(Xi)
 
 P (yj | parents(Yj)) . (14.12)
 
-Hence, to flip each variable Xi conditioned on its Markov blanket, the number of multiplica- tions required is equal to the number of Xi’s children.  
+Hence, to flip each variable Xi conditioned on its Markov blanket, the number of multiplications required is equal to the number of Xi’s children.  
 
 Section 14.6. Relational and First-Order Probability Models 539
 
@@ -2775,9 +2775,9 @@ _Recommendation_(_C_1_, B_2) _Recommendation_(_C_2_, B_2)
 
 14.6 RELATIONAL AND FIRST-ORDER PROBABILITY MODELS
 
-In Chapter 8, we explained the representational advantages possessed by first-order logic in comparison to propositional logic. First-order logic commits to the existence of objects and relations among them and can express facts about _some_ or _all_ of the objects in a domain. This often results in representations that are vastly more concise than the equivalent propositional descriptions. Now, Bayesian networks are essentially propositional: the set of random vari- ables is fixed and finite, and each has a fixed domain of possible values. This fact limits the applicability of Bayesian networks. _If we can find a way to combine probability theory with the expressive power of first-order representations, we expect to be able to increase dramati- cally the range of problems that can be handled._
+In Chapter 8, we explained the representational advantages possessed by first-order logic in comparison to propositional logic. First-order logic commits to the existence of objects and relations among them and can express facts about _some_ or _all_ of the objects in a domain. This often results in representations that are vastly more concise than the equivalent propositional descriptions. Now, Bayesian networks are essentially propositional: the set of random variables is fixed and finite, and each has a fixed domain of possible values. This fact limits the applicability of Bayesian networks. _If we can find a way to combine probability theory with the expressive power of first-order representations, we expect to be able to increase dramatically the range of problems that can be handled._
 
-For example, suppose that an online book retailer would like to provide overall evalu- ations of products based on recommendations received from its customers. The evaluation will take the form of a posterior distribution over the quality of the book, given the avail- able evidence. The simplest solution to base the evaluation on the average recommendation, perhaps with a variance determined by the number of recommendations, but this fails to take into account the fact that some customers are kinder than others and some are less honest than others. Kind customers tend to give high recommendations even to fairly mediocre books, while dishonest customers give very high or very low recommendations for reasons other than quality—for example, they might work for a publisher.6
+For example, suppose that an online book retailer would like to provide overall evaluations of products based on recommendations received from its customers. The evaluation will take the form of a posterior distribution over the quality of the book, given the available evidence. The simplest solution to base the evaluation on the average recommendation, perhaps with a variance determined by the number of recommendations, but this fails to take into account the fact that some customers are kinder than others and some are less honest than others. Kind customers tend to give high recommendations even to fairly mediocre books, while dishonest customers give very high or very low recommendations for reasons other than quality—for example, they might work for a publisher.6
 
 For a single customer C1, recommending a single book B1, the Bayes net might look like the one shown in Figure 14.17(a). (Just as in Section 9.1, expressions with parentheses such as Honest(C1) are just fancy symbols—in this case, fancy names for random variables.)
 
@@ -2797,7 +2797,7 @@ with the intended meaning that a customer’s recommendation for a book depends 
 
 **14.6.1 Possible worlds**
 
-Recall from Chapter 13 that a probability model defines a set Ω of possible worlds with a probability P (ω) for each world ω. For Bayesian networks, the possible worlds are as- signments of values to variables; for the Boolean case in particular, the possible worlds are identical to those of propositional logic. For a first-order probability model, then, it seems we need the possible worlds to be those of first-order logic—that is, a set of objects with relations among them and an interpretation that maps constant symbols to objects, predicate symbols to relations, and function symbols to functions on those objects. (See Section 8.2.) The model also needs to define a probability for each such possible world, just as a Bayesian network defines a probability for each assignment of values to variables.
+Recall from Chapter 13 that a probability model defines a set Ω of possible worlds with a probability P (ω) for each world ω. For Bayesian networks, the possible worlds are assignments of values to variables; for the Boolean case in particular, the possible worlds are identical to those of propositional logic. For a first-order probability model, then, it seems we need the possible worlds to be those of first-order logic—that is, a set of objects with relations among them and an interpretation that maps constant symbols to objects, predicate symbols to relations, and function symbols to functions on those objects. (See Section 8.2.) The model also needs to define a probability for each such possible world, just as a Bayesian network defines a probability for each assignment of values to variables.
 
 Let us suppose, for a moment, that we have figured out how to do this. Then, as usual (see page 485), we can obtain the probability of any first-order logical sentence φ as a sum over the possible worlds where it is true:
 
@@ -2813,7 +2813,7 @@ Conditional probabilities P (φ | **e**) can be obtained similarly, so we can, i
 
 There is, however, a problem: the set of first-order models is infinite. We saw this explicitly in Figure 8.4 on page 293, which we show again in Figure 14.18 (top). This means that (1) the summation in Equation (14.13) could be infeasible, and (2) specifying a complete, consistent distribution over an infinite set of worlds could be very difficult.
 
-Section 14.6.2 explores one approach to dealing with this problem. The idea is to borrow not from the standard semantics of first-order logic but from the **database seman- tics** defined in Section 8.2.8 (page 299). The database semantics makes the **unique names assumption**—here, we adopt it for the constant symbols. It also assumes **domain closure**— there are no more objects than those that are named. We can then guarantee a finite set of possible worlds by making the set of objects in each world be exactly the set of constant  
+Section 14.6.2 explores one approach to dealing with this problem. The idea is to borrow not from the standard semantics of first-order logic but from the **database semantics** defined in Section 8.2.8 (page 299). The database semantics makes the **unique names assumption**—here, we adopt it for the constant symbols. It also assumes **domain closure**— there are no more objects than those that are named. We can then guarantee a finite set of possible worlds by making the set of objects in each world be exactly the set of constant  
 
 Section 14.6. Relational and First-Order Probability Models 541
 
@@ -2861,7 +2861,7 @@ PROBABILITY MODEL
 
 tween the semantics of RPMs and the database semantics introduced in Section 8.2.8 is that RPMs do not make the closed-world assumption—obviously, assuming that every unknown fact is false doesn’t make sense in a probabilistic reasoning system!
 
-When the underlying assumptions of database semantics fail to hold, RPMs won’t work well. For example, a book retailer might use an ISBN (International Standard Book Number) as a constant symbol to name each book, even though a given “logical” book (e.g., “Gone With the Wind”) may have several ISBNs. It would make sense to aggregate recommenda- tions across multiple ISBNs, but the retailer may not know for sure which ISBNs are really the same book. (Note that we are not reifying the _individual copies_ of the book, which might be necessary for used-book sales, car sales, and so on.) Worse still, each customer is iden- tified by a login ID, but a dishonest customer may have thousands of IDs! In the computer security field, these multiple IDs are called **sibyls** and their use to confound a reputation sys-SIBYL
+When the underlying assumptions of database semantics fail to hold, RPMs won’t work well. For example, a book retailer might use an ISBN (International Standard Book Number) as a constant symbol to name each book, even though a given “logical” book (e.g., “Gone With the Wind”) may have several ISBNs. It would make sense to aggregate recommendations across multiple ISBNs, but the retailer may not know for sure which ISBNs are really the same book. (Note that we are not reifying the _individual copies_ of the book, which might be necessary for used-book sales, car sales, and so on.) Worse still, each customer is identified by a login ID, but a dishonest customer may have thousands of IDs! In the computer security field, these multiple IDs are called **sibyls** and their use to confound a reputation sys-SIBYL
 
 tem is called a **sibyl attack**. Thus, even a simple application in a relatively well-defined,SIBYL ATTACK
 
@@ -2879,7 +2879,7 @@ same object). We need to bite the bullet and define probability models based on 
 
 Like first-order logic, RPMs have constant, function, and predicate symbols. (It turns out to be easier to view predicates as functions that return true or false .) We will also assume a **type signature** for each function, that is, a specification of the type of each argument and theTYPE SIGNATURE
 
-function’s value. If the type of each object is known, many spurious possible worlds are elim- inated by this mechanism. For the book-recommendation domain, the types are Customer
+function’s value. If the type of each object is known, many spurious possible worlds are eliminated by this mechanism. For the book-recommendation domain, the types are Customer
 
 and Book , and the type signatures for the functions and predicates are as follows:
 
@@ -2891,7 +2891,7 @@ Recommendation : Customer ×Book → {1, 2, 3, 4, 5}
 
 The constant symbols will be whatever customer and book names appear in the retailer’s data set. In the example given earlier (Figure 14.17(b)), these were C1, C2 and B1, B2.
 
-Given the constants and their types, together with the functions and their type signa- tures, the random variables of the RPM are obtained by instantiating each function with each possible combination of objects: Honest(C1), Quality(B2), Recommendation(C1, B2), and so on. These are exactly the variables appearing in Figure 14.17(b). Because each type has only finitely many instances, the number of basic random variables is also finite.
+Given the constants and their types, together with the functions and their type signatures, the random variables of the RPM are obtained by instantiating each function with each possible combination of objects: Honest(C1), Quality(B2), Recommendation(C1, B2), and so on. These are exactly the variables appearing in Figure 14.17(b). Because each type has only finitely many instances, the number of basic random variables is also finite.
 
 To complete the RPM, we have to write the dependencies that govern these random variables. There is one dependency statement for each function, where each argument of the function is a logical variable (i.e., a variable that ranges over objects, as in first-order logic):
 
@@ -2903,11 +2903,11 @@ Quality(b) ∼ 〈0.05, 0.2, 0.4, 0.2, 0.15〉
 
 Recommendation (c, b) ∼ RecCPT (Honest(c),Kindness(c),Quality(b))
 
-where RecCPT is a separately defined conditional distribution with 2× 5× 5= 50 rows, each with 5 entries. The semantics of the RPM can be obtained by instantiating these de- pendencies for all known constants, giving a Bayesian network (as in Figure 14.17(b)) that defines a joint distribution over the RPM’s random variables.8
+where RecCPT is a separately defined conditional distribution with 2× 5× 5= 50 rows, each with 5 entries. The semantics of the RPM can be obtained by instantiating these dependencies for all known constants, giving a Bayesian network (as in Figure 14.17(b)) that defines a joint distribution over the RPM’s random variables.8
 
 We can refine the model by introducing a **context-specific independence** to reflect theCONTEXT-SPECIFIC INDEPENDENCE
 
-fact that dishonest customers ignore quality when giving a recommendation; moreover, kind- ness plays no role in their decisions. A context-specific independence allows a variable to be independent of some of its parents given certain values of others; thus, Recommendation(c, b)
+fact that dishonest customers ignore quality when giving a recommendation; moreover, kindness plays no role in their decisions. A context-specific independence allows a variable to be independent of some of its parents given certain values of others; thus, Recommendation(c, b)
 
 is independent of Kindness(c) and Quality(b) when Honest(c)= false :
 
@@ -2917,7 +2917,7 @@ HonestRecCPT (Kindness(c),Quality(b))
 
 **else** 〈0.4, 0.1, 0.0, 0.1, 0.4〉 .
 
-8 Some technical conditions must be observed to guarantee that the RPM defines a proper distribution. First, the dependencies must be _acyclic_, otherwise the resulting Bayesian network will have cycles and will not define a proper distribution. Second, the dependencies must be _well-founded_, that is, there can be no infinite ancestor chains, such as might arise from recursive dependencies. Under some circumstances (see Exercise 14.6), a fixed- point calculation yields a well-defined probability model for a recursive RPM.  
+8 Some technical conditions must be observed to guarantee that the RPM defines a proper distribution. First, the dependencies must be _acyclic_, otherwise the resulting Bayesian network will have cycles and will not define a proper distribution. Second, the dependencies must be _well-founded_, that is, there can be no infinite ancestor chains, such as might arise from recursive dependencies. Under some circumstances (see Exercise 14.6), a fixedpoint calculation yields a well-defined probability model for a recursive RPM.  
 
 Section 14.6. Relational and First-Order Probability Models 543
 
@@ -2955,31 +2955,31 @@ which of Fan(C1, A1) and Fan(C1, A2) actually gets to influence the recommendati
 
 UNCERTAINTY
 
-In case you are wondering how the system can possibly work out who the author of B2 is: consider the possibility that three other customers are fans of A1 (and have no other favorite authors in common) and all three have given B2 a 5, even though most other cus- tomers find it quite dismal. In that case, it is extremely likely that A1 is the author of B2.  
+In case you are wondering how the system can possibly work out who the author of B2 is: consider the possibility that three other customers are fans of A1 (and have no other favorite authors in common) and all three have given B2 a 5, even though most other customers find it quite dismal. In that case, it is extremely likely that A1 is the author of B2.  
 
 
 
-The emergence of sophisticated reasoning like this from an RPM model of just a few lines is an intriguing example of how probabilistic influences spread through the web of intercon- nections among objects in the model. As more dependencies and more objects are added, the picture conveyed by the posterior distribution often becomes clearer and clearer.
+The emergence of sophisticated reasoning like this from an RPM model of just a few lines is an intriguing example of how probabilistic influences spread through the web of interconnections among objects in the model. As more dependencies and more objects are added, the picture conveyed by the posterior distribution often becomes clearer and clearer.
 
 The next question is how to do inference in RPMs. One approach is to collect the evidence and query and the constant symbols therein, construct the equivalent Bayes net, and apply any of the inference methods discussed in this chapter. This technique is called **unrolling**. The obvious drawback is that the resulting Bayes net may be very large. Further-UNROLLING
 
 more, if there are many candidate objects for an unknown relation or function—for example, the unknown author of B2—then some variables in the network may have many parents.
 
-Fortunately, much can be done to improve on generic inference algorithms. First, the presence of repeated substructure in the unrolled Bayes net means that many of the factors constructed during variable elimination (and similar kinds of tables constructed by cluster- ing algorithms) will be identical; effective caching schemes have yielded speedups of three orders of magnitude for large networks. Second, inference methods developed to take advan- tage of context-specific independence in Bayes nets find many applications in RPMs. Third, MCMC inference algorithms have some interesting properties when applied to RPMs with relational uncertainty. MCMC works by sampling complete possible worlds, so in each state the relational structure is completely known. In the example given earlier, each MCMC state would specify the value of Author(B2), and so the other potential authors are no longer par- ents of the recommendation nodes for B2. For MCMC, then, relational uncertainty causes no increase in network complexity; instead, the MCMC process includes transitions that change the relational structure, and hence the dependency structure, of the unrolled network.
+Fortunately, much can be done to improve on generic inference algorithms. First, the presence of repeated substructure in the unrolled Bayes net means that many of the factors constructed during variable elimination (and similar kinds of tables constructed by clustering algorithms) will be identical; effective caching schemes have yielded speedups of three orders of magnitude for large networks. Second, inference methods developed to take advantage of context-specific independence in Bayes nets find many applications in RPMs. Third, MCMC inference algorithms have some interesting properties when applied to RPMs with relational uncertainty. MCMC works by sampling complete possible worlds, so in each state the relational structure is completely known. In the example given earlier, each MCMC state would specify the value of Author(B2), and so the other potential authors are no longer parents of the recommendation nodes for B2. For MCMC, then, relational uncertainty causes no increase in network complexity; instead, the MCMC process includes transitions that change the relational structure, and hence the dependency structure, of the unrolled network.
 
-All of the methods just described assume that the RPM has to be partially or completely unrolled into a Bayesian network. This is exactly analogous to the method of **proposition- alization** for first-order logical inference. (See page 322.) Resolution theorem-provers and logic programming systems avoid propositionalizing by instantiating the logical variables only as needed to make the inference go through; that is, they _lift_ the inference process above the level of ground propositional sentences and make each lifted step do the work of many ground steps. The same idea applied in probabilistic inference. For example, in the variable elimination algorithm, a lifted factor can represent an entire set of ground factors that assign probabilities to random variables in the RPM, where those random variables differ only in the constant symbols used to construct them. The details of this method are beyond the scope of this book, but references are given at the end of the chapter.
+All of the methods just described assume that the RPM has to be partially or completely unrolled into a Bayesian network. This is exactly analogous to the method of **propositionalization** for first-order logical inference. (See page 322.) Resolution theorem-provers and logic programming systems avoid propositionalizing by instantiating the logical variables only as needed to make the inference go through; that is, they _lift_ the inference process above the level of ground propositional sentences and make each lifted step do the work of many ground steps. The same idea applied in probabilistic inference. For example, in the variable elimination algorithm, a lifted factor can represent an entire set of ground factors that assign probabilities to random variables in the RPM, where those random variables differ only in the constant symbols used to construct them. The details of this method are beyond the scope of this book, but references are given at the end of the chapter.
 
 **14.6.3 Open-universe probability models**
 
-We argued earlier that database semantics was appropriate for situations in which we know exactly the set of relevant objects that exist and can identify them unambiguously. (In partic- ular, all observations about an object are correctly associated with the constant symbol that names it.) In many real-world settings, however, these assumptions are simply untenable. We gave the examples of multiple ISBNs and sibyl attacks in the book-recommendation domain (to which we will return in a moment), but the phenomenon is far more pervasive:  
+We argued earlier that database semantics was appropriate for situations in which we know exactly the set of relevant objects that exist and can identify them unambiguously. (In particular, all observations about an object are correctly associated with the constant symbol that names it.) In many real-world settings, however, these assumptions are simply untenable. We gave the examples of multiple ISBNs and sibyl attacks in the book-recommendation domain (to which we will return in a moment), but the phenomenon is far more pervasive:  
 
 Section 14.6. Relational and First-Order Probability Models 545
 
-• A vision system doesn’t know what exists, if anything, around the next corner, and may not know if the object it sees now is the same one it saw a few minutes ago.
+- A vision system doesn’t know what exists, if anything, around the next corner, and may not know if the object it sees now is the same one it saw a few minutes ago.
 
-• A text-understanding system does not know in advance the entities that will be featured in a text, and must reason about whether phrases such as “Mary,” “Dr. Smith,” “she,” “his cardiologist,” “his mother,” and so on refer to the same object.
+- A text-understanding system does not know in advance the entities that will be featured in a text, and must reason about whether phrases such as “Mary,” “Dr. Smith,” “she,” “his cardiologist,” “his mother,” and so on refer to the same object.
 
-• An intelligence analyst hunting for spies never knows how many spies there really are and can only guess whether various pseudonyms, phone numbers, and sightings belong to the same individual.
+- An intelligence analyst hunting for spies never knows how many spies there really are and can only guess whether various pseudonyms, phone numbers, and sightings belong to the same individual.
 
 In fact, a major part of human cognition seems to require learning what objects exist and being able to connect observations—which almost never come with unique IDs attached—to hypothesized objects in the world.
 
@@ -3011,27 +3011,27 @@ e (x).
 
 
 
-Subject to technical conditions of acyclicity and well-foundedness similar to those for RPMs, open-universe models of this kind define a unique distribution over possible worlds. Furthermore, there exist inference algorithms such that, for every such well-defined model and every first-order query, the answer returned approaches the true posterior arbitrarily closely in the limit. There are some tricky issues involved in designing these algorithms. For example, an MCMC algorithm cannot sample directly in the space of possible worlds when the size of those worlds is unbounded; instead, it samples finite, partial worlds, rely- ing on the fact that only finitely many objects can be relevant to the query in distinct ways. Moreover, transitions must allow for merging two objects into one or splitting one into two. (Details are given in the references at the end of the chapter.) Despite these complications, the basic principle established in Equation (14.13) still holds: the probability of any sentence is well defined and can be calculated.
+Subject to technical conditions of acyclicity and well-foundedness similar to those for RPMs, open-universe models of this kind define a unique distribution over possible worlds. Furthermore, there exist inference algorithms such that, for every such well-defined model and every first-order query, the answer returned approaches the true posterior arbitrarily closely in the limit. There are some tricky issues involved in designing these algorithms. For example, an MCMC algorithm cannot sample directly in the space of possible worlds when the size of those worlds is unbounded; instead, it samples finite, partial worlds, relying on the fact that only finitely many objects can be relevant to the query in distinct ways. Moreover, transitions must allow for merging two objects into one or splitting one into two. (Details are given in the references at the end of the chapter.) Despite these complications, the basic principle established in Equation (14.13) still holds: the probability of any sentence is well defined and can be calculated.
 
-Research in this area is still at an early stage, but already it is becoming clear that first- order probabilistic reasoning yields a tremendous increase in the effectiveness of AI systems at handling uncertain information. Potential applications include those mentioned above— computer vision, text understanding, and intelligence analysis—as well as many other kinds of sensor interpretation.
+Research in this area is still at an early stage, but already it is becoming clear that firstorder probabilistic reasoning yields a tremendous increase in the effectiveness of AI systems at handling uncertain information. Potential applications include those mentioned above— computer vision, text understanding, and intelligence analysis—as well as many other kinds of sensor interpretation.
 
 14.7 OTHER APPROACHES TO UNCERTAIN REASONING
 
-Other sciences (e.g., physics, genetics, and economics) have long favored probability as a model for uncertainty. In 1819, Pierre Laplace said, “Probability theory is nothing but com- mon sense reduced to calculation.” In 1850, James Maxwell said, “The true logic for this world is the calculus of Probabilities, which takes account of the magnitude of the probabil- ity which is, or ought to be, in a reasonable man’s mind.”
+Other sciences (e.g., physics, genetics, and economics) have long favored probability as a model for uncertainty. In 1819, Pierre Laplace said, “Probability theory is nothing but common sense reduced to calculation.” In 1850, James Maxwell said, “The true logic for this world is the calculus of Probabilities, which takes account of the magnitude of the probability which is, or ought to be, in a reasonable man’s mind.”
 
-Given this long tradition, it is perhaps surprising that AI has considered many alterna- tives to probability. The earliest expert systems of the 1970s ignored uncertainty and used strict logical reasoning, but it soon became clear that this was impractical for most real-world domains. The next generation of expert systems (especially in medical domains) used prob- abilistic techniques. Initial results were promising, but they did not scale up because of the exponential number of probabilities required in the full joint distribution. (Efficient Bayesian network algorithms were unknown then.) As a result, probabilistic approaches fell out of favor from roughly 1975 to 1988, and a variety of alternatives to probability were tried for a variety of reasons:
+Given this long tradition, it is perhaps surprising that AI has considered many alternatives to probability. The earliest expert systems of the 1970s ignored uncertainty and used strict logical reasoning, but it soon became clear that this was impractical for most real-world domains. The next generation of expert systems (especially in medical domains) used probabilistic techniques. Initial results were promising, but they did not scale up because of the exponential number of probabilities required in the full joint distribution. (Efficient Bayesian network algorithms were unknown then.) As a result, probabilistic approaches fell out of favor from roughly 1975 to 1988, and a variety of alternatives to probability were tried for a variety of reasons:
 
-• One common view is that probability theory is essentially numerical, whereas human judgmental reasoning is more “qualitative.” Certainly, we are not consciously aware of doing numerical calculations of degrees of belief. (Neither are we aware of doing unification, yet we seem to be capable of some kind of logical reasoning.) It might be that we have some kind of numerical degrees of belief encoded directly in strengths of connections and activations in our neurons. In that case, the difficulty of conscious access to those strengths is not surprising. One should also note that qualitative reason-  
+- One common view is that probability theory is essentially numerical, whereas human judgmental reasoning is more “qualitative.” Certainly, we are not consciously aware of doing numerical calculations of degrees of belief. (Neither are we aware of doing unification, yet we seem to be capable of some kind of logical reasoning.) It might be that we have some kind of numerical degrees of belief encoded directly in strengths of connections and activations in our neurons. In that case, the difficulty of conscious access to those strengths is not surprising. One should also note that qualitative reason 
 
 Section 14.7. Other Approaches to Uncertain Reasoning 547
 
-ing mechanisms can be built directly on top of probability theory, so the “no numbers” argument against probability has little force. Nonetheless, some qualitative schemes have a good deal of appeal in their own right. One of the best studied is **default rea- soning**, which treats conclusions not as “believed to a certain degree,” but as “believed until a better reason is found to believe something else.” Default reasoning is covered in Chapter 12.
+ing mechanisms can be built directly on top of probability theory, so the “no numbers” argument against probability has little force. Nonetheless, some qualitative schemes have a good deal of appeal in their own right. One of the best studied is **default reasoning**, which treats conclusions not as “believed to a certain degree,” but as “believed until a better reason is found to believe something else.” Default reasoning is covered in Chapter 12.
 
-• **Rule-based** approaches to uncertainty have also been tried. Such approaches hope to build on the success of logical rule-based systems, but add a sort of “fudge factor” to each rule to accommodate uncertainty. These methods were developed in the mid-1970s and formed the basis for a large number of expert systems in medicine and other areas.
+- **Rule-based** approaches to uncertainty have also been tried. Such approaches hope to build on the success of logical rule-based systems, but add a sort of “fudge factor” to each rule to accommodate uncertainty. These methods were developed in the mid-1970s and formed the basis for a large number of expert systems in medicine and other areas.
 
-• One area that we have not addressed so far is the question of **ignorance**, as opposed to uncertainty. Consider the flipping of a coin. If we know that the coin is fair, then a probability of 0.5 for heads is reasonable. If we know that the coin is biased, but we do not know which way, then 0.5 for heads is again reasonable. Obviously, the two cases are different, yet the outcome probability seems not to distinguish them. The **Dempster–Shafer theory** uses **interval-valued** degrees of belief to represent an agent’s knowledge of the probability of a proposition.
+- One area that we have not addressed so far is the question of **ignorance**, as opposed to uncertainty. Consider the flipping of a coin. If we know that the coin is fair, then a probability of 0.5 for heads is reasonable. If we know that the coin is biased, but we do not know which way, then 0.5 for heads is again reasonable. Obviously, the two cases are different, yet the outcome probability seems not to distinguish them. The **Dempster–Shafer theory** uses **interval-valued** degrees of belief to represent an agent’s knowledge of the probability of a proposition.
 
-• Probability makes the same ontological commitment as logic: that propositions are true or false in the world, even if the agent is uncertain as to which is the case. Researchers in **fuzzy logic** have proposed an ontology that allows **vagueness**: that a proposition can be “sort of” true. Vagueness and uncertainty are in fact orthogonal issues.
+- Probability makes the same ontological commitment as logic: that propositions are true or false in the world, even if the agent is uncertain as to which is the case. Researchers in **fuzzy logic** have proposed an ontology that allows **vagueness**: that a proposition can be “sort of” true. Vagueness and uncertainty are in fact orthogonal issues.
 
 The next three subsections treat some of these approaches in slightly more depth. We will not provide detailed technical material, but we cite references for further study.
 
@@ -3039,15 +3039,15 @@ The next three subsections treat some of these approaches in slightly more depth
 
 Rule-based systems emerged from early work on practical and intuitive systems for logical inference. Logical systems in general, and logical rule-based systems in particular, have three desirable properties:
 
-• **Locality**: In logical systems, whenever we have a rule of the form A ⇒ B, we canLOCALITY
+- **Locality**: In logical systems, whenever we have a rule of the form A ⇒ B, we canLOCALITY
 
 conclude B, given evidence A, _without worrying about any other rules._ In probabilistic systems, we need to consider _all_ the evidence.
 
-• **Detachment**: Once a logical proof is found for a proposition B, the proposition can beDETACHMENT
+- **Detachment**: Once a logical proof is found for a proposition B, the proposition can beDETACHMENT
 
 used regardless of how it was derived. That is, it can be **detached** from its justification. In dealing with probabilities, on the other hand, the source of the evidence for a belief is important for subsequent reasoning.
 
-• **Truth-functionality**: In logic, the truth of complex sentences can be computed fromTRUTH- FUNCTIONALITY
+- **Truth-functionality**: In logic, the truth of complex sentences can be computed fromTRUTHFUNCTIONALITY
 
 the truth of the components. Probability combination does not work this way, except under strong global independence assumptions.
 
@@ -3057,7 +3057,7 @@ There have been several attempts to devise uncertain reasoning schemes that reta
 
 are also truth-functional; for example, the degree of belief in A∨B is a function of the belief in A and the belief in B.
 
-The bad news for rule-based systems is that the properties of _locality, detachment, and truth-functionality are simply not appropriate for uncertain reasoning._ Let us look at truth- functionality first. Let H1 be the event that a fair coin flip comes up heads, let T1 be the event that the coin comes up tails on that same flip, and let H2 be the event that the coin comes up heads on a second flip. Clearly, all three events have the same probability, 0.5, and so a truth-functional system must assign the same belief to the disjunction of any two of them. But we can see that the probability of the disjunction depends on the events themselves and not just on their probabilities:
+The bad news for rule-based systems is that the properties of _locality, detachment, and truth-functionality are simply not appropriate for uncertain reasoning._ Let us look at truthfunctionality first. Let H1 be the event that a fair coin flip comes up heads, let T1 be the event that the coin comes up tails on that same flip, and let H2 be the event that the coin comes up heads on a second flip. Clearly, all three events have the same probability, 0.5, and so a truth-functional system must assign the same belief to the disjunction of any two of them. But we can see that the probability of the disjunction depends on the events themselves and not just on their probabilities:
 
 P (A) P (B) P (A ∨B)
 
@@ -3067,7 +3067,7 @@ P (H1) = 0.5 P (T1) = 0.5 P (H1 ∨ T1) = 1.00
 
 P (H2) = 0.5 P (H1 ∨H2) = 0.75
 
-It gets worse when we chain evidence together. Truth-functional systems have **rules** of the form A %→ B that allow us to compute the belief in B as a function of the belief in the rule and the belief in A. Both forward- and backward-chaining systems can be devised. The belief in the rule is assumed to be constant and is usually specified by the knowledge engineer—for example, as A %→0.9 B.
+It gets worse when we chain evidence together. Truth-functional systems have **rules** of the form A %→ B that allow us to compute the belief in B as a function of the belief in the rule and the belief in A. Both forwardand backward-chaining systems can be devised. The belief in the rule is assumed to be constant and is usually specified by the knowledge engineer—for example, as A %→0.9 B.
 
 Consider the wet-grass situation from Figure 14.12(a) (page 529). If we wanted to be able to do both causal and diagnostic reasoning, we would need the two rules
 
@@ -3081,13 +3081,13 @@ Sprinkler %→ WetGrass and WetGrass %→ Rain .
 
 Suppose we see that the sprinkler is on. Chaining forward through our rules, this increases the belief that the grass will be wet, which in turn increases the belief that it is raining. But this is ridiculous: the fact that the sprinkler is on explains away the wet grass and should _reduce_ the belief in rain. A truth-functional system acts as if it also believes Sprinkler %→ Rain .
 
-Given these difficulties, how can truth-functional systems be made useful in practice? The answer lies in restricting the task and in carefully engineering the rule base so that un- desirable interactions do not occur. The most famous example of a truth-functional system for uncertain reasoning is the **certainty factors** model, which was developed for the MYCINCERTAINTY FACTOR
+Given these difficulties, how can truth-functional systems be made useful in practice? The answer lies in restricting the task and in carefully engineering the rule base so that undesirable interactions do not occur. The most famous example of a truth-functional system for uncertain reasoning is the **certainty factors** model, which was developed for the MYCINCERTAINTY FACTOR
 
-medical diagnosis program and was widely used in expert systems of the late 1970s and 1980s. Almost all uses of certainty factors involved rule sets that were either purely diagnos- tic (as in MYCIN) or purely causal. Furthermore, evidence was entered only at the “roots” of the rule set, and most rule sets were singly connected. Heckerman (1986) has shown that,  
+medical diagnosis program and was widely used in expert systems of the late 1970s and 1980s. Almost all uses of certainty factors involved rule sets that were either purely diagnostic (as in MYCIN) or purely causal. Furthermore, evidence was entered only at the “roots” of the rule set, and most rule sets were singly connected. Heckerman (1986) has shown that,  
 
 Section 14.7. Other Approaches to Uncertain Reasoning 549
 
-under these circumstances, a minor variation on certainty-factor inference was exactly equiv- alent to Bayesian inference on polytrees. In other circumstances, certainty factors could yield disastrously incorrect degrees of belief through overcounting of evidence. As rule sets be- came larger, undesirable interactions between rules became more common, and practitioners found that the certainty factors of many other rules had to be “tweaked” when new rules were added. For these reasons, Bayesian networks have largely supplanted rule-based methods for uncertain reasoning.
+under these circumstances, a minor variation on certainty-factor inference was exactly equivalent to Bayesian inference on polytrees. In other circumstances, certainty factors could yield disastrously incorrect degrees of belief through overcounting of evidence. As rule sets became larger, undesirable interactions between rules became more common, and practitioners found that the certainty factors of many other rules had to be “tweaked” when new rules were added. For these reasons, Bayesian networks have largely supplanted rule-based methods for uncertain reasoning.
 
 **14.7.2 Representing ignorance: Dempster–Shafer theory**
 
@@ -3107,7 +3107,7 @@ The masses still must add to 1 over all possible events. Bel(A) is defined to be
 
 and 1− Bel(¬A)—is often interpreted as bounding the probability of A. As with default reasoning, there is a problem in connecting beliefs to actions. Whenever
 
-there is a gap in the beliefs, then a decision problem can be defined such that a Dempster– Shafer system is unable to make a decision. In fact, the notion of utility in the Dempster– Shafer model is not yet well understood because the meanings of masses and beliefs them- selves have yet to be understood. Pearl (1988) has argued that Bel(A) should be interpreted not as a degree of belief in A but as the probability assigned to all the possible worlds (now interpreted as logical theories) in which A is _provable_. While there are cases in which this quantity might be of interest, it is not the same as the probability that A is true.
+there is a gap in the beliefs, then a decision problem can be defined such that a Dempster– Shafer system is unable to make a decision. In fact, the notion of utility in the Dempster– Shafer model is not yet well understood because the meanings of masses and beliefs themselves have yet to be understood. Pearl (1988) has argued that Bel(A) should be interpreted not as a degree of belief in A but as the probability assigned to all the possible worlds (now interpreted as logical theories) in which A is _provable_. While there are cases in which this quantity might be of interest, it is not the same as the probability that A is true.
 
 A Bayesian analysis of the coin-flipping example would suggest that no new formalism is necessary to handle such cases. The model would have two variables: the Bias of the coin (a number between 0 and 1, where 0 is a coin that always shows tails and 1 a coin that always shows heads) and the outcome of the next Flip. The prior probability distribution for Bias  
 
@@ -3149,13 +3149,13 @@ Fuzzy logic is therefore a truth-functional system—a fact that causes serious 
 
 **Fuzzy control** is a methodology for constructing control systems in which the mappingFUZZY CONTROL
 
-between real-valued input and output parameters is represented by fuzzy rules. Fuzzy con- trol has been very successful in commercial products such as automatic transmissions, video  
+between real-valued input and output parameters is represented by fuzzy rules. Fuzzy control has been very successful in commercial products such as automatic transmissions, video  
 
 Section 14.8. Summary 551
 
 cameras, and electric shavers. Critics (see, e.g., Elkan, 1993) argue that these applications are successful because they have small rule bases, no chaining of inferences, and tunable parameters that can be adjusted to improve the system’s performance. The fact that they are implemented with fuzzy operators might be incidental to their success; the key is simply to provide a concise and intuitive way to specify a smoothly interpolated, real-valued function.
 
-There have been attempts to provide an explanation of fuzzy logic in terms of probabil- ity theory. One idea is to view assertions such as “Nate is Tall” as discrete observations made concerning a continuous hidden variable, Nate’s actual Height . The probability model speci- fies P (Observer says Nate is tall | Height), perhaps using a **probit distribution** as described on page 522. A posterior distribution over Nate’s height can then be calculated in the usual way, for example, if the model is part of a hybrid Bayesian network. Such an approach is not truth-functional, of course. For example, the conditional distribution
+There have been attempts to provide an explanation of fuzzy logic in terms of probability theory. One idea is to view assertions such as “Nate is Tall” as discrete observations made concerning a continuous hidden variable, Nate’s actual Height . The probability model specifies P (Observer says Nate is tall | Height), perhaps using a **probit distribution** as described on page 522. A posterior distribution over Nate’s height can then be calculated in the usual way, for example, if the model is part of a hybrid Bayesian network. Such an approach is not truth-functional, of course. For example, the conditional distribution
 
 P (Observer says Nate is tall and heavy | Height ,Weight)
 
@@ -3165,39 +3165,39 @@ Fuzzy predicates can also be given a probabilistic interpretation in terms of **
 
 is a random set whose possible values are sets of people. The probability P (Tall = S1), where S1 is some particular set of people, is the probability that exactly that set would be identified as “tall” by an observer. Then the probability that “Nate is tall” is the sum of the probabilities of all the sets of which Nate is a member.
 
-Both the hybrid Bayesian network approach and the random sets approach appear to capture aspects of fuzziness without introducing degrees of truth. Nonetheless, there remain many open issues concerning the proper representation of linguistic observations and contin- uous quantities—issues that have been neglected by most outside the fuzzy community.
+Both the hybrid Bayesian network approach and the random sets approach appear to capture aspects of fuzziness without introducing degrees of truth. Nonetheless, there remain many open issues concerning the proper representation of linguistic observations and continuous quantities—issues that have been neglected by most outside the fuzzy community.
 
 14.8 SUMMARY
 
 This chapter has described **Bayesian networks**, a well-developed representation for uncertain knowledge. Bayesian networks play a role roughly analogous to that of propositional logic for definite knowledge.
 
-• A Bayesian network is a directed acyclic graph whose nodes correspond to random variables; each node has a conditional distribution for the node, given its parents.
+- A Bayesian network is a directed acyclic graph whose nodes correspond to random variables; each node has a conditional distribution for the node, given its parents.
 
-• Bayesian networks provide a concise way to represent **conditional independence** rela- tionships in the domain.
+- Bayesian networks provide a concise way to represent **conditional independence** relationships in the domain.
 
-• A Bayesian network specifies a full joint distribution; each joint entry is defined as the product of the corresponding entries in the local conditional distributions. A Bayesian network is often exponentially smaller than an explicitly enumerated joint distribution.
+- A Bayesian network specifies a full joint distribution; each joint entry is defined as the product of the corresponding entries in the local conditional distributions. A Bayesian network is often exponentially smaller than an explicitly enumerated joint distribution.
 
-• Many conditional distributions can be represented compactly by canonical families of  
+- Many conditional distributions can be represented compactly by canonical families of  
 
 
 
 distributions. **Hybrid Bayesian networks**, which include both discrete and continuous variables, use a variety of canonical distributions.
 
-• Inference in Bayesian networks means computing the probability distribution of a set of query variables, given a set of evidence variables. Exact inference algorithms, such as **variable elimination**, evaluate sums of products of conditional probabilities as effi- ciently as possible.
+- Inference in Bayesian networks means computing the probability distribution of a set of query variables, given a set of evidence variables. Exact inference algorithms, such as **variable elimination**, evaluate sums of products of conditional probabilities as efficiently as possible.
 
-• In **polytrees** (singly connected networks), exact inference takes time linear in the size of the network. In the general case, the problem is intractable.
+- In **polytrees** (singly connected networks), exact inference takes time linear in the size of the network. In the general case, the problem is intractable.
 
-• Stochastic approximation techniques such as **likelihood weighting** and **Markov chain Monte Carlo** can give reasonable estimates of the true posterior probabilities in a net- work and can cope with much larger networks than can exact algorithms.
+- Stochastic approximation techniques such as **likelihood weighting** and **Markov chain Monte Carlo** can give reasonable estimates of the true posterior probabilities in a network and can cope with much larger networks than can exact algorithms.
 
-• Probability theory can be combined with representational ideas from first-order logic to produce very powerful systems for reasoning under uncertainty. **Relational probabil- ity models** (RPMs) include representational restrictions that guarantee a well-defined probability distribution that can be expressed as an equivalent Bayesian network. **Open- universe probability models** handle **existence** and **identity uncertainty**, defining prob- abilty distributions over the infinite space of first-order possible worlds.
+- Probability theory can be combined with representational ideas from first-order logic to produce very powerful systems for reasoning under uncertainty. **Relational probability models** (RPMs) include representational restrictions that guarantee a well-defined probability distribution that can be expressed as an equivalent Bayesian network. **Openuniverse probability models** handle **existence** and **identity uncertainty**, defining probabilty distributions over the infinite space of first-order possible worlds.
 
-• Various alternative systems for reasoning under uncertainty have been suggested. Gen- erally speaking, **truth-functional** systems are not well suited for such reasoning.
+- Various alternative systems for reasoning under uncertainty have been suggested. Generally speaking, **truth-functional** systems are not well suited for such reasoning.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-The use of networks to represent probabilistic information began early in the 20th century, with the work of Sewall Wright on the probabilistic analysis of genetic inheritance and an- imal growth factors (Wright, 1921, 1934). I. J. Good (1961), in collaboration with Alan Turing, developed probabilistic representations and Bayesian inference methods that could be regarded as a forerunner of modern Bayesian networks—although the paper is not often cited in this context.10 The same paper is the original source for the noisy-OR model.
+The use of networks to represent probabilistic information began early in the 20th century, with the work of Sewall Wright on the probabilistic analysis of genetic inheritance and animal growth factors (Wright, 1921, 1934). I. J. Good (1961), in collaboration with Alan Turing, developed probabilistic representations and Bayesian inference methods that could be regarded as a forerunner of modern Bayesian networks—although the paper is not often cited in this context.10 The same paper is the original source for the noisy-OR model.
 
-The **influence diagram** representation for decision problems, which incorporated a DAG representation for random variables, was used in decision analysis in the late 1970s (see Chapter 16), but only enumeration was used for evaluation. Judea Pearl developed the message-passing method for carrying out inference in tree networks (Pearl, 1982a) and poly- tree networks (Kim and Pearl, 1983) and explained the importance of causal rather than di- agnostic probability models, in contrast to the certainty-factor systems then in vogue.
+The **influence diagram** representation for decision problems, which incorporated a DAG representation for random variables, was used in decision analysis in the late 1970s (see Chapter 16), but only enumeration was used for evaluation. Judea Pearl developed the message-passing method for carrying out inference in tree networks (Pearl, 1982a) and polytree networks (Kim and Pearl, 1983) and explained the importance of causal rather than diagnostic probability models, in contrast to the certainty-factor systems then in vogue.
 
 The first expert system using Bayesian networks was CONVINCE (Kim, 1983). Early applications in medicine included the MUNIN system for diagnosing neuromuscular disorders (Andersen _et al._, 1989) and the PATHFINDER system for pathology (Heckerman, 1991). The CPCS system (Pradhan _et al._, 1994) is a Bayesian network for internal medicine consisting
 
@@ -3207,35 +3207,35 @@ Bibliographical and Historical Notes 553
 
 of 448 nodes, 906 links and 8,254 conditional probability values. (The front cover shows a portion of the network.)
 
-Applications in engineering include the Electric Power Research Institute’s work on monitoring power generators (Morjaria _et al._, 1995), NASA’s work on displaying time- critical information at Mission Control in Houston (Horvitz and Barry, 1995), and the general field of **network tomography**, which aims to infer unobserved local properties of nodes and links in the Internet from observations of end-to-end message performance (Castro _et al._, 2004). Perhaps the most widely used Bayesian network systems have been the diagnosis- and-repair modules (e.g., the Printer Wizard) in Microsoft Windows (Breese and Heckerman, 1996) and the Office Assistant in Microsoft Office (Horvitz _et al._, 1998). Another impor- tant application area is biology: Bayesian networks have been used for identifying human genes by reference to mouse genes (Zhang _et al._, 2003), inferring cellular networks Friedman (2004), and many other tasks in bioinformatics. We could go on, but instead we’ll refer you to Pourret _et al._ (2008), a 400-page guide to applications of Bayesian networks.
+Applications in engineering include the Electric Power Research Institute’s work on monitoring power generators (Morjaria _et al._, 1995), NASA’s work on displaying timecritical information at Mission Control in Houston (Horvitz and Barry, 1995), and the general field of **network tomography**, which aims to infer unobserved local properties of nodes and links in the Internet from observations of end-to-end message performance (Castro _et al._, 2004). Perhaps the most widely used Bayesian network systems have been the diagnosisand-repair modules (e.g., the Printer Wizard) in Microsoft Windows (Breese and Heckerman, 1996) and the Office Assistant in Microsoft Office (Horvitz _et al._, 1998). Another important application area is biology: Bayesian networks have been used for identifying human genes by reference to mouse genes (Zhang _et al._, 2003), inferring cellular networks Friedman (2004), and many other tasks in bioinformatics. We could go on, but instead we’ll refer you to Pourret _et al._ (2008), a 400-page guide to applications of Bayesian networks.
 
 Ross Shachter (1986), working in the influence diagram community, developed the first complete algorithm for general Bayesian networks. His method was based on goal-directed reduction of the network using posterior-preserving transformations. Pearl (1986) developed a clustering algorithm for exact inference in general Bayesian networks, utilizing a conversion to a directed polytree of clusters in which message passing was used to achieve consistency over variables shared between clusters. A similar approach, developed by the statisticians David Spiegelhalter and Steffen Lauritzen (Lauritzen and Spiegelhalter, 1988), is based on conversion to an undirected form of graphical model called a **Markov network**. This ap-MARKOV NETWORK
 
 proach is implemented in the HUGIN system, an efficient and widely used tool for uncertain reasoning (Andersen _et al._, 1989). Boutilier _et al._ (1996) show how to exploit context-specific independence in clustering algorithms.
 
-The basic idea of variable elimination—that repeated computations within the overall sum-of-products expression can be avoided by caching—appeared in the symbolic probabilis- tic inference (SPI) algorithm (Shachter _et al._, 1990). The elimination algorithm we describe is closest to that developed by Zhang and Poole (1994). Criteria for pruning irrelevant vari- ables were developed by Geiger _et al._ (1990) and by Lauritzen _et al._ (1990); the criterion we give is a simple special case of these. Dechter (1999) shows how the variable elimination idea is essentially identical to **nonserial dynamic programming** (Bertele and Brioschi, 1972), anNONSERIAL DYNAMIC
+The basic idea of variable elimination—that repeated computations within the overall sum-of-products expression can be avoided by caching—appeared in the symbolic probabilistic inference (SPI) algorithm (Shachter _et al._, 1990). The elimination algorithm we describe is closest to that developed by Zhang and Poole (1994). Criteria for pruning irrelevant variables were developed by Geiger _et al._ (1990) and by Lauritzen _et al._ (1990); the criterion we give is a simple special case of these. Dechter (1999) shows how the variable elimination idea is essentially identical to **nonserial dynamic programming** (Bertele and Brioschi, 1972), anNONSERIAL DYNAMIC
 
 PROGRAMMING
 
 algorithmic approach that can be applied to solve a range of inference problems in Bayesian networks—for example, finding the **most likely explanation** for a set of observations. This connects Bayesian network algorithms to related methods for solving CSPs and gives a direct measure of the complexity of exact inference in terms of the tree width of the network. Wexler and Meek (2009) describe a method of preventing exponential growth in the size of factors computed in variable elimination; their algorithm breaks down large factors into products of smaller factors and simultaneously computes an error bound for the resulting approximation.
 
-The inclusion of continuous random variables in Bayesian networks was considered by Pearl (1988) and Shachter and Kenley (1989); these papers discussed networks contain- ing only continuous variables with linear Gaussian distributions. The inclusion of discrete variables has been investigated by Lauritzen and Wermuth (1989) and implemented in the  
+The inclusion of continuous random variables in Bayesian networks was considered by Pearl (1988) and Shachter and Kenley (1989); these papers discussed networks containing only continuous variables with linear Gaussian distributions. The inclusion of discrete variables has been investigated by Lauritzen and Wermuth (1989) and implemented in the  
 
 
 
-cHUGIN system (Olesen, 1993). Further analysis of linear Gaussian models, with connec- tions to many other models used in statistics, appears in Roweis and Ghahramani (1999) The probit distribution is usually attributed to Gaddum (1933) and Bliss (1934), although it had been discovered several times in the 19th century. Bliss’s work was expanded considerably by Finney (1947). The probit has been used widely for modeling discrete choice phenomena and can be extended to handle more than two choices (Daganzo, 1979). The logit model was introduced by Berkson (1944); initially much derided, it eventually became more popular than the probit model. Bishop (1995) gives a simple justification for its use.
+cHUGIN system (Olesen, 1993). Further analysis of linear Gaussian models, with connections to many other models used in statistics, appears in Roweis and Ghahramani (1999) The probit distribution is usually attributed to Gaddum (1933) and Bliss (1934), although it had been discovered several times in the 19th century. Bliss’s work was expanded considerably by Finney (1947). The probit has been used widely for modeling discrete choice phenomena and can be extended to handle more than two choices (Daganzo, 1979). The logit model was introduced by Berkson (1944); initially much derided, it eventually became more popular than the probit model. Bishop (1995) gives a simple justification for its use.
 
-Cooper (1990) showed that the general problem of inference in unconstrained Bayesian networks is NP-hard, and Paul Dagum and Mike Luby (1993) showed the corresponding approximation problem to be NP-hard. Space complexity is also a serious problem in both clustering and variable elimination methods. The method of **cutset conditioning**, which was developed for CSPs in Chapter 6, avoids the construction of exponentially large tables. In a Bayesian network, a cutset is a set of nodes that, when instantiated, reduces the remaining nodes to a polytree that can be solved in linear time and space. The query is answered by summing over all the instantiations of the cutset, so the overall space requirement is still lin- ear (Pearl, 1988). Darwiche (2001) describes a recursive conditioning algorithm that allows a complete range of space/time tradeoffs.
+Cooper (1990) showed that the general problem of inference in unconstrained Bayesian networks is NP-hard, and Paul Dagum and Mike Luby (1993) showed the corresponding approximation problem to be NP-hard. Space complexity is also a serious problem in both clustering and variable elimination methods. The method of **cutset conditioning**, which was developed for CSPs in Chapter 6, avoids the construction of exponentially large tables. In a Bayesian network, a cutset is a set of nodes that, when instantiated, reduces the remaining nodes to a polytree that can be solved in linear time and space. The query is answered by summing over all the instantiations of the cutset, so the overall space requirement is still linear (Pearl, 1988). Darwiche (2001) describes a recursive conditioning algorithm that allows a complete range of space/time tradeoffs.
 
 The development of fast approximation algorithms for Bayesian network inference is a very active area, with contributions from statistics, computer science, and physics. The rejection sampling method is a general technique that is long known to statisticians; it was first applied to Bayesian networks by Max Henrion (1988), who called it **logic sampling**. Likelihood weighting, which was developed by Fung and Chang (1989) and Shachter and Peot (1989), is an example of the well-known statistical method of **importance sampling**. Cheng and Druzdzel (2000) describe an adaptive version of likelihood weighting that works well even when the evidence has very low prior likelihood.
 
-Markov chain Monte Carlo (MCMC) algorithms began with the Metropolis algorithm, due to Metropolis _et al._ (1953), which was also the source of the simulated annealing algo- rithm described in Chapter 4. The Gibbs sampler was devised by Geman and Geman (1984) for inference in undirected Markov networks. The application of MCMC to Bayesian net- works is due to Pearl (1987). The papers collected by Gilks _et al._ (1996) cover a wide variety of applications of MCMC, several of which were developed in the well-known BUGS pack- age (Gilks _et al._, 1994).
+Markov chain Monte Carlo (MCMC) algorithms began with the Metropolis algorithm, due to Metropolis _et al._ (1953), which was also the source of the simulated annealing algorithm described in Chapter 4. The Gibbs sampler was devised by Geman and Geman (1984) for inference in undirected Markov networks. The application of MCMC to Bayesian networks is due to Pearl (1987). The papers collected by Gilks _et al._ (1996) cover a wide variety of applications of MCMC, several of which were developed in the well-known BUGS package (Gilks _et al._, 1994).
 
 There are two very important families of approximation methods that we did not cover in the chapter. The first is the family of **variational approximation** methods, which can beVARIATIONAL
 
 APPROXIMATION
 
-used to simplify complex calculations of all kinds. The basic idea is to propose a reduced version of the original problem that is simple to work with, but that resembles the original problem as closely as possible. The reduced problem is described by some **variational pa- rameters λ** that are adjusted to minimize a distance function D between the original andVARIATIONAL
+used to simplify complex calculations of all kinds. The basic idea is to propose a reduced version of the original problem that is simple to work with, but that resembles the original problem as closely as possible. The reduced problem is described by some **variational parameters λ** that are adjusted to minimize a distance function D between the original andVARIATIONAL
 
 PARAMETER
 
@@ -3245,9 +3245,9 @@ ational approximation in which the individual variables making up the model are 
 
 Bibliographical and Historical Notes 555
 
-to be completely independent. This idea was applied to solve large undirected Markov net- works (Peterson and Anderson, 1987; Parisi, 1988). Saul _et al._ (1996) developed the math- ematical foundations for applying variational methods to Bayesian networks and obtained accurate lower-bound approximations for sigmoid networks with the use of mean-field meth- ods. Jaakkola and Jordan (1996) extended the methodology to obtain both lower and upper bounds. Since these early papers, variational methods have been applied to many specific families of models. The remarkable paper by Wainwright and Jordan (2008) provides a uni- fying theoretical analysis of the literature on variational methods.
+to be completely independent. This idea was applied to solve large undirected Markov networks (Peterson and Anderson, 1987; Parisi, 1988). Saul _et al._ (1996) developed the mathematical foundations for applying variational methods to Bayesian networks and obtained accurate lower-bound approximations for sigmoid networks with the use of mean-field methods. Jaakkola and Jordan (1996) extended the methodology to obtain both lower and upper bounds. Since these early papers, variational methods have been applied to many specific families of models. The remarkable paper by Wainwright and Jordan (2008) provides a unifying theoretical analysis of the literature on variational methods.
 
-A second important family of approximation algorithms is based on Pearl’s polytree message-passing algorithm (1982a). This algorithm can be applied to general networks, as suggested by Pearl (1988). The results might be incorrect, or the algorithm might fail to ter- minate, but in many cases, the values obtained are close to the true values. Little attention was paid to this so-called **belief propagation** (or BP) approach until McEliece _et al._ (1998)BELIEF
+A second important family of approximation algorithms is based on Pearl’s polytree message-passing algorithm (1982a). This algorithm can be applied to general networks, as suggested by Pearl (1988). The results might be incorrect, or the algorithm might fail to terminate, but in many cases, the values obtained are close to the true values. Little attention was paid to this so-called **belief propagation** (or BP) approach until McEliece _et al._ (1998)BELIEF
 
 PROPAGATION
 
@@ -3255,33 +3255,33 @@ observed that message passing in a multiply connected Bayesian network was exact
 
 vided a major breakthrough in the design of efficient error-correcting codes. The implication is that BP is both fast and accurate on the very large and very highly connected networks used for decoding and might therefore be useful more generally. Murphy _et al._ (1999) presented a promising empirical study of BP’s performance, and Weiss and Freeman (2001) established strong convergence results for BP on linear Gaussian networks. Weiss (2000b) shows how an approximation called loopy belief propagation works, and when the approximation is correct. Yedidia _et al._ (2005) made further connections between loopy propagation and ideas from statistical physics.
 
-The connection between probability and first-order languages was first studied by Car- nap (1950). Gaifman (1964) and Scott and Krauss (1966) defined a language in which proba- bilities could be associated with first-order sentences and for which models were probability measures on possible worlds. Within AI, this idea was developed for propositional logic by Nilsson (1986) and for first-order logic by Halpern (1990). The first extensive inves- tigation of knowledge representation issues in such languages was carried out by Bacchus (1990). The basic idea is that each sentence in the knowledge base expressed a _constraint_ on the distribution over possible worlds; one sentence entails another if it expresses a stronger constraint. For example, the sentence ∀x P (Hungry(x)) > 0.2 rules out distributions in which any object is hungry with probability less than 0.2; thus, it entails the sentence ∀x P (Hungry(x)) > 0.1. It turns out that writing a _consistent_ set of sentences in these languages is quite difficult and constructing a unique probability model nearly impossible unless one adopts the representation approach of Bayesian networks by writing suitable sen- tences about conditional probabilities.
+The connection between probability and first-order languages was first studied by Carnap (1950). Gaifman (1964) and Scott and Krauss (1966) defined a language in which probabilities could be associated with first-order sentences and for which models were probability measures on possible worlds. Within AI, this idea was developed for propositional logic by Nilsson (1986) and for first-order logic by Halpern (1990). The first extensive investigation of knowledge representation issues in such languages was carried out by Bacchus (1990). The basic idea is that each sentence in the knowledge base expressed a _constraint_ on the distribution over possible worlds; one sentence entails another if it expresses a stronger constraint. For example, the sentence ∀x P (Hungry(x)) > 0.2 rules out distributions in which any object is hungry with probability less than 0.2; thus, it entails the sentence ∀x P (Hungry(x)) > 0.1. It turns out that writing a _consistent_ set of sentences in these languages is quite difficult and constructing a unique probability model nearly impossible unless one adopts the representation approach of Bayesian networks by writing suitable sentences about conditional probabilities.
 
-Beginning in the early 1990s, researchers working on complex applications noticed the expressive limitations of Bayesian networks and developed various languages for writing “templates” with logical variables, from which large networks could be constructed automat- ically for each problem instance (Breese, 1992; Wellman _et al._, 1992). The most important such language was BUGS (Bayesian inference Using Gibbs Sampling) (Gilks _et al._, 1994), which combined Bayesian networks with the **indexed random variable** notation common inINDEXED RANDOM
+Beginning in the early 1990s, researchers working on complex applications noticed the expressive limitations of Bayesian networks and developed various languages for writing “templates” with logical variables, from which large networks could be constructed automatically for each problem instance (Breese, 1992; Wellman _et al._, 1992). The most important such language was BUGS (Bayesian inference Using Gibbs Sampling) (Gilks _et al._, 1994), which combined Bayesian networks with the **indexed random variable** notation common inINDEXED RANDOM
 
 VARIABLE  
 
 
 
-statistics. (In BUGS, an indexed random variable looks like X\[i\], where i has a defined integer range.) These languages inherited the key property of Bayesian networks: every well-formed knowledge base defines a unique, consistent probability model. Languages with well-defined semantics based on unique names and domain closure drew on the representational capa- bilities of logic programming (Poole, 1993; Sato and Kameya, 1997; Kersting _et al._, 2000) and semantic networks (Koller and Pfeffer, 1998; Pfeffer, 2000). Pfeffer (2007) went on to develop IBAL, which represents first-order probability models as probabilistic programs in a programming language extended with a randomization primitive. Another important thread was the combination of relational and first-order notations with (undirected) Markov net- works (Taskar _et al._, 2002; Domingos and Richardson, 2004), where the emphasis has been less on knowledge representation and more on learning from large data sets.
+statistics. (In BUGS, an indexed random variable looks like X\[i\], where i has a defined integer range.) These languages inherited the key property of Bayesian networks: every well-formed knowledge base defines a unique, consistent probability model. Languages with well-defined semantics based on unique names and domain closure drew on the representational capabilities of logic programming (Poole, 1993; Sato and Kameya, 1997; Kersting _et al._, 2000) and semantic networks (Koller and Pfeffer, 1998; Pfeffer, 2000). Pfeffer (2007) went on to develop IBAL, which represents first-order probability models as probabilistic programs in a programming language extended with a randomization primitive. Another important thread was the combination of relational and first-order notations with (undirected) Markov networks (Taskar _et al._, 2002; Domingos and Richardson, 2004), where the emphasis has been less on knowledge representation and more on learning from large data sets.
 
 Initially, inference in these models was performed by generating an equivalent Bayesian network. Pfeffer _et al._ (1999) introduced a variable elimination algorithm that cached each computed factor for reuse by later computations involving the same relations but different objects, thereby realizing some of the computational gains of lifting. The first truly lifted inference algorithm was a lifted form of variable elimination described by Poole (2003) and subsequently improved by de Salvo Braz _et al._ (2007). Further advances, including cases where certain aggregate probabilities can be computed in closed form, are described by Milch _et al._ (2008) and Kisynski and Poole (2009). Pasula and Russell (2001) studied the application of MCMC to avoid building the complete equivalent Bayes net in cases of relational and identity uncertainty. Getoor and Taskar (2007) collect many important papers on first-order probability models and their use in machine learning.
 
-Probabilistic reasoning about identity uncertainty has two distinct origins. In statis- tics, the problem of **record linkage** arises when data records do not contain standard uniqueRECORD LINKAGE
+Probabilistic reasoning about identity uncertainty has two distinct origins. In statistics, the problem of **record linkage** arises when data records do not contain standard uniqueRECORD LINKAGE
 
-identifiers—for example, various citations of this book might name its first author “Stuart Russell” or “S. J. Russell” or even “Stewart Russle,” and other authors may use the some of the same names. Literally hundreds of companies exist solely to solve record linkage prob- lems in financial, medical, census, and other data. Probabilistic analysis goes back to work by Dunn (1946); the Fellegi–Sunter model (1969), which is essentially naive Bayes applied to matching, still dominates current practice. The second origin for work on identity uncer- tainty is multitarget tracking (Sittler, 1964), which we cover in Chapter 15. For most of its history, work in symbolic AI assumed erroneously that sensors could supply sentences with unique identifiers for objects. The issue was studied in the context of language understanding by Charniak and Goldman (1992) and in the context of surveillance by (Huang and Russell, 1998) and Pasula _et al._ (1999). Pasula _et al._ (2003) developed a complex generative model for authors, papers, and citation strings, involving both relational and identity uncertainty, and demonstrated high accuracy for citation information extraction. The first formally de- fined language for open-universe probability models was BLOG (Milch _et al._, 2005), which came with a complete (albeit slow) MCMC inference algorithm for all well-defined mdoels. (The program code faintly visible on the front cover of this book is part of a BLOG model for detecting nuclear explosions from seismic signals as part of the UN Comprehensive Test Ban Treaty verification regime.) Laskey (2008) describes another open-universe modeling language called **multi-entity Bayesian networks**.  
+identifiers—for example, various citations of this book might name its first author “Stuart Russell” or “S. J. Russell” or even “Stewart Russle,” and other authors may use the some of the same names. Literally hundreds of companies exist solely to solve record linkage problems in financial, medical, census, and other data. Probabilistic analysis goes back to work by Dunn (1946); the Fellegi–Sunter model (1969), which is essentially naive Bayes applied to matching, still dominates current practice. The second origin for work on identity uncertainty is multitarget tracking (Sittler, 1964), which we cover in Chapter 15. For most of its history, work in symbolic AI assumed erroneously that sensors could supply sentences with unique identifiers for objects. The issue was studied in the context of language understanding by Charniak and Goldman (1992) and in the context of surveillance by (Huang and Russell, 1998) and Pasula _et al._ (1999). Pasula _et al._ (2003) developed a complex generative model for authors, papers, and citation strings, involving both relational and identity uncertainty, and demonstrated high accuracy for citation information extraction. The first formally defined language for open-universe probability models was BLOG (Milch _et al._, 2005), which came with a complete (albeit slow) MCMC inference algorithm for all well-defined mdoels. (The program code faintly visible on the front cover of this book is part of a BLOG model for detecting nuclear explosions from seismic signals as part of the UN Comprehensive Test Ban Treaty verification regime.) Laskey (2008) describes another open-universe modeling language called **multi-entity Bayesian networks**.  
 
 Bibliographical and Historical Notes 557
 
-As explained in Chapter 13, early probabilistic systems fell out of favor in the early 1970s, leaving a partial vacuum to be filled by alternative methods. Certainty factors were invented for use in the medical expert system MYCIN (Shortliffe, 1976), which was intended both as an engineering solution and as a model of human judgment under uncertainty. The collection _Rule-Based Expert Systems_ (Buchanan and Shortliffe, 1984) provides a complete overview of MYCIN and its descendants (see also Stefik, 1995). David Heckerman (1986) showed that a slightly modified version of certainty factor calculations gives correct proba- bilistic results in some cases, but results in serious overcounting of evidence in other cases. The PROSPECTOR expert system (Duda _et al._, 1979) used a rule-based approach in which the rules were justified by a (seldom tenable) global independence assumption.
+As explained in Chapter 13, early probabilistic systems fell out of favor in the early 1970s, leaving a partial vacuum to be filled by alternative methods. Certainty factors were invented for use in the medical expert system MYCIN (Shortliffe, 1976), which was intended both as an engineering solution and as a model of human judgment under uncertainty. The collection _Rule-Based Expert Systems_ (Buchanan and Shortliffe, 1984) provides a complete overview of MYCIN and its descendants (see also Stefik, 1995). David Heckerman (1986) showed that a slightly modified version of certainty factor calculations gives correct probabilistic results in some cases, but results in serious overcounting of evidence in other cases. The PROSPECTOR expert system (Duda _et al._, 1979) used a rule-based approach in which the rules were justified by a (seldom tenable) global independence assumption.
 
-Dempster–Shafer theory originates with a paper by Arthur Dempster (1968) proposing a generalization of probability to interval values and a combination rule for using them. Later work by Glenn Shafer (1976) led to the Dempster-Shafer theory’s being viewed as a compet- ing approach to probability. Pearl (1988) and Ruspini _et al._ (1992) analyze the relationship between the Dempster–Shafer theory and standard probability theory.
+Dempster–Shafer theory originates with a paper by Arthur Dempster (1968) proposing a generalization of probability to interval values and a combination rule for using them. Later work by Glenn Shafer (1976) led to the Dempster-Shafer theory’s being viewed as a competing approach to probability. Pearl (1988) and Ruspini _et al._ (1992) analyze the relationship between the Dempster–Shafer theory and standard probability theory.
 
 Fuzzy sets were developed by Lotfi Zadeh (1965) in response to the perceived difficulty of providing exact inputs to intelligent systems. The text by Zimmermann (2001) provides a thorough introduction to fuzzy set theory; papers on fuzzy applications are collected in Zimmermann (1999). As we mentioned in the text, fuzzy logic has often been perceived incorrectly as a direct competitor to probability theory, whereas in fact it addresses a different set of issues. **Possibility theory** (Zadeh, 1978) was introduced to handle uncertainty in fuzzyPOSSIBILITY THEORY
 
 systems and has much in common with probability. Dubois and Prade (1994) survey the connections between possibility theory and probability theory.
 
-The resurgence of probability depended mainly on Pearl’s development of Bayesian networks as a method for representing and using conditional independence information. This resurgence did not come without a fight; Peter Cheeseman’s (1985) pugnacious “In Defense of Probability” and his later article “An Inquiry into Computer Understanding” (Cheeseman, 1988, with commentaries) give something of the flavor of the debate. Eugene Charniak helped present the ideas to AI researchers with a popular article, “Bayesian networks with- out tears”11 (1991), and book (1993). The book by Dean and Wellman (1991) also helped introduce Bayesian networks to AI researchers. One of the principal philosophical objections of the logicists was that the numerical calculations that probability theory was thought to re- quire were not apparent to introspection and presumed an unrealistic level of precision in our uncertain knowledge. The development of **qualitative probabilistic networks** (Wellman, 1990a) provided a purely qualitative abstraction of Bayesian networks, using the notion of positive and negative influences between variables. Wellman shows that in many cases such information is sufficient for optimal decision making without the need for the precise spec- ification of probability values. Goldszmidt and Pearl (1996) take a similar approach. Work by Adnan Darwiche and Matt Ginsberg (1992) extracts the basic properties of conditioning and evidence combination from probability theory and shows that they can also be applied in logical and default reasoning. Often, programs speak louder than words, and the ready avail-
+The resurgence of probability depended mainly on Pearl’s development of Bayesian networks as a method for representing and using conditional independence information. This resurgence did not come without a fight; Peter Cheeseman’s (1985) pugnacious “In Defense of Probability” and his later article “An Inquiry into Computer Understanding” (Cheeseman, 1988, with commentaries) give something of the flavor of the debate. Eugene Charniak helped present the ideas to AI researchers with a popular article, “Bayesian networks without tears”11 (1991), and book (1993). The book by Dean and Wellman (1991) also helped introduce Bayesian networks to AI researchers. One of the principal philosophical objections of the logicists was that the numerical calculations that probability theory was thought to require were not apparent to introspection and presumed an unrealistic level of precision in our uncertain knowledge. The development of **qualitative probabilistic networks** (Wellman, 1990a) provided a purely qualitative abstraction of Bayesian networks, using the notion of positive and negative influences between variables. Wellman shows that in many cases such information is sufficient for optimal decision making without the need for the precise specification of probability values. Goldszmidt and Pearl (1996) take a similar approach. Work by Adnan Darwiche and Matt Ginsberg (1992) extracts the basic properties of conditioning and evidence combination from probability theory and shows that they can also be applied in logical and default reasoning. Often, programs speak louder than words, and the ready avail-
 
 11 The title of the original version of the article was “Pearl for swine.”  
 
@@ -3289,7 +3289,7 @@ The resurgence of probability depended mainly on Pearl’s development of Bayesi
 
 ability of high-quality software such as the Bayes Net toolkit (Murphy, 2001) accelerated the adoption of the technology.
 
-The most important single publication in the growth of Bayesian networks was undoubt- edly the text _Probabilistic Reasoning in Intelligent Systems_ (Pearl, 1988). Several excellent texts (Lauritzen, 1996; Jensen, 2001; Korb and Nicholson, 2003; Jensen, 2007; Darwiche, 2009; Koller and Friedman, 2009) provide thorough treatments of the topics we have cov- ered in this chapter. New research on probabilistic reasoning appears both in mainstream AI journals, such as _Artificial Intelligence_ and the _Journal of AI Research_, and in more spe- cialized journals, such as the _International Journal of Approximate Reasoning_. Many papers on graphical models, which include Bayesian networks, appear in statistical journals. The proceedings of the conferences on Uncertainty in Artificial Intelligence (UAI), Neural Infor- mation Processing Systems (NIPS), and Artificial Intelligence and Statistics (AISTATS) are excellent sources for current research.
+The most important single publication in the growth of Bayesian networks was undoubtedly the text _Probabilistic Reasoning in Intelligent Systems_ (Pearl, 1988). Several excellent texts (Lauritzen, 1996; Jensen, 2001; Korb and Nicholson, 2003; Jensen, 2007; Darwiche, 2009; Koller and Friedman, 2009) provide thorough treatments of the topics we have covered in this chapter. New research on probabilistic reasoning appears both in mainstream AI journals, such as _Artificial Intelligence_ and the _Journal of AI Research_, and in more specialized journals, such as the _International Journal of Approximate Reasoning_. Many papers on graphical models, which include Bayesian networks, appear in statistical journals. The proceedings of the conferences on Uncertainty in Artificial Intelligence (UAI), Neural Information Processing Systems (NIPS), and Artificial Intelligence and Statistics (AISTATS) are excellent sources for current research.
 
 EXERCISES
 
@@ -3303,7 +3303,7 @@ EXERCISES
 
 from this definition.
 
-**a**. Consider a simple network X → Y → Z with three Boolean variables. Use Equa- tions (13.3) and (13.6) (pages 485 and 492) to express the conditional probability P (z | y) as the ratio of two sums, each over entries in the joint distribution **P**(X,Y,Z).
+**a**. Consider a simple network X → Y → Z with three Boolean variables. Use Equations (13.3) and (13.6) (pages 485 and 492) to express the conditional probability P (z | y) as the ratio of two sums, each over entries in the joint distribution **P**(X,Y,Z).
 
 **b**. Now use Equation (14.1) to write this expression in terms of the network parameters θ(X), θ(Y |X), and θ(Z |Y ).
 
@@ -3321,7 +3321,7 @@ Exercises 559
 
 **14.3** The operation of **arc reversal** in a Bayesian network allows us to change the directionARC REVERSAL
 
-of an arc X → Y while preserving the joint probability distribution that the network repre- sents (Shachter, 1986). Arc reversal may require introducing new arcs: all the parents of X
+of an arc X → Y while preserving the joint probability distribution that the network represents (Shachter, 1986). Arc reversal may require introducing new arcs: all the parents of X
 
 also become parents of Y , and all parents of Y also become parents of X.
 
@@ -3347,15 +3347,15 @@ Prove that the new network expresses the same joint distribution over all variab
 
 **a**. If no evidence is observed, are Burglary and Earthquake independent? Prove this from the numerical semantics and from the topological semantics.
 
-**b**. If we observe Alarm = true , are Burglary and Earthquake independent? Justify your answer by calculating whether the probabilities involved satisfy the definition of condi- tional independence.
+**b**. If we observe Alarm = true , are Burglary and Earthquake independent? Justify your answer by calculating whether the probabilities involved satisfy the definition of conditional independence.
 
-**14.5** Suppose that in a Bayesian network containing an unobserved variable Y , all the vari- ables in the Markov blanket MB(Y ) have been observed.
+**14.5** Suppose that in a Bayesian network containing an unobserved variable Y , all the variables in the Markov blanket MB(Y ) have been observed.
 
-**a**. Prove that removing the node Y from the network will not affect the posterior distribu- tion for any other unobserved variable in the network.
+**a**. Prove that removing the node Y from the network will not affect the posterior distribution for any other unobserved variable in the network.
 
 **b**. Discuss whether we can remove Y if we are planning to use (i) rejection sampling and (ii) likelihood weighting.
 
-**14.6** Let Hx be a random variable denoting the handedness of an individual x, with possible values l or r. A common hypothesis is that left- or right-handedness is inherited by a simple mechanism; that is, perhaps there is a gene Gx, also with values l or r, and perhaps actual handedness turns out mostly the same (with some probability s) as the gene an individual possesses. Furthermore, perhaps the gene itself is equally likely to be inherited from either of an individual’s parents, with a small nonzero probability m of a random mutation flipping the handedness.
+**14.6** Let Hx be a random variable denoting the handedness of an individual x, with possible values l or r. A common hypothesis is that leftor right-handedness is inherited by a simple mechanism; that is, perhaps there is a gene Gx, also with values l or r, and perhaps actual handedness turns out mostly the same (with some probability s) as the gene an individual possesses. Furthermore, perhaps the gene itself is equally likely to be inherited from either of an individual’s parents, with a small nonzero probability m of a random mutation flipping the handedness.
 
 **a**. Which of the three networks in Figure 14.20 claim that **P**(Gfather , Gmother , Gchild ) =
 
@@ -3391,13 +3391,13 @@ _childG_
 
 (a) (b) (c)
 
-**Figure 14.20** Three possible structures for a Bayesian network describing genetic inheri- tance of handedness.
+**Figure 14.20** Three possible structures for a Bayesian network describing genetic inheritance of handedness.
 
 **c**. Which of the three networks is the best description of the hypothesis?
 
 **d**. Write down the CPT for the Gchild node in network (a), in terms of s and m.
 
-**e**. Suppose that P (Gfather = l) = P (Gmother = l) = q. In network (a), derive an expres- sion for P (Gchild = l) in terms of m and q only, by conditioning on its parent nodes.
+**e**. Suppose that P (Gfather = l) = P (Gmother = l) = q. In network (a), derive an expression for P (Gchild = l) in terms of m and q only, by conditioning on its parent nodes.
 
 **f**. Under conditions of genetic equilibrium, we expect the distribution of genes to be the same across generations. Use this to calculate the value of q, and, given what you know about handedness in humans, explain why the hypothesis described at the beginning of this question must be wrong.
 
@@ -3451,7 +3451,7 @@ Exercises 561
 
 **d**. Suppose the alarm works correctly unless it is faulty, in which case it never sounds. Give the conditional probability table associated with A.
 
-**e**. Suppose the alarm and gauge are working and the alarm sounds. Calculate an expres- sion for the probability that the temperature of the core is too high, in terms of the various conditional probabilities in the network.  
+**e**. Suppose the alarm and gauge are working and the alarm sounds. Calculate an expression for the probability that the temperature of the core is too high, in terms of the various conditional probabilities in the network.  
 
 
 
@@ -3479,7 +3479,7 @@ _M_2_N_
 
 **14.12** Two astronomers in different parts of the world make measurements M1 and M2 of the number of stars N in some small region of the sky, using their telescopes. Normally, there is a small possibility e of error by up to one star in each direction. Each telescope can also (with a much smaller probability f ) be badly out of focus (events F1 and F2), in which case the scientist will undercount by three or more stars (or if N is less than 3, fail to detect any stars at all). Consider the three networks shown in Figure 14.22.
 
-**a**. Which of these Bayesian networks are correct (but not necessarily efficient) represen- tations of the preceding information?
+**a**. Which of these Bayesian networks are correct (but not necessarily efficient) representations of the preceding information?
 
 **b**. Which is the best network? Explain.
 
@@ -3489,7 +3489,7 @@ _M_2_N_
 
 **e**. What is the _most likely_ number of stars, given these observations? Explain how to compute this, or if it is not possible to compute, explain what additional information is needed and how it would affect the result.
 
-**14.13** Consider the network shown in Figure 14.22(ii), and assume that the two telescopes work identically. N ∈{1, 2, 3} and M1,M2 ∈{0, 1, 2, 3, 4}, with the symbolic CPTs as de- scribed in Exercise 14.12. Using the enumeration algorithm (Figure 14.9 on page 525), cal- culate the probability distribution **P**(N |M1 = 2,M2 = 2).
+**14.13** Consider the network shown in Figure 14.22(ii), and assume that the two telescopes work identically. N ∈{1, 2, 3} and M1,M2 ∈{0, 1, 2, 3, 4}, with the symbolic CPTs as described in Exercise 14.12. Using the enumeration algorithm (Figure 14.9 on page 525), calculate the probability distribution **P**(N |M1 = 2,M2 = 2).
 
 **14.14** Consider the Bayes net shown in Figure 14.23.
 
@@ -3585,7 +3585,7 @@ where Parents(Xi)= {Xi−1} for i= 2, . . . , n. What is the complexity of compu
 
 **14.16** Investigate the complexity of exact inference in general Bayesian networks:
 
-**a**. Prove that any 3-SAT problem can be reduced to exact inference in a Bayesian network constructed to represent the particular problem and hence that exact inference is NP-  
+**a**. Prove that any 3-SAT problem can be reduced to exact inference in a Bayesian network constructed to represent the particular problem and hence that exact inference is NP 
 
 
 
@@ -3619,7 +3619,7 @@ also Appendix A.) Explain how to calculate the cumulative distribution in O(k) t
 
 **14.19** This exercise explores the stationary distribution for Gibbs sampling methods.
 
-**a**. The convex composition \[α, q1; 1 − α, q2\] of q1 and q2 is a transition probability distri- bution that first chooses one of q1 and q2 with probabilities α and 1 − α, respectively, and then applies whichever is chosen. Prove that if q1 and q2 are in detailed balance with π, then their convex composition is also in detailed balance with π. (_Note_: this result justifies a variant of GIBBS-ASK in which variables are chosen at random rather than sampled in a fixed sequence.)
+**a**. The convex composition \[α, q1; 1 − α, q2\] of q1 and q2 is a transition probability distribution that first chooses one of q1 and q2 with probabilities α and 1 − α, respectively, and then applies whichever is chosen. Prove that if q1 and q2 are in detailed balance with π, then their convex composition is also in detailed balance with π. (_Note_: this result justifies a variant of GIBBS-ASK in which variables are chosen at random rather than sampled in a fixed sequence.)
 
 **b**. Prove that if each of q1 and q2 has π as its stationary distribution, then the sequential composition q = q1 ◦ q2 also has π as its stationary distribution.
 
@@ -3671,7 +3671,7 @@ _In which we try to interpret the present, understand the past, and perhaps pred
 
 Agents in partially observable environments must be able to keep track of the current state, to the extent that their sensors allow. In Section 4.4 we showed a methodology for doing that: an agent maintains a **belief state** that represents which states of the world are currently possible. From the belief state and a **transition model**, the agent can predict how the world might evolve in the next time step. From the percepts observed and a **sensor model**, the agent can update the belief state. This is a pervasive idea: in Chapter 4 belief states were represented by explicitly enumerated sets of states, whereas in Chapters 7 and 11 they were represented by logical formulas. Those approaches defined belief states in terms of which world states were _possible_, but could say nothing about which states were _likely_ or _unlikely_. In this chapter, we use probability theory to quantify the degree of belief in elements of the belief state.
 
-As we show in Section 15.1, time itself is handled in the same way as in Chapter 7: a changing world is modeled using a variable for each aspect of the world state _at each point in time_. The transition and sensor models may be uncertain: the transition model describes the probability distribution of the variables at time t, given the state of the world at past times, while the sensor model describes the probability of each percept at time t, given the current state of the world. Section 15.2 defines the basic inference tasks and describes the gen- eral structure of inference algorithms for temporal models. Then we describe three specific kinds of models: **hidden Markov models**, **Kalman filters,** and **dynamic Bayesian net- works** (which include hidden Markov models and Kalman filters as special cases). Finally, Section 15.6 examines the problems faced when keeping track of more than one thing.
+As we show in Section 15.1, time itself is handled in the same way as in Chapter 7: a changing world is modeled using a variable for each aspect of the world state _at each point in time_. The transition and sensor models may be uncertain: the transition model describes the probability distribution of the variables at time t, given the state of the world at past times, while the sensor model describes the probability of each percept at time t, given the current state of the world. Section 15.2 defines the basic inference tasks and describes the general structure of inference algorithms for temporal models. Then we describe three specific kinds of models: **hidden Markov models**, **Kalman filters,** and **dynamic Bayesian networks** (which include hidden Markov models and Kalman filters as special cases). Finally, Section 15.6 examines the problems faced when keeping track of more than one thing.
 
 15.1 TIME AND UNCERTAINTY
 
@@ -3681,7 +3681,7 @@ We have developed our techniques for probabilistic reasoning in the context of _
 
 Section 15.1. Time and Uncertainty 567
 
-Now consider a slightly different problem: treating a diabetic patient. As in the case of car repair, we have evidence such as recent insulin doses, food intake, blood sugar measure- ments, and other physical signs. The task is to assess the current state of the patient, including the actual blood sugar level and insulin level. Given this information, we can make a deci- sion about the patient’s food intake and insulin dose. Unlike the case of car repair, here the _dynamic_ aspects of the problem are essential. Blood sugar levels and measurements thereof can change rapidly over time, depending on recent food intake and insulin doses, metabolic activity, the time of day, and so on. To assess the current state from the history of evidence and to predict the outcomes of treatment actions, we must model these changes.
+Now consider a slightly different problem: treating a diabetic patient. As in the case of car repair, we have evidence such as recent insulin doses, food intake, blood sugar measurements, and other physical signs. The task is to assess the current state of the patient, including the actual blood sugar level and insulin level. Given this information, we can make a decision about the patient’s food intake and insulin dose. Unlike the case of car repair, here the _dynamic_ aspects of the problem are essential. Blood sugar levels and measurements thereof can change rapidly over time, depending on recent food intake and insulin doses, metabolic activity, the time of day, and so on. To assess the current state from the history of evidence and to predict the outcomes of treatment actions, we must model these changes.
 
 The same considerations arise in many other contexts, such as tracking the location of a robot, tracking the economic activity of a nation, and making sense of a spoken or written sequence of words. How can dynamic situations like these be modeled?
 
@@ -3691,7 +3691,7 @@ We view the world as a series of snapshots, or **time slices**, each of which co
 
 random variables, some observable and some not.1 For simplicity, we will assume that the same subset of variables is observable in each time slice (although this is not strictly necessary in anything that follows). We will use **X**t to denote the set of state variables at time t, which are assumed to be unobservable, and **E**t to denote the set of observable evidence variables. The observation at time t is **E**t = **e**t for some set of values **e**t.
 
-Consider the following example: You are the security guard stationed at a secret under- ground installation. You want to know whether it’s raining today, but your only access to the outside world occurs each morning when you see the director coming in with, or without, an umbrella. For each day t, the set **E**t thus contains a single evidence variable Umbrellat or Ut
+Consider the following example: You are the security guard stationed at a secret underground installation. You want to know whether it’s raining today, but your only access to the outside world occurs each morning when you see the director coming in with, or without, an umbrella. For each day t, the set **E**t thus contains a single evidence variable Umbrellat or Ut
 
 for short (whether the umbrella appears), and the set **X**t contains a single state variable Rain t
 
@@ -3721,7 +3721,7 @@ The transition model specifies the probability distribution over the latest stat
 
 ASSUMPTION
 
-that the current state depends on only a _finite fixed number_ of previous states. Processes sat- isfying this assumption were first studied in depth by the Russian statistician Andrei Markov (1856–1922) and are called **Markov processes** or **Markov chains**. They come in various fla-MARKOV PROCESS
+that the current state depends on only a _finite fixed number_ of previous states. Processes satisfying this assumption were first studied in depth by the Russian statistician Andrei Markov (1856–1922) and are called **Markov processes** or **Markov chains**. They come in various fla-MARKOV PROCESS
 
 vors; the simplest is the **first-order Markov process**, in which the current state depends onlyFIRST-ORDER MARKOV PROCESS
 
@@ -3729,7 +3729,7 @@ on the previous state and not on any earlier states. In other words, a state pro
 
 **P**(**X**t |**X**0:t−1) = **P**(**X**t |**X**t−1) . (15.1)
 
-Hence, in a first-order Markov process, the transition model is the conditional distribution **P**(**X**t |**X**t−1). The transition model for a second-order Markov process is the conditional distribution **P**(**X**t |**X**t−2, **X**t−1). Figure 15.1 shows the Bayesian network structures corre- sponding to first-order and second-order Markov processes.
+Hence, in a first-order Markov process, the transition model is the conditional distribution **P**(**X**t |**X**t−1). The transition model for a second-order Markov process is the conditional distribution **P**(**X**t |**X**t−2, **X**t−1). Figure 15.1 shows the Bayesian network structures corresponding to first-order and second-order Markov processes.
 
 Even with the Markov assumption there is still a problem: there are infinitely many possible values of t. Do we need to specify a different distribution for each time step? We avoid this problem by assuming that changes in the world state are caused by a **stationary process**—that is, a process of change that is governed by laws that do not themselves changeSTATIONARY
 
@@ -3737,7 +3737,7 @@ PROCESS
 
 over time. (Don’t confuse _stationary_ with _static_: in a _static_ process, the state itself does not change.) In the umbrella world, then, the conditional probability of rain, **P**(Rt |Rt−1), is the same for all t, and we only have to specify one conditional probability table.
 
-Now for the sensor model. The evidence variables **E**t _could_ depend on previous vari- ables as well as the current state variables, but any state that’s worth its salt should suffice to generate the current sensor values. Thus, we make a **sensor Markov assumption** as follows:SENSOR MARKOV
+Now for the sensor model. The evidence variables **E**t _could_ depend on previous variables as well as the current state variables, but any state that’s worth its salt should suffice to generate the current sensor values. Thus, we make a **sensor Markov assumption** as follows:SENSOR MARKOV
 
 ASSUMPTION
 
@@ -3769,7 +3769,7 @@ _tR tP_(_U_ ) 0.9_t_ 0.2_f_
 
 direction of the dependence between state and sensors: the arrows go from the actual state of the world to sensor values because the state of the world _causes_ the sensors to take on particular values: the rain _causes_ the umbrella to appear. (The inference process, of course, goes in the other direction; the distinction between the direction of modeled dependencies and the direction of inference is one of the principal advantages of Bayesian networks.)
 
-In addition to specifying the transition and sensor models, we need to say how every- thing gets started—the prior probability distribution at time 0, **P**(**X**0). With that, we have a specification of the complete joint distribution over all the variables, using Equation (14.2). For any t,
+In addition to specifying the transition and sensor models, we need to say how everything gets started—the prior probability distribution at time 0, **P**(**X**0). With that, we have a specification of the complete joint distribution over all the variables, using Equation (14.2). For any t,
 
 **P**(**X**0:t, **E**1:t) = **P**(**X**0)
 
@@ -3799,13 +3799,13 @@ Consider, for example, the problem of tracking a robot wandering randomly on the
 
 Having set up the structure of a generic temporal model, we can formulate the basic inference tasks that must be solved:
 
-• **Filtering**: This is the task of computing the **belief state**—the posterior distributionFILTERING
+- **Filtering**: This is the task of computing the **belief state**—the posterior distributionFILTERING
 
 BELIEF STATE over the most recent state—given all evidence to date. Filtering2 is also called **state estimation**. In our example, we wish to compute **P**(**X**t | **e**1:t). In the umbrella example,STATE ESTIMATION
 
 this would mean computing the probability of rain today, given all the observations of the umbrella carrier made so far. Filtering is what a rational agent does to keep track of the current state so that rational decisions can be made. It turns out that an almost identical calculation provides the likelihood of the evidence sequence, P (**e**1:t).
 
-• **Prediction**: This is the task of computing the posterior distribution over the _future_ state,PREDICTION
+- **Prediction**: This is the task of computing the posterior distribution over the _future_ state,PREDICTION
 
 given all evidence to date. That is, we wish to compute **P**(**X**t+k | **e**1:t) for some k > 0. In the umbrella example, this might mean computing the probability of rain three days from now, given all the observations to date. Prediction is useful for evaluating possible courses of action based on their expected outcomes.
 
@@ -3813,21 +3813,21 @@ given all evidence to date. That is, we wish to compute **P**(**X**t+k | **e**1:
 
 Section 15.2. Inference in Temporal Models 571
 
-• **Smoothing**: This is the task of computing the posterior distribution over a _past_ state,SMOOTHING
+- **Smoothing**: This is the task of computing the posterior distribution over a _past_ state,SMOOTHING
 
 given all evidence up to the present. That is, we wish to compute **P**(**X**k | **e**1:t) for some k
 
 such that 0 ≤ k < t. In the umbrella example, it might mean computing the probability that it rained last Wednesday, given all the observations of the umbrella carrier made up to today. Smoothing provides a better estimate of the state than was available at the time, because it incorporates more evidence.3
 
-• **Most likely explanation**: Given a sequence of observations, we might wish to find the sequence of states that is most likely to have generated those observations. That is, we wish to compute argmax**x**1:t
+- **Most likely explanation**: Given a sequence of observations, we might wish to find the sequence of states that is most likely to have generated those observations. That is, we wish to compute argmax**x**1:t
 
 P (**x**1:t | **e**1:t). For example, if the umbrella appears on each of the first three days and is absent on the fourth, then the most likely explanation is that it rained on the first three days and did not rain on the fourth. Algorithms for this task are useful in many applications, including speech recognition—where the aim is to find the most likely sequence of words, given a series of sounds—and the reconstruction of bit strings transmitted over a noisy channel.
 
 In addition to these inference tasks, we also have
 
-• **Learning**: The transition and sensor models, if not yet known, can be learned from observations. Just as with static Bayesian networks, dynamic Bayes net learning can be done as a by-product of inference. Inference provides an estimate of what transitions actually occurred and of what states generated the sensor readings, and these estimates can be used to update the models. The updated models provide new estimates, and the process iterates to convergence. The overall process is an instance of the expectation- maximization or **EM algorithm**. (See Section 20.3.)
+- **Learning**: The transition and sensor models, if not yet known, can be learned from observations. Just as with static Bayesian networks, dynamic Bayes net learning can be done as a by-product of inference. Inference provides an estimate of what transitions actually occurred and of what states generated the sensor readings, and these estimates can be used to update the models. The updated models provide new estimates, and the process iterates to convergence. The overall process is an instance of the expectationmaximization or **EM algorithm**. (See Section 20.3.)
 
-Note that learning requires smoothing, rather than filtering, because smoothing provides bet- ter estimates of the states of the process. Learning with filtering can fail to converge correctly; consider, for example, the problem of learning to solve murders: unless you are an eyewit- ness, smoothing is _always_ required to infer what happened at the murder scene from the observable variables.
+Note that learning requires smoothing, rather than filtering, because smoothing provides better estimates of the states of the process. Learning with filtering can fail to converge correctly; consider, for example, the problem of learning to solve murders: unless you are an eyewitness, smoothing is _always_ required to infer what happened at the murder scene from the observable variables.
 
 The remainder of this section describes generic algorithms for the four inference tasks, independent of the particular kind of model employed. Improvements specific to each model are described in subsequent sections.
 
@@ -3875,11 +3875,11 @@ Within the summation, the first factor comes from the transition model and the s
 
 where FORWARD implements the update described in Equation (15.5) and the process begins with **f**1:0 = **P**(**X**0). When all the state variables are discrete, the time for each update is constant (i.e., independent of t), and the space required is also constant. (The constants depend, of course, on the size of the state space and the specific type of the temporal model in question.) _The time and space requirements for updating must be constant if an agent with limited memory is to keep track of the current state distribution over an unbounded sequence of observations._
 
-Let us illustrate the filtering process for two steps in the basic umbrella example (Fig- ure 15.2.) That is, we will compute **P**(R2 |u1:2) as follows:
+Let us illustrate the filtering process for two steps in the basic umbrella example (Figure 15.2.) That is, we will compute **P**(R2 |u1:2) as follows:
 
-• On day 0, we have no observations, only the security guard’s prior beliefs; let’s assume that consists of **P**(R0) = 〈0.5, 0.5〉.
+- On day 0, we have no observations, only the security guard’s prior beliefs; let’s assume that consists of **P**(R0) = 〈0.5, 0.5〉.
 
-• On day 1, the umbrella appears, so U1 = true . The prediction from t = 0 to t = 1 is
+- On day 1, the umbrella appears, so U1 = true . The prediction from t = 0 to t = 1 is
 
 **P**(R1) =
 
@@ -3899,7 +3899,7 @@ Then the update step simply multiplies by the probability of the evidence for t 
 
 Section 15.2. Inference in Temporal Models 573
 
-• On day 2, the umbrella appears, so U2 = true . The prediction from t = 1 to t = 2 is
+- On day 2, the umbrella appears, so U2 = true . The prediction from t = 1 to t = 2 is
 
 **P**(R2 | u1) =
 
@@ -3917,7 +3917,7 @@ and updating it with the evidence for t = 2 gives
 
 \= α 〈0.565, 0.075〉 ≈ 〈0.883, 0.117〉 .
 
-Intuitively, the probability of rain increases from day 1 to day 2 because rain persists. Exer- cise 15.2(a) asks you to investigate this tendency further.
+Intuitively, the probability of rain increases from day 1 to day 2 because rain persists. Exercise 15.2(a) asks you to investigate this tendency further.
 
 The task of **prediction** can be seen simply as filtering without the addition of new evidence. In fact, the filtering process already incorporates a one-step prediction, and it is easy to derive the following recursive computation for predicting the state at t + k + 1 from a prediction for t + k:
 
@@ -3949,7 +3949,7 @@ L1:t = P (**e**1:t) =
 
 1:t(**x**t) . (15.7)
 
-Notice that the likelihood message represents the probabilities of longer and longer evidence sequences as time goes by and so becomes numerically smaller and smaller, leading to under- flow problems with floating-point arithmetic. This is an important problem in practice, but we shall not go into solutions here.  
+Notice that the likelihood message represents the probabilities of longer and longer evidence sequences as time goes by and so becomes numerically smaller and smaller, leading to underflow problems with floating-point arithmetic. This is an important problem in practice, but we shall not go into solutions here.  
 
 
 
@@ -3979,7 +3979,7 @@ As we said earlier, smoothing is the process of computing the distribution over 
 
 \= α **f**1:k× **b**k+1:t . (15.8)
 
-where “×” represents pointwise multiplication of vectors. Here we have defined a “back- ward” message **b**k+1:t = **P**(**e**k+1:t |**X**k), analogous to the forward message **f**1:k. The forward message **f**1:k can be computed by filtering forward from 1 to k, as given by Equation (15.5). It turns out that the backward message **b**k+1:t can be computed by a recursive process that runs _backward_ from t:
+where “×” represents pointwise multiplication of vectors. Here we have defined a “backward” message **b**k+1:t = **P**(**e**k+1:t |**X**k), analogous to the forward message **f**1:k. The forward message **f**1:k can be computed by filtering forward from 1 to k, as given by Equation (15.5). It turns out that the backward message **b**k+1:t can be computed by a recursive process that runs _backward_ from t:
 
 **P**(**e**k+1:t |**X**k) =
 
@@ -4019,7 +4019,7 @@ where the last step follows by the conditional independence of **e**k+1 and **e*
 
 where BACKWARD implements the update described in Equation (15.9). As with the forward recursion, the time and space needed for each update are constant and thus independent of t.
 
-We can now see that the two terms in Equation (15.8) can both be computed by recur- sions through time, one running forward from 1 to k and using the filtering equation (15.5)  
+We can now see that the two terms in Equation (15.8) can both be computed by recursions through time, one running forward from 1 to k and using the filtering equation (15.5)  
 
 Section 15.2. Inference in Temporal Models 575
 
@@ -4029,7 +4029,7 @@ Let us now apply this algorithm to the umbrella example, computing the smoothed 
 
 **P**(R1 |u1, u2) = α **P**(R1 | u1) **P**(u2 |R1) . (15.10)
 
-The first term we already know to be 〈.818, .182〉, from the forward filtering process de- scribed earlier. The second term can be computed by applying the backward recursion in Equation (15.9):
+The first term we already know to be 〈.818, .182〉, from the forward filtering process described earlier. The second term can be computed by applying the backward recursion in Equation (15.9):
 
 **P**(u2 |R1) =
 
@@ -4047,13 +4047,13 @@ Plugging this into Equation (15.10), we find that the smoothed estimate for rain
 
 Thus, the smoothed estimate for rain on day 1 is _higher_ than the filtered estimate (0.818) in this case. This is because the umbrella on day 2 makes it more likely to have rained on day 2; in turn, because rain tends to persist, that makes it more likely to have rained on day 1.
 
-Both the forward and backward recursions take a constant amount of time per step; hence, the time complexity of smoothing with respect to evidence **e**1:t is O(t). This is the complexity for smoothing at a particular time step k. If we want to smooth the whole se- quence, one obvious method is simply to run the whole smoothing process once for each time step to be smoothed. This results in a time complexity of O(t2). A better approach uses a simple application of dynamic programming to reduce the complexity to O(t). A clue appears in the preceding analysis of the umbrella example, where we were able to reuse the results of the forward-filtering phase. The key to the linear-time algorithm is to _record the results_ of forward filtering over the whole sequence. Then we run the backward recursion from t down to 1, computing the smoothed estimate at each step k from the computed back- ward message **b**k+1:t and the stored forward message **f**1:k. The algorithm, aptly called the **forward–backward algorithm**, is shown in Figure 15.4.
+Both the forward and backward recursions take a constant amount of time per step; hence, the time complexity of smoothing with respect to evidence **e**1:t is O(t). This is the complexity for smoothing at a particular time step k. If we want to smooth the whole sequence, one obvious method is simply to run the whole smoothing process once for each time step to be smoothed. This results in a time complexity of O(t2). A better approach uses a simple application of dynamic programming to reduce the complexity to O(t). A clue appears in the preceding analysis of the umbrella example, where we were able to reuse the results of the forward-filtering phase. The key to the linear-time algorithm is to _record the results_ of forward filtering over the whole sequence. Then we run the backward recursion from t down to 1, computing the smoothed estimate at each step k from the computed backward message **b**k+1:t and the stored forward message **f**1:k. The algorithm, aptly called the **forward–backward algorithm**, is shown in Figure 15.4.
 
 FORWARD– BACKWARD ALGORITHM
 
-The alert reader will have spotted that the Bayesian network structure shown in Fig- ure 15.3 is a _polytree_ as defined on page 528. This means that a straightforward application of the clustering algorithm also yields a linear-time algorithm that computes smoothed es- timates for the entire sequence. It is now understood that the forward–backward algorithm is in fact a special case of the polytree propagation algorithm used with clustering methods (although the two were developed independently).
+The alert reader will have spotted that the Bayesian network structure shown in Figure 15.3 is a _polytree_ as defined on page 528. This means that a straightforward application of the clustering algorithm also yields a linear-time algorithm that computes smoothed estimates for the entire sequence. It is now understood that the forward–backward algorithm is in fact a special case of the polytree propagation algorithm used with clustering methods (although the two were developed independently).
 
-The forward–backward algorithm forms the computational backbone for many applica- tions that deal with sequences of noisy observations. As described so far, it has two practical drawbacks. The first is that its space complexity can be too high when the state space is large and the sequences are long. It uses O(|**f**|t) space where |**f**| is the size of the representation of the forward message. The space requirement can be reduced to O(|**f**| log t) with a concomi-  
+The forward–backward algorithm forms the computational backbone for many applications that deal with sequences of noisy observations. As described so far, it has two practical drawbacks. The first is that its space complexity can be too high when the state space is large and the sequences are long. It uses O(|**f**|t) space where |**f**| is the size of the representation of the forward message. The space requirement can be reduced to O(|**f**| log t) with a concomi 
 
 
 
@@ -4091,7 +4091,7 @@ prior , the prior distribution on the initial state, **P**(**X**0)
 
 **return sv**
 
-**Figure 15.4** The forward–backward algorithm for smoothing: computing posterior prob- abilities of a sequence of states given a sequence of observations. The FORWARD and BACKWARD operators are defined by Equations (15.5) and (15.9), respectively.  
+**Figure 15.4** The forward–backward algorithm for smoothing: computing posterior probabilities of a sequence of states given a sequence of observations. The FORWARD and BACKWARD operators are defined by Equations (15.5) and (15.9), respectively.  
 
 Section 15.2. Inference in Temporal Models 577
 
@@ -4167,7 +4167,7 @@ _true_
 
 _false_
 
-**Figure 15.5** (a) Possible state sequences for Raint can be viewed as paths through a graph of the possible states at each time step. (States are shown as rectangles to avoid confusion with nodes in a Bayes net.) (b) Operation of the Viterbi algorithm for the umbrella obser- vation sequence \[true, true, false, true, true\]. For each t, we have shown the values of the message **m**1:t, which gives the probability of the best sequence reaching each state at time t. Also, for each state, the bold arrow leading into it indicates its best predecessor as measured by the product of the preceding sequence probability and the transition probability. Following the bold arrows back from the most likely state in **m**1:5 gives the most likely sequence.
+**Figure 15.5** (a) Possible state sequences for Raint can be viewed as paths through a graph of the possible states at each time step. (States are shown as rectangles to avoid confusion with nodes in a Bayes net.) (b) Operation of the Viterbi algorithm for the umbrella observation sequence \[true, true, false, true, true\]. For each t, we have shown the values of the message **m**1:t, which gives the probability of the best sequence reaching each state at time t. Also, for each state, the bold arrow leading into it indicates its best predecessor as measured by the product of the preceding sequence probability and the transition probability. Following the bold arrows back from the most likely state in **m**1:5 gives the most likely sequence.
 
 butions over _single_ time steps, whereas to find the most likely _sequence_ we must consider _joint_ probabilities over all the time steps. The results can in fact be quite different. (See Exercise 15.4.)
 
@@ -4203,7 +4203,7 @@ that is, the probabilities of the most likely path to each state **x**t; and
 
 2\. the summation over **x**t in Equation (15.5) is replaced by the maximization over **x**t in Equation (15.11).
 
-Thus, the algorithm for computing the most likely sequence is similar to filtering: it runs for- ward along the sequence, computing the **m** message at each time step, using Equation (15.11). The progress of this computation is shown in Figure 15.5(b). At the end, it will have the probability for the most likely sequence reaching _each_ of the final states. One can thus easily select the most likely sequence overall (the states outlined in bold). In order to identify the actual sequence, as opposed to just computing its probability, the algorithm will also need to record, for each state, the best state that leads to it; these are indicated by the bold arrows in Figure 15.5(b). The optimal sequence is identified by following these bold arrows backwards from the best final state.
+Thus, the algorithm for computing the most likely sequence is similar to filtering: it runs forward along the sequence, computing the **m** message at each time step, using Equation (15.11). The progress of this computation is shown in Figure 15.5(b). At the end, it will have the probability for the most likely sequence reaching _each_ of the final states. One can thus easily select the most likely sequence overall (the states outlined in bold). In order to identify the actual sequence, as opposed to just computing its probability, the algorithm will also need to record, for each state, the best state that leads to it; these are indicated by the bold arrows in Figure 15.5(b). The optimal sequence is identified by following these bold arrows backwards from the best final state.
 
 The algorithm we have just described is called the **Viterbi algorithm**, after its inventor.VITERBI ALGORITHM
 
@@ -4211,11 +4211,11 @@ Like the filtering algorithm, its time complexity is linear in t, the length of 
 
 15.3 HIDDEN MARKOV MODELS
 
-The preceding section developed algorithms for temporal probabilistic reasoning using a gen- eral framework that was independent of the specific form of the transition and sensor models. In this and the next two sections, we discuss more concrete models and applications that illustrate the power of the basic algorithms and in some cases allow further improvements.
+The preceding section developed algorithms for temporal probabilistic reasoning using a general framework that was independent of the specific form of the transition and sensor models. In this and the next two sections, we discuss more concrete models and applications that illustrate the power of the basic algorithms and in some cases allow further improvements.
 
 We begin with the **hidden Markov model**, or **HMM**. An HMM is a temporal proba-HIDDEN MARKOV MODEL
 
-bilistic model in which the state of the process is described by a _single discrete_ random vari- able. The possible values of the variable are the possible states of the world. The umbrella example described in the preceding section is therefore an HMM, since it has just one state variable: Rain t. What happens if you have a model with two or more state variables? You can still fit it into the HMM framework by combining the variables into a single “megavariable” whose values are all possible tuples of values of the individual state variables. We will see that the restricted structure of HMMs allows for a simple and elegant matrix implementation of all the basic algorithms.4
+bilistic model in which the state of the process is described by a _single discrete_ random variable. The possible values of the variable are the possible states of the world. The umbrella example described in the preceding section is therefore an HMM, since it has just one state variable: Rain t. What happens if you have a model with two or more state variables? You can still fit it into the HMM framework by combining the variables into a single “megavariable” whose values are all possible tuples of values of the individual state variables. We will see that the restricted structure of HMMs allows for a simple and elegant matrix implementation of all the basic algorithms.4
 
 4 The reader unfamiliar with basic operations on vectors and matrices might wish to consult Appendix A before proceeding with this section.  
 
@@ -4259,7 +4259,7 @@ We also put the sensor model in matrix form. In this case, because the value of 
 
 .
 
-Now, if we use column vectors to represent the forward and backward messages, all the com- putations become simple matrix–vector operations. The forward equation (15.5) becomes
+Now, if we use column vectors to represent the forward and backward messages, all the computations become simple matrix–vector operations. The forward equation (15.5) becomes
 
 **f**1:t+1 = α **O**t+1**T** **f**1:t (15.12)
 
@@ -4267,11 +4267,11 @@ and the backward equation (15.9) becomes
 
 **b**k+1:t = **TO**k+1**b**k+2:t . (15.13)
 
-From these equations, we can see that the time complexity of the forward–backward algo- rithm (Figure 15.4) applied to a sequence of length t is O(S2
+From these equations, we can see that the time complexity of the forward–backward algorithm (Figure 15.4) applied to a sequence of length t is O(S2
 
-t), because each step requires multiplying an S-element vector by an S ×S matrix. The space requirement is O(St), be- cause the forward pass stores t vectors of size S.
+t), because each step requires multiplying an S-element vector by an S ×S matrix. The space requirement is O(St), because the forward pass stores t vectors of size S.
 
-Besides providing an elegant description of the filtering and smoothing algorithms for HMMs, the matrix formulation reveals opportunities for improved algorithms. The first is a simple variation on the forward–backward algorithm that allows smoothing to be carried out in _constant_ space, independently of the length of the sequence. The idea is that smooth- ing for any particular time slice k requires the simultaneous presence of both the forward and backward messages, **f**1:k and **b**k+1:t, according to Equation (15.8). The forward–backward al- gorithm achieves this by storing the **f**s computed on the forward pass so that they are available during the backward pass. Another way to achieve this is with a single pass that propagates both **f** and **b** in the same direction. For example, the “forward” message **f** can be propagated backward if we manipulate Equation (15.12) to work in the other direction:
+Besides providing an elegant description of the filtering and smoothing algorithms for HMMs, the matrix formulation reveals opportunities for improved algorithms. The first is a simple variation on the forward–backward algorithm that allows smoothing to be carried out in _constant_ space, independently of the length of the sequence. The idea is that smoothing for any particular time slice k requires the simultaneous presence of both the forward and backward messages, **f**1:k and **b**k+1:t, according to Equation (15.8). The forward–backward algorithm achieves this by storing the **f**s computed on the forward pass so that they are available during the backward pass. Another way to achieve this is with a single pass that propagates both **f** and **b** in the same direction. For example, the “forward” message **f** can be propagated backward if we manipulate Equation (15.12) to work in the other direction:
 
 **f**1:t = α ′
 
@@ -4281,7 +4281,7 @@ Besides providing an elegant description of the filtering and smoothing algorith
 
 t+1 **f**1:t+1 .
 
-The modified smoothing algorithm works by first running the standard forward pass to com- pute **f**t:t (forgetting all the intermediate results) and then running the backward pass for both  
+The modified smoothing algorithm works by first running the standard forward pass to compute **f**t:t (forgetting all the intermediate results) and then running the backward pass for both  
 
 
 
@@ -4317,11 +4317,11 @@ t← t + 1
 
 **if** t > d **then return** NORMALIZE(**f** × **B1**) **else return** null
 
-**Figure 15.6** An algorithm for smoothing with a fixed time lag of d steps, implemented as an online algorithm that outputs the new smoothed estimate given the observation for a new time step. Notice that the final output NORMALIZE(**f**×**B1**) is just α **f**×**b**, by Equa- tion (15.14).
+**Figure 15.6** An algorithm for smoothing with a fixed time lag of d steps, implemented as an online algorithm that outputs the new smoothed estimate given the observation for a new time step. Notice that the final output NORMALIZE(**f**×**B1**) is just α **f**×**b**, by Equation (15.14).
 
-**b** and **f** together, using them to compute the smoothed estimate at each step. Since only one copy of each message is needed, the storage requirements are constant (i.e., independent of t, the length of the sequence). There are two significant restrictions on this algorithm: it re- quires that the transition matrix be invertible and that the sensor model have no zeroes—that is, that every observation be possible in every state.
+**b** and **f** together, using them to compute the smoothed estimate at each step. Since only one copy of each message is needed, the storage requirements are constant (i.e., independent of t, the length of the sequence). There are two significant restrictions on this algorithm: it requires that the transition matrix be invertible and that the sensor model have no zeroes—that is, that every observation be possible in every state.
 
-A second area in which the matrix formulation reveals an improvement is in _online_ smoothing with a fixed lag. The fact that smoothing can be done in constant space suggests that there should exist an efficient recursive algorithm for online smoothing—that is, an al- gorithm whose time complexity is independent of the length of the lag. Let us suppose that the lag is d; that is, we are smoothing at time slice t− d, where the current time is t. By Equation (15.8), we need to compute
+A second area in which the matrix formulation reveals an improvement is in _online_ smoothing with a fixed lag. The fact that smoothing can be done in constant space suggests that there should exist an efficient recursive algorithm for online smoothing—that is, an algorithm whose time complexity is independent of the length of the lag. Let us suppose that the lag is d; that is, we are smoothing at time slice t− d, where the current time is t. By Equation (15.8), we need to compute
 
 α **f**1:t−d× **b**t−d+1:t
 
@@ -4347,7 +4347,7 @@ i = t−d+1
 
 **b**t+1:t = **B**t−d+1:t**1** , (15.14)
 
-where the matrix **B**t−d+1:t is the product of the sequence of **T** and **O** matrices. **B** can be thought of as a “transformation operator” that transforms a later backward message into an earlier one. A similar equation holds for the new backward messages _after_ the next observa- tion arrives:
+where the matrix **B**t−d+1:t is the product of the sequence of **T** and **O** matrices. **B** can be thought of as a “transformation operator” that transforms a later backward message into an earlier one. A similar equation holds for the new backward messages _after_ the next observation arrives:
 
 **b**t−d+2:t+1 =
 
@@ -4367,7 +4367,7 @@ Examining the product expressions in Equations (15.14) and (15.15), we see that 
 
 t−d+1 **T**−1**B**t−d+1:t**TO**t+1 . (15.16)
 
-This equation provides an incremental update for the **B** matrix, which in turn (through Equa- tion (15.15)) allows us to compute the new backward message **b**t−d+2:t+1. The complete algorithm, which requires storing and updating **f** and **B**, is shown in Figure 15.6.
+This equation provides an incremental update for the **B** matrix, which in turn (through Equation (15.15)) allows us to compute the new backward message **b**t−d+2:t+1. The complete algorithm, which requires storing and updating **f** and **B**, is shown in Figure 15.6.
 
 **15.3.2 Hidden Markov model example: Localization**
 
@@ -4381,7 +4381,7 @@ P (Xt+1 = j |Xt = i) = **T**ij = (1/N(i) if j ∈ NEIGHBORS(i) else 0) .
 
 We don’t know where the robot starts, so we will assume a uniform distribution over all the squares; that is, P (X0 = i)= 1/n. For the particular environment we consider (Figure 15.7), n = 42 and the transition matrix **T** has 42× 42= 1764 entries.
 
-The sensor variable Et has 16 possible values, each a four-bit sequence giving the pres- ence or absence of an obstacle in a particular compass direction. We will use the notation  
+The sensor variable Et has 16 possible values, each a four-bit sequence giving the presence or absence of an obstacle in a particular compass direction. We will use the notation  
 
 
 
@@ -4405,7 +4405,7 @@ P (Et = et |Xt = i) = **O**tii = (1− ε) 4−dit
 
 For example, the probability that a square with obstacles to the north and south would produce a sensor reading NSE is (1− ε)3ε1.
 
-Given the matrices **T** and **O**t, the robot can use Equation (15.12) to compute the pos- terior distribution over locations—that is, to work out where it is. Figure 15.7 shows the distributions **P**(X1 |E1 = NSW ) and **P**(X2 |E1 =NSW,E2 = NS). This is the same maze we saw before in Figure 4.18 (page 146), but there we used logical filtering to find the loca- tions that were _possible_, assuming perfect sensing. Those same locations are still the most _likely_ with noisy sensing, but now _every_ location has some nonzero probability.
+Given the matrices **T** and **O**t, the robot can use Equation (15.12) to compute the posterior distribution over locations—that is, to work out where it is. Figure 15.7 shows the distributions **P**(X1 |E1 = NSW ) and **P**(X2 |E1 =NSW,E2 = NS). This is the same maze we saw before in Figure 4.18 (page 146), but there we used logical filtering to find the locations that were _possible_, assuming perfect sensing. Those same locations are still the most _likely_ with noisy sensing, but now _every_ location has some nonzero probability.
 
 In addition to filtering to estimate its current location, the robot can use smoothing (Equation (15.13)) to work out where it was at any given past time—for example, where it began at time 0—and it can use the Viterbi algorithm to work out the most likely path it has  
 
@@ -4475,7 +4475,7 @@ Number of observations
 
 (a) (b)
 
-**Figure 15.8** Performance of HMM localization as a function of the length of the observa- tion sequence for various different values of the sensor error probability ε; data averaged over 400 runs. (a) The localization error, defined as the Manhattan distance from the true location. (b) The Viterbi path accuracy, defined as the fraction of correct states on the Viterbi path.
+**Figure 15.8** Performance of HMM localization as a function of the length of the observation sequence for various different values of the sensor error probability ε; data averaged over 400 runs. (a) The localization error, defined as the Manhattan distance from the true location. (b) The Viterbi path accuracy, defined as the fraction of correct states on the Viterbi path.
 
 taken to get where it is now. Figure 15.8 shows the localization error and Viterbi path accuracy for various values of the per-bit sensor error rate ε. Even when ε is 20%—which means that the overall sensor reading is wrong 59% of the time—the robot is usually able to work out its location within two squares after 25 observations. This is because of the algorithm’s ability to integrate evidence over time and to take into account the probabilistic constraints imposed on the location sequence by the transition model. When ε is 10%, the performance after a half-dozen observations is hard to distinguish from the performance with perfect sensing. Exercise 15.7 asks you to explore how robust the HMM localization algorithm is to errors in the prior distribution **P**(X0) and in the transition model itself. Broadly speaking, high levels of localization and path accuracy are maintained even in the face of substantial errors in the models used.
 
@@ -4493,7 +4493,7 @@ for position (Xt, Yt, Zt) and three for velocity (Ẋt, Ẏt, Żt). We will nee
 
 P (Xt+Δ = xt+Δ |Xt = xt, Ẋt = ẋt) = N(xt + ẋt Δ, σ 2 )(xt+Δ) .
 
-The Bayesian network structure for a system with position vector **X**t and velocity **Ẋt** is shown in Figure 15.9. Note that this is a very specific form of linear Gaussian model; the general form will be described later in this section and covers a vast array of applications beyond the simple motion examples of the first paragraph. The reader might wish to consult Appendix A for some of the mathematical properties of Gaussian distributions; for our immediate pur- poses, the most important is that a **multivariate Gaussian** distribution for d variables isMULTIVARIATE
+The Bayesian network structure for a system with position vector **X**t and velocity **Ẋt** is shown in Figure 15.9. Note that this is a very specific form of linear Gaussian model; the general form will be described later in this section and covers a vast array of applications beyond the simple motion examples of the first paragraph. The reader might wish to consult Appendix A for some of the mathematical properties of Gaussian distributions; for our immediate purposes, the most important is that a **multivariate Gaussian** distribution for d variables isMULTIVARIATE
 
 GAUSSIAN
 
@@ -4501,7 +4501,7 @@ specified by a d-element mean **μ** and a d× d covariance matrix **Σ**.
 
 **15.4.1 Updating Gaussian distributions**
 
-In Chapter 14 on page 521, we alluded to a key property of the linear Gaussian family of dis- tributions: it remains closed under the standard Bayesian network operations. Here, we make this claim precise in the context of filtering in a temporal probability model. The required properties correspond to the two-step filtering calculation in Equation (15.5):
+In Chapter 14 on page 521, we alluded to a key property of the linear Gaussian family of distributions: it remains closed under the standard Bayesian network operations. Here, we make this claim precise in the context of filtering in a temporal probability model. The required properties correspond to the two-step filtering calculation in Equation (15.5):
 
 1\. If the current distribution **P**(**X**t | **e**1:t) is Gaussian and the transition model **P**(**X**t+1 | **x**t)
 
@@ -4539,9 +4539,9 @@ This seems to be a nice, elegant result, but why is it so important? The reason 
 
 **15.4.2 A simple one-dimensional example**
 
-We have said that the FORWARD operator for the Kalman filter maps a Gaussian into a new Gaussian. This translates into computing a new mean and covariance matrix from the previ- ous mean and covariance matrix. Deriving the update rule in the general (multivariate) case requires rather a lot of linear algebra, so we will stick to a very simple univariate case for now; and later give the results for the general case. Even for the univariate case, the calculations are somewhat tedious, but we feel that they are worth seeing because the usefulness of the Kalman filter is tied so intimately to the mathematical properties of Gaussian distributions.
+We have said that the FORWARD operator for the Kalman filter maps a Gaussian into a new Gaussian. This translates into computing a new mean and covariance matrix from the previous mean and covariance matrix. Deriving the update rule in the general (multivariate) case requires rather a lot of linear algebra, so we will stick to a very simple univariate case for now; and later give the results for the general case. Even for the univariate case, the calculations are somewhat tedious, but we feel that they are worth seeing because the usefulness of the Kalman filter is tied so intimately to the mathematical properties of Gaussian distributions.
 
-The temporal model we consider describes a **random walk** of a single continuous state variable Xt with a noisy observation Zt. An example might be the “consumer confidence” in- dex, which can be modeled as undergoing a random Gaussian-distributed change each month and is measured by a random consumer survey that also introduces Gaussian sampling noise.  
+The temporal model we consider describes a **random walk** of a single continuous state variable Xt with a noisy observation Zt. An example might be the “consumer confidence” index, which can be modeled as undergoing a random Gaussian-distributed change each month and is measured by a random consumer survey that also introduces Gaussian sampling noise.  
 
 
 
@@ -4935,7 +4935,7 @@ N(**μ**,**Σ**)(**x**) = αe
 
 Multiplying out the terms in the exponent makes it clear that the exponent is also a quadratic function of the values xi in **x**. As in the univariate case, the filtering update preserves the Gaussian nature of the state distribution.
 
-Let us first define the general temporal model used with Kalman filtering. Both the tran- sition model and the sensor model allow for a _linear_ transformation with additive Gaussian noise. Thus, we have
+Let us first define the general temporal model used with Kalman filtering. Both the transition model and the sensor model allow for a _linear_ transformation with additive Gaussian noise. Thus, we have
 
 P (**x**t+1 | **x**t) = N(**Fx**t,**Σ**x)(**x**t+1)
 
@@ -4943,7 +4943,7 @@ P (**z**t | **x**t) = N(**Hx**t,**Σ**z)(**z**t) ,
 
 (15.21)
 
-where **F** and **Σ**x are matrices describing the linear transition model and transition noise co- variance, and **H** and **Σ**z are the corresponding matrices for the sensor model. Now the update equations for the mean and covariance, in their full, hairy horribleness, are
+where **F** and **Σ**x are matrices describing the linear transition model and transition noise covariance, and **H** and **Σ**z are the corresponding matrices for the sensor model. Now the update equations for the mean and covariance, in their full, hairy horribleness, are
 
 **μ**t+1 = **Fμ**t + **K**t+1(**z**t+1 −**HFμ**t)
 
@@ -5023,7 +5023,7 @@ true observed smoothed
 
 **Figure 15.11** (a) Results of Kalman filtering for an object moving on the X–Y plane, showing the true trajectory (left to right), a series of noisy observations, and the trajectory estimated by Kalman filtering. Variance in the position estimate is indicated by the ovals. (b) The results of Kalman smoothing for the same observation sequence.
 
-The fact that Kalman filtering can be applied to a system does not mean that the re- sults will be valid or useful. The assumptions made—a linear Gaussian transition and sensor models—are very strong. The **extended Kalman filter (EKF)** attempts to overcome nonlin-EXTENDED KALMAN
+The fact that Kalman filtering can be applied to a system does not mean that the results will be valid or useful. The assumptions made—a linear Gaussian transition and sensor models—are very strong. The **extended Kalman filter (EKF)** attempts to overcome nonlin-EXTENDED KALMAN
 
 FILTER (EKF)
 
@@ -5033,7 +5033,7 @@ be described as a matrix multiplication of the state vector, as in Equation (15.
 
 What does it mean for a system to be “unsmooth” or “poorly behaved”? Technically, it means that there is significant nonlinearity in system response within the region that is “close” (according to the covariance **Σ**t) to the current mean **μ**t. To understand this idea in nontechnical terms, consider the example of trying to track a bird as it flies through the jungle. The bird appears to be heading at high speed straight for a tree trunk. The Kalman filter, whether regular or extended, can make only a Gaussian prediction of the location of the bird, and the mean of this Gaussian will be centered on the trunk, as shown in Figure 15.12(a). A reasonable model of the bird, on the other hand, would predict evasive action to one side or the other, as shown in Figure 15.12(b). Such a model is highly nonlinear, because the bird’s decision varies sharply depending on its precise location relative to the trunk.
 
-To handle examples like these, we clearly need a more expressive language for repre- senting the behavior of the system being modeled. Within the control theory community, for which problems such as evasive maneuvering by aircraft raise the same kinds of difficulties, the standard solution is the **switching Kalman filter.** In this approach, multiple Kalman fil-SWITCHING KALMAN
+To handle examples like these, we clearly need a more expressive language for representing the behavior of the system being modeled. Within the control theory community, for which problems such as evasive maneuvering by aircraft raise the same kinds of difficulties, the standard solution is the **switching Kalman filter.** In this approach, multiple Kalman fil-SWITCHING KALMAN
 
 FILTER  
 
@@ -5043,7 +5043,7 @@ FILTER
 
 **Figure 15.12** A bird flying toward a tree (top views). (a) A Kalman filter will predict the location of the bird using a single Gaussian centered on the obstacle. (b) A more realistic model allows for the bird’s evasive action, predicting that it will fly to one side or the other.
 
-ters run in parallel, each using a different model of the system—for example, one for straight flight, one for sharp left turns, and one for sharp right turns. A weighted sum of predictions is used, where the weight depends on how well each filter fits the current data. We will see in the next section that this is simply a special case of the general dynamic Bayesian net- work model, obtained by adding a discrete “maneuver” state variable to the network shown in Figure 15.9. Switching Kalman filters are discussed further in Exercise 15.10.
+ters run in parallel, each using a different model of the system—for example, one for straight flight, one for sharp left turns, and one for sharp right turns. A weighted sum of predictions is used, where the weight depends on how well each filter fits the current data. We will see in the next section that this is simply a special case of the general dynamic Bayesian network model, obtained by adding a discrete “maneuver” state variable to the network shown in Figure 15.9. Switching Kalman filters are discussed further in Exercise 15.10.
 
 15.5 DYNAMIC BAYESIAN NETWORKS
 
@@ -5051,17 +5051,17 @@ A **dynamic Bayesian network**, or **DBN**, is a Bayesian network that represent
 
 probability model of the kind described in Section 15.1. We have already seen examples of DBNs: the umbrella network in Figure 15.2 and the Kalman filter network in Figure 15.9. In general, each slice of a DBN can have any number of state variables **X**t and evidence variables **E**t. For simplicity, we assume that the variables and their links are exactly replicated from slice to slice and that the DBN represents a first-order Markov process, so that each variable can have parents only in its own slice or the immediately preceding slice.
 
-It should be clear that every hidden Markov model can be represented as a DBN with a single state variable and a single evidence variable. It is also the case that every discrete- variable DBN can be represented as an HMM; as explained in Section 15.3, we can combine all the state variables in the DBN into a single state variable whose values are all possible tuples of values of the individual state variables. Now, if every HMM is a DBN and every DBN can be translated into an HMM, what’s the difference? The difference is that, _by de-_  
+It should be clear that every hidden Markov model can be represented as a DBN with a single state variable and a single evidence variable. It is also the case that every discretevariable DBN can be represented as an HMM; as explained in Section 15.3, we can combine all the state variables in the DBN into a single state variable whose values are all possible tuples of values of the individual state variables. Now, if every HMM is a DBN and every DBN can be translated into an HMM, what’s the difference? The difference is that, _by de-_  
 
 Section 15.5. Dynamic Bayesian Networks 591
 
-_composing the state of a complex system into its constituent variables, the can take advantage of_ sparseness _in the temporal probability model._ Suppose, for example, that a DBN has 20 Boolean state variables, each of which has three parents in the preceding slice. Then the DBN transition model has 20× 23 = 160 probabilities, whereas the corresponding HMM has 220 states and therefore 240, or roughly a trillion, probabilities in the transition matrix. This is bad for at least three reasons: first, the HMM itself requires much more space; second, the huge transition matrix makes HMM inference much more expensive; and third, the prob- lem of learning such a huge number of parameters makes the pure HMM model unsuitable for large problems. The relationship between DBNs and HMMs is roughly analogous to the relationship between ordinary Bayesian networks and full tabulated joint distributions.
+_composing the state of a complex system into its constituent variables, the can take advantage of_ sparseness _in the temporal probability model._ Suppose, for example, that a DBN has 20 Boolean state variables, each of which has three parents in the preceding slice. Then the DBN transition model has 20× 23 = 160 probabilities, whereas the corresponding HMM has 220 states and therefore 240, or roughly a trillion, probabilities in the transition matrix. This is bad for at least three reasons: first, the HMM itself requires much more space; second, the huge transition matrix makes HMM inference much more expensive; and third, the problem of learning such a huge number of parameters makes the pure HMM model unsuitable for large problems. The relationship between DBNs and HMMs is roughly analogous to the relationship between ordinary Bayesian networks and full tabulated joint distributions.
 
 We have already explained that every Kalman filter model can be represented in a DBN with continuous variables and linear Gaussian conditional distributions (Figure 15.9). It should be clear from the discussion at the end of the preceding section that _not_ every DBN can be represented by a Kalman filter model. In a Kalman filter, the current state distribution is always a single multivariate Gaussian distribution—that is, a single “bump” in a particular location. DBNs, on the other hand, can model arbitrary distributions. For many real-world applications, this flexibility is essential. Consider, for example, the current location of my keys. They might be in my pocket, on the bedside table, on the kitchen counter, dangling from the front door, or locked in the car. A single Gaussian bump that included all these places would have to allocate significant probability to the keys being in mid-air in the front hall. Aspects of the real world such as purposive agents, obstacles, and pockets introduce “nonlinearities” that require combinations of discrete and continuous variables in order to get reasonable models.
 
 **15.5.1 Constructing DBNs**
 
-To construct a DBN, one must specify three kinds of information: the prior distribution over the state variables, **P**(**X**0); the transition model **P**(**X**t+1 |**X**t); and the sensor model **P**(**E**t |**X**t). To specify the transition and sensor models, one must also specify the topology of the con- nections between successive slices and between the state and evidence variables. Because the transition and sensor models are assumed to be stationary—the same for all t—it is most convenient simply to specify them for the first slice. For example, the complete DBN speci- fication for the umbrella world is given by the three-node network shown in Figure 15.13(a). From this specification, the complete DBN with an unbounded number of time slices can be constructed as needed by copying the first slice.
+To construct a DBN, one must specify three kinds of information: the prior distribution over the state variables, **P**(**X**0); the transition model **P**(**X**t+1 |**X**t); and the sensor model **P**(**E**t |**X**t). To specify the transition and sensor models, one must also specify the topology of the connections between successive slices and between the state and evidence variables. Because the transition and sensor models are assumed to be stationary—the same for all t—it is most convenient simply to specify them for the first slice. For example, the complete DBN specification for the umbrella world is given by the three-node network shown in Figure 15.13(a). From this specification, the complete DBN with an unbounded number of time slices can be constructed as needed by copying the first slice.
 
 Let us now consider a more interesting example: monitoring a battery-powered robot moving in the X–Y plane, as introduced at the end of Section 15.1. First, we need state variables, which will include both **X**t = (Xt, Yt) for position and **Ẋt** \=(Ẋt, Ẏt) for velocity. We assume some method of measuring position—perhaps a fixed camera or onboard GPS (Global Positioning System)—yielding measurements **Z**t. The position at the next time step depends on the current position and velocity, as in the standard Kalman filter model. The velocity at the next step depends on the current velocity and the state of the battery. We add Battery t to represent the actual battery charge level, which has as parents the previous  
 
@@ -5111,7 +5111,7 @@ example, the battery level sensor might have a habit of sending a zero when some
 
 Let’s see what happens when a transient failure occurs with a Gaussian error model that doesn’t accommodate such failures. Suppose, for example, that the robot is sitting quietly and observes 20 consecutive battery readings of 5. Then the battery meter has a temporary seizure
 
-5 Strictly speaking, a Gaussian distribution is problematic because it assigns nonzero probability to large nega- tive charge levels. The **beta distribution** is sometimes a better choice for a variable whose range is restricted.  
+5 Strictly speaking, a Gaussian distribution is problematic because it assigns nonzero probability to large negative charge levels. The **beta distribution** is sometimes a better choice for a variable whose range is restricted.  
 
 Section 15.5. Dynamic Bayesian Networks 593
 
@@ -5127,7 +5127,7 @@ which is presumably much larger than the probability assigned by the simple Gaus
 
 MODEL
 
-with a reading of 0? Provided that the _predicted_ probability of an empty battery, according to the readings so far, is much less than 0.03, then the best explanation of the observation BMeter21 = 0 is that the sensor has temporarily failed. Intuitively, we can think of the belief about the battery level as having a certain amount of “inertia” that helps to overcome tempo- rary blips in the meter reading. The upper curve in Figure 15.14(b) shows that the transient failure model can handle transient failures without a catastrophic change in beliefs.
+with a reading of 0? Provided that the _predicted_ probability of an empty battery, according to the readings so far, is much less than 0.03, then the best explanation of the observation BMeter21 = 0 is that the sensor has temporarily failed. Intuitively, we can think of the belief about the battery level as having a certain amount of “inertia” that helps to overcome temporary blips in the meter reading. The upper curve in Figure 15.14(b) shows that the transient failure model can handle transient failures without a catastrophic change in beliefs.
 
 So much for temporary blips. What about a persistent sensor failure? Sadly, failures of this kind are all too common. If the sensor returns 20 readings of 5 followed by 20 readings of 0, then the transient sensor failure model described in the preceding paragraph will result in the robot gradually coming to believe that its battery is empty when in fact it may be that the meter has failed. The lower curve in Figure 15.14(b) shows the belief “trajectory” for this case. By t = 25—five readings of 0—the robot is convinced that its battery is empty. Obviously, we would prefer the robot to believe that its battery meter is broken—if indeed this is the more likely event.
 
@@ -5193,7 +5193,7 @@ _E_(_Batteryt_ |...5555000000...)
 
 (a) (b)
 
-**Figure 15.14** (a) Upper curve: trajectory of the expected value of Battery t for an observa- tion sequence consisting of all 5s except for 0s at t =21 and t =22, using a simple Gaussian error model. Lower curve: trajectory when the observation remains at 0 from t =21 onwards. (b) The same experiment run with the transient failure model. Notice that the transient fail- ure is handled well, but the persistent failure results in excessive pessimism about the battery charge.
+**Figure 15.14** (a) Upper curve: trajectory of the expected value of Battery t for an observation sequence consisting of all 5s except for 0s at t =21 and t =22, using a simple Gaussian error model. Lower curve: trajectory when the observation remains at 0 from t =21 onwards. (b) The same experiment run with the transient failure model. Notice that the transient failure is handled well, but the persistent failure results in excessive pessimism about the battery charge.
 
 1_BatteryBattery_0
 
@@ -5239,7 +5239,7 @@ _P_(_BMBrokent_ |...5555005555...)
 
 (a) (b)
 
-**Figure 15.15** (a) A DBN fragment showing the sensor status variable required for mod- eling persistent failure of the battery sensor. (b) Upper curves: trajectories of the expected value of Battery t for the “transient failure” and “permanent failure” observations sequences. Lower curves: probability trajectories for BMBroken given the two observation sequences.
+**Figure 15.15** (a) A DBN fragment showing the sensor status variable required for modeling persistent failure of the battery sensor. (b) Upper curves: trajectories of the expected value of Battery t for the “transient failure” and “permanent failure” observations sequences. Lower curves: probability trajectories for BMBroken given the two observation sequences.
 
 arc linking BMBroken0 to BMBroken1. This **persistence arc** has a CPT that gives a smallPERSISTENCE ARC
 
@@ -5313,7 +5313,7 @@ _Umbrella_1
 
 _Rain_0 _Rain_1
 
-**Figure 15.16** Unrolling a dynamic Bayesian network: slices are replicated to accommo- date the observation sequence Umbrella1:3. Further slices have no effect on inferences within the observation period.
+**Figure 15.16** Unrolling a dynamic Bayesian network: slices are replicated to accommodate the observation sequence Umbrella1:3. Further slices have no effect on inferences within the observation period.
 
 The persistent failure model for the battery sensor is shown in Figure 15.15(a). Its performance on the two data sequences (temporary blip and persistent failure) is shown in Figure 15.15(b). There are several things to notice about these curves. First, in the case of the temporary blip, the probability that the sensor is broken rises significantly after the second 0 reading, but immediately drops back to zero once a 5 is observed. Second, in the case of persistent failure, the probability that the sensor is broken rises quickly to almost 1 and stays there. Finally, once the sensor is known to be broken, the robot can only assume that its battery discharges at the “normal” rate, as shown by the gradually descending level of E(Battery t | . . . ).
 
@@ -5335,19 +5335,19 @@ So much for the good news; now for the bad news: It turns out that the “consta
 
 n+k), where d is the domain size of the variables and k is the maximum number of parents of any state variable.
 
-Of course, this is much less than the cost of HMM updating, which is O(d2n), but it is still infeasible for large numbers of variables. This grim fact is somewhat hard to accept. What it means is that _even though we can use DBNs to_ represent _very complex temporal processes with many sparsely connected variables, we cannot_ reason _efficiently and exactly about those processes._ The DBN model itself, which represents the prior joint distribution over all the variables, is factorable into its constituent CPTs, but the posterior joint distribu- tion conditioned on an observation sequence—that is, the forward message—is generally _not_ factorable. So far, no one has found a way around this problem, despite the fact that many important areas of science and engineering would benefit enormously from its solution. Thus, we must fall back on approximate methods.
+Of course, this is much less than the cost of HMM updating, which is O(d2n), but it is still infeasible for large numbers of variables. This grim fact is somewhat hard to accept. What it means is that _even though we can use DBNs to_ represent _very complex temporal processes with many sparsely connected variables, we cannot_ reason _efficiently and exactly about those processes._ The DBN model itself, which represents the prior joint distribution over all the variables, is factorable into its constituent CPTs, but the posterior joint distribution conditioned on an observation sequence—that is, the forward message—is generally _not_ factorable. So far, no one has found a way around this problem, despite the fact that many important areas of science and engineering would benefit enormously from its solution. Thus, we must fall back on approximate methods.
 
 **15.5.3 Approximate inference in DBNs**
 
 Section 14.5 described two approximation algorithms: likelihood weighting (Figure 14.15) and Markov chain Monte Carlo (MCMC, Figure 14.16). Of the two, the former is most easily adapted to the DBN context. (An MCMC filtering algorithm is described briefly in the notes at the end of the chapter.) We will see, however, that several improvements are required over the standard likelihood weighting algorithm before a practical method emerges.
 
-Recall that likelihood weighting works by sampling the nonevidence nodes of the net- work in topological order, weighting each sample by the likelihood it accords to the observed evidence variables. As with the exact algorithms, we could apply likelihood weighting di- rectly to an unrolled DBN, but this would suffer from the same problems of increasing time  
+Recall that likelihood weighting works by sampling the nonevidence nodes of the network in topological order, weighting each sample by the likelihood it accords to the observed evidence variables. As with the exact algorithms, we could apply likelihood weighting directly to an unrolled DBN, but this would suffer from the same problems of increasing time  
 
 Section 15.5. Dynamic Bayesian Networks 597
 
-and space requirements per update as the observation sequence grows. The problem is that the standard algorithm runs each sample in turn, all the way through the network. Instead, we can simply run all N samples together through the DBN, one slice at a time. The mod- ified algorithm fits the general pattern of filtering algorithms, with the set of N samples as the forward message. The first key innovation, then, is to _use the samples themselves as an approximate representation of the current state distribution._ This meets the requirement of a “constant” time per update, although the constant depends on the number of samples required to maintain an accurate approximation. There is also no need to unroll the DBN, because we need to have in memory only the current slice and the next slice.
+and space requirements per update as the observation sequence grows. The problem is that the standard algorithm runs each sample in turn, all the way through the network. Instead, we can simply run all N samples together through the DBN, one slice at a time. The modified algorithm fits the general pattern of filtering algorithms, with the set of N samples as the forward message. The first key innovation, then, is to _use the samples themselves as an approximate representation of the current state distribution._ This meets the requirement of a “constant” time per update, although the constant depends on the number of samples required to maintain an accurate approximation. There is also no need to unroll the DBN, because we need to have in memory only the current slice and the next slice.
 
-In our discussion of likelihood weighting in Chapter 14, we pointed out that the al- gorithm’s accuracy suffers if the evidence variables are “downstream” from the variables being sampled, because in that case the samples are generated without any influence from the evidence. Looking at the typical structure of a DBN—say, the umbrella DBN in Fig- ure 15.16—we see that indeed the early state variables will be sampled without the benefit of the later evidence. In fact, looking more carefully, we see that _none_ of the state variables has _any_ evidence variables among its ancestors! Hence, although the weight of each sample will depend on the evidence, the actual set of samples generated will be _completely independent_ of the evidence. For example, even if the boss brings in the umbrella every day, the sam- pling process could still hallucinate endless days of sunshine. What this means in practice is that the fraction of samples that remain reasonably close to the actual series of events (and therefore have nonnegligible weights) drops exponentially with t, the length of the observa- tion sequence. In other words, to maintain a given level of accuracy, we need to increase the number of samples exponentially with t. Given that a filtering algorithm that works in real time can use only a fixed number of samples, what happens in practice is that the error blows up after a very small number of update steps.
+In our discussion of likelihood weighting in Chapter 14, we pointed out that the algorithm’s accuracy suffers if the evidence variables are “downstream” from the variables being sampled, because in that case the samples are generated without any influence from the evidence. Looking at the typical structure of a DBN—say, the umbrella DBN in Figure 15.16—we see that indeed the early state variables will be sampled without the benefit of the later evidence. In fact, looking more carefully, we see that _none_ of the state variables has _any_ evidence variables among its ancestors! Hence, although the weight of each sample will depend on the evidence, the actual set of samples generated will be _completely independent_ of the evidence. For example, even if the boss brings in the umbrella every day, the sampling process could still hallucinate endless days of sunshine. What this means in practice is that the fraction of samples that remain reasonably close to the actual series of events (and therefore have nonnegligible weights) drops exponentially with t, the length of the observation sequence. In other words, to maintain a given level of accuracy, we need to increase the number of samples exponentially with t. Given that a filtering algorithm that works in real time can use only a fixed number of samples, what happens in practice is that the error blows up after a very small number of update steps.
 
 Clearly, we need a better solution. The second key innovation is to _focus the set of samples on the high-probability regions of the state space._ This can be done by throwing away samples that have very low weight, according to the observations, while replicating those that have high weight. In that way, the population of samples will stay reasonably close to reality. If we think of samples as a resource for modeling the posterior distribution, then it makes sense to use more samples in regions of the state space where the posterior is higher.
 
@@ -5377,7 +5377,7 @@ N , the number of samples to be maintained dbn , a DBN with prior **P**(**X**0),
 
 S ←WEIGHTED-SAMPLE-WITH-REPLACEMENT(N ,S ,W ) /\* step 3 \*/ **return** S
 
-**Figure 15.17** The particle filtering algorithm implemented as a recursive update op- eration with state (the set of samples). Each of the sampling operations involves sam- pling the relevant slice variables in topological order, much as in PRIOR-SAMPLE. The WEIGHTED-SAMPLE-WITH-REPLACEMENT operation can be implemented to run in O(N)
+**Figure 15.17** The particle filtering algorithm implemented as a recursive update operation with state (the set of samples). Each of the sampling operations involves sampling the relevant slice variables in topological order, much as in PRIOR-SAMPLE. The WEIGHTED-SAMPLE-WITH-REPLACEMENT operation can be implemented to run in O(N)
 
 expected time. The step numbers refer to the description in the text.
 
@@ -5391,7 +5391,7 @@ _Raint Raint+_1_Raint+_1_Raint+_1
 
 (b) Weight
 
-**Figure 15.18** The particle filtering update cycle for the umbrella DBN with N = 10, show- ing the sample populations of each state. (a) At time t, 8 samples indicate rain and 2 indicate ¬rain . Each is propagated forward by sampling the next state through the transition model. At time t + 1, 6 samples indicate rain and 4 indicate ¬rain . (b) ¬umbrella is observed at t + 1. Each sample is weighted by its likelihood for the observation, as indicated by the size of the circles. (c) A new set of 10 samples is generated by weighted random selection from the current set, resulting in 2 samples that indicate rain and 8 that indicate ¬rain .
+**Figure 15.18** The particle filtering update cycle for the umbrella DBN with N = 10, showing the sample populations of each state. (a) At time t, 8 samples indicate rain and 2 indicate ¬rain . Each is propagated forward by sampling the next state through the transition model. At time t + 1, 6 samples indicate rain and 4 indicate ¬rain . (b) ¬umbrella is observed at t + 1. Each sample is weighted by its likelihood for the observation, as indicated by the size of the circles. (c) A new set of 10 samples is generated by weighted random selection from the current set, resulting in 2 samples that indicate rain and 8 that indicate ¬rain .
 
 We can show that this algorithm is consistent—gives the correct probabilities as N tends to infinity—by considering what happens during one update cycle. We assume that the sample population starts with a correct representation of the forward message **f**1:t = **P**(**X**t | **e**1:t) at time t. Writing N(**x**t | **e**1:t) for the number of samples occupying state **x**t after observations **e**1:t have been processed, we therefore have
 
@@ -5451,13 +5451,13 @@ P (**x**t+1 | **x**t)P (**x**t | **e**1:t)
 
 \= P (**x**t+1 | **e**1:t+1) (by 15.5).
 
-Therefore the sample population after one update cycle correctly represents the forward mes- sage at time t + 1.
+Therefore the sample population after one update cycle correctly represents the forward message at time t + 1.
 
-Particle filtering is _consistent_, therefore, but is it _efficient?_ In practice, it seems that the answer is yes: particle filtering seems to maintain a good approximation to the true posterior using a constant number of samples. Under certain assumptions—in particular, that the prob- abilities in the transition and sensor models are strictly greater than 0 and less than 1—it is possible to prove that the approximation maintains bounded error with high probability. On the practical side, the range of applications has grown to include many fields of science and engineering; some references are given at the end of the chapter.
+Particle filtering is _consistent_, therefore, but is it _efficient?_ In practice, it seems that the answer is yes: particle filtering seems to maintain a good approximation to the true posterior using a constant number of samples. Under certain assumptions—in particular, that the probabilities in the transition and sensor models are strictly greater than 0 and less than 1—it is possible to prove that the approximation maintains bounded error with high probability. On the practical side, the range of applications has grown to include many fields of science and engineering; some references are given at the end of the chapter.
 
 15.6 KEEPING TRACK OF MANY OBJECTS
 
-The preceding sections have considered—without mentioning it—state estimation problems involving a single object. In this section, we see what happens when two or more objects generate the observations. What makes this case different from plain old state estimation is that there is now the possibility of _uncertainty_ about which object generated which observa- tion. This is the **identity uncertainty** problem of Section 14.6.3 (page 544), now viewed in a temporal context. In the control theory literature, this is the **data association** problem—thatDATA ASSOCIATION
+The preceding sections have considered—without mentioning it—state estimation problems involving a single object. In this section, we see what happens when two or more objects generate the observations. What makes this case different from plain old state estimation is that there is now the possibility of _uncertainty_ about which object generated which observation. This is the **identity uncertainty** problem of Section 14.6.3 (page 544), now viewed in a temporal context. In the control theory literature, this is the **data association** problem—thatDATA ASSOCIATION
 
 is, the problem of associating observation data with the objects that generated them.  
 
@@ -5615,7 +5615,7 @@ with the objects. Some of those ways are shown in Figure 15.19(b–c); in genera
 
 objects and T time steps, there are (n!)T ways of doing it—an awfully large number. Mathematically speaking, the “way of associating the observations with the objects”
 
-is a collection of unobserved random variable that identify the source of each observation. We’ll write ωt to denote the one-to-one mapping from objects to observations at time t, with ωt(A) and ωt(B) denoting the specific observations (1 or 2) that ωt assigns to A and B. (For n objects, ωt will have n! possible values; here, n! = 2.) Because the labels “1” ad “2” on the observations are assigned arbitrarily, the prior on ωt is uniform and ωt is inde- pendent of the states of the objects, x
+is a collection of unobserved random variable that identify the source of each observation. We’ll write ωt to denote the one-to-one mapping from objects to observations at time t, with ωt(A) and ωt(B) denoting the specific observations (1 or 2) that ωt assigns to A and B. (For n objects, ωt will have n! possible values; here, n! = 2.) Because the labels “1” ad “2” on the observations are assigned arbitrarily, the prior on ωt is uniform and ωt is independent of the states of the objects, x
 
 A t and x
 
@@ -5701,11 +5701,11 @@ As a result of the complexity of exact inference, many different approximate met
 
 FILTER
 
-of predicted position and observation and adds that pairing to the assignment. The nearest- neighbor filter works well when the objects are well separated in state space and the prediction uncertainty and observation error are small—in other words, when there is no possibility of confusion. When there is more uncertainty as to the correct assignment, a better approach is to choose the assignment that maximizes the joint probability of the current observations given the predicted positions. This can be done very efficiently using the **Hungarian algo- rithm** (Kuhn, 1955), even though there are n! assignments to choose from.HUNGARIAN
+of predicted position and observation and adds that pairing to the assignment. The nearestneighbor filter works well when the objects are well separated in state space and the prediction uncertainty and observation error are small—in other words, when there is no possibility of confusion. When there is more uncertainty as to the correct assignment, a better approach is to choose the assignment that maximizes the joint probability of the current observations given the predicted positions. This can be done very efficiently using the **Hungarian algorithm** (Kuhn, 1955), even though there are n! assignments to choose from.HUNGARIAN
 
 ALGORITHM
 
-Any method that commits to a single best assignment at each time step fails miserably under more difficult conditions. In particular, if the algorithm commits to an incorrect as- signment, the prediction at the next time step may be significantly wrong, leading to more  
+Any method that commits to a single best assignment at each time step fails miserably under more difficult conditions. In particular, if the algorithm commits to an incorrect assignment, the prediction at the next time step may be significantly wrong, leading to more  
 
 
 
@@ -5713,7 +5713,7 @@ Any method that commits to a single best assignment at each time step fails mise
 
 **Figure 15.20** Images from (a) upstream and (b) downstream surveillance cameras roughly two miles apart on Highway 99 in Sacramento, California. The boxed vehicle has been identified at both cameras.
 
-incorrect assignments, and so on. Two modern approaches turn out to be much more effec- tive. A **particle filtering** algorithm (see page 598) for data association works by maintaining a large collection of possible current assignments. An **MCMC** algorithm explores the space of assignment histories—for example, Figure 15.19(b–c) might be states in the MCMC state space—and can change its mind about previous assignment decisions. Current MCMC data association methods can handle many hundreds of objects in real time while giving a good approximation to the true posterior distributions.
+incorrect assignments, and so on. Two modern approaches turn out to be much more effective. A **particle filtering** algorithm (see page 598) for data association works by maintaining a large collection of possible current assignments. An **MCMC** algorithm explores the space of assignment histories—for example, Figure 15.19(b–c) might be states in the MCMC state space—and can change its mind about previous assignment decisions. Current MCMC data association methods can handle many hundreds of objects in real time while giving a good approximation to the true posterior distributions.
 
 The scenario described so far involved n known objects generating n observations at each time step. Real application of data association are typically much more complicated. Often, the reported observations include **false alarms** (also known as **clutter**), which are notFALSE ALARM
 
@@ -5725,77 +5725,77 @@ In this application, we are interested in two goals: estimating the time it take
 
 Section 15.7. Summary 603
 
-Data association is an essential foundation for keeping track of a complex world, be- cause without it there is no way to combine multiple observations of any given object. When objects in the world interact with each other in complex activities, understanding the world requires combining data association with the relational and open-universe probability models of Section 14.6.3. This is currently an active area of research.
+Data association is an essential foundation for keeping track of a complex world, because without it there is no way to combine multiple observations of any given object. When objects in the world interact with each other in complex activities, understanding the world requires combining data association with the relational and open-universe probability models of Section 14.6.3. This is currently an active area of research.
 
 15.7 SUMMARY
 
-This chapter has addressed the general problem of representing and reasoning about proba- bilistic temporal processes. The main points are as follows:
+This chapter has addressed the general problem of representing and reasoning about probabilistic temporal processes. The main points are as follows:
 
-• The changing state of the world is handled by using a set of random variables to repre- sent the state at each point in time.
+- The changing state of the world is handled by using a set of random variables to represent the state at each point in time.
 
-• Representations can be designed to satisfy the **Markov property**, so that the future is independent of the past given the present. Combined with the assumption that the process is **stationary**—that is, the dynamics do not change over time—this greatly simplifies the representation.
+- Representations can be designed to satisfy the **Markov property**, so that the future is independent of the past given the present. Combined with the assumption that the process is **stationary**—that is, the dynamics do not change over time—this greatly simplifies the representation.
 
-• A temporal probability model can be thought of as containing a **transition model** de- scribing the state evolution and a **sensor model** describing the observation process.
+- A temporal probability model can be thought of as containing a **transition model** describing the state evolution and a **sensor model** describing the observation process.
 
-• The principal inference tasks in temporal models are **filtering, prediction**, **smooth- ing**, and computing the **most likely explanation**. Each of these can be achieved using simple, recursive algorithms whose run time is linear in the length of the sequence.
+- The principal inference tasks in temporal models are **filtering, prediction**, **smoothing**, and computing the **most likely explanation**. Each of these can be achieved using simple, recursive algorithms whose run time is linear in the length of the sequence.
 
-• Three families of temporal models were studied in more depth: **hidden Markov mod- els**, **Kalman filters,** and **dynamic Bayesian networks** (which include the other two as special cases).
+- Three families of temporal models were studied in more depth: **hidden Markov models**, **Kalman filters,** and **dynamic Bayesian networks** (which include the other two as special cases).
 
-• Unless special assumptions are made, as in Kalman filters, exact inference with many state variables is intractable. In practice, the **particle filtering** algorithm seems to be an effective approximation algorithm.
+- Unless special assumptions are made, as in Kalman filters, exact inference with many state variables is intractable. In practice, the **particle filtering** algorithm seems to be an effective approximation algorithm.
 
-• When trying to keep track of many objects, uncertainty arises as to which observations belong to which objects—the **data association** problem. The number of association hypotheses is typically intractably large, but MCMC and particle filtering algorithms for data association work well in practice.
+- When trying to keep track of many objects, uncertainty arises as to which observations belong to which objects—the **data association** problem. The number of association hypotheses is typically intractably large, but MCMC and particle filtering algorithms for data association work well in practice.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Many of the basic ideas for estimating the state of dynamical systems came from the mathe- matician C. F. Gauss (1809), who formulated a deterministic least-squares algorithm for the problem of estimating orbits from astronomical observations. A. A. Markov (1913) devel- oped what was later called the **Markov assumption** in his analysis of stochastic processes;  
+Many of the basic ideas for estimating the state of dynamical systems came from the mathematician C. F. Gauss (1809), who formulated a deterministic least-squares algorithm for the problem of estimating orbits from astronomical observations. A. A. Markov (1913) developed what was later called the **Markov assumption** in his analysis of stochastic processes;  
 
 
 
-he estimated a first-order Markov chain on letters from the text of _Eugene Onegin_. The gen- eral theory of Markov chains and their mixing times is covered by Levin _et al._ (2008).
+he estimated a first-order Markov chain on letters from the text of _Eugene Onegin_. The general theory of Markov chains and their mixing times is covered by Levin _et al._ (2008).
 
-Significant classified work on filtering was done during World War II by Wiener (1942) for continuous-time processes and by Kolmogorov (1941) for discrete-time processes. Al- though this work led to important technological developments over the next 20 years, its use of a frequency-domain representation made many calculations quite cumbersome. Di- rect state-space modeling of the stochastic process turned out to be simpler, as shown by Peter Swerling (1959) and Rudolf Kalman (1960). The latter paper described what is now known as the Kalman filter for forward inference in linear systems with Gaussian noise; Kalman’s results had, however, been obtained previously by the Danish statistician Thorvold Thiele (1880) and by the Russian mathematician Ruslan Stratonovich (1959), whom Kalman met in Moscow in 1960. After a visit to NASA Ames Research Center in 1960, Kalman saw the applicability of the method to the tracking of rocket trajectories, and the filter was later implemented for the Apollo missions. Important results on smoothing were derived by Rauch _et al._ (1965), and the impressively named Rauch–Tung–Striebel smoother is still a standard technique today. Many early results are gathered in Gelb (1974). Bar-Shalom and Fortmann (1988) give a more modern treatment with a Bayesian flavor, as well as many ref- erences to the vast literature on the subject. Chatfield (1989) and Box _et al._ (1994) cover the control theory approach to time series analysis.
+Significant classified work on filtering was done during World War II by Wiener (1942) for continuous-time processes and by Kolmogorov (1941) for discrete-time processes. Although this work led to important technological developments over the next 20 years, its use of a frequency-domain representation made many calculations quite cumbersome. Direct state-space modeling of the stochastic process turned out to be simpler, as shown by Peter Swerling (1959) and Rudolf Kalman (1960). The latter paper described what is now known as the Kalman filter for forward inference in linear systems with Gaussian noise; Kalman’s results had, however, been obtained previously by the Danish statistician Thorvold Thiele (1880) and by the Russian mathematician Ruslan Stratonovich (1959), whom Kalman met in Moscow in 1960. After a visit to NASA Ames Research Center in 1960, Kalman saw the applicability of the method to the tracking of rocket trajectories, and the filter was later implemented for the Apollo missions. Important results on smoothing were derived by Rauch _et al._ (1965), and the impressively named Rauch–Tung–Striebel smoother is still a standard technique today. Many early results are gathered in Gelb (1974). Bar-Shalom and Fortmann (1988) give a more modern treatment with a Bayesian flavor, as well as many references to the vast literature on the subject. Chatfield (1989) and Box _et al._ (1994) cover the control theory approach to time series analysis.
 
-The hidden Markov model and associated algorithms for inference and learning, in- cluding the forward–backward algorithm, were developed by Baum and Petrie (1966). The Viterbi algorithm first appeared in (Viterbi, 1967). Similar ideas also appeared independently in the Kalman filtering community (Rauch _et al._, 1965). The forward–backward algorithm was one of the main precursors of the general formulation of the EM algorithm (Dempster _et al._, 1977); see also Chapter 20. Constant-space smoothing appears in Binder _et al._ (1997b), as does the divide-and-conquer algorithm developed in Exercise 15.3. Constant-time fixed- lag smoothing for HMMs first appeared in Russell and Norvig (2003). HMMs have found many applications in language processing (Charniak, 1993), speech recognition (Rabiner and Juang, 1993), machine translation (Och and Ney, 2003), computational biology (Krogh _et al._, 1994; Baldi _et al._, 1994), financial economics Bhar and Hamori (2004) and other fields. There have been several extensions to the basic HMM model, for example the Hierarchical HMM (Fine _et al._, 1998) and Layered HMM (Oliver _et al._, 2004) introduce structure back into the model, replacing the single state variable of HMMs.
+The hidden Markov model and associated algorithms for inference and learning, including the forward–backward algorithm, were developed by Baum and Petrie (1966). The Viterbi algorithm first appeared in (Viterbi, 1967). Similar ideas also appeared independently in the Kalman filtering community (Rauch _et al._, 1965). The forward–backward algorithm was one of the main precursors of the general formulation of the EM algorithm (Dempster _et al._, 1977); see also Chapter 20. Constant-space smoothing appears in Binder _et al._ (1997b), as does the divide-and-conquer algorithm developed in Exercise 15.3. Constant-time fixedlag smoothing for HMMs first appeared in Russell and Norvig (2003). HMMs have found many applications in language processing (Charniak, 1993), speech recognition (Rabiner and Juang, 1993), machine translation (Och and Ney, 2003), computational biology (Krogh _et al._, 1994; Baldi _et al._, 1994), financial economics Bhar and Hamori (2004) and other fields. There have been several extensions to the basic HMM model, for example the Hierarchical HMM (Fine _et al._, 1998) and Layered HMM (Oliver _et al._, 2004) introduce structure back into the model, replacing the single state variable of HMMs.
 
-Dynamic Bayesian networks (DBNs) can be viewed as a sparse encoding of a Markov process and were first used in AI by Dean and Kanazawa (1989b), Nicholson and Brady (1992), and Kjaerulff (1992). The last work extends the HUGIN Bayes net system to ac- commodate dynamic Bayesian networks. The book by Dean and Wellman (1991) helped popularize DBNs and the probabilistic approach to planning and control within AI. Murphy (2002) provides a thorough analysis of DBNs.
+Dynamic Bayesian networks (DBNs) can be viewed as a sparse encoding of a Markov process and were first used in AI by Dean and Kanazawa (1989b), Nicholson and Brady (1992), and Kjaerulff (1992). The last work extends the HUGIN Bayes net system to accommodate dynamic Bayesian networks. The book by Dean and Wellman (1991) helped popularize DBNs and the probabilistic approach to planning and control within AI. Murphy (2002) provides a thorough analysis of DBNs.
 
-Dynamic Bayesian networks have become popular for modeling a variety of com- plex motion processes in computer vision (Huang _et al._, 1994; Intille and Bobick, 1999). Like HMMs, they have found applications in speech recognition (Zweig and Russell, 1998; Richardson _et al._, 2000; Stephenson _et al._, 2000; Nefian _et al._, 2002; Livescu _et al._, 2003), ge-  
+Dynamic Bayesian networks have become popular for modeling a variety of complex motion processes in computer vision (Huang _et al._, 1994; Intille and Bobick, 1999). Like HMMs, they have found applications in speech recognition (Zweig and Russell, 1998; Richardson _et al._, 2000; Stephenson _et al._, 2000; Nefian _et al._, 2002; Livescu _et al._, 2003), ge 
 
 Bibliographical and Historical Notes 605
 
 nomics (Murphy and Mian, 1999; Perrin _et al._, 2003; Husmeier, 2003) and robot localization (Theocharous _et al._, 2004). The link between HMMs and DBNs, and between the forward– backward algorithm and Bayesian network propagation, was made explicitly by Smyth _et al._ (1997). A further unification with Kalman filters (and other statistical models) appears in Roweis and Ghahramani (1999). Procedures exist for learning the parameters (Binder _et al._, 1997a; Ghahramani, 1998) and structures (Friedman _et al._, 1998) of DBNs.
 
-The particle filtering algorithm described in Section 15.5 has a particularly interesting history. The first sampling algorithms for particle filtering (also called sequential Monte Carlo methods) were developed in the control theory community by Handschin and Mayne (1969), and the resampling idea that is the core of particle filtering appeared in a Russian control journal (Zaritskii _et al._, 1975). It was later reinvented in statistics as **sequential importance- sampling resampling**, or **SIR** (Rubin, 1988; Liu and Chen, 1998), in control theory as parti- cle filtering (Gordon _et al._, 1993; Gordon, 1994), in AI as **survival of the fittest** (Kanazawa _et al._, 1995), and in computer vision as **condensation** (Isard and Blake, 1996). The paper by Kanazawa _et al._ (1995) includes an improvement called **evidence reversal** whereby the stateEVIDENCE
+The particle filtering algorithm described in Section 15.5 has a particularly interesting history. The first sampling algorithms for particle filtering (also called sequential Monte Carlo methods) were developed in the control theory community by Handschin and Mayne (1969), and the resampling idea that is the core of particle filtering appeared in a Russian control journal (Zaritskii _et al._, 1975). It was later reinvented in statistics as **sequential importancesampling resampling**, or **SIR** (Rubin, 1988; Liu and Chen, 1998), in control theory as particle filtering (Gordon _et al._, 1993; Gordon, 1994), in AI as **survival of the fittest** (Kanazawa _et al._, 1995), and in computer vision as **condensation** (Isard and Blake, 1996). The paper by Kanazawa _et al._ (1995) includes an improvement called **evidence reversal** whereby the stateEVIDENCE
 
 REVERSAL
 
-at time t + 1 is sampled conditional on both the state at time t _and the evidence at time_ t + 1. This allows the evidence to influence sample generation directly and was proved by Doucet (1997) and Liu and Chen (1998) to reduce the approximation error. Particle filtering has been applied in many areas, including tracking complex motion patterns in video (Isard and Blake, 1996), predicting the stock market (de Freitas _et al._, 2000), and diagnosing faults on plane- tary rovers (Verma _et al._, 2004). A variant called the **Rao-Blackwellized particle filter** or
+at time t + 1 is sampled conditional on both the state at time t _and the evidence at time_ t + 1. This allows the evidence to influence sample generation directly and was proved by Doucet (1997) and Liu and Chen (1998) to reduce the approximation error. Particle filtering has been applied in many areas, including tracking complex motion patterns in video (Isard and Blake, 1996), predicting the stock market (de Freitas _et al._, 2000), and diagnosing faults on planetary rovers (Verma _et al._, 2004). A variant called the **Rao-Blackwellized particle filter** or
 
-RAO- BLACKWELLIZED PARTICLE FILTER
+RAOBLACKWELLIZED PARTICLE FILTER
 
-RBPF (Doucet _et al._, 2000; Murphy and Russell, 2001) applies particle filtering to a subset of state variables and, for each particle, performs exact inference on the remaining variables conditioned on the value sequence in the particle. In some cases RBPF works well with thou- sands of state variables. An application of RBPF to localization and mapping in robotics is described in Chapter 25. The book by Doucet _et al._ (2001) collects many important papers on **sequential Monte Carlo** (SMC) algorithms, of which particle filtering is the most importantSEQUENTIAL MONTE
+RBPF (Doucet _et al._, 2000; Murphy and Russell, 2001) applies particle filtering to a subset of state variables and, for each particle, performs exact inference on the remaining variables conditioned on the value sequence in the particle. In some cases RBPF works well with thousands of state variables. An application of RBPF to localization and mapping in robotics is described in Chapter 25. The book by Doucet _et al._ (2001) collects many important papers on **sequential Monte Carlo** (SMC) algorithms, of which particle filtering is the most importantSEQUENTIAL MONTE
 
 CARLO
 
 instance. Pierre Del Moral and colleagues have performed extensive theoretical analyses of SMC algorithms (Del Moral, 2004; Del Moral _et al._, 2006).
 
-MCMC methods (see Section 14.5.2) can be applied to the filtering problem; for ex- ample, Gibbs sampling can be applied directly to an unrolled DBN. To avoid the problem of increasing update times as the unrolled network grows, the **decayed MCMC** filter (MarthiDECAYED MCMC
+MCMC methods (see Section 14.5.2) can be applied to the filtering problem; for example, Gibbs sampling can be applied directly to an unrolled DBN. To avoid the problem of increasing update times as the unrolled network grows, the **decayed MCMC** filter (MarthiDECAYED MCMC
 
 _et al._, 2002) prefers to sample more recent state variables, with a probability that decays as 1/k2 for a variable k steps into the past. Decayed MCMC is a provably nondivergent filter. Nondivergence theorems can also be obtained for certain types of **assumed-density filter.ASSUMED-DENSITY**
 
 FILTER
 
-An assumed-density filter assumes that the posterior distribution over states at time t belongs to a particular finitely parameterized family; if the projection and update steps take it outside this family, the distribution is projected back to give the best approximation within the fam- ily. For DBNs, the Boyen–Koller algorithm (Boyen _et al._, 1999) and the **factored frontier**FACTORED
+An assumed-density filter assumes that the posterior distribution over states at time t belongs to a particular finitely parameterized family; if the projection and update steps take it outside this family, the distribution is projected back to give the best approximation within the family. For DBNs, the Boyen–Koller algorithm (Boyen _et al._, 1999) and the **factored frontier**FACTORED
 
 FRONTIER
 
-algorithm (Murphy and Weiss, 2001) assume that the posterior distribution can be approxi- mated well by a product of small factors. Variational techniques (see Chapter 14) have also been developed for temporal models. Ghahramani and Jordan (1997) discuss an approxima- tion algorithm for the **factorial HMM**, a DBN in which two or more independently evolvingFACTORIAL HMM  
+algorithm (Murphy and Weiss, 2001) assume that the posterior distribution can be approximated well by a product of small factors. Variational techniques (see Chapter 14) have also been developed for temporal models. Ghahramani and Jordan (1997) discuss an approximation algorithm for the **factorial HMM**, a DBN in which two or more independently evolvingFACTORIAL HMM  
 
 
 
 Markov chains are linked by a shared observation stream. Jordan _et al._ (1998) cover a number of other applications.
 
-Data association for multitarget tracking was first described in a probabilistic setting by Sittler (1964). The first practical algorithm for large-scale problems was the “multiple hypothesis tracker” or MHT algorithm (Reid, 1979). Many important papers are collected by Bar-Shalom and Fortmann (1988) and Bar-Shalom (1992). The development of an MCMC algorithm for data association is due to Pasula _et al._ (1999), who applied it to traffic surveil- lance problems. Oh _et al._ (2009) provide a formal analysis and extensive experimental com- parisons to other methods. Schulz _et al._ (2003) describe a data association method based on particle filtering. Ingemar Cox analyzed the complexity of data association (Cox, 1993; Cox and Hingorani, 1994) and brought the topic to the attention of the vision community. He also noted the applicability of the polynomial-time Hungarian algorithm to the problem of find- ing most-likely assignments, which had long been considered an intractable problem in the tracking community. The algorithm itself was published by Kuhn (1955), based on transla- tions of papers published in 1931 by two Hungarian mathematicians, Dénes König and Jenö Egerváry. The basic theorem had been derived previously, however, in an unpublished Latin manuscript by the famous Prussian mathematician Carl Gustav Jacobi (1804–1851).
+Data association for multitarget tracking was first described in a probabilistic setting by Sittler (1964). The first practical algorithm for large-scale problems was the “multiple hypothesis tracker” or MHT algorithm (Reid, 1979). Many important papers are collected by Bar-Shalom and Fortmann (1988) and Bar-Shalom (1992). The development of an MCMC algorithm for data association is due to Pasula _et al._ (1999), who applied it to traffic surveillance problems. Oh _et al._ (2009) provide a formal analysis and extensive experimental comparisons to other methods. Schulz _et al._ (2003) describe a data association method based on particle filtering. Ingemar Cox analyzed the complexity of data association (Cox, 1993; Cox and Hingorani, 1994) and brought the topic to the attention of the vision community. He also noted the applicability of the polynomial-time Hungarian algorithm to the problem of finding most-likely assignments, which had long been considered an intractable problem in the tracking community. The algorithm itself was published by Kuhn (1955), based on translations of papers published in 1931 by two Hungarian mathematicians, Dénes König and Jenö Egerváry. The basic theorem had been derived previously, however, in an unpublished Latin manuscript by the famous Prussian mathematician Carl Gustav Jacobi (1804–1851).
 
 EXERCISES
 
@@ -5803,7 +5803,7 @@ EXERCISES
 
 **15.2** In this exercise, we examine what happens to the probabilities in the umbrella world in the limit of long time sequences.
 
-**a**. Suppose we observe an unending sequence of days on which the umbrella appears. Show that, as the days go by, the probability of rain on the current day increases mono- tonically toward a fixed point. Calculate this fixed point.
+**a**. Suppose we observe an unending sequence of days on which the umbrella appears. Show that, as the days go by, the probability of rain on the current day increases monotonically toward a fixed point. Calculate this fixed point.
 
 **b**. Now consider _forecasting_ further and further into the future, given just the first two umbrella observations. First, compute the probability P (r2+k|u1, u2) for k = 1 . . . 20
 
@@ -5817,7 +5817,7 @@ and plot the results. You should see that the probability converges towards a fi
 
 Exercises 607
 
-**c**. Given the results of (a) and (b), a recursive divide-and-conquer algorithm can be con- structed by first running forward along the sequence and then backward from the end, storing just the required messages at the middle and the ends. Then the algorithm is called on each half. Write out the algorithm in detail.
+**c**. Given the results of (a) and (b), a recursive divide-and-conquer algorithm can be constructed by first running forward along the sequence and then backward from the end, storing just the required messages at the middle and the ends. Then the algorithm is called on each half. Write out the algorithm in detail.
 
 **d**. Compute the time and space complexity of the algorithm as a function of t, the length of the sequence. How does this change if we divide the input into more than two pieces?
 
@@ -5829,9 +5829,9 @@ Exercises 607
 
 **15.7** In Section 15.3.2, the prior distribution over locations is uniform and the transition model assumes an equal probability of moving to any neighboring square. What if those assumptions are wrong? Suppose that the initial location is actually chosen uniformly from the northwest quadrant of the room and the _Move_ action actually tends to move southeast. Keeping the HMM model fixed, explore the effect on localization and path accuracy as the southeasterly tendency increases, for different values of ε.
 
-**15.8** Consider a version of the vacuum robot (page 582) that has the policy of going straight for as long as it can; only when it encounters an obstacle does it change to a new (randomly selected) heading. To model this robot, each state in the model consists of a _(location, head- ing)_ pair. Implement this model and see how well the Viterbi algorithm can track a robot with this model. The robot’s policy is more constrained than the random-walk robot; does that mean that predictions of the most likely path are more accurate?
+**15.8** Consider a version of the vacuum robot (page 582) that has the policy of going straight for as long as it can; only when it encounters an obstacle does it change to a new (randomly selected) heading. To model this robot, each state in the model consists of a _(location, heading)_ pair. Implement this model and see how well the Viterbi algorithm can track a robot with this model. The robot’s policy is more constrained than the random-walk robot; does that mean that predictions of the most likely path are more accurate?
 
-**15.9** This exercise is concerned with filtering in an environment with no landmarks. Con- sider a vacuum robot in an empty room, represented by an n×m rectangular grid. The robot’s location is hidden; the only evidence available to the observer is a noisy location sensor that gives an approximation to the robot’s location. If the robot is at location (x, y) then with probability .1 the sensor gives the correct location, with probability .05 each it reports one of the 8 locations immediately surrounding (x, y), with probability .025 each it reports one of the 16 locations that surround those 8, and with the remaining probability of .1 it reports “no reading.” The robot’s policy is to pick a direction and follow it with probability .8 on each step; the robot switches to a randomly selected new heading with probability .2 (or with  
+**15.9** This exercise is concerned with filtering in an environment with no landmarks. Consider a vacuum robot in an empty room, represented by an n×m rectangular grid. The robot’s location is hidden; the only evidence available to the observer is a noisy location sensor that gives an approximation to the robot’s location. If the robot is at location (x, y) then with probability .1 the sensor gives the correct location, with probability .05 each it reports one of the 8 locations immediately surrounding (x, y), with probability .025 each it reports one of the 16 locations that surround those 8, and with the remaining probability of .1 it reports “no reading.” The robot’s policy is to pick a direction and follow it with probability .8 on each step; the robot switches to a randomly selected new heading with probability .2 (or with  
 
 
 
@@ -5845,15 +5845,15 @@ Exercises 607
 
 **S**_t_+1
 
-**Figure 15.21** A Bayesian network representation of a switching Kalman filter. The switching variable St is a discrete state variable whose value determines the transition model for the continuous state variables **X**t. For any discrete state i, the transition model **P**(**X**t+1|**X**t, St = i) is a linear Gaussian model, just as in a regular Kalman filter. The tran- sition model for the discrete state, **P**(St+1|St), can be thought of as a matrix, as in a hidden Markov model.
+**Figure 15.21** A Bayesian network representation of a switching Kalman filter. The switching variable St is a discrete state variable whose value determines the transition model for the continuous state variables **X**t. For any discrete state i, the transition model **P**(**X**t+1|**X**t, St = i) is a linear Gaussian model, just as in a regular Kalman filter. The transition model for the discrete state, **P**(St+1|St), can be thought of as a matrix, as in a hidden Markov model.
 
 probability 1 if it encounters a wall). Implement this as an HMM and do filtering to track the robot. How accurately can we track the robot’s path?
 
-**15.10** Often, we wish to monitor a continuous-state system whose behavior switches unpre- dictably among a set of k distinct “modes.” For example, an aircraft trying to evade a missile can execute a series of distinct maneuvers that the missile may attempt to track. A Bayesian network representation of such a **switching Kalman filter** model is shown in Figure 15.21.
+**15.10** Often, we wish to monitor a continuous-state system whose behavior switches unpredictably among a set of k distinct “modes.” For example, an aircraft trying to evade a missile can execute a series of distinct maneuvers that the missile may attempt to track. A Bayesian network representation of such a **switching Kalman filter** model is shown in Figure 15.21.
 
 **a**. Suppose that the discrete state St has k possible values and that the prior continuous state estimate **P**(**X**0) is a multivariate Gaussian distribution. Show that the prediction **P**(**X**1) is a **mixture of Gaussians**—that is, a weighted sum of Gaussians such that the weights sum to 1.
 
-**b**. Show that if the current continuous state estimate **P**(**X**t|**e**1:t) is a mixture of m Gaus- sians, then in the general case the updated state estimate **P**(**X**t+1|**e**1:t+1) will be a mix- ture of km Gaussians.
+**b**. Show that if the current continuous state estimate **P**(**X**t|**e**1:t) is a mixture of m Gaussians, then in the general case the updated state estimate **P**(**X**t+1|**e**1:t+1) will be a mixture of km Gaussians.
 
 **c**. What aspect of the temporal process do the weights in the Gaussian mixture represent?
 
@@ -5883,15 +5883,15 @@ The results in (a) and (b) show that the representation of the posterior grows w
 
 Exercises 609
 
-**15.13** A professor wants to know if students are getting enough sleep. Each day, the pro- fessor observes whether the students sleep in class, and whether they have red eyes. The professor has the following domain theory:
+**15.13** A professor wants to know if students are getting enough sleep. Each day, the professor observes whether the students sleep in class, and whether they have red eyes. The professor has the following domain theory:
 
-• The prior probability of getting enough sleep, with no observations, is 0.7.
+- The prior probability of getting enough sleep, with no observations, is 0.7.
 
-• The probability of getting enough sleep on night t is 0.8 given that the student got enough sleep the previous night, and 0.3 if not.
+- The probability of getting enough sleep on night t is 0.8 given that the student got enough sleep the previous night, and 0.3 if not.
 
-• The probability of having red eyes is 0.2 if the student got enough sleep, and 0.7 if not.
+- The probability of having red eyes is 0.2 if the student got enough sleep, and 0.7 if not.
 
-• The probability of sleeping in class is 0.1 if the student got enough sleep, and 0.3 if not.
+- The probability of sleeping in class is 0.1 if the student got enough sleep, and 0.3 if not.
 
 Formulate this information as a dynamic Bayesian network that the professor could use to filter or predict from a sequence of observations. Then reformulate it as a hidden Markov model that has only a single observation variable. Give the complete probability tables for the model.
 
@@ -5909,13 +5909,13 @@ perform the following computations:
 
 **15.15** Suppose that a particular student shows up with red eyes and sleeps in class every day. Given the model described in Exercise 15.13, explain why the probability that the student had enough sleep the previous night converges to a fixed point rather than continuing to go down as we gather more days of evidence. What is the fixed point? Answer this both numerically (by computation) and analytically.
 
-**15.16** This exercise analyzes in more detail the persistent-failure model for the battery sen- sor in Figure 15.15(a) (page 594).
+**15.16** This exercise analyzes in more detail the persistent-failure model for the battery sensor in Figure 15.15(a) (page 594).
 
 **a**. Figure 15.15(b) stops at t = 32. Describe qualitatively what should happen as t → ∞
 
 if the sensor continues to read 0.
 
-**b**. Suppose that the external temperature affects the battery sensor in such a way that tran- sient failures become more likely as temperature increases. Show how to augment the DBN structure in Figure 15.15(a), and explain any required changes to the CPTs.
+**b**. Suppose that the external temperature affects the battery sensor in such a way that transient failures become more likely as temperature increases. Show how to augment the DBN structure in Figure 15.15(a), and explain any required changes to the CPTs.
 
 **c**. Given the new network structure, can battery readings be used by the robot to infer the current temperature?
 
@@ -5931,7 +5931,7 @@ Section 16.1 introduces the basic principle of decision theory: the maximization
 
 16.1 COMBINING BELIEFS AND DESIRES UNDER UNCERTAINTY
 
-Decision theory, in its simplest form, deals with choosing among actions based on the desir- ability of their _immediate_ outcomes; that is, the environment is assumed to be episodic in the sense defined on page 43. (This assumption is relaxed in Chapter 17.) In Chapter 3 we used the notation RESULT(s0, a) for the state that is the deterministic outcome of taking action a
+Decision theory, in its simplest form, deals with choosing among actions based on the desirability of their _immediate_ outcomes; that is, the environment is assumed to be episodic in the sense defined on page 43. (This assumption is relaxed in Chapter 17.) In Chapter 3 we used the notation RESULT(s0, a) for the state that is the deterministic outcome of taking action a
 
 in state s0. In this chapter we deal with nondeterministic partially observable environments. Since the agent may not know the current state, we omit it and define RESULT(a) as a _random variable_ whose values are the possible outcome states. The probability of outcome s
 
@@ -5973,7 +5973,7 @@ EU (a|**e**)
 
 In a sense, the MEU principle could be seen as defining all of AI. All an intelligent agent has to do is calculate the various quantities, maximize utility over its actions, and away it goes. But this does not mean that the AI problem is _solved_ by the definition!
 
-The MEU principle _formalizes_ the general notion that the agent should “do the right thing,” but goes only a small distance toward a full _operationalization_ of that advice. Es- timating the state of the world requires perception, learning, knowledge representation, and inference. Computing P (RESULT(a) | a, **e**) requires a complete causal model of the world and, as we saw in Chapter 14, NP-hard inference in (very large) Bayesian networks. Comput- ing the outcome utilities U(s′) often requires searching or planning, because an agent may not know how good a state is until it knows where it can get to from that state. So, decision theory is not a panacea that solves the AI problem—but it does provide a useful framework.
+The MEU principle _formalizes_ the general notion that the agent should “do the right thing,” but goes only a small distance toward a full _operationalization_ of that advice. Estimating the state of the world requires perception, learning, knowledge representation, and inference. Computing P (RESULT(a) | a, **e**) requires a complete causal model of the world and, as we saw in Chapter 14, NP-hard inference in (very large) Bayesian networks. Computing the outcome utilities U(s′) often requires searching or planning, because an agent may not know how good a state is until it knows where it can get to from that state. So, decision theory is not a panacea that solves the AI problem—but it does provide a useful framework.
 
 The MEU principle has a clear relation to the idea of performance measures introduced in Chapter 2. The basic idea is simple. Consider the environments that could lead to an agent having a given percept history, and consider the different agents that we could design. _If an agent acts so as to maximize a utility function that correctly reflects the performance measure, then the agent will achieve the highest possible performance score (averaged over all the possible environments)._ This is the central justification for the MEU principle itself. While the claim may seem tautological, it does in fact embody a very important transition from a global, external criterion of rationality—the performance measure over environment histories—to a local, internal criterion involving the maximization of a utility function applied to the next state.
 
@@ -6015,25 +6015,25 @@ L = \[p1, S1; p2, S2; . . . pn, Sn\] .
 
 In general, each outcome Si of a lottery can be either an atomic state or another lottery. The primary issue for utility theory is to understand how preferences between complex lotteries are related to preferences between the underlying states in those lotteries. To address this issue we list six constraints that we require any reasonable preference relation to obey:
 
-• **Orderability**: Given any two lotteries, a rational agent must either prefer one to theORDERABILITY
+- **Orderability**: Given any two lotteries, a rational agent must either prefer one to theORDERABILITY
 
 other or else rate the two as equally preferable. That is, the agent cannot avoid deciding. As we said on page 490, refusing to bet is like refusing to allow time to pass.
 
 Exactly one of (A ' B), (B ' A), or (A ∼ B) holds.
 
-• **Transitivity**: Given any three lotteries, if an agent prefers A to B and prefers B to C ,TRANSITIVITY
+- **Transitivity**: Given any three lotteries, if an agent prefers A to B and prefers B to C ,TRANSITIVITY
 
 then the agent must prefer A to C .
 
 (A ' B) ∧ (B ' C) ⇒ (A ' C) .
 
-• **Continuity**: If some lottery B is between A and C in preference, then there is someCONTINUITY
+- **Continuity**: If some lottery B is between A and C in preference, then there is someCONTINUITY
 
 probability p for which the rational agent will be indifferent between getting B for sure and the lottery that yields A with probability p and C with probability 1− p.
 
 A ' B ' C ⇒ ∃ p \[p,A; 1− p,C\] ∼ B .
 
-• **Substitutability**: If an agent is indifferent between two lotteries A and B, then theSUBSTITUTABILITY
+- **Substitutability**: If an agent is indifferent between two lotteries A and B, then theSUBSTITUTABILITY
 
 agent is indifferent between two more complex lotteries that are the same except that B
 
@@ -6047,13 +6047,13 @@ A ∼ B ⇒ \[p,A; 1− p,C\] ∼ \[p,B; 1− p,C\] .
 
 This also holds if we substitute ' for ∼ in this axiom.
 
-• **Monotonicity**: Suppose two lotteries have the same two possible outcomes, A and B.MONOTONICITY
+- **Monotonicity**: Suppose two lotteries have the same two possible outcomes, A and B.MONOTONICITY
 
 If an agent prefers A to B, then the agent must prefer the lottery that has a higher probability for A (and vice versa).
 
 A ' B ⇒ (p > q ⇔ \[p,A; 1− p,B\] ' \[q,A; 1− q,B\]) .
 
-• **Decomposability**: Compound lotteries can be reduced to simpler ones using the lawsDECOMPOSABILITY
+- **Decomposability**: Compound lotteries can be reduced to simpler ones using the lawsDECOMPOSABILITY
 
 of probability. This has been called the “no fun in gambling” rule because it says that two consecutive lotteries can be compressed into a single equivalent lottery, as shown in Figure 16.1(b).3
 
@@ -6065,13 +6065,13 @@ These constraints are known as the axioms of utility theory. Each axiom can be m
 
 Notice that the axioms of utility theory are really axioms about preferences—they say nothing about a utility function. But in fact from the axioms of utility we can derive the following consequences (for the proof, see von Neumann and Morgenstern, 1944):
 
-• **Existence of Utility Function**: If an agent’s preferences obey the axioms of utility, then there exists a function U such that U(A) > U(B) if and only if A is preferred to B, and U(A) = U(B) if and only if the agent is indifferent between A and B.
+- **Existence of Utility Function**: If an agent’s preferences obey the axioms of utility, then there exists a function U such that U(A) > U(B) if and only if A is preferred to B, and U(A) = U(B) if and only if the agent is indifferent between A and B.
 
 U(A) > U(B) ⇔ A ' B
 
 U(A) = U(B) ⇔ A ∼ B
 
-• **Expected Utility of a Lottery**: The utility of a lottery is the sum of the probability of each outcome times the utility of that outcome.
+- **Expected Utility of a Lottery**: The utility of a lottery is the sum of the probability of each outcome times the utility of that outcome.
 
 U(\[p1, S1; . . . ; pn, Sn\]) =
 
@@ -6161,7 +6161,7 @@ ELICITATION
 
 observed preferences to pin down the underlying utility function. Equation (16.2) says that there is no absolute scale for utilities, but it is helpful, nonethe-
 
-less, to establish _some_ scale on which utilities can be recorded and compared for any particu- lar problem. A scale can be established by fixing the utilities of any two particular outcomes, just as we fix a temperature scale by fixing the freezing point and boiling point of water. Typically, we fix the utility of a “best possible prize” at U(S) = u
+less, to establish _some_ scale on which utilities can be recorded and compared for any particular problem. A scale can be established by fixing the utilities of any two particular outcomes, just as we fix a temperature scale by fixing the freezing point and boiling point of water. Typically, we fix the utility of a “best possible prize” at U(S) = u
 
  and a “worst possible
 
@@ -6185,11 +6185,11 @@ and u ⊥
 
 The probability p is adjusted until the agent is indifferent between S and the standard lottery. Assuming normalized utilities, the utility of S is given by p. Once this is done for each prize, the utilities for all lotteries involving those prizes are determined.
 
-In medical, transportation, and environmental decision problems, among others, peo- ple’s lives are at stake. In such cases, u
+In medical, transportation, and environmental decision problems, among others, people’s lives are at stake. In such cases, u
 
 ⊥ is the value assigned to immediate death (or perhaps
 
-many deaths). _Although nobody feels comfortable with putting a value on human life, it is a fact that tradeoffs are made all the time._ Aircraft are given a complete overhaul at intervals determined by trips and miles flown, rather than after every trip. Cars are manufactured in a way that trades off costs against accident survival rates. Paradoxically, a refusal to “put a monetary value on life” means that life is often _undervalued_. Ross Shachter relates an ex- perience with a government agency that commissioned a study on removing asbestos from schools. The decision analysts performing the study assumed a particular dollar value for the life of a school-age child, and argued that the rational choice under that assumption was to remove the asbestos. The agency, morally outraged at the idea of setting the value of a life, rejected the report out of hand. It then decided against asbestos removal—implicitly asserting a lower value for the life of a child than that assigned by the analysts.  
+many deaths). _Although nobody feels comfortable with putting a value on human life, it is a fact that tradeoffs are made all the time._ Aircraft are given a complete overhaul at intervals determined by trips and miles flown, rather than after every trip. Cars are manufactured in a way that trades off costs against accident survival rates. Paradoxically, a refusal to “put a monetary value on life” means that life is often _undervalued_. Ross Shachter relates an experience with a government agency that commissioned a study on removing asbestos from schools. The decision analysts performing the study assumed a particular dollar value for the life of a school-age child, and argued that the rational choice under that assumption was to remove the asbestos. The agency, morally outraged at the idea of setting the value of a life, rejected the report out of hand. It then decided against asbestos removal—implicitly asserting a lower value for the life of a child than that assigned by the analysts.  
 
 
 
@@ -6271,7 +6271,7 @@ for the range between n = −$150, 000 and n = $800, 000. We should not assume t
 
 it is likely that most people have a utility function that is concave for positive wealth. Going into debt is bad, but preferences between different levels of debt can display a reversal of the concavity associated with positive wealth. For example, someone already $10,000,000 in debt might well accept a gamble on a fair coin with a gain of $10,000,000 for heads and a loss of $20,000,000 for tails.5 This yields the S-shaped curve shown in Figure 16.2(b).
 
-If we restrict our attention to the positive part of the curves, where the slope is decreas- ing, then for any lottery L, the utility of being faced with that lottery is less than the utility of being handed the expected monetary value of the lottery as a sure thing:
+If we restrict our attention to the positive part of the curves, where the slope is decreasing, then for any lottery L, the utility of being faced with that lottery is less than the utility of being handed the expected monetary value of the lottery as a sure thing:
 
 U(L) < U(SEMV (L)) .
 
@@ -6351,7 +6351,7 @@ With more choices, extremely optimistic estimates are more likely to arise: for 
 
 This tendency for the estimated expected utility of the best choice to be too high is called the **optimizer’s curse** (Smith and Winkler, 2006). It afflicts even the most seasonedOPTIMIZER’S CURSE
 
-decision analysts and statisticians. Serious manifestations include believing that an exciting new drug that has cured 80% patients in a trial will cure 80% of patients (it’s been chosen from k = thousands of candidate drugs) or that a mutual fund advertised as having above- average returns will continue to have them (it’s been chosen to appear in the advertisement out of k = dozens of funds in the company’s overall portfolio). It can even be the case that what appears to be the best choice may not be, if the variance in the utility estimate is high: a drug, selected from thousands tried, that has cured 9 of 10 patients is probably _worse_ than one that has cured 800 of 1000.
+decision analysts and statisticians. Serious manifestations include believing that an exciting new drug that has cured 80% patients in a trial will cure 80% of patients (it’s been chosen from k = thousands of candidate drugs) or that a mutual fund advertised as having aboveaverage returns will continue to have them (it’s been chosen to appear in the advertisement out of k = dozens of funds in the company’s overall portfolio). It can even be the case that what appears to be the best choice may not be, if the variance in the utility estimate is high: a drug, selected from thousands tried, that has cured 9 of 10 patients is probably _worse_ than one that has cured 800 of 1000.
 
 The optimizer’s curse crops up everywhere because of the ubiquity of utility-maximizing selection processes, so taking the utility estimates at face value is a bad idea. We can avoid the curse by using an explicit probability model **P(ÊU** |EU ) of the error in the utility estimates. Given this model and a prior **P**(EU ) on what we might reasonably expect the utilities to be, we treat the utility estimate, once obtained, as evidence and compute the posterior distribution for the true utility using Bayes’ rule.
 
@@ -6395,21 +6395,21 @@ like a medical procedure that it is described as having a “90% survival rate�
 
 People feel more comfortable making _relative_ utility judgments rather than absolute ones. I may have little idea how much I might enjoy the various wines offered by a restaurant. The restaurant takes advantage of this by offering a $200 bottle that it knows nobody will buy, but which serves to skew upward the customer’s estimate of the value of all wines and make the $55 bottle seem like a bargain. This is called the **anchoring effect**.ANCHORING EFFECT
 
-If human informants insist on contradictory preference judgments, there is nothing that automated agents can do to be consistent with them. Fortunately, preference judgments made by humans are often open to revision in the light of further consideration. Paradoxes like the Allais paradox are greatly reduced (but not eliminated) if the choices are explained bet- ter. In work at the Harvard Business School on assessing the utility of money, Keeney and Raiffa (1976, p. 210) found the following:
+If human informants insist on contradictory preference judgments, there is nothing that automated agents can do to be consistent with them. Fortunately, preference judgments made by humans are often open to revision in the light of further consideration. Paradoxes like the Allais paradox are greatly reduced (but not eliminated) if the choices are explained better. In work at the Harvard Business School on assessing the utility of money, Keeney and Raiffa (1976, p. 210) found the following:
 
 Subjects tend to be too risk-averse in the small and therefore . . . the fitted utility functions exhibit unacceptably large risk premiums for lotteries with a large spread. . . . Most of the subjects, however, can reconcile their inconsistencies and feel that they have learned an important lesson about how they want to behave. As a consequence, some subjects cancel their automobile collision insurance and take out more term insurance on their lives.
 
-The evidence for human irrationality is also questioned by researchers in the field of **evo- lutionary psychology**, who point to the fact that our brain’s decision-making mechanismsEVOLUTIONARY
+The evidence for human irrationality is also questioned by researchers in the field of **evolutionary psychology**, who point to the fact that our brain’s decision-making mechanismsEVOLUTIONARY
 
 PSYCHOLOGY
 
-did not evolve to solve word problems with probabilities and prizes stated as decimal num- bers. Let us grant, for the sake of argument, that the brain has built-in neural mechanism for computing with probabilities and utilities, or something functionally equivalent; if so, the required inputs would be obtained through accumulated experience of outcomes and rewards rather than through linguistic presentations of numerical values. It is far from obvious that we can directly access the brain’s built-in neural mechanisms by presenting decision problems in linguistic/numerical form. The very fact that different wordings of the _same decision prob- lem_ elicit different choices suggests that the decision problem itself is not getting through. Spurred by this observation, psychologists have tried presenting problems in uncertain rea- soning and decision making in “evolutionarily appropriate” forms; for example, instead of saying “90% survival rate,” the experimenter might show 100 stick-figure animations of the operation, where the patient dies in 10 of them and survives in 90. (Boredom is a complicat- ing factor in these experiments!) With decision problems posed in this way, people seem to be much closer to rational behavior than previously suspected.  
+did not evolve to solve word problems with probabilities and prizes stated as decimal numbers. Let us grant, for the sake of argument, that the brain has built-in neural mechanism for computing with probabilities and utilities, or something functionally equivalent; if so, the required inputs would be obtained through accumulated experience of outcomes and rewards rather than through linguistic presentations of numerical values. It is far from obvious that we can directly access the brain’s built-in neural mechanisms by presenting decision problems in linguistic/numerical form. The very fact that different wordings of the _same decision problem_ elicit different choices suggests that the decision problem itself is not getting through. Spurred by this observation, psychologists have tried presenting problems in uncertain reasoning and decision making in “evolutionarily appropriate” forms; for example, instead of saying “90% survival rate,” the experimenter might show 100 stick-figure animations of the operation, where the patient dies in 10 of them and survives in 90. (Boredom is a complicating factor in these experiments!) With decision problems posed in this way, people seem to be much closer to rational behavior than previously suspected.  
 
 
 
 16.4 MULTIATTRIBUTE UTILITY FUNCTIONS
 
-Decision making in the field of public policy involves high stakes, in both money and lives. For example, in deciding what levels of harmful emissions to allow from a power plant, pol- icy makers must weigh the prevention of death and disability against the benefit of the power and the economic burden of mitigating the emissions. Siting a new airport requires consid- eration of the disruption caused by construction; the cost of land; the distance from centers of population; the noise of flight operations; safety issues arising from local topography and weather conditions; and so on. Problems like these, in which outcomes are characterized by two or more attributes, are handled by **multiattribute utility theory**.MULTIATTRIBUTE
+Decision making in the field of public policy involves high stakes, in both money and lives. For example, in deciding what levels of harmful emissions to allow from a power plant, policy makers must weigh the prevention of death and disability against the benefit of the power and the economic burden of mitigating the emissions. Siting a new airport requires consideration of the disruption caused by construction; the cost of land; the distance from centers of population; the noise of flight operations; safety issues arising from local topography and weather conditions; and so on. Problems like these, in which outcomes are characterized by two or more attributes, are handled by **multiattribute utility theory**.MULTIATTRIBUTE
 
 UTILITY THEORY
 
@@ -6511,7 +6511,7 @@ _S_2
 
 (a) (b)
 
-**Figure 16.5** Stochastic dominance. (a) S1 stochastically dominates S2 on cost. (b) Cu- mulative distributions for the negative cost of S1 and S2.
+**Figure 16.5** Stochastic dominance. (a) S1 stochastically dominates S2 on cost. (b) Cumulative distributions for the negative cost of S1 and S2.
 
 cost, we can say that S1 stochastically dominates S2 (i.e., S2 can be discarded). It is important to note that this does _not_ follow from comparing the expected costs. For example, if we knew the cost of S1 to be _exactly_ $3.8 billion, then we would be _unable_ to make a decision without additional information on the utility of money. (It might seem odd that _more_ information on the cost of S1 could make the agent _less_ able to decide. The paradox is resolved by noting that in the absence of exact cost information, the decision is easier to make but is more likely to be wrong.)
 
@@ -6553,7 +6553,7 @@ system to make rational decisions based on stochastic dominance, without using a
 
 Suppose we have n attributes, each of which has d distinct possible values. To specify the complete utility function U(x1, . . . , xn), we need d
 
-n values in the worst case. Now, the worst case corresponds to a situation in which the agent’s preferences have no regularity at all. Mul- tiattribute utility theory is based on the supposition that the preferences of typical agents have much more structure than that. The basic approach is to identify regularities in the preference behavior we would expect to see and to use what are called **representation theorems** to showREPRESENTATION
+n values in the worst case. Now, the worst case corresponds to a situation in which the agent’s preferences have no regularity at all. Multiattribute utility theory is based on the supposition that the preferences of typical agents have much more structure than that. The basic approach is to identify regularities in the preference behavior we would expect to see and to use what are called **representation theorems** to showREPRESENTATION
 
 THEOREM
 
@@ -6579,7 +6579,7 @@ X3 if the preference between outcomes 〈x1, x2, x3〉 and 〈x′
 
 particular value x3 for attribute X3. Going back to the airport example, where we have (among other attributes) Noise ,
 
-Cost , and Deaths to consider, one may propose that Noise and Cost are preferentially inde-  
+Cost , and Deaths to consider, one may propose that Noise and Cost are preferentially inde 
 
 Section 16.4. Multiattribute Utility Functions 625
 
@@ -6589,7 +6589,7 @@ MUTUAL PREFERENTIAL INDEPENDENCE
 
 MPI says that, whereas each attribute may be important, it does not affect the way in which one trades off the other attributes against each other.
 
-Mutual preferential independence is something of a mouthful, but thanks to a remark- able theorem due to the economist Gérard Debreu (1960), we can derive from it a very simple form for the agent’s value function: _If attributes_ X1, . . . , Xn _are mutually preferentially in- dependent, then the agent’s preference behavior can be described as maximizing the function_
+Mutual preferential independence is something of a mouthful, but thanks to a remarkable theorem due to the economist Gérard Debreu (1960), we can derive from it a very simple form for the agent’s value function: _If attributes_ X1, . . . , Xn _are mutually preferentially independent, then the agent’s preference behavior can be described as maximizing the function_
 
 V (x1, . . . , xn) =
 
@@ -6607,19 +6607,19 @@ V (noise, cost , deaths) = −noise × 10 4 − cost − deaths × 10
 
 A value function of this type is called an **additive value function**. Additive functions are anADDITIVE VALUE FUNCTION
 
-extremely natural way to describe an agent’s preferences and are valid in many real-world situations. For n attributes, assessing an additive value function requires assessing n separate one-dimensional value functions rather than one n-dimensional function; typically, this repre- sents an exponential reduction in the number of preference experiments that are needed. Even when MPI does not strictly hold, as might be the case at extreme values of the attributes, an additive value function might still provide a good approximation to the agent’s preferences. This is especially true when the violations of MPI occur in portions of the attribute ranges that are unlikely to occur in practice.
+extremely natural way to describe an agent’s preferences and are valid in many real-world situations. For n attributes, assessing an additive value function requires assessing n separate one-dimensional value functions rather than one n-dimensional function; typically, this represents an exponential reduction in the number of preference experiments that are needed. Even when MPI does not strictly hold, as might be the case at extreme values of the attributes, an additive value function might still provide a good approximation to the agent’s preferences. This is especially true when the violations of MPI occur in portions of the attribute ranges that are unlikely to occur in practice.
 
 To understand MPI better, it helps to look at cases where it _doesn’t_ hold. Suppose you are at a medieval market, considering the purchase of some hunting dogs, some chickens, and some wicker cages for the chickens. The hunting dogs are very valuable, but if you don’t have enough cages for the chickens, the dogs will eat the chickens; hence, the tradeoff between dogs and chickens depends strongly on the number of cages, and MPI is violated. The existence of these kinds of interactions among various attributes makes it much harder to assess the overall value function.
 
 **Preferences with uncertainty**
 
-When uncertainty is present in the domain, we also need to consider the structure of prefer- ences between lotteries and to understand the resulting properties of utility functions, rather than just value functions. The mathematics of this problem can become quite complicated, so we present just one of the main results to give a flavor of what can be done. The reader is referred to Keeney and Raiffa (1976) for a thorough survey of the field.  
+When uncertainty is present in the domain, we also need to consider the structure of preferences between lotteries and to understand the resulting properties of utility functions, rather than just value functions. The mathematics of this problem can become quite complicated, so we present just one of the main results to give a flavor of what can be done. The reader is referred to Keeney and Raiffa (1976) for a thorough survey of the field.  
 
 
 
 The basic notion of **utility independence** extends preference independence to coverUTILITY INDEPENDENCE
 
-lotteries: a set of attributes **X** is utility independent of a set of attributes **Y** if preferences be- tween lotteries on the attributes in **X** are independent of the particular values of the attributes in **Y**. A set of attributes is **mutually utility independent** (MUI) if each of its subsets isMUTUALLY UTILITY
+lotteries: a set of attributes **X** is utility independent of a set of attributes **Y** if preferences between lotteries on the attributes in **X** are independent of the particular values of the attributes in **Y**. A set of attributes is **mutually utility independent** (MUI) if each of its subsets isMUTUALLY UTILITY
 
 INDEPENDENT
 
@@ -6649,11 +6649,11 @@ with additional node types for actions and utilities. We use airport siting as a
 
 In its most general form, a decision network represents information about the agent’s current state, its possible actions, the state that will result from the agent’s action, and the utility of that state. It therefore provides a substrate for implementing utility-based agents of the type first introduced in Section 2.4.5. Figure 16.6 shows a decision network for the airport siting problem. It illustrates the three types of nodes used:
 
-• **Chance nodes** (ovals) represent random variables, just as they do in Bayesian networks.CHANCE NODES
+- **Chance nodes** (ovals) represent random variables, just as they do in Bayesian networks.CHANCE NODES
 
 The agent could be uncertain about the construction cost, the level of air traffic and the potential for litigation, and the Deaths , Noise , and total Cost variables, each of which also depends on the site chosen. Each chance node has associated with it a conditional distribution that is indexed by the state of the parent nodes. In decision networks, the parent nodes can include decision nodes as well as chance nodes. Note that each of the current-state chance nodes could be part of a large Bayesian network for assessing construction costs, air traffic levels, or litigation potentials.
 
-• **Decision nodes** (rectangles) represent points where the decision maker has a choice ofDECISION NODES  
+- **Decision nodes** (rectangles) represent points where the decision maker has a choice ofDECISION NODES  
 
 Section 16.5. Decision Networks 627
 
@@ -6677,7 +6677,7 @@ _Air Traffic_
 
 actions. In this case, the AirportSite action can take on a different value for each site under consideration. The choice influences the cost, safety, and noise that will result. In this chapter, we assume that we are dealing with a single decision node. Chapter 17 deals with cases in which more than one decision must be made.
 
-• **Utility nodes** (diamonds) represent the agent’s utility function.9 The utility node hasUTILITY NODES
+- **Utility nodes** (diamonds) represent the agent’s utility function.9 The utility node hasUTILITY NODES
 
 as parents all variables describing the outcome that directly affect utility. Associated with the utility node is a description of the agent’s utility as a function of the parent attributes. The description could be just a tabulation of the function, or it might be a parameterized additive or linear function of the attribute values.
 
@@ -6703,13 +6703,13 @@ _Construction_
 
 _Air Traffic_
 
-**Figure 16.7** A simplified representation of the airport-siting problem. Chance nodes cor- responding to outcome states have been factored out.
+**Figure 16.7** A simplified representation of the airport-siting problem. Chance nodes corresponding to outcome states have been factored out.
 
 a change in the utility table. In the action-utility diagram, Figure 16.7, on the other hand, all such changes have to be reflected by changes to the action-utility table. Essentially, the action-utility formulation is a _compiled_ version of the original formulation.
 
 **16.5.2 Evaluating decision networks**
 
-Actions are selected by evaluating the decision network for each possible setting of the deci- sion node. Once the decision node is set, it behaves exactly like a chance node that has been set as an evidence variable. The algorithm for evaluating decision networks is the following:
+Actions are selected by evaluating the decision network for each possible setting of the decision node. Once the decision node is set, it behaves exactly like a chance node that has been set as an evidence variable. The algorithm for evaluating decision networks is the following:
 
 1\. Set the evidence variables for the current state.
 
@@ -6721,11 +6721,11 @@ a standard probabilistic inference algorithm. (c) Calculate the resulting utilit
 
 3\. Return the action with the highest utility.
 
-This is a straightforward extension of the Bayesian network algorithm and can be incorpo- rated directly into the agent design given in Figure 13.1 on page 484. We will see in Chap- ter 17 that the possibility of executing several actions in sequence makes the problem much more interesting.
+This is a straightforward extension of the Bayesian network algorithm and can be incorporated directly into the agent design given in Figure 13.1 on page 484. We will see in Chapter 17 that the possibility of executing several actions in sequence makes the problem much more interesting.
 
 16.6 THE VALUE OF INFORMATION
 
-In the preceding analysis, we have assumed that all relevant information, or at least all avail- able information, is provided to the agent before it makes its decision. In practice, this is  
+In the preceding analysis, we have assumed that all relevant information, or at least all available information, is provided to the agent before it makes its decision. In practice, this is  
 
 Section 16.6. The Value of Information 629
 
@@ -6743,9 +6743,9 @@ Suppose an oil company is hoping to buy one of n indistinguishable blocks of oce
 
 Now suppose that a seismologist offers the company the results of a survey of block number 3, which indicates definitively whether the block contains oil. How much should the company be willing to pay for the information? The way to answer this question is to examine what the company would do if it had the information:
 
-• With probability 1/n, the survey will indicate oil in block 3. In this case, the company will buy block 3 for C/n dollars and make a profit of C −C/n = (n− 1)C/n dollars.
+- With probability 1/n, the survey will indicate oil in block 3. In this case, the company will buy block 3 for C/n dollars and make a profit of C −C/n = (n− 1)C/n dollars.
 
-• With probability (n−1)/n, the survey will show that the block contains no oil, in which case the company will buy a different block. Now the probability of finding oil in one of the other blocks changes from 1/n to 1/(n− 1), so the company makes an expected profit of C/(n− 1)− C/n = C/n(n− 1) dollars.
+- With probability (n−1)/n, the survey will show that the block contains no oil, in which case the company will buy a different block. Now the probability of finding oil in one of the other blocks changes from 1/n to 1/(n− 1), so the company makes an expected profit of C/(n− 1)− C/n = C/n(n− 1) dollars.
 
 Now we can calculate the expected profit, given the survey information:
 
@@ -6895,7 +6895,7 @@ _U_1_U_2
 
 _U_
 
-**Figure 16.8** Three generic cases for the value of information. In (a), a1 will almost cer- tainly remain superior to a2, so the information is not needed. In (b), the choice is unclear and the information is crucial. In (c), the choice is unclear, but because it makes little difference, the information is less valuable. (Note: The fact that U2 has a high peak in (c) means that its expected value is known with higher certainty than U1.)
+**Figure 16.8** Three generic cases for the value of information. In (a), a1 will almost certainly remain superior to a2, so the information is not needed. In (b), the choice is unclear and the information is crucial. In (c), the choice is unclear, but because it makes little difference, the information is less valuable. (Note: The fact that U2 has a high peak in (c) means that its expected value is known with higher certainty than U1.)
 
 case the difference in utilities will be very high. The VPI formula indicates that it might be worthwhile getting the satellite reports. Such a situation is shown in Figure 16.8(b).
 
@@ -6933,7 +6933,7 @@ Order independence distinguishes sensing actions from ordinary actions and simpl
 
 A sensible agent should ask questions in a reasonable order, should avoid asking questions that are irrelevant, should take into account the importance of each piece of information in relation to its cost, and should stop asking questions when that is appropriate. All of these capabilities can be achieved by using the value of information as a guide.
 
-Figure 16.9 shows the overall design of an agent that can gather information intel- ligently before acting. For now, we assume that with each observable evidence variable Ej , there is an associated cost, Cost(Ej), which reflects the cost of obtaining the evidence through tests, consultants, questions, or whatever. The agent requests what appears to be the most efficient observation in terms of utility gain per unit cost. We assume that the result of the action Request(Ej) is that the next percept provides the value of Ej . If no observation is worth its cost, the agent selects a “real” action.
+Figure 16.9 shows the overall design of an agent that can gather information intelligently before acting. For now, we assume that with each observable evidence variable Ej , there is an associated cost, Cost(Ej), which reflects the cost of obtaining the evidence through tests, consultants, questions, or whatever. The agent requests what appears to be the most efficient observation in terms of utility gain per unit cost. We assume that the result of the action Request(Ej) is that the next percept provides the value of Ej . If no observation is worth its cost, the agent selects a “real” action.
 
 The agent algorithm we have described implements a form of information gathering that is called **myopic**. This is because it uses the VPI formula shortsightedly, calculating theMYOPIC
 
@@ -6951,13 +6951,13 @@ j ← the value that maximizes VPI (Ej) / Cost(Ej)
 
 **return** REQUEST(Ej) **else return** the best action from D
 
-**Figure 16.9** Design of a simple information-gathering agent. The agent works by repeat- edly selecting the observation with the highest information value, until the cost of the next observation is greater than its expected benefit.  
+**Figure 16.9** Design of a simple information-gathering agent. The agent works by repeatedly selecting the observation with the highest information value, until the cost of the next observation is greater than its expected benefit.  
 
 Section 16.7. Decision-Theoretic Expert Systems 633
 
 However, if there is no single evidence variable that will help a lot, a myopic agent might hastily take an action when it would have been better to request two or more variables first and then take action. A better approach in this situation would be to construct a _conditional plan_ (as described in Section 11.3.2) that asks for variable values and takes different next steps depending on the answer.
 
-One final consideration is the effect a series of questions will have on a human respon- dent. People may respond better to a series of questions if they “make sense,” so some expert systems are built to take this into account, asking questions in an order that maximizes the total utility of the system and human rather than an order that maximizes value of information.
+One final consideration is the effect a series of questions will have on a human respondent. People may respond better to a series of questions if they “make sense,” so some expert systems are built to take this into account, asking questions in an order that maximizes the total utility of the system and human rather than an order that maximizes value of information.
 
 16.7 DECISION-THEORETIC EXPERT SYSTEMS
 
@@ -6967,13 +6967,13 @@ of decision theory to actual decision problems. It is used to help make rational
 
 DECISION ANALYST enumerates the possible actions and outcomes and elicits preferences from the decision maker to determine the best course of action. Until the early 1980s, the main purpose of decision analysis was to help humans make decisions that actually reflect their own preferences. As more and more decision processes become automated, decision analysis is increasingly used to ensure that the automated processes are behaving as desired.
 
-Early expert system research concentrated on answering questions, rather than on mak- ing decisions. Those systems that did recommend actions rather than providing opinions on matters of fact generally did so using condition-action rules, rather than with explicit rep- resentations of outcomes and preferences. The emergence of Bayesian networks in the late 1980s made it possible to build large-scale systems that generated sound probabilistic infer- ences from evidence. The addition of decision networks means that expert systems can be developed that recommend optimal decisions, reflecting the preferences of the agent as well as the available evidence.
+Early expert system research concentrated on answering questions, rather than on making decisions. Those systems that did recommend actions rather than providing opinions on matters of fact generally did so using condition-action rules, rather than with explicit representations of outcomes and preferences. The emergence of Bayesian networks in the late 1980s made it possible to build large-scale systems that generated sound probabilistic inferences from evidence. The addition of decision networks means that expert systems can be developed that recommend optimal decisions, reflecting the preferences of the agent as well as the available evidence.
 
-A system that incorporates utilities can avoid one of the most common pitfalls associ- ated with the consultation process: confusing likelihood and importance. A common strategy in early medical expert systems, for example, was to rank possible diagnoses in order of like- lihood and report the most likely. Unfortunately, this can be disastrous! For the majority of patients in general practice, the two most _likely_ diagnoses are usually “There’s nothing wrong with you” and “You have a bad cold,” but if the third most likely diagnosis for a given patient is lung cancer, that’s a serious matter. Obviously, a testing or treatment plan should depend both on probabilities and utilities. Current medical expert systems can take into account the value of information to recommend tests, and then describe a differential diagnosis.  
+A system that incorporates utilities can avoid one of the most common pitfalls associated with the consultation process: confusing likelihood and importance. A common strategy in early medical expert systems, for example, was to rank possible diagnoses in order of likelihood and report the most likely. Unfortunately, this can be disastrous! For the majority of patients in general practice, the two most _likely_ diagnoses are usually “There’s nothing wrong with you” and “You have a bad cold,” but if the third most likely diagnosis for a given patient is lung cancer, that’s a serious matter. Obviously, a testing or treatment plan should depend both on probabilities and utilities. Current medical expert systems can take into account the value of information to recommend tests, and then describe a differential diagnosis.  
 
 
 
-We now describe the knowledge engineering process for decision-theoretic expert sys- tems. As an example we consider the problem of selecting a medical treatment for a kind of congenital heart disease in children (see Lucas, 1996).
+We now describe the knowledge engineering process for decision-theoretic expert systems. As an example we consider the problem of selecting a medical treatment for a kind of congenital heart disease in children (see Lucas, 1996).
 
 About 0.8% of children are born with a heart anomaly, the most common being **aortic coarctation** (a constriction of the aorta). It can be treated with surgery, angioplasty (expand-AORTIC
 
@@ -6985,9 +6985,9 @@ ing the aorta with a balloon placed inside the artery), or medication. The probl
 
 **Simplify to a qualitative decision model**. Since we are using the model to make treatment decisions and not for other purposes (such as determining the joint probability of certain symptom/disorder combinations), we can often simplify by removing variables that are not involved in treatment decisions. Sometimes variables will have to be split or joined to match the expert’s intuitions. For example, the original aortic coarctation model had a _Treatment_ variable with values _surgery_, _angioplasty_, and _medication_, and a separate variable for _Timing_ of the treatment. But the expert had a hard time thinking of these separately, so they were combined, with _Treatment_ taking on values such as _surgery in 1 month_. This gives us the model of Figure 16.10.
 
-**Assign probabilities**. Probabilities can come from patient databases, literature studies, or the expert’s subjective assessments. Note that a diagnostic system will reason from symp- toms and other observations to the disease or other cause of the problems. Thus, in the early years of building these systems, experts were asked for the probability of a cause given an effect. In general they found this difficult to do, and were better able to assess the probability of an effect given a cause. So modern systems usually assess causal knowledge and encode it directly in the Bayesian network structure of the model, leaving the diagnostic reasoning to the Bayesian network inference algorithms (Shachter and Heckerman, 1987).
+**Assign probabilities**. Probabilities can come from patient databases, literature studies, or the expert’s subjective assessments. Note that a diagnostic system will reason from symptoms and other observations to the disease or other cause of the problems. Thus, in the early years of building these systems, experts were asked for the probability of a cause given an effect. In general they found this difficult to do, and were better able to assess the probability of an effect given a cause. So modern systems usually assess causal knowledge and encode it directly in the Bayesian network structure of the model, leaving the diagnostic reasoning to the Bayesian network inference algorithms (Shachter and Heckerman, 1987).
 
-**Assign utilities**. When there are a small number of possible outcomes, they can be enumerated and evaluated individually using the methods of Section 16.3.1. We would create a scale from best to worst outcome and give each a numeric value, for example 0 for death and 1 for complete recovery. We would then place the other outcomes on this scale. This can be done by the expert, but it is better if the patient (or in the case of infants, the patient’s parents) can be involved, because different people have different preferences. If there are ex- ponentially many outcomes, we need some way to combine them using multiattribute utility functions. For example, we may say that the costs of various complications are additive.
+**Assign utilities**. When there are a small number of possible outcomes, they can be enumerated and evaluated individually using the methods of Section 16.3.1. We would create a scale from best to worst outcome and give each a numeric value, for example 0 for death and 1 for complete recovery. We would then place the other outcomes on this scale. This can be done by the expert, but it is better if the patient (or in the case of infants, the patient’s parents) can be involved, because different people have different preferences. If there are exponentially many outcomes, we need some way to combine them using multiattribute utility functions. For example, we may say that the costs of various complications are additive.
 
 **Verify and refine the model**. To evaluate the system we need a set of correct (input, output) pairs; a so-called **gold standard** to compare against. For medical expert systemsGOLD STANDARD
 
@@ -7007,7 +7007,7 @@ _Failure To Thrive_
 
 _Intercostal Recession_
 
-_Hepato- megaly_
+_Hepatomegaly_
 
 _Pulmonary Crepitations_
 
@@ -7051,19 +7051,19 @@ criticisms of probabilistic approaches to expert systems is that it is too diffi
 
 This chapter shows how to combine utility theory with probability to enable an agent to select actions that will maximize its expected performance.
 
-• **Probability theory** describes what an agent should believe on the basis of evidence, **utility theory** describes what an agent wants, and **decision theory** puts the two together to describe what an agent should do.
+- **Probability theory** describes what an agent should believe on the basis of evidence, **utility theory** describes what an agent wants, and **decision theory** puts the two together to describe what an agent should do.
 
-• We can use decision theory to build a system that makes decisions by considering all possible actions and choosing the one that leads to the best expected outcome. Such a system is known as a **rational agent**.
+- We can use decision theory to build a system that makes decisions by considering all possible actions and choosing the one that leads to the best expected outcome. Such a system is known as a **rational agent**.
 
-• Utility theory shows that an agent whose preferences between lotteries are consistent with a set of simple axioms can be described as possessing a utility function; further- more, the agent selects actions as if maximizing its expected utility.
+- Utility theory shows that an agent whose preferences between lotteries are consistent with a set of simple axioms can be described as possessing a utility function; furthermore, the agent selects actions as if maximizing its expected utility.
 
-• **Multiattribute utility theory** deals with utilities that depend on several distinct at- tributes of states. **Stochastic dominance** is a particularly useful technique for making unambiguous decisions, even without precise utility values for attributes.
+- **Multiattribute utility theory** deals with utilities that depend on several distinct attributes of states. **Stochastic dominance** is a particularly useful technique for making unambiguous decisions, even without precise utility values for attributes.
 
-• **Decision networks** provide a simple formalism for expressing and solving decision problems. They are a natural extension of Bayesian networks, containing decision and utility nodes in addition to chance nodes.
+- **Decision networks** provide a simple formalism for expressing and solving decision problems. They are a natural extension of Bayesian networks, containing decision and utility nodes in addition to chance nodes.
 
-• Sometimes, solving a problem involves finding more information before making a de- cision. The **value of information** is defined as the expected improvement in utility compared with making a decision without the information.
+- Sometimes, solving a problem involves finding more information before making a decision. The **value of information** is defined as the expected improvement in utility compared with making a decision without the information.
 
-• **Expert systems** that incorporate utility information have additional capabilities com- pared with pure inference systems. In addition to being able to make decisions, they can use the value of information to decide which questions to ask, if any; they can rec- ommend contingency plans; and they can calculate the sensitivity of their decisions to small changes in probability and utility assessments.
+- **Expert systems** that incorporate utility information have additional capabilities compared with pure inference systems. In addition to being able to make decisions, they can use the value of information to decide which questions to ask, if any; they can recommend contingency plans; and they can calculate the sensitivity of their decisions to small changes in probability and utility assessments.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
@@ -7075,9 +7075,9 @@ Bibliographical and Historical Notes 637
 
 Modern texts talk of _utility_ rather than good and evil, but this statement correctly notes that one should multiply utility by probability (“view geometrically”) to give expected utility, and maximize that over all outcomes (“all these things”) to “judge what one must do.” It is remarkable how much this got right, 350 years ago, and only 8 years after Pascal and Fermat showed how to use probability correctly. The Port-Royal Logic also marked the first publication of Pascal’s wager.
 
-Daniel Bernoulli (1738), investigating the St. Petersburg paradox (see Exercise 16.3), was the first to realize the importance of preference measurement for lotteries, writing “the _value_ of an item must not be based on its _price_, but rather on the _utility_ that it yields” (ital- ics his). Utilitarian philosopher Jeremy Bentham (1823) proposed the **hedonic calculus** for weighing “pleasures” and “pains,” arguing that all decisions (not just monetary ones) could be reduced to utility comparisons.
+Daniel Bernoulli (1738), investigating the St. Petersburg paradox (see Exercise 16.3), was the first to realize the importance of preference measurement for lotteries, writing “the _value_ of an item must not be based on its _price_, but rather on the _utility_ that it yields” (italics his). Utilitarian philosopher Jeremy Bentham (1823) proposed the **hedonic calculus** for weighing “pleasures” and “pains,” arguing that all decisions (not just monetary ones) could be reduced to utility comparisons.
 
-The derivation of numerical utilities from preferences was first carried out by Ram- sey (1931); the axioms for preference in the present text are closer in form to those rediscov- ered in _Theory of Games and Economic Behavior_ (von Neumann and Morgenstern, 1944). A good presentation of these axioms, in the course of a discussion on risk preference, is given by Howard (1977). Ramsey had derived subjective probabilities (not just utilities) from an agent’s preferences; Savage (1954) and Jeffrey (1983) carry out more recent constructions of this kind. Von Winterfeldt and Edwards (1986) provide a modern perspective on decision analysis and its relationship to human preference structures. The micromort utility measure is discussed by Howard (1989). A 1994 survey by the _Economist_ set the value of a life at between $750,000 and $2.6 million. However, Richard Thaler (1992) found irrational fram- ing effects on the price one is willing to pay to avoid a risk of death versus the price one is willing to be paid to accept a risk. For a 1/1000 chance, a respondent wouldn’t pay more than $200 to remove the risk, but wouldn’t accept $50,000 to take on the risk. How much are people willing to pay for a QALY? When it comes down to a specific case of saving oneself or a family member, the number is approximately “whatever I’ve got.” But we can ask at a societal level: suppose there is a vaccine that would yield X QALYs but costs Y dollars; is it worth it? In this case people report a wide range of values from around $10,000 to $150,000 per QALY (Prades _et al._, 2008). QALYs are much more widely used in medical and social policy decision making than are micromorts; see (Russell, 1990) for a typical example of an argument for a major change in public health policy on grounds of increased expected utility measured in QALYs.
+The derivation of numerical utilities from preferences was first carried out by Ramsey (1931); the axioms for preference in the present text are closer in form to those rediscovered in _Theory of Games and Economic Behavior_ (von Neumann and Morgenstern, 1944). A good presentation of these axioms, in the course of a discussion on risk preference, is given by Howard (1977). Ramsey had derived subjective probabilities (not just utilities) from an agent’s preferences; Savage (1954) and Jeffrey (1983) carry out more recent constructions of this kind. Von Winterfeldt and Edwards (1986) provide a modern perspective on decision analysis and its relationship to human preference structures. The micromort utility measure is discussed by Howard (1989). A 1994 survey by the _Economist_ set the value of a life at between $750,000 and $2.6 million. However, Richard Thaler (1992) found irrational framing effects on the price one is willing to pay to avoid a risk of death versus the price one is willing to be paid to accept a risk. For a 1/1000 chance, a respondent wouldn’t pay more than $200 to remove the risk, but wouldn’t accept $50,000 to take on the risk. How much are people willing to pay for a QALY? When it comes down to a specific case of saving oneself or a family member, the number is approximately “whatever I’ve got.” But we can ask at a societal level: suppose there is a vaccine that would yield X QALYs but costs Y dollars; is it worth it? In this case people report a wide range of values from around $10,000 to $150,000 per QALY (Prades _et al._, 2008). QALYs are much more widely used in medical and social policy decision making than are micromorts; see (Russell, 1990) for a typical example of an argument for a major change in public health policy on grounds of increased expected utility measured in QALYs.
 
 The **optimizer’s curse** was brought to the attention of decision analysts in a forceful way by Smith and Winkler (2006), who pointed out that the financial benefits to the client projected by analysts for their proposed course of action almost never materialized. They trace this directly to the bias introduced by selecting an optimal action and show that a more complete Bayesian analysis eliminates the problem. The same underlying concept has been called **post-decision disappointment** by Harrison and March (1984) and was noted in thePOST-DECISION
 
@@ -7085,7 +7085,7 @@ DISAPPOINTMENT
 
 context of analyzing capital investment projects by Brown (1974). The optimizer’s curse is also closely related to the **winner’s curse** (Capen _et al._, 1971; Thaler, 1992), which appliesWINNER’S CURSE
 
-to competitive bidding in auctions: whoever wins the auction is very likely to have overes- timated the value of the object in question. Capen _et al_. quote a petroleum engineer on the  
+to competitive bidding in auctions: whoever wins the auction is very likely to have overestimated the value of the object in question. Capen _et al_. quote a petroleum engineer on the  
 
 
 
@@ -7095,23 +7095,23 @@ MEAN
 
 individuals selected on the basis of exceptional characteristics previously exhibited will, with high probability, become less exceptional in future.
 
-The Allais paradox, due to Nobel Prize-winning economist Maurice Allais (1953) was tested experimentally (Tversky and Kahneman, 1982; Conlisk, 1989) to show that people are consistently inconsistent in their judgments. The Ellsberg paradox on ambiguity aver- sion was introduced in the Ph.D. thesis of Daniel Ellsberg (Ellsberg, 1962), who went on to become a military analyst at the RAND Corporation and to leak documents known as The Pentagon Papers, which contributed to the end of the Vietnam war and the resignation of President Nixon. Fox and Tversky (1995) describe a further study of ambiguity aversion. Mark Machina (2005) gives an overview of choice under uncertainty and how it can vary from expected utility theory.
+The Allais paradox, due to Nobel Prize-winning economist Maurice Allais (1953) was tested experimentally (Tversky and Kahneman, 1982; Conlisk, 1989) to show that people are consistently inconsistent in their judgments. The Ellsberg paradox on ambiguity aversion was introduced in the Ph.D. thesis of Daniel Ellsberg (Ellsberg, 1962), who went on to become a military analyst at the RAND Corporation and to leak documents known as The Pentagon Papers, which contributed to the end of the Vietnam war and the resignation of President Nixon. Fox and Tversky (1995) describe a further study of ambiguity aversion. Mark Machina (2005) gives an overview of choice under uncertainty and how it can vary from expected utility theory.
 
-There has been a recent outpouring of more-or-less popular books on human irrational- ity. The best known is _Predictably Irrational_ (Ariely, 2009); others include _Sway_ (Brafman and Brafman, 2009), _Nudge_ (Thaler and Sunstein, 2009), _Kluge_ (Marcus, 2009), _How We Decide_ (Lehrer, 2009) and _On Being Certain_ (Burton, 2009). They complement the classic (Kahneman _et al._, 1982) and the article that started it all (Kahneman and Tversky, 1979). The field of evolutionary psychology (Buss, 2005), on the other hand, has run counter to this literature, arguing that humans are quite rational in evolutionarily appropriate contexts. Its adherents point out that irrationality is penalized by definition in an evolutionary context and show that in some cases it is an artifact of the experimental setup (Cummins and Allen, 1998). There has been a recent resurgence of interest in Bayesian models of cognition, overturning decades of pessimism (Oaksford and Chater, 1998; Elio, 2002; Chater and Oaksford, 2008).
+There has been a recent outpouring of more-or-less popular books on human irrationality. The best known is _Predictably Irrational_ (Ariely, 2009); others include _Sway_ (Brafman and Brafman, 2009), _Nudge_ (Thaler and Sunstein, 2009), _Kluge_ (Marcus, 2009), _How We Decide_ (Lehrer, 2009) and _On Being Certain_ (Burton, 2009). They complement the classic (Kahneman _et al._, 1982) and the article that started it all (Kahneman and Tversky, 1979). The field of evolutionary psychology (Buss, 2005), on the other hand, has run counter to this literature, arguing that humans are quite rational in evolutionarily appropriate contexts. Its adherents point out that irrationality is penalized by definition in an evolutionary context and show that in some cases it is an artifact of the experimental setup (Cummins and Allen, 1998). There has been a recent resurgence of interest in Bayesian models of cognition, overturning decades of pessimism (Oaksford and Chater, 1998; Elio, 2002; Chater and Oaksford, 2008).
 
-Keeney and Raiffa (1976) give a thorough introduction to multiattribute utility the- ory. They describe early computer implementations of methods for eliciting the necessary parameters for a multiattribute utility function and include extensive accounts of real appli- cations of the theory. In AI, the principal reference for MAUT is Wellman’s (1985) paper, which includes a system called URP (Utility Reasoning Package) that can use a collection of statements about preference independence and conditional independence to analyze the structure of decision problems. The use of stochastic dominance together with qualitative probability models was investigated extensively by Wellman (1988, 1990a). Wellman and Doyle (1992) provide a preliminary sketch of how a complex set of utility-independence re- lationships might be used to provide a structured model of a utility function, in much the same way that Bayesian networks provide a structured model of joint probability distribu- tions. Bacchus and Grove (1995, 1996) and La Mura and Shoham (1999) give further results along these lines.
+Keeney and Raiffa (1976) give a thorough introduction to multiattribute utility theory. They describe early computer implementations of methods for eliciting the necessary parameters for a multiattribute utility function and include extensive accounts of real applications of the theory. In AI, the principal reference for MAUT is Wellman’s (1985) paper, which includes a system called URP (Utility Reasoning Package) that can use a collection of statements about preference independence and conditional independence to analyze the structure of decision problems. The use of stochastic dominance together with qualitative probability models was investigated extensively by Wellman (1988, 1990a). Wellman and Doyle (1992) provide a preliminary sketch of how a complex set of utility-independence relationships might be used to provide a structured model of a utility function, in much the same way that Bayesian networks provide a structured model of joint probability distributions. Bacchus and Grove (1995, 1996) and La Mura and Shoham (1999) give further results along these lines.
 
-Decision theory has been a standard tool in economics, finance, and management sci- ence since the 1950s. Until the 1980s, decision trees were the main tool used for representing simple decision problems. Smith (1988) gives an overview of the methodology of deci- sion analysis. Influence diagrams were introduced by Howard and Matheson (1984), based on earlier work at SRI (Miller _et al._, 1976). Howard and Matheson’s method involved the  
+Decision theory has been a standard tool in economics, finance, and management science since the 1950s. Until the 1980s, decision trees were the main tool used for representing simple decision problems. Smith (1988) gives an overview of the methodology of decision analysis. Influence diagrams were introduced by Howard and Matheson (1984), based on earlier work at SRI (Miller _et al._, 1976). Howard and Matheson’s method involved the  
 
 Bibliographical and Historical Notes 639
 
-derivation of a decision tree from a decision network, but in general the tree is of exponential size. Shachter (1986) developed a method for making decisions based directly on a decision network, without the creation of an intermediate decision tree. This algorithm was also one of the first to provide complete inference for multiply connected Bayesian networks. Zhang _et al._ (1994) showed how to take advantage of conditional independence of information to re- duce the size of trees in practice; they use the term _decision network_ for networks that use this approach (although others use it as a synonym for influence diagram). Nilsson and Lauritzen (2000) link algorithms for decision networks to ongoing developments in clustering algo- rithms for Bayesian networks. Koller and Milch (2003) show how influence diagrams can be used to solve games that involve gathering information by opposing players, and Detwarasiti and Shachter (2005) show how influence diagrams can be used as an aid to decision making for a team that shares goals but is unable to share all information perfectly. The collection by Oliver and Smith (1990) has a number of useful articles on decision networks, as does the 1990 special issue of the journal _Networks_. Papers on decision networks and utility modeling also appear regularly in the journals _Management Science_ and _Decision Analysis_.
+derivation of a decision tree from a decision network, but in general the tree is of exponential size. Shachter (1986) developed a method for making decisions based directly on a decision network, without the creation of an intermediate decision tree. This algorithm was also one of the first to provide complete inference for multiply connected Bayesian networks. Zhang _et al._ (1994) showed how to take advantage of conditional independence of information to reduce the size of trees in practice; they use the term _decision network_ for networks that use this approach (although others use it as a synonym for influence diagram). Nilsson and Lauritzen (2000) link algorithms for decision networks to ongoing developments in clustering algorithms for Bayesian networks. Koller and Milch (2003) show how influence diagrams can be used to solve games that involve gathering information by opposing players, and Detwarasiti and Shachter (2005) show how influence diagrams can be used as an aid to decision making for a team that shares goals but is unable to share all information perfectly. The collection by Oliver and Smith (1990) has a number of useful articles on decision networks, as does the 1990 special issue of the journal _Networks_. Papers on decision networks and utility modeling also appear regularly in the journals _Management Science_ and _Decision Analysis_.
 
-The theory of information value was explored first in the context of statistical experi- ments, where a quasi-utility (entropy reduction) was used (Lindley, 1956). The Russian con- trol theorist Ruslan Stratonovich (1965) developed the more general theory presented here, in which information has value by virtue of its ability to affect decisions. Stratonovich’s work was not known in the West, where Ron Howard (1966) pioneered the same idea. His paper ends with the remark “If information value theory and associated decision theoretic structures do not in the future occupy a large part of the education of engineers, then the engineering profession will find that its traditional role of managing scientific and economic resources for the benefit of man has been forfeited to another profession.” To date, the implied revolution in managerial methods has not occurred.
+The theory of information value was explored first in the context of statistical experiments, where a quasi-utility (entropy reduction) was used (Lindley, 1956). The Russian control theorist Ruslan Stratonovich (1965) developed the more general theory presented here, in which information has value by virtue of its ability to affect decisions. Stratonovich’s work was not known in the West, where Ron Howard (1966) pioneered the same idea. His paper ends with the remark “If information value theory and associated decision theoretic structures do not in the future occupy a large part of the education of engineers, then the engineering profession will find that its traditional role of managing scientific and economic resources for the benefit of man has been forfeited to another profession.” To date, the implied revolution in managerial methods has not occurred.
 
-Recent work by Krause and Guestrin (2009) shows that computing the exact non- myopic value of information is intractable even in polytree networks. There are other cases— more restricted than general value of information—in which the myopic algorithm does pro- vide a provably good approximation to the optimal sequence of observations (Krause _et al._, 2008). In some cases—for example, looking for treasure buried in one of n places—ranking experiments in order of success probability divided by cost gives an optimal solution (Kadane and Simon, 1977).
+Recent work by Krause and Guestrin (2009) shows that computing the exact nonmyopic value of information is intractable even in polytree networks. There are other cases— more restricted than general value of information—in which the myopic algorithm does provide a provably good approximation to the optimal sequence of observations (Krause _et al._, 2008). In some cases—for example, looking for treasure buried in one of n places—ranking experiments in order of success probability divided by cost gives an optimal solution (Kadane and Simon, 1977).
 
-Surprisingly few early AI researchers adopted decision-theoretic tools after the early applications in medical decision making described in Chapter 13. One of the few exceptions was Jerry Feldman, who applied decision theory to problems in vision (Feldman and Yaki- movsky, 1974) and planning (Feldman and Sproull, 1977). After the resurgence of interest in probabilistic methods in AI in the 1980s, decision-theoretic expert systems gained widespread acceptance (Horvitz _et al._, 1988; Cowell _et al._, 2002). In fact, from 1991 onward, the cover design of the journal _Artificial Intelligence_ has depicted a decision network, although some artistic license appears to have been taken with the direction of the arrows.  
+Surprisingly few early AI researchers adopted decision-theoretic tools after the early applications in medical decision making described in Chapter 13. One of the few exceptions was Jerry Feldman, who applied decision theory to problems in vision (Feldman and Yakimovsky, 1974) and planning (Feldman and Sproull, 1977). After the resurgence of interest in probabilistic methods in AI in the 1980s, decision-theoretic expert systems gained widespread acceptance (Horvitz _et al._, 1988; Cowell _et al._, 2002). In fact, from 1991 onward, the cover design of the journal _Artificial Intelligence_ has depicted a decision network, although some artistic license appears to have been taken with the direction of the arrows.  
 
 
 
@@ -7173,11 +7173,11 @@ Exercises 641
 
 **c**. Nicolas’s cousin Daniel Bernoulli resolved the apparent paradox in 1738 by suggesting that the utility of money is measured on a logarithmic scale (i.e., U(Sn) = a log2 n+ b, where Sn is the state of having $n). What is the expected utility of the game under this assumption?
 
-**d**. What is the maximum amount that it would be rational to pay to play the game, assum- ing that one’s initial wealth is $k ?
+**d**. What is the maximum amount that it would be rational to pay to play the game, assuming that one’s initial wealth is $k ?
 
-**16.4** Write a computer program to automate the process in Exercise 16.9. Try your pro- gram out on several people of different net worth and political outlook. Comment on the consistency of your results, both for an individual and across individuals.
+**16.4** Write a computer program to automate the process in Exercise 16.9. Try your program out on several people of different net worth and political outlook. Comment on the consistency of your results, both for an individual and across individuals.
 
-**16.5** The Surprise Candy Company makes candy in two flavors: 70% are strawberry fla- vor and 30% are anchovy flavor. Each new piece of candy starts out with a round shape; as it moves along the production line, a machine randomly selects a certain percentage to be trimmed into a square; then, each piece is wrapped in a wrapper whose color is chosen randomly to be red or brown. 80% of the strawberry candies are round and 80% have a red wrapper, while 90% of the anchovy candies are square and 90% have a brown wrapper. All candies are sold individually in sealed, identical, black boxes.
+**16.5** The Surprise Candy Company makes candy in two flavors: 70% are strawberry flavor and 30% are anchovy flavor. Each new piece of candy starts out with a round shape; as it moves along the production line, a machine randomly selects a certain percentage to be trimmed into a square; then, each piece is wrapped in a wrapper whose color is chosen randomly to be red or brown. 80% of the strawberry candies are round and 80% have a red wrapper, while 90% of the anchovy candies are square and 90% have a brown wrapper. All candies are sold individually in sealed, identical, black boxes.
 
 Now you, the customer, have just bought a Surprise candy at the store but have not yet opened the box. Consider the three Bayes nets in Figure 16.11.
 
@@ -7209,7 +7209,7 @@ _Flavor_
 
 **e**. In the box is a round candy with a red wrapper. What is the probability that its flavor is strawberry?
 
-**f**. A unwrapped strawberry candy is worth s on the open market and an unwrapped an- chovy candy is worth a. Write an expression for the value of an unopened candy box.
+**f**. A unwrapped strawberry candy is worth s on the open market and an unwrapped anchovy candy is worth a. Write an expression for the value of an unopened candy box.
 
 **g**. A new law prohibits trading of unwrapped candies, but it is still legal to trade wrapped candies (out of the box). Is an unopened candy box now worth more than less than, or the same as before?
 
@@ -7217,7 +7217,7 @@ _Flavor_
 
 **16.7** Consider the Allais paradox described on page 620: an agent who prefers B over A (taking the sure thing), and C over D (taking the higher EMV) is not acting rationally, according to utility theory. Do you think this indicates a problem for the agent, a problem for the theory, or no problem at all? Explain.
 
-**16.8** Tickets to a lottery cost $1. There are two possible prizes: a $10 payoff with probabil- ity 1/50, and a $1,000,000 payoff with probability 1/2,000,000. What is the expected mone- tary value of a lottery ticket? When (if ever) is it rational to buy a ticket? Be precise—show an equation involving utilities. You may assume current wealth of $k and that U(Sk) = 0. You may also assume that U(Sk+10) = 10 × U(Sk+1), but you may not make any assumptions about U(Sk+1,000,000). Sociological studies show that people with lower income buy a dis- proportionate number of lottery tickets. Do you think this is because they are worse decision makers or because they have a different utility function? Consider the value of contemplating the possibility of winning the lottery versus the value of contemplating becoming an action hero while watching an adventure movie.
+**16.8** Tickets to a lottery cost $1. There are two possible prizes: a $10 payoff with probability 1/50, and a $1,000,000 payoff with probability 1/2,000,000. What is the expected monetary value of a lottery ticket? When (if ever) is it rational to buy a ticket? Be precise—show an equation involving utilities. You may assume current wealth of $k and that U(Sk) = 0. You may also assume that U(Sk+10) = 10 × U(Sk+1), but you may not make any assumptions about U(Sk+1,000,000). Sociological studies show that people with lower income buy a disproportionate number of lottery tickets. Do you think this is because they are worse decision makers or because they have a different utility function? Consider the value of contemplating the possibility of winning the lottery versus the value of contemplating becoming an action hero while watching an adventure movie.
 
 **16.9** Assess your own utility for different incremental amounts of money by running a series of preference tests between some definite amount M1 and a lottery \[p,M2; (1−p), 0\]. Choose different values of M1 and M2, and vary p until you are indifferent between the two choices. Plot the resulting utility function.
 
@@ -7235,9 +7235,9 @@ ance reflects how likely an individual is to accept a lottery with a particular 
 
 Exercises 643
 
-**a**. Assume Mary has an exponential utility function with R = $500. Mary is given the choice between receiving $500 with certainty (probability 1) or participating in a lot- tery which has a 60% probability of winning $5000 and a 40% probability of winning nothing. Assuming Marry acts rationally, which option would she choose? Show how you derived your answer.
+**a**. Assume Mary has an exponential utility function with R = $500. Mary is given the choice between receiving $500 with certainty (probability 1) or participating in a lottery which has a 60% probability of winning $5000 and a 40% probability of winning nothing. Assuming Marry acts rationally, which option would she choose? Show how you derived your answer.
 
-**b**. Consider the choice between receiving $100 with certainty (probability 1) or participat- ing in a lottery which has a 50% probability of winning $500 and a 50% probability of winning nothing. Approximate the value of R (to 3 significant digits) in an exponential utility function that would cause an individual to be indifferent to these two alternatives. (You might find it helpful to write a short program to help you solve this problem.)
+**b**. Consider the choice between receiving $100 with certainty (probability 1) or participating in a lottery which has a 50% probability of winning $500 and a 50% probability of winning nothing. Approximate the value of R (to 3 significant digits) in an exponential utility function that would cause an individual to be indifferent to these two alternatives. (You might find it helpful to write a short program to help you solve this problem.)
 
 **16.13** Repeat Exercise 16.16, using the action-utility representation shown in Figure 16.7.
 
@@ -7253,7 +7253,7 @@ P (p|¬b,m) = 0.8
 
 P (p|¬b,¬m) = 0.3
 
-You might think that P would be independent of B given M , But this course has an open- book final—so having the book helps.
+You might think that P would be independent of B given M , But this course has an openbook final—so having the book helps.
 
 **a**. Draw the decision network for this problem.
 
@@ -7263,7 +7263,7 @@ You might think that P would be independent of B given M , But this course has a
 
 **16.16** This exercise completes the analysis of the airport-siting problem in Figure 16.6.
 
-**a**. Provide reasonable variable domains, probabilities, and utilities for the network, assum- ing that there are three possible sites.
+**a**. Provide reasonable variable domains, probabilities, and utilities for the network, assuming that there are three possible sites.
 
 **b**. Solve the decision problem.
 
@@ -7275,7 +7275,7 @@ You might think that P would be independent of B given M , But this course has a
 
 
 
-**16.17** (Adapted from Pearl (1988).) A used-car buyer can decide to carry out various tests with various costs (e.g., kick the tires, take the car to a qualified mechanic) and then, depend- ing on the outcome of the tests, decide which car to buy. We will assume that the buyer is deciding whether to buy car c1, that there is time to carry out at most one test, and that t1 is the test of c1 and costs $50.
+**16.17** (Adapted from Pearl (1988).) A used-car buyer can decide to carry out various tests with various costs (e.g., kick the tires, take the car to a qualified mechanic) and then, depending on the outcome of the tests, decide which car to buy. We will assume that the buyer is deciding whether to buy car c1, that there is time to carry out at most one test, and that t1 is the test of c1 and costs $50.
 
 A car can be in good shape (quality q +) or bad shape (quality q
 
@@ -7301,7 +7301,7 @@ Use Bayes’ theorem to calculate the probability that the car will pass (or fai
 
 **a**. Prove that the value of information is nonnegative and order independent.
 
-**b**. Explain why it is that some people would prefer not to get some information—for ex- ample, not wanting to know the sex of their baby when an ultrasound is done.
+**b**. Explain why it is that some people would prefer not to get some information—for example, not wanting to know the sex of their baby when an ultrasound is done.
 
 **c**. A function f on sets is **submodular** if, for any element x and any sets A and B suchSUBMODULARITY
 
@@ -7309,7 +7309,7 @@ that A ⊆ B, adding x to A gives a greater increase in f than adding x to B:
 
 A ⊆ B ⇒ (f(A∪{x})− f(A)) ≥ (f(B ∪{x}) − f(B)) .
 
-Submodularity captures the intuitive notion of _diminishing returns_. Is the value of in- formation, viewed as a function f on sets of possible observations, submodular? Prove this or find a counterexample.
+Submodularity captures the intuitive notion of _diminishing returns_. Is the value of information, viewed as a function f on sets of possible observations, submodular? Prove this or find a counterexample.
 
 The answers to Exercise 16.1 (where M stands for million): First set: 3M, 1.6M, 1541, 41M, 4768, 221, 649M, 295M, 132, 25,546. Second set: 1917, 155M, 4,500M, 11M, 120,000, 1.1M, 1636, 19,340, 1,595, 41,710.  
 
@@ -7317,17 +7317,17 @@ The answers to Exercise 16.1 (where M stands for million): First set: 3M, 1.6M, 
 
 _In which we examine methods for deciding what to do today, given that we may decide again tomorrow._
 
-In this chapter, we address the computational issues involved in making decisions in a stochas- tic environment. Whereas Chapter 16 was concerned with one-shot or episodic decision problems, in which the utility of each action’s outcome was well known, we are concerned here with **sequential decision problems**, in which the agent’s utility depends on a sequenceSEQUENTIAL
+In this chapter, we address the computational issues involved in making decisions in a stochastic environment. Whereas Chapter 16 was concerned with one-shot or episodic decision problems, in which the utility of each action’s outcome was well known, we are concerned here with **sequential decision problems**, in which the agent’s utility depends on a sequenceSEQUENTIAL
 
 DECISION PROBLEM
 
-of decisions. Sequential decision problems incorporate utilities, uncertainty, and sensing, and include search and planning problems as special cases. Section 17.1 explains how se- quential decision problems are defined, and Sections 17.2 and 17.3 explain how they can be solved to produce optimal behavior that balances the risks and rewards of acting in an uncertain environment. Section 17.4 extends these ideas to the case of partially observable environments, and Section 17.4.3 develops a complete design for decision-theoretic agents in partially observable environments, combining dynamic Bayesian networks from Chapter 15 with decision networks from Chapter 16.
+of decisions. Sequential decision problems incorporate utilities, uncertainty, and sensing, and include search and planning problems as special cases. Section 17.1 explains how sequential decision problems are defined, and Sections 17.2 and 17.3 explain how they can be solved to produce optimal behavior that balances the risks and rewards of acting in an uncertain environment. Section 17.4 extends these ideas to the case of partially observable environments, and Section 17.4.3 develops a complete design for decision-theoretic agents in partially observable environments, combining dynamic Bayesian networks from Chapter 15 with decision networks from Chapter 16.
 
-The second part of the chapter covers environments with multiple agents. In such en- vironments, the notion of optimal behavior is complicated by the interactions among the agents. Section 17.5 introduces the main ideas of **game theory**, including the idea that ra- tional agents might need to behave randomly. Section 17.6 looks at how multiagent systems can be designed so that multiple agents can achieve a common goal.
+The second part of the chapter covers environments with multiple agents. In such environments, the notion of optimal behavior is complicated by the interactions among the agents. Section 17.5 introduces the main ideas of **game theory**, including the idea that rational agents might need to behave randomly. Section 17.6 looks at how multiagent systems can be designed so that multiple agents can achieve a common goal.
 
 17.1 SEQUENTIAL DECISION PROBLEMS
 
-Suppose that an agent is situated in the 4× 3 environment shown in Figure 17.1(a). Beginning in the start state, it must choose an action at each time step. The interaction with the environ- ment terminates when the agent reaches one of the goal states, marked +1 or –1. Just as for search problems, the actions available to the agent in each state are given by ACTIONS(s), sometimes abbreviated to A(s); in the 4× 3 environment, the actions in every state are _Up_, _Down_, _Left_, and _Right_. We assume for now that the environment is **fully observable**, so that the agent always knows where it is.
+Suppose that an agent is situated in the 4× 3 environment shown in Figure 17.1(a). Beginning in the start state, it must choose an action at each time step. The interaction with the environment terminates when the agent reaches one of the goal states, marked +1 or –1. Just as for search problems, the actions available to the agent in each state are given by ACTIONS(s), sometimes abbreviated to A(s); in the 4× 3 environment, the actions in every state are _Up_, _Down_, _Left_, and _Right_. We assume for now that the environment is **fully observable**, so that the agent always knows where it is.
 
 645  
 
@@ -7393,7 +7393,7 @@ use π ∗ to denote an optimal policy. Given π
 
 An optimal policy for the world of Figure 17.1 is shown in Figure 17.2(a). Notice that, because the cost of taking a step is fairly small compared with the penalty for ending up in (4,2) by accident, the optimal policy for the state (3,1) is conservative. The policy recommends taking the long way round, rather than taking the shortcut and thereby risking entering (4,2).
 
-The balance of risk and reward changes depending on the value of R(s) for the nonter- minal states. Figure 17.2(b) shows optimal policies for four different ranges of R(s). When R(s) ≤ −1.6284, life is so painful that the agent heads straight for the nearest exit, even if the exit is worth –1. When −0.4278 ≤ R(s) ≤ −0.0850, life is quite unpleasant; the agent takes the shortest route to the +1 state and is willing to risk falling into the –1 state by acci- dent. In particular, the agent takes the shortcut from (3,1). When life is only slightly dreary (−0.0221 < R(s) < 0), the optimal policy takes _no risks at all_. In (4,1) and (3,2), the agent heads directly away from the –1 state so that it cannot fall in by accident, even though this means banging its head against the wall quite a few times. Finally, if R(s) > 0, then life is positively enjoyable and the agent avoids _both_ exits. As long as the actions in (4,1), (3,2),
+The balance of risk and reward changes depending on the value of R(s) for the nonterminal states. Figure 17.2(b) shows optimal policies for four different ranges of R(s). When R(s) ≤ −1.6284, life is so painful that the agent heads straight for the nearest exit, even if the exit is worth –1. When −0.4278 ≤ R(s) ≤ −0.0850, life is quite unpleasant; the agent takes the shortest route to the +1 state and is willing to risk falling into the –1 state by accident. In particular, the agent takes the shortcut from (3,1). When life is only slightly dreary (−0.0221 < R(s) < 0), the optimal policy takes _no risks at all_. In (4,1) and (3,2), the agent heads directly away from the –1 state so that it cannot fall in by accident, even though this means banging its head against the wall quite a few times. Finally, if R(s) > 0, then life is positively enjoyable and the agent avoids _both_ exits. As long as the actions in (4,1), (3,2),
 
 1 Some definitions of MDPs allow the reward to depend on the action and outcome too, so the reward function is R(s, a, s
 
@@ -7443,7 +7443,7 @@ _R(s)_ \> 0
 
 **Figure 17.2** (a) An optimal policy for the stochastic environment with R(s)= − 0.04 in the nonterminal states. (b) Optimal policies for four different ranges of R(s).
 
-and (3,3) are as shown, every policy is optimal, and the agent obtains infinite total reward be- cause it never enters a terminal state. Surprisingly, it turns out that there are six other optimal policies for various ranges of R(s); Exercise 17.5 asks you to find them.
+and (3,3) are as shown, every policy is optimal, and the agent obtains infinite total reward because it never enters a terminal state. Surprisingly, it turns out that there are six other optimal policies for various ranges of R(s); Exercise 17.5 asks you to find them.
 
 The careful balancing of risk and reward is a characteristic of MDPs that does not arise in deterministic search problems; moreover, it is a characteristic of many real-world decision problems. For this reason, MDPs have been studied in several fields, including AI, operations research, economics, and control theory. Dozens of algorithms have been proposed for calculating optimal policies. In sections 17.2 and 17.3 we describe two of the most important algorithm families. First, however, we must complete our investigation of utilities and policies for sequential decision problems.
 
@@ -7463,11 +7463,11 @@ _the optimal action in a given state could change over time._ We say that the op
 
 POLICY
 
-no reason to behave differently in the same state at different times. Hence, the optimal ac- tion depends only on the current state, and the optimal policy is **stationary**. Policies for theSTATIONARY POLICY
+no reason to behave differently in the same state at different times. Hence, the optimal action depends only on the current state, and the optimal policy is **stationary**. Policies for theSTATIONARY POLICY
 
-infinite-horizon case are therefore simpler than those for the finite-horizon case, and we deal mainly with the infinite-horizon case in this chapter. (We will see later that for partially ob- servable environments, the infinite-horizon case is not so simple.) Note that “infinite horizon” does not necessarily mean that all state sequences are infinite; it just means that there is no fixed deadline. In particular, there can be finite state sequences in an infinite-horizon MDP containing a terminal state.
+infinite-horizon case are therefore simpler than those for the finite-horizon case, and we deal mainly with the infinite-horizon case in this chapter. (We will see later that for partially observable environments, the infinite-horizon case is not so simple.) Note that “infinite horizon” does not necessarily mean that all state sequences are infinite; it just means that there is no fixed deadline. In particular, there can be finite state sequences in an infinite-horizon MDP containing a terminal state.
 
-The next question we must decide is how to calculate the utility of state sequences. In the terminology of multiattribute utility theory, each state si can be viewed as an **attribute** of the state sequence \[s0, s1, s2 . . .\]. To obtain a simple expression in terms of the attributes, we will need to make some sort of preference-independence assumption. The most natural as- sumption is that the agent’s preferences between state sequences are **stationary**. StationaritySTATIONARY
+The next question we must decide is how to calculate the utility of state sequences. In the terminology of multiattribute utility theory, each state si can be viewed as an **attribute** of the state sequence \[s0, s1, s2 . . .\]. To obtain a simple expression in terms of the attributes, we will need to make some sort of preference-independence assumption. The most natural assumption is that the agent’s preferences between state sequences are **stationary**. StationaritySTATIONARY
 
 PREFERENCE
 
@@ -7565,7 +7565,7 @@ t =0
 
 , (17.2)
 
-where the expectation is with respect to the probability distribution over state sequences de- termined by s and π. Now, out of all the policies the agent could choose to execute starting in s, one (or more) will have higher expected utilities than all the others. We’ll use π
+where the expectation is with respect to the probability distribution over state sequences determined by s and π. Now, out of all the policies the agent could choose to execute starting in s, one (or more) will have higher expected utilities than all the others. We’ll use π
 
 ∗
 
@@ -7733,7 +7733,7 @@ P (s′ | s, a) U \[s′\]
 
 **return** U
 
-**Figure 17.4** The value iteration algorithm for calculating utilities of states. The termina- tion condition is from Equation (17.8).
+**Figure 17.4** The value iteration algorithm for calculating utilities of states. The termination condition is from Equation (17.8).
 
 \-0.2
 
@@ -7805,7 +7805,7 @@ _c_ = 0.0001 _c_ = 0.001 _c_ = 0.01 _c_ = 0.1
 
 where the update is assumed to be applied simultaneously to all the states at each iteration. If we apply the Bellman update infinitely often, we are guaranteed to reach an equilibrium (see Section 17.2.3), in which case the final utility values must be solutions to the Bellman equations. In fact, they are also the _unique_ solutions, and the corresponding policy (obtained using Equation (17.4)) is optimal. The algorithm, called VALUE-ITERATION, is shown in Figure 17.4.
 
-We can apply value iteration to the 4× 3 world in Figure 17.1(a). Starting with initial values of zero, the utilities evolve as shown in Figure 17.5(a). Notice how the states at differ-  
+We can apply value iteration to the 4× 3 world in Figure 17.1(a). Starting with initial values of zero, the utilities evolve as shown in Figure 17.5(a). Notice how the states at differ 
 
 
 
@@ -7813,15 +7813,15 @@ ent distances from (4,3) accumulate negative reward until a path is found to (4,
 
 **17.2.3 Convergence of value iteration**
 
-We said that value iteration eventually converges to a unique set of solutions of the Bellman equations. In this section, we explain why this happens. We introduce some useful mathe- matical ideas along the way, and we obtain some methods for assessing the error in the utility function returned when the algorithm is terminated early; this is useful because it means that we don’t have to run forever. This section is quite technical.
+We said that value iteration eventually converges to a unique set of solutions of the Bellman equations. In this section, we explain why this happens. We introduce some useful mathematical ideas along the way, and we obtain some methods for assessing the error in the utility function returned when the algorithm is terminated early; this is useful because it means that we don’t have to run forever. This section is quite technical.
 
-The basic concept used in showing that value iteration converges is the notion of a **con- traction**. Roughly speaking, a contraction is a function of one argument that, when applied toCONTRACTION
+The basic concept used in showing that value iteration converges is the notion of a **contraction**. Roughly speaking, a contraction is a function of one argument that, when applied toCONTRACTION
 
 two different inputs in turn, produces two output values that are “closer together,” by at least some constant factor, than the original inputs. For example, the function “divide by two” is a contraction, because, after we divide any two numbers by two, their difference is halved. Notice that the “divide by two” function has a fixed point, namely zero, that is unchanged by the application of the function. From this example, we can discern two important properties of contractions:
 
-• A contraction has only one fixed point; if there were two fixed points they would not get closer together when the function was applied, so it would not be a contraction.
+- A contraction has only one fixed point; if there were two fixed points they would not get closer together when the function was applied, so it would not be a contraction.
 
-• When the function is applied to any argument, the value must get closer to the fixed point (because the fixed point does not move), so repeated application of a contraction always reaches the fixed point in the limit.
+- When the function is applied to any argument, the value must get closer to the fixed point (because the fixed point does not move), so repeated application of a contraction always reaches the fixed point in the limit.
 
 Now, suppose we view the Bellman update (Equation (17.6)) as an operator B that is applied simultaneously to update the utility of every state. Let Ui denote the vector of utilities for all the states at the ith iteration. Then the Bellman update equation can be written as
 
@@ -7851,7 +7851,7 @@ _That is, the Bellman update is a contraction by a factor of_ γ _on the space o
 
 Section 17.2. Value Iteration 655
 
-We can also use the contraction property to analyze the _rate_ of convergence to a solu- tion. In particular, we can replace U
+We can also use the contraction property to analyze the _rate_ of convergence to a solution. In particular, we can replace U
 
 ′
 
@@ -7897,11 +7897,11 @@ In the previous section, we observed that it is possible to get an optimal polic
 
 the following two steps, beginning from some initial policy π0:
 
-• **Policy evaluation**: given a policy πi, calculate Ui = U πi , the utility of each state if πiPOLICY EVALUATION
+- **Policy evaluation**: given a policy πi, calculate Ui = U πi , the utility of each state if πiPOLICY EVALUATION
 
 were to be executed.
 
-• **Policy improvement**: Calculate a new MEU policy πi+1, using one-step look-aheadPOLICY IMPROVEMENT
+- **Policy improvement**: Calculate a new MEU policy πi+1, using one-step look-aheadPOLICY IMPROVEMENT
 
 based on Ui (as in Equation (17.4)).
 
@@ -8029,7 +8029,7 @@ unchanged?← false **until** unchanged?
 
 
 
-The algorithms we have described so far require updating the utility or policy for all states at once. It turns out that this is not strictly necessary. In fact, on each iteration, we can pick _any subset_ of states and apply _either_ kind of updating (policy improvement or sim- plified value iteration) to that subset. This very general algorithm is called **asynchronous policy iteration**. Given certain conditions on the initial policy and initial utility function,ASYNCHRONOUS
+The algorithms we have described so far require updating the utility or policy for all states at once. It turns out that this is not strictly necessary. In fact, on each iteration, we can pick _any subset_ of states and apply _either_ kind of updating (policy improvement or simplified value iteration) to that subset. This very general algorithm is called **asynchronous policy iteration**. Given certain conditions on the initial policy and initial utility function,ASYNCHRONOUS
 
 POLICY ITERATION
 
@@ -8045,7 +8045,7 @@ pronounced “pom-dee-pees”) are usually viewed as much more difficult than or
 
 **17.4.1 Definition of POMDPs**
 
-To get a handle on POMDPs, we must first define them properly. A POMDP has the same elements as an MDP—the transition model P (s′ | s, a), actions A(s), and reward function R(s)—but, like the partially observable search problems of Section 4.4, it also has a **sensor model** P (e | s). Here, as in Chapter 15, the sensor model specifies the probability of perceiv- ing evidence e in state s.3 For example, we can convert the 4× 3 world of Figure 17.1 into a POMDP by adding a noisy or partial sensor instead of assuming that the agent knows its location exactly. Such a sensor might measure the _number of adjacent walls_, which happens to be 2 in all the nonterminal squares except for those in the third column, where the value is 1; a noisy version might give the wrong value with probability 0.1.
+To get a handle on POMDPs, we must first define them properly. A POMDP has the same elements as an MDP—the transition model P (s′ | s, a), actions A(s), and reward function R(s)—but, like the partially observable search problems of Section 4.4, it also has a **sensor model** P (e | s). Here, as in Chapter 15, the sensor model specifies the probability of perceiving evidence e in state s.3 For example, we can convert the 4× 3 world of Figure 17.1 into a POMDP by adding a noisy or partial sensor instead of assuming that the agent knows its location exactly. Such a sensor might measure the _number of adjacent walls_, which happens to be 2 in all the nonterminal squares except for those in the third column, where the value is 1; a noisy version might give the wrong value with probability 0.1.
 
 In Chapters 4 and 11, we studied nondeterministic and partially observable planning problems and identified the **belief state**—the set of actual states the agent might be in—as a key concept for describing and calculating solutions. In POMDPs, the belief state b becomes a _probability distribution_ over all possible states, just as in Chapter 15. For example, the initial
 
@@ -8119,7 +8119,7 @@ The fundamental insight required to understand POMDPs is this: _the optimal acti
 
 3\. Set the current belief state to FORWARD(b, a, e) and repeat.
 
-Now we can think of POMDPs as requiring a search in belief-state space, just like the meth- ods for sensorless and contingency problems in Chapter 4. The main difference is that the POMDP belief-state space is _continuous_, because a POMDP belief state is a probability dis- tribution. For example, a belief state for the 4× 3 world is a point in an 11-dimensional continuous space. An action changes the belief state, not just the physical state. Hence, the action is evaluated at least in part according to the information the agent acquires as a result. POMDPs therefore include the value of information (Section 16.6) as one component of the decision problem.
+Now we can think of POMDPs as requiring a search in belief-state space, just like the methods for sensorless and contingency problems in Chapter 4. The main difference is that the POMDP belief-state space is _continuous_, because a POMDP belief state is a probability distribution. For example, a belief state for the 4× 3 world is a point in an 11-dimensional continuous space. An action changes the belief state, not just the physical state. Hence, the action is evaluated at least in part according to the information the agent acquires as a result. POMDPs therefore include the value of information (Section 16.6) as one component of the decision problem.
 
 Let’s look more carefully at the outcome of actions. In particular, let’s calculate the probability that an agent in belief state b reaches belief state b
 
@@ -8209,15 +8209,15 @@ s
 
 b(s)R(s) .
 
-Together, P (b′ | b, a) and ρ(b) define an _observable_ MDP on the space of belief states. Fur- thermore, it can be shown that an optimal policy for this MDP, π∗(b), is also an optimal policy for the original POMDP. In other words, _solving a POMDP on a physical state space can be reduced to solving an MDP on the corresponding belief-state space._ This fact is perhaps less surprising if we remember that the belief state is always observable to the agent, by definition.
+Together, P (b′ | b, a) and ρ(b) define an _observable_ MDP on the space of belief states. Furthermore, it can be shown that an optimal policy for this MDP, π∗(b), is also an optimal policy for the original POMDP. In other words, _solving a POMDP on a physical state space can be reduced to solving an MDP on the corresponding belief-state space._ This fact is perhaps less surprising if we remember that the belief state is always observable to the agent, by definition.
 
-Notice that, although we have reduced POMDPs to MDPs, the MDP we obtain has a continuous (and usually high-dimensional) state space. None of the MDP algorithms de- scribed in Sections 17.2 and 17.3 applies directly to such MDPs. The next two subsec- tions describe a value iteration algorithm designed specifically for POMDPs and an online decision-making algorithm, similar to those developed for games in Chapter 5.
+Notice that, although we have reduced POMDPs to MDPs, the MDP we obtain has a continuous (and usually high-dimensional) state space. None of the MDP algorithms described in Sections 17.2 and 17.3 applies directly to such MDPs. The next two subsections describe a value iteration algorithm designed specifically for POMDPs and an online decision-making algorithm, similar to those developed for games in Chapter 5.
 
 **17.4.2 Value iteration for POMDPs**
 
 Section 17.2 described a value iteration algorithm that computed one utility value for each state. With infinitely many belief states, we need to be more creative. Consider an optimal policy π
 
-∗ and its application in a specific belief state b: the policy generates an action, then, for each subsequent percept, the belief state is updated and a new action is generated, and so on. For this specific b, therefore, the policy is exactly equivalent to a **conditional plan**, as de- fined in Chapter 4 for nondeterministic and partially observable problems. Instead of thinking about policies, let us think about conditional plans and how the expected utility of executing a fixed conditional plan varies with the initial belief state. We make two observations:  
+∗ and its application in a specific belief state b: the policy generates an action, then, for each subsequent percept, the belief state is updated and a new action is generated, and so on. For this specific b, therefore, the policy is exactly equivalent to a **conditional plan**, as defined in Chapter 4 for nondeterministic and partially observable problems. Instead of thinking about policies, let us think about conditional plans and how the expected utility of executing a fixed conditional plan varies with the initial belief state. We make two observations:  
 
 Section 17.4. Partially Observable MDPs 661
 
@@ -8243,7 +8243,7 @@ From these two observations, we see that the utility function U(b) on belief sta
 
 To illustrate this, we use a simple two-state world. The states are labeled 0 and 1, with R(0)= 0 and R(1)= 1. There are two actions: _Stay_ stays put with probability 0.9 and _Go_ switches to the other state with probability 0.9. For now we will assume the discount factor γ = 1. The sensor reports the correct state with probability 0.6. Obviously, the agent should _Stay_ when it thinks it’s in state 1 and _Go_ when it thinks it’s in state 0.
 
-The advantage of a two-state world is that the belief space can be viewed as one- dimensional, because the two probabilities must sum to 1. In Figure 17.8(a), the x-axis represents the belief state, defined by b(1), the probability of being in state 1. Now let us con- sider the one-step plans \[Stay \] and \[Go\], each of which receives the reward for the current state followed by the (discounted) reward for the state reached after the action:
+The advantage of a two-state world is that the belief space can be viewed as onedimensional, because the two probabilities must sum to 1. In Figure 17.8(a), the x-axis represents the belief state, defined by b(1), the probability of being in state 1. Now let us consider the one-step plans \[Stay \] and \[Go\], each of which receives the reward for the current state followed by the (discounted) reward for the state reached after the action:
 
 α\[Stay \](0) = R(0) + γ(0.9R(0) + 0.1R(1)) = 0.1
 
@@ -8365,7 +8365,7 @@ for the two-state world, with the corresponding utility function shown in bold. 
 
 There are eight distinct depth-2 plans in all, and their utilities are shown in Figure 17.8(b). Notice that four of the plans, shown as dashed lines, are suboptimal across the entire belief space—we say these plans are **dominated**, and they need not be considered further. ThereDOMINATED PLAN
 
-are four undominated plans, each of which is optimal in a specific region, as shown in Fig- ure 17.8(c). The regions partition the belief-state space.
+are four undominated plans, each of which is optimal in a specific region, as shown in Figure 17.8(c). The regions partition the belief-state space.
 
 We repeat the process for depth 3, and so on. In general, let p be a depth-d conditional plan whose initial action is a and whose depth-d − 1 subplan for percept e is p.e; then
 
@@ -8389,7 +8389,7 @@ P (e | s′)αp.e(s ′
 
 . (17.13)
 
-This recursion naturally gives us a value iteration algorithm, which is sketched in Figure 17.9. The structure of the algorithm and its error analysis are similar to those of the basic value iter- ation algorithm in Figure 17.4 on page 653; the main difference is that instead of computing one utility number for each state, POMDP-VALUE-ITERATION maintains a collection of  
+This recursion naturally gives us a value iteration algorithm, which is sketched in Figure 17.9. The structure of the algorithm and its error analysis are similar to those of the basic value iteration algorithm in Figure 17.4 on page 653; the main difference is that instead of computing one utility number for each state, POMDP-VALUE-ITERATION maintains a collection of  
 
 Section 17.4. Partially Observable MDPs 663
 
@@ -8411,17 +8411,17 @@ U ′←REMOVE-DOMINATED-PLANS(U ′) **until** MAX-DIFFERENCE(U ,U ′) < ε(1�
 
 **Figure 17.9** A high-level sketch of the value iteration algorithm for POMDPs. The REMOVE-DOMINATED-PLANS step and MAX-DIFFERENCE test are typically implemented as linear programs.
 
-undominated plans with their utility hyperplanes. The algorithm’s complexity depends pri- marily on how many plans get generated. Given |A| actions and |E| possible observations, it is easy to show that there are |A|O(|E|
+undominated plans with their utility hyperplanes. The algorithm’s complexity depends primarily on how many plans get generated. Given |A| actions and |E| possible observations, it is easy to show that there are |A|O(|E|
 
 d−1) distinct depth-d plans. Even for the lowly two-state world with d= 8, the exact number is 2255. The elimination of dominated plans is essential for reducing this doubly exponential growth: the number of undominated plans with d= 8 is just 144. The utility function for these 144 plans is shown in Figure 17.8(d).
 
 Notice that even though state 0 has lower utility than state 1, the intermediate belief states have even lower utility because the agent lacks the information needed to choose a good action. This is why information has value in the sense defined in Section 16.6 and optimal policies in POMDPs often include information-gathering actions.
 
-Given such a utility function, an executable policy can be extracted by looking at which hyperplane is optimal at any given belief state b and executing the first action of the corre- sponding plan. In Figure 17.8(d), the corresponding optimal policy is still the same as for depth-1 plans: _Stay_ when b(1) > 0.5 and _Go_ otherwise.
+Given such a utility function, an executable policy can be extracted by looking at which hyperplane is optimal at any given belief state b and executing the first action of the corresponding plan. In Figure 17.8(d), the corresponding optimal policy is still the same as for depth-1 plans: _Stay_ when b(1) > 0.5 and _Go_ otherwise.
 
-In practice, the value iteration algorithm in Figure 17.9 is hopelessly inefficient for larger problems—even the 4× 3 POMDP is too hard. The main reason is that, given n con- ditional plans at level d, the algorithm constructs |A| · n|E| conditional plans at level d + 1
+In practice, the value iteration algorithm in Figure 17.9 is hopelessly inefficient for larger problems—even the 4× 3 POMDP is too hard. The main reason is that, given n conditional plans at level d, the algorithm constructs |A| · n|E| conditional plans at level d + 1
 
-before eliminating the dominated ones. Since the 1970s, when this algorithm was developed, there have been several advances including more efficient forms of value iteration and various kinds of policy iteration algorithms. Some of these are discussed in the notes at the end of the chapter. For general POMDPs, however, finding optimal policies is very difficult (PSPACE- hard, in fact—i.e., very hard indeed). Problems with a few dozen states are often infeasible. The next section describes a different, approximate method for solving POMDPs, one based on look-ahead search.  
+before eliminating the dominated ones. Since the 1970s, when this algorithm was developed, there have been several advances including more efficient forms of value iteration and various kinds of policy iteration algorithms. Some of these are discussed in the notes at the end of the chapter. For general POMDPs, however, finding optimal policies is very difficult (PSPACEhard, in fact—i.e., very hard indeed). Problems with a few dozen states are often infeasible. The next section describes a different, approximate method for solving POMDPs, one based on look-ahead search.  
 
 
 
@@ -8467,19 +8467,19 @@ _Ut+_3**X**_t_
 
 **17.4.3 Online agents for POMDPs**
 
-In this section, we outline a simple approach to agent design for partially observable, stochas- tic environments. The basic elements of the design are already familiar:
+In this section, we outline a simple approach to agent design for partially observable, stochastic environments. The basic elements of the design are already familiar:
 
-• The transition and sensor models are represented by a **dynamic Bayesian network** (DBN), as described in Chapter 15.
+- The transition and sensor models are represented by a **dynamic Bayesian network** (DBN), as described in Chapter 15.
 
-• The dynamic Bayesian network is extended with decision and utility nodes, as used in **decision networks** in Chapter 16. The resulting model is called a **dynamic decision network**, or DDN.DYNAMIC DECISION
+- The dynamic Bayesian network is extended with decision and utility nodes, as used in **decision networks** in Chapter 16. The resulting model is called a **dynamic decision network**, or DDN.DYNAMIC DECISION
 
 NETWORK
 
-• A filtering algorithm is used to incorporate each new percept and action and to update the belief state representation.
+- A filtering algorithm is used to incorporate each new percept and action and to update the belief state representation.
 
-• Decisions are made by projecting forward possible action sequences and choosing the best one.
+- Decisions are made by projecting forward possible action sequences and choosing the best one.
 
-DBNs are **factored representations** in the terminology of Chapter 2; they typically have an exponential complexity advantage over atomic representations and can model quite sub- stantial real-world problems. The agent design is therefore a practical implementation of the **utility-based agent** sketched in Chapter 2.
+DBNs are **factored representations** in the terminology of Chapter 2; they typically have an exponential complexity advantage over atomic representations and can model quite substantial real-world problems. The agent design is therefore a practical implementation of the **utility-based agent** sketched in Chapter 2.
 
 In the DBN, the single state St becomes a set of state variables **X**t, and there may be multiple evidence variables **E**t. We will use At to refer to the action at time t, so the transition model becomes **P**(**X**t+1|**X**t, At) and the sensor model becomes **P**(**E**t|**X**t). We will use Rt to refer to the reward received at time t and Ut to refer to the utility of the state at time t. (Both of these are random variables.) With this notation, a dynamic decision network looks like the one shown in Figure 17.10.
 
@@ -8527,15 +8527,15 @@ _U_(**X**_t_+3)
 
 Figure 17.11 shows part of the search tree corresponding to the three-step look-ahead DDN in Figure 17.10. Each of the triangular nodes is a belief state in which the agent makes a decision At+i for i= 0, 1, 2, . . .. The round (chance) nodes correspond to choices by the environment, namely, what evidence **E**t+i arrives. Notice that there are no chance nodes corresponding to the action outcomes; this is because the belief-state update for an action is deterministic regardless of the actual outcome.
 
-The belief state at each triangular node can be computed by applying a filtering al- gorithm to the sequence of percepts and actions leading to it. In this way, the algorithm takes into account the fact that, for decision At+i, the agent _will_ have available percepts **E**t+1, . . . , **E**t+i, even though at time t it does not know what those percepts will be. In this way, a decision-theoretic agent automatically takes into account the value of information and will execute information-gathering actions where appropriate.
+The belief state at each triangular node can be computed by applying a filtering algorithm to the sequence of percepts and actions leading to it. In this way, the algorithm takes into account the fact that, for decision At+i, the agent _will_ have available percepts **E**t+1, . . . , **E**t+i, even though at time t it does not know what those percepts will be. In this way, a decision-theoretic agent automatically takes into account the value of information and will execute information-gathering actions where appropriate.
 
-A decision can be extracted from the search tree by backing up the utility values from the leaves, taking an average at the chance nodes and taking the maximum at the decision nodes. This is similar to the EXPECTIMINIMAX algorithm for game trees with chance nodes, except that (1) there can also be rewards at non-leaf states and (2) the decision nodes corre- spond to belief states rather than actual states. The time complexity of an exhaustive search to depth d is O(|A|d · |**E**|d), where |A| is the number of available actions and |**E**| is the num- ber of possible percepts. (Notice that this is far less than the number of depth-d conditional  
+A decision can be extracted from the search tree by backing up the utility values from the leaves, taking an average at the chance nodes and taking the maximum at the decision nodes. This is similar to the EXPECTIMINIMAX algorithm for game trees with chance nodes, except that (1) there can also be rewards at non-leaf states and (2) the decision nodes correspond to belief states rather than actual states. The time complexity of an exhaustive search to depth d is O(|A|d · |**E**|d), where |A| is the number of available actions and |**E**| is the number of possible percepts. (Notice that this is far less than the number of depth-d conditional  
 
 
 
 plans generated by value iteration.) For problems in which the discount factor γ is not too close to 1, a shallow search is often good enough to give near-optimal decisions. It is also possible to approximate the averaging step at the chance nodes, by sampling from the set of possible percepts instead of summing over all possible percepts. There are various other ways of finding good approximate solutions quickly, but we defer them to Chapter 21.
 
-Decision-theoretic agents based on dynamic decision networks have a number of advan- tages compared with other, simpler agent designs presented in earlier chapters. In particular, they handle partially observable, uncertain environments and can easily revise their “plans” to handle unexpected evidence. With appropriate sensor models, they can handle sensor failure and can plan to gather information. They exhibit “graceful degradation” under time pressure and in complex environments, using various approximation techniques. So what is missing? One defect of our DDN-based algorithm is its reliance on forward search through state space, rather than using the hierarchical and other advanced planning techniques described in Chap- ter 11. There have been attempts to extend these techniques into the probabilistic domain, but so far they have proved to be inefficient. A second, related problem is the basically proposi- tional nature of the DDN language. We would like to be able to extend some of the ideas for first-order probabilistic languages to the problem of decision making. Current research has shown that this extension is possible and has significant benefits, as discussed in the notes at the end of the chapter.
+Decision-theoretic agents based on dynamic decision networks have a number of advantages compared with other, simpler agent designs presented in earlier chapters. In particular, they handle partially observable, uncertain environments and can easily revise their “plans” to handle unexpected evidence. With appropriate sensor models, they can handle sensor failure and can plan to gather information. They exhibit “graceful degradation” under time pressure and in complex environments, using various approximation techniques. So what is missing? One defect of our DDN-based algorithm is its reliance on forward search through state space, rather than using the hierarchical and other advanced planning techniques described in Chapter 11. There have been attempts to extend these techniques into the probabilistic domain, but so far they have proved to be inefficient. A second, related problem is the basically propositional nature of the DDN language. We would like to be able to extend some of the ideas for first-order probabilistic languages to the problem of decision making. Current research has shown that this extension is possible and has significant benefits, as discussed in the notes at the end of the chapter.
 
 17.5 DECISIONS WITH MULTIPLE AGENTS: GAME THEORY
 
@@ -8553,17 +8553,17 @@ Section 17.5. Decisions with Multiple Agents: Game Theory 667
 
 **17.5.1 Single-move games**
 
-We start by considering a restricted set of games: ones where all players take action simulta- neously and the result of the game is based on this single set of actions. (Actually, it is not crucial that the actions take place at exactly the same time; what matters is that no player has knowledge of the other players’ choices.) The restriction to a single move (and the very use of the word “game”) might make this seem trivial, but in fact, game theory is serious busi- ness. It is used in decision-making situations including the auctioning of oil drilling rights and wireless frequency spectrum rights, bankruptcy proceedings, product development and pricing decisions, and national defense—situations involving billions of dollars and hundreds of thousands of lives. A single-move game is defined by three components:
+We start by considering a restricted set of games: ones where all players take action simultaneously and the result of the game is based on this single set of actions. (Actually, it is not crucial that the actions take place at exactly the same time; what matters is that no player has knowledge of the other players’ choices.) The restriction to a single move (and the very use of the word “game”) might make this seem trivial, but in fact, game theory is serious business. It is used in decision-making situations including the auctioning of oil drilling rights and wireless frequency spectrum rights, bankruptcy proceedings, product development and pricing decisions, and national defense—situations involving billions of dollars and hundreds of thousands of lives. A single-move game is defined by three components:
 
-• **Players** or agents who will be making decisions. Two-player games have received thePLAYER
+- **Players** or agents who will be making decisions. Two-player games have received thePLAYER
 
 most attention, although n-player games for n > 2 are also common. We give players capitalized names, like _Alice_ and _Bob_ or O and E.
 
-• **Actions** that the players can choose. We will give actions lowercase names, like one orACTION
+- **Actions** that the players can choose. We will give actions lowercase names, like one orACTION
 
 testify . The players may or may not have the same set of actions available.
 
-• A **payoff function** that gives the utility to each player for each combination of actionsPAYOFF FUNCTION
+- A **payoff function** that gives the utility to each player for each combination of actionsPAYOFF FUNCTION
 
 by all the players. For single-move games the payoff function can be represented by a matrix, a representation known as the **strategic form** (also called **normal form**). TheSTRATEGIC FORM
 
@@ -8591,7 +8591,7 @@ A **solution** to a game is a strategy profile in which each player adopts a rat
 
 We will see that the most important issue in game theory is to define what “rational” means when each agent chooses only part of the strategy profile that determines the outcome. It is important to realize that outcomes are actual results of playing a game, while solutions are theoretical constructs used to analyze a game. We will see that some games have a solution only in mixed strategies. But that does not mean that a player must literally be adopting a mixed strategy to be rational.
 
-Consider the following story: Two alleged burglars, Alice and Bob, are caught red- handed near the scene of a burglary and are interrogated separately. A prosecutor offers each a deal: if you testify against your partner as the leader of a burglary ring, you’ll go free for being the cooperative one, while your partner will serve 10 years in prison. However, if you both testify against each other, you’ll both get 5 years. Alice and Bob also know that if both refuse to testify they will serve only 1 year each for the lesser charge of possessing stolen property. Now Alice and Bob face the so-called **prisoner’s dilemma**: should they testifyPRISONER’S
+Consider the following story: Two alleged burglars, Alice and Bob, are caught redhanded near the scene of a burglary and are interrogated separately. A prosecutor offers each a deal: if you testify against your partner as the leader of a burglary ring, you’ll go free for being the cooperative one, while your partner will serve 10 years in prison. However, if you both testify against each other, you’ll both get 5 years. Alice and Bob also know that if both refuse to testify they will serve only 1 year each for the lesser charge of possessing stolen property. Now Alice and Bob face the so-called **prisoner’s dilemma**: should they testifyPRISONER’S
 
 DILEMMA
 
@@ -8631,7 +8631,7 @@ Section 17.5. Decisions with Multiple Agents: Game Theory 669
 
 strategy. An equilibrium is essentially a **local optimum** in the space of policies; it is the top of a peak that slopes downward along every dimension, where a dimension corresponds to a player’s strategy choices.
 
-The mathematician John Nash (1928–) proved that _every game has at least one equi- librium._ The general concept of equilibrium is now called **Nash equilibrium** in his honor. Clearly, a dominant strategy equilibrium is a Nash equilibrium (Exercise 17.16), but someNASH EQUILIBRIUM
+The mathematician John Nash (1928–) proved that _every game has at least one equilibrium._ The general concept of equilibrium is now called **Nash equilibrium** in his honor. Clearly, a dominant strategy equilibrium is a Nash equilibrium (Exercise 17.16), but someNASH EQUILIBRIUM
 
 games have Nash equilibria but no dominant strategies. The _dilemma_ in the prisoner’s dilemma is that the equilibrium outcome is worse for
 
@@ -8659,9 +8659,9 @@ But _which_ mixed strategy? In 1928, von Neumann developed a method for finding 
 
 payoffs is always zero.6 Clearly, Morra is such a game. For two-player, zero-sum games, we know that the payoffs are equal and opposite, so we need consider the payoffs of only one player, who will be the maximizer (just as in Chapter 5). For Morra, we pick the even player E to be the maximizer, so we can define the payoff matrix by the values UE(e, o)—the payoff to E if E does e and O does o. (For convenience we call player E “her” and O “him.”) Von Neumann’s method is called the the **maximin** technique, and it works as follows:MAXIMIN
 
-• Suppose we change the rules as follows: first E picks her strategy and reveals it to O. Then O picks his strategy, with knowledge of E’s strategy. Finally, we evaluate the expected payoff of the game based on the chosen strategies. This gives us a turn- taking game to which we can apply the standard **minimax** algorithm from Chapter 5. Let’s suppose this gives an outcome UE,O. Clearly, this game favors O, so the true utility U of the original game (from E’s point of view) is _at least_ UE,O. For example, if we just look at pure strategies, the minimax game tree has a root value of −3 (see Figure 17.12(a)), so we know that U ≥ −3.
+- Suppose we change the rules as follows: first E picks her strategy and reveals it to O. Then O picks his strategy, with knowledge of E’s strategy. Finally, we evaluate the expected payoff of the game based on the chosen strategies. This gives us a turntaking game to which we can apply the standard **minimax** algorithm from Chapter 5. Let’s suppose this gives an outcome UE,O. Clearly, this game favors O, so the true utility U of the original game (from E’s point of view) is _at least_ UE,O. For example, if we just look at pure strategies, the minimax game tree has a root value of −3 (see Figure 17.12(a)), so we know that U ≥ −3.
 
-• Now suppose we change the rules to force O to reveal his strategy first, followed by E. Then the minimax value of this game is UO,E , and because this game favors E we know that U is _at most_ UO,E . With pure strategies, the value is +2 (see Figure 17.12(b)), so we know U ≤ +2.
+- Now suppose we change the rules to force O to reveal his strategy first, followed by E. Then the minimax value of this game is UO,E , and because this game favors E we know that U is _at most_ UO,E . With pure strategies, the value is +2 (see Figure 17.12(b)), so we know U ≤ +2.
 
 Combining these two arguments, we see that the true utility U of the solution to the original game must satisfy
 
@@ -8801,7 +8801,7 @@ With this observation in mind, the minimax trees can be thought of as having inf
 
 player can choose. Each of these leads to a node with two branches corresponding to the pure strategies for the second player. We can depict these infinite trees finitely by having one “parameterized” choice at the root:
 
-• If E chooses first, the situation is as shown in Figure 17.12(c). E chooses the strategy \[p: one; (1−p): two \] at the root, and then O chooses a pure strategy (and hence a move) given the value of p. If O chooses one , the expected payoff (to E) is 2p−3(1−p)= 5p−
+- If E chooses first, the situation is as shown in Figure 17.12(c). E chooses the strategy \[p: one; (1−p): two \] at the root, and then O chooses a pure strategy (and hence a move) given the value of p. If O chooses one , the expected payoff (to E) is 2p−3(1−p)= 5p−
 
 3; if O chooses two, the expected payoff is −3p + 4(1 − p)= 4 − 7p. We can draw these two payoffs as straight lines on a graph, where p ranges from 0 to 1 on the x-axis, as shown in Figure 17.12(e). O, the minimizer, will always choose the lower of the two lines, as shown by the heavy lines in the figure. Therefore, the best that E can do at the root is to choose p to be at the intersection point, which is where
 
@@ -8809,7 +8809,7 @@ player can choose. Each of these leads to a node with two branches corresponding
 
 The utility for E at this point is UE,O = − 1/12.
 
-• If O moves first, the situation is as shown in Figure 17.12(d). O chooses the strategy \[q: one; (1 − q): two\] at the root, and then E chooses a move given the value of q. The payoffs are 2q−3(1−q)= 5q−3 and−3q+4(1−q)= 4−7q.7 Again, Figure 17.12(f) shows that the best O can do at the root is to choose the intersection point:
+- If O moves first, the situation is as shown in Figure 17.12(d). O chooses the strategy \[q: one; (1 − q): two\] at the root, and then E chooses a move given the value of q. The payoffs are 2q−3(1−q)= 5q−3 and−3q+4(1−q)= 4−7q.7 Again, Figure 17.12(f) shows that the best O can do at the root is to choose the intersection point:
 
 5q − 3 = 4− 7q ⇒ q = 7/12 .
 
@@ -8833,11 +8833,11 @@ highest (or lowest) intersection point of the remaining hyperplanes. Finding thi
 
 The question remains, what should a rational agent actually _do_ in playing a single game of Morra? The rational agent will have derived the fact that \[7/12: one; 5/12: two\] is the maximin equilibrium strategy, and will assume that this is mutual knowledge with a rational opponent. The agent could use a 12-sided die or a random number generator to pick randomly according to this mixed strategy, in which case the expected payoff would be -1/12 for E. Or the agent could just decide to play one , or two. In either case, the expected payoff remains -1/12 for E. Curiously, unilaterally choosing a particular action does not harm one’s expected payoff, but allowing the other agent to know that one has made such a unilateral decision _does_ affect the expected payoff, because then the opponent can adjust his strategy accordingly.
 
-Finding equilibria in non-zero-sum games is somewhat more complicated. The general approach has two steps: (1) Enumerate all possible subsets of actions that might form mixed strategies. For example, first try all strategy profiles where each player uses a single action, then those where each player uses either one or two actions, and so on. This is exponential in the number of actions, and so only applies to relatively small games. (2) For each strategy profile enumerated in (1), check to see if it is an equilibrium. This is done by solving a set of equations and inequalities that are similar to the ones used in the zero-sum case. For two play- ers these equations are linear and can be solved with basic linear programming techniques, but for three or more players they are nonlinear and may be very difficult to solve.
+Finding equilibria in non-zero-sum games is somewhat more complicated. The general approach has two steps: (1) Enumerate all possible subsets of actions that might form mixed strategies. For example, first try all strategy profiles where each player uses a single action, then those where each player uses either one or two actions, and so on. This is exponential in the number of actions, and so only applies to relatively small games. (2) For each strategy profile enumerated in (1), check to see if it is an equilibrium. This is done by solving a set of equations and inequalities that are similar to the ones used in the zero-sum case. For two players these equations are linear and can be solved with basic linear programming techniques, but for three or more players they are nonlinear and may be very difficult to solve.
 
 **17.5.2 Repeated games**
 
-So far we have looked only at games that last a single move. The simplest kind of multiple- move game is the **repeated game**, in which players face the same choice repeatedly, but eachREPEATED GAME
+So far we have looked only at games that last a single move. The simplest kind of multiplemove game is the **repeated game**, in which players face the same choice repeatedly, but eachREPEATED GAME
 
 time with knowledge of the history of all players’ previous choices. A strategy profile for a repeated game specifies an action choice for each player at each time step for every possible history of previous choices. As with MDPs, payoffs are additive over time.
 
@@ -8893,7 +8893,7 @@ The key idea of extensive form that sets it apart from the game trees of Chapter
 
 representation we can find equilibrium solutions, just as we did with normal-form games. As a simple example of a sequential game, place two agents in the 4× 3 world of Fig-
 
-ure 17.1 and have them move simultaneously until one agent reaches an exit square, and gets the payoff for that square. If we specify that no movement occurs when the two agents try to move into the same square simultaneously (a common problem at many traffic intersec- tions), then certain pure strategies can get stuck forever. Thus, agents need a mixed strategy to perform well in this game: randomly choose between moving ahead and staying put. This is exactly what is done to resolve packet collisions in Ethernet networks.
+ure 17.1 and have them move simultaneously until one agent reaches an exit square, and gets the payoff for that square. If we specify that no movement occurs when the two agents try to move into the same square simultaneously (a common problem at many traffic intersections), then certain pure strategies can get stuck forever. Thus, agents need a mixed strategy to perform well in this game: randomly choose between moving ahead and staying put. This is exactly what is done to resolve packet collisions in Ethernet networks.
 
 Next we’ll consider a very simple variant of poker. The deck has only four cards, two aces and two kings. One card is dealt to each player. The first player then has the option to _raise_ the stakes of the game from 1 point to 2, or to _check_. If player 1 checks, the game is over. If he raises, then player 2 has the option to _call_, accepting that the game is worth 2 points, or _fold_, conceding the 1 point. If the game does not end with a fold, then the payoff depends on the cards: it is zero for both players if they have the same card; otherwise the player with the king pays the stakes to the player with the ace.
 
@@ -9049,7 +9049,7 @@ Section 17.6. Mechanism Design 679
 
 17.6 MECHANISM DESIGN
 
-In the previous section, we asked, “Given a game, what is a rational strategy?” In this sec- tion, we ask, “Given that agents pick rational strategies, what game should we design?” More specifically, we would like to design a game whose solutions, consisting of each agent pursu- ing its own rational strategy, result in the maximization of some global utility function. This problem is called **mechanism design**, or sometimes **inverse game theory**. Mechanism de-MECHANISM DESIGN
+In the previous section, we asked, “Given a game, what is a rational strategy?” In this section, we ask, “Given that agents pick rational strategies, what game should we design?” More specifically, we would like to design a game whose solutions, consisting of each agent pursuing its own rational strategy, result in the maximization of some global utility function. This problem is called **mechanism design**, or sometimes **inverse game theory**. Mechanism de-MECHANISM DESIGN
 
 sign is a staple of economics and political science. Capitalism 101 says that if everyone tries to get rich, the total wealth of society will increase. But the examples we will discuss show that proper mechanism design is necessary to keep the invisible hand on track. For collections of agents, mechanism design allows us to construct smart systems out of a collection of more limited systems—even uncooperative systems—in much the same way that teams of humans can achieve goals beyond the reach of any individual.
 
@@ -9079,13 +9079,13 @@ How do we know if this is a good mechanism? One goal is to maximize expected rev
 
 The ascending-bid auction is usually both efficient and revenue maximizing, but if the reserve price is set too high, the bidder who values it most may not bid, and if the reserve is set too low, the seller loses net revenue.
 
-Probably the most important things that an auction mechanism can do is encourage a sufficient number of bidders to enter the game and discourage them from engaging in **collu- sion**. Collusion is an unfair or illegal agreement by two or more bidders to manipulate prices.COLLUSION
+Probably the most important things that an auction mechanism can do is encourage a sufficient number of bidders to enter the game and discourage them from engaging in **collusion**. Collusion is an unfair or illegal agreement by two or more bidders to manipulate prices.COLLUSION
 
 It can happen in secret backroom deals or tacitly, within the rules of the mechanism. For example, in 1999, Germany auctioned ten blocks of cell-phone spectrum with a
 
 simultaneous auction (bids were taken on all ten blocks at the same time), using the rule that any bid must be a minimum of a 10% raise over the previous bid on a block. There were only two credible bidders, and the first, Mannesman, entered the bid of 20 million deutschmark on blocks 1-5 and 18.18 million on blocks 6-10. Why 18.18M? One of T-Mobile’s managers said they “interpreted Mannesman’s first bid as an offer.” Both parties could compute that a 10% raise on 18.18M is 19.99M; thus Mannesman’s bid was interpreted as saying “we can each get half the blocks for 20M; let’s not spoil it by bidding the prices up higher.” And in fact T-Mobile bid 20M on blocks 6-10 and that was the end of the bidding. The German government got less than they expected, because the two competitors were able to use the bidding mechanism to come to a tacit agreement on how not to compete. From the government’s point of view, a better result could have been obtained by any of these changes to the mechanism: a higher reserve price; a sealed-bid first-price auction, so that the competitors could not communicate through their bids; or incentives to bring in a third bidder. Perhaps the 10% rule was an error in mechanism design, because it facilitated the precise signaling from Mannesman to T-Mobile.
 
-In general, both the seller and the global utility function benefit if there are more bid- ders, although global utility can suffer if you count the cost of wasted time of bidders that have no chance of winning. One way to encourage more bidders is to make the mechanism easier for them. After all, if it requires too much research or computation on the part of the bidders, they may decide to take their money elsewhere. So it is desirable that the bidders have a **dominant strategy**. Recall that “dominant” means that the strategy works against all other strategies, which in turn means that an agent can adopt it without regard for the other strategies. An agent with a dominant strategy can just bid, without wasting time contemplat- ing other agents’ possible strategies. A mechanism where agents have a dominant strategy is called a **strategy-proof** mechanism. If, as is usually the case, that strategy involves theSTRATEGY-PROOF
+In general, both the seller and the global utility function benefit if there are more bidders, although global utility can suffer if you count the cost of wasted time of bidders that have no chance of winning. One way to encourage more bidders is to make the mechanism easier for them. After all, if it requires too much research or computation on the part of the bidders, they may decide to take their money elsewhere. So it is desirable that the bidders have a **dominant strategy**. Recall that “dominant” means that the strategy works against all other strategies, which in turn means that an agent can adopt it without regard for the other strategies. An agent with a dominant strategy can just bid, without wasting time contemplating other agents’ possible strategies. A mechanism where agents have a dominant strategy is called a **strategy-proof** mechanism. If, as is usually the case, that strategy involves theSTRATEGY-PROOF
 
 bidders revealing their true value, vi, then it is called a **truth-revealing**, or **truthful**, auction;TRUTH-REVEALING
 
@@ -9097,13 +9097,13 @@ nism can be transformed into an equivalent truth-revealing mechanism, so part of
 
 It turns out that the ascending-bid auction has most of the desirable properties. The bidder with the highest value vi gets the goods at a price of bo + d, where bo is the highest bid among all the other agents and d is the auctioneer’s increment.9 Bidders have a simple dominant strategy: keep bidding as long as the current cost is below your vi. The mechanism is not quite truth-revealing, because the winning bidder reveals only that his vi ≥ bo + d; we have a lower bound on vi but not an exact amount.
 
-A disadvantage (from the point of view of the seller) of the ascending-bid auction is that it can discourage competition. Suppose that in a bid for cell-phone spectrum there is one advantaged company that everyone agrees would be able to leverage existing customers and infrastructure, and thus can make a larger profit than anyone else. Potential competitors can see that they have no chance in an ascending-bid auction, because the advantaged com- pany can always bid higher. Thus, the competitors may not enter at all, and the advantaged company ends up winning at the reserve price.
+A disadvantage (from the point of view of the seller) of the ascending-bid auction is that it can discourage competition. Suppose that in a bid for cell-phone spectrum there is one advantaged company that everyone agrees would be able to leverage existing customers and infrastructure, and thus can make a larger profit than anyone else. Potential competitors can see that they have no chance in an ascending-bid auction, because the advantaged company can always bid higher. Thus, the competitors may not enter at all, and the advantaged company ends up winning at the reserve price.
 
-Another negative property of the English auction is its high communication costs. Either the auction takes place in one room or all bidders have to have high-speed, secure communi- cation lines; in either case they have to have the time available to go through several rounds of bidding. An alternative mechanism, which requires much less communication, is the **sealed- bid auction**. Each bidder makes a single bid and communicates it to the auctioneer, withoutSEALED-BID
+Another negative property of the English auction is its high communication costs. Either the auction takes place in one room or all bidders have to have high-speed, secure communication lines; in either case they have to have the time available to go through several rounds of bidding. An alternative mechanism, which requires much less communication, is the **sealedbid auction**. Each bidder makes a single bid and communicates it to the auctioneer, withoutSEALED-BID
 
 AUCTION
 
-the other bidders seeing it. With this mechanism, there is no longer a simple dominant strat- egy. If your value is vi and you believe that the maximum of all the other agents’ bids will be bo, then you should bid bo + ε, for some small ε, if that is less than vi. Thus, your bid depends on your estimation of the other agents’ bids, requiring you to do more work. Also, note that the agent with the highest vi might not win the auction. This is offset by the fact that the auction is more competitive, reducing the bias toward an advantaged bidder.
+the other bidders seeing it. With this mechanism, there is no longer a simple dominant strategy. If your value is vi and you believe that the maximum of all the other agents’ bids will be bo, then you should bid bo + ε, for some small ε, if that is less than vi. Thus, your bid depends on your estimation of the other agents’ bids, requiring you to do more work. Also, note that the agent with the highest vi might not win the auction. This is offset by the fact that the auction is more competitive, reducing the bias toward an advantaged bidder.
 
 A small change in the mechanism for sealed-bid auctions produces the **sealed-bid second-price auction**, also known as a **Vickrey auction**.10 In such auctions, the winner pays
 
@@ -9217,45 +9217,45 @@ way i can make the center optimize what i wants is to report the true utility, b
 
 This chapter shows how to use knowledge about the world to make decisions even when the outcomes of an action are uncertain and the rewards for acting might not be reaped until many actions have passed. The main points are as follows:
 
-• Sequential decision problems in uncertain environments, also called **Markov decision processes**, or MDPs, are defined by a **transition model** specifying the probabilistic outcomes of actions and a **reward function** specifying the reward in each state.
+- Sequential decision problems in uncertain environments, also called **Markov decision processes**, or MDPs, are defined by a **transition model** specifying the probabilistic outcomes of actions and a **reward function** specifying the reward in each state.
 
-• The utility of a state sequence is the sum of all the rewards over the sequence, possibly discounted over time. The solution of an MDP is a **policy** that associates a decision with every state that the agent might reach. An optimal policy maximizes the utility of the state sequences encountered when it is executed.
+- The utility of a state sequence is the sum of all the rewards over the sequence, possibly discounted over time. The solution of an MDP is a **policy** that associates a decision with every state that the agent might reach. An optimal policy maximizes the utility of the state sequences encountered when it is executed.
 
-• The utility of a state is the expected utility of the state sequences encountered when an optimal policy is executed, starting in that state. The **value iteration** algorithm for solving MDPs works by iteratively solving the equations relating the utility of each state to those of its neighbors.
+- The utility of a state is the expected utility of the state sequences encountered when an optimal policy is executed, starting in that state. The **value iteration** algorithm for solving MDPs works by iteratively solving the equations relating the utility of each state to those of its neighbors.
 
-• **Policy iteration** alternates between calculating the utilities of states under the current policy and improving the current policy with respect to the current utilities.
+- **Policy iteration** alternates between calculating the utilities of states under the current policy and improving the current policy with respect to the current utilities.
 
-• Partially observable MDPs, or POMDPs, are much more difficult to solve than are MDPs. They can be solved by conversion to an MDP in the continuous space of belief  
+- Partially observable MDPs, or POMDPs, are much more difficult to solve than are MDPs. They can be solved by conversion to an MDP in the continuous space of belief  
 
 Bibliographical and Historical Notes 685
 
-states; both value iteration and policy iteration algorithms have been devised. Optimal behavior in POMDPs includes information gathering to reduce uncertainty and there- fore make better decisions in the future.
+states; both value iteration and policy iteration algorithms have been devised. Optimal behavior in POMDPs includes information gathering to reduce uncertainty and therefore make better decisions in the future.
 
-• A decision-theoretic agent can be constructed for POMDP environments. The agent uses a **dynamic decision network** to represent the transition and sensor models, to update its belief state, and to project forward possible action sequences.
+- A decision-theoretic agent can be constructed for POMDP environments. The agent uses a **dynamic decision network** to represent the transition and sensor models, to update its belief state, and to project forward possible action sequences.
 
-• **Game theory** describes rational behavior for agents in situations in which multiple agents interact simultaneously. Solutions of games are **Nash equilibria**—strategy pro- files in which no agent has an incentive to deviate from the specified strategy.
+- **Game theory** describes rational behavior for agents in situations in which multiple agents interact simultaneously. Solutions of games are **Nash equilibria**—strategy profiles in which no agent has an incentive to deviate from the specified strategy.
 
-• **Mechanism design** can be used to set the rules by which agents will interact, in order to maximize some global utility through the operation of individually rational agents. Sometimes, mechanisms exist that achieve this goal without requiring each agent to consider the choices made by other agents.
+- **Mechanism design** can be used to set the rules by which agents will interact, in order to maximize some global utility through the operation of individually rational agents. Sometimes, mechanisms exist that achieve this goal without requiring each agent to consider the choices made by other agents.
 
-We shall return to the world of MDPs and POMDP in Chapter 21, when we study **rein- forcement learning** methods that allow an agent to improve its behavior from experience in sequential, uncertain environments.
+We shall return to the world of MDPs and POMDP in Chapter 21, when we study **reinforcement learning** methods that allow an agent to improve its behavior from experience in sequential, uncertain environments.
 
 BIBLIOGRAPHICAL AND HISTORICAL NOTES
 
-Richard Bellman developed the ideas underlying the modern approach to sequential decision problems while working at the RAND Corporation beginning in 1949. According to his au- tobiography (Bellman, 1984), he coined the exciting term “dynamic programming” to hide from a research-phobic Secretary of Defense, Charles Wilson, the fact that his group was doing mathematics. (This cannot be strictly true, because his first paper using the term (Bell- man, 1952) appeared before Wilson became Secretary of Defense in 1953.) Bellman’s book, _Dynamic Programming_ (1957), gave the new field a solid foundation and introduced the basic algorithmic approaches. Ron Howard’s Ph.D. thesis (1960) introduced policy iteration and the idea of average reward for solving infinite-horizon problems. Several additional results were introduced by Bellman and Dreyfus (1962). Modified policy iteration is due to van Nunen (1976) and Puterman and Shin (1978). Asynchronous policy iteration was analyzed by Williams and Baird (1993), who also proved the policy loss bound in Equation (17.9). The analysis of discounting in terms of stationary preferences is due to Koopmans (1972). The texts by Bertsekas (1987), Puterman (1994), and Bertsekas and Tsitsiklis (1996) provide a rigorous introduction to sequential decision problems. Papadimitriou and Tsitsiklis (1987) describe results on the computational complexity of MDPs.
+Richard Bellman developed the ideas underlying the modern approach to sequential decision problems while working at the RAND Corporation beginning in 1949. According to his autobiography (Bellman, 1984), he coined the exciting term “dynamic programming” to hide from a research-phobic Secretary of Defense, Charles Wilson, the fact that his group was doing mathematics. (This cannot be strictly true, because his first paper using the term (Bellman, 1952) appeared before Wilson became Secretary of Defense in 1953.) Bellman’s book, _Dynamic Programming_ (1957), gave the new field a solid foundation and introduced the basic algorithmic approaches. Ron Howard’s Ph.D. thesis (1960) introduced policy iteration and the idea of average reward for solving infinite-horizon problems. Several additional results were introduced by Bellman and Dreyfus (1962). Modified policy iteration is due to van Nunen (1976) and Puterman and Shin (1978). Asynchronous policy iteration was analyzed by Williams and Baird (1993), who also proved the policy loss bound in Equation (17.9). The analysis of discounting in terms of stationary preferences is due to Koopmans (1972). The texts by Bertsekas (1987), Puterman (1994), and Bertsekas and Tsitsiklis (1996) provide a rigorous introduction to sequential decision problems. Papadimitriou and Tsitsiklis (1987) describe results on the computational complexity of MDPs.
 
 Seminal work by Sutton (1988) and Watkins (1989) on reinforcement learning methods for solving MDPs played a significant role in introducing MDPs into the AI community, as did the later survey by Barto _et al._ (1995). (Earlier work by Werbos (1977) contained many similar ideas, but was not taken up to the same extent.) The connection between MDPs and AI planning problems was made first by Sven Koenig (1991), who showed how probabilistic STRIPS operators provide a compact representation for transition models (see also Wellman,  
 
 
 
-1990b). Work by Dean _et al._ (1993) and Tash and Russell (1994) attempted to overcome the combinatorics of large state spaces by using a limited search horizon and abstract states. Heuristics based on the value of information can be used to select areas of the state space where a local expansion of the horizon will yield a significant improvement in decision qual- ity. Agents using this approach can tailor their effort to handle time pressure and generate some interesting behaviors such as using familiar “beaten paths” to find their way around the state space quickly without having to recompute optimal decisions at each point.
+1990b). Work by Dean _et al._ (1993) and Tash and Russell (1994) attempted to overcome the combinatorics of large state spaces by using a limited search horizon and abstract states. Heuristics based on the value of information can be used to select areas of the state space where a local expansion of the horizon will yield a significant improvement in decision quality. Agents using this approach can tailor their effort to handle time pressure and generate some interesting behaviors such as using familiar “beaten paths” to find their way around the state space quickly without having to recompute optimal decisions at each point.
 
-As one might expect, AI researchers have pushed MDPs in the direction of more ex- pressive representations that can accommodate much larger problems than the traditional atomic representations based on transition matrices. The use of a dynamic Bayesian network to represent transition models was an obvious idea, but work on **factored MDPs** (BoutilierFACTORED MDP
+As one might expect, AI researchers have pushed MDPs in the direction of more expressive representations that can accommodate much larger problems than the traditional atomic representations based on transition matrices. The use of a dynamic Bayesian network to represent transition models was an obvious idea, but work on **factored MDPs** (BoutilierFACTORED MDP
 
 _et al._, 2000; Koller and Parr, 2000; Guestrin _et al._, 2003b) extends the idea to structured representations of the value function with provable improvements in complexity. **Relational MDPs** (Boutilier _et al._, 2001; Guestrin _et al._, 2003a) go one step further, using structuredRELATIONAL MDP
 
 representations to handle domains with many related objects. The observation that a partially observable MDP can be transformed into a regular MDP
 
-over belief states is due to Astrom (1965) and Aoki (1965). The first complete algorithm for the exact solution of POMDPs—essentially the value iteration algorithm presented in this chapter—was proposed by Edward Sondik (1971) in his Ph.D. thesis. (A later journal paper by Smallwood and Sondik (1973) contains some errors, but is more accessible.) Lovejoy (1991) surveyed the first twenty-five years of POMDP research, reaching somewhat pes- simistic conclusions about the feasibility of solving large problems. The first significant contribution within AI was the Witness algorithm (Cassandra _et al._, 1994; Kaelbling _et al._, 1998), an improved version of POMDP value iteration. Other algorithms soon followed, in- cluding an approach due to Hansen (1998) that constructs a policy incrementally in the form of a finite-state automaton. In this policy representation, the belief state corresponds directly to a particular state in the automaton. More recent work in AI has focused on **point-based** value iteration methods that, at each iteration, generate conditional plans and α-vectors for a finite set of belief states rather than for the entire belief space. Lovejoy (1991) proposed such an algorithm for a fixed grid of points, an approach taken also by Bonet (2002). An influential paper by Pineau _et al._ (2003) suggested generating reachable points by simulat- ing trajectories in a somewhat greedy fashion; Spaan and Vlassis (2005) observe that one need generate plans for only a small, randomly selected subset of points to improve on the plans from the previous iteration for all points in the set. Current point-based methods— such as point-based policy iteration (Ji _et al._, 2007)—can generate near-optimal solutions for POMDPs with thousands of states. Because POMDPs are PSPACE-hard (Papadimitriou and Tsitsiklis, 1987), further progress may require taking advantage of various kinds of structure within a factored representation.
+over belief states is due to Astrom (1965) and Aoki (1965). The first complete algorithm for the exact solution of POMDPs—essentially the value iteration algorithm presented in this chapter—was proposed by Edward Sondik (1971) in his Ph.D. thesis. (A later journal paper by Smallwood and Sondik (1973) contains some errors, but is more accessible.) Lovejoy (1991) surveyed the first twenty-five years of POMDP research, reaching somewhat pessimistic conclusions about the feasibility of solving large problems. The first significant contribution within AI was the Witness algorithm (Cassandra _et al._, 1994; Kaelbling _et al._, 1998), an improved version of POMDP value iteration. Other algorithms soon followed, including an approach due to Hansen (1998) that constructs a policy incrementally in the form of a finite-state automaton. In this policy representation, the belief state corresponds directly to a particular state in the automaton. More recent work in AI has focused on **point-based** value iteration methods that, at each iteration, generate conditional plans and α-vectors for a finite set of belief states rather than for the entire belief space. Lovejoy (1991) proposed such an algorithm for a fixed grid of points, an approach taken also by Bonet (2002). An influential paper by Pineau _et al._ (2003) suggested generating reachable points by simulating trajectories in a somewhat greedy fashion; Spaan and Vlassis (2005) observe that one need generate plans for only a small, randomly selected subset of points to improve on the plans from the previous iteration for all points in the set. Current point-based methods— such as point-based policy iteration (Ji _et al._, 2007)—can generate near-optimal solutions for POMDPs with thousands of states. Because POMDPs are PSPACE-hard (Papadimitriou and Tsitsiklis, 1987), further progress may require taking advantage of various kinds of structure within a factored representation.
 
 The online approach—using look-ahead search to select an action for the current belief state—was first examined by Satia and Lave (1973). The use of sampling at chance nodes was explored analytically by Kearns _et al._ (2000) and Ng and Jordan (2000). The basic ideas for an agent architecture using dynamic decision networks were proposed by Dean and Kanazawa (1989a). The book _Planning and Control_ by Dean and Wellman (1991) goes  
 
@@ -9263,7 +9263,7 @@ Bibliographical and Historical Notes 687
 
 into much greater depth, making connections between DBN/DDN models and the classical control literature on filtering. Tatman and Shachter (1990) showed how to apply dynamic programming algorithms to DDN models. Russell (1998) explains various ways in which such agents can be scaled up and identifies a number of open research issues.
 
-The roots of game theory can be traced back to proposals made in the 17th century by Christiaan Huygens and Gottfried Leibniz to study competitive and cooperative human interactions scientifically and mathematically. Throughout the 19th century, several leading economists created simple mathematical examples to analyze particular examples of com- petitive situations. The first formal results in game theory are due to Zermelo (1913) (who had, the year before, suggested a form of minimax search for games, albeit an incorrect one). Emile Borel (1921) introduced the notion of a mixed strategy. John von Neumann (1928) proved that every two-person, zero-sum game has a maximin equilibrium in mixed strategies and a well-defined value. Von Neumann’s collaboration with the economist Oskar Morgen- stern led to the publication in 1944 of the _Theory of Games and Economic Behavior_, the defining book for game theory. Publication of the book was delayed by the wartime paper shortage until a member of the Rockefeller family personally subsidized its publication.
+The roots of game theory can be traced back to proposals made in the 17th century by Christiaan Huygens and Gottfried Leibniz to study competitive and cooperative human interactions scientifically and mathematically. Throughout the 19th century, several leading economists created simple mathematical examples to analyze particular examples of competitive situations. The first formal results in game theory are due to Zermelo (1913) (who had, the year before, suggested a form of minimax search for games, albeit an incorrect one). Emile Borel (1921) introduced the notion of a mixed strategy. John von Neumann (1928) proved that every two-person, zero-sum game has a maximin equilibrium in mixed strategies and a well-defined value. Von Neumann’s collaboration with the economist Oskar Morgenstern led to the publication in 1944 of the _Theory of Games and Economic Behavior_, the defining book for game theory. Publication of the book was delayed by the wartime paper shortage until a member of the Rockefeller family personally subsidized its publication.
 
 In 1950, at the age of 21, John Nash published his ideas concerning equilibria in general (non-zero-sum) games. His definition of an equilibrium solution, although originating in the work of Cournot (1838), became known as Nash equilibrium. After a long delay because of the schizophrenia he suffered from 1959 onward, Nash was awarded the Nobel Memorial Prize in Economics (along with Reinhart Selten and John Harsanyi) in 1994. The Bayes–Nash equilibrium is described by Harsanyi (1967) and discussed by Kadane and Larkey (1982). Some issues in the use of game theory for agent control are covered by Binmore (1982).
 
@@ -9271,13 +9271,13 @@ The prisoner’s dilemma was invented as a classroom exercise by Albert W. Tucke
 
 The use of abstraction to reduce a game tree to a size that can be solved with Koller’s technique is discussed by Billings _et al._ (2003). Bowling _et al._ (2008) show how to use importance sampling to get a better estimate of the value of a strategy. Waugh _et al._ (2009) show that the abstraction approach is vulnerable to making systematic errors in approximating the equilibrium solution, meaning that the whole approach is on shaky ground: it works for some games but not others. Korb _et al._ (1999) experiment with an opponent model in the form of a Bayesian network. It plays five-card stud about as well as experienced humans. (Zinkevich _et al._, 2008) show how an approach that minimizes regret can find approximate equilibria for abstractions with 1012 states, 100 times more than previous methods.
 
-Game theory and MDPs are combined in the theory of Markov games, also called stochastic games (Littman, 1994; Hu and Wellman, 1998). Shapley (1953) actually described the value iteration algorithm independently of Bellman, but his results were not widely ap- preciated, perhaps because they were presented in the context of Markov games. Evolu-  
+Game theory and MDPs are combined in the theory of Markov games, also called stochastic games (Littman, 1994; Hu and Wellman, 1998). Shapley (1953) actually described the value iteration algorithm independently of Bellman, but his results were not widely appreciated, perhaps because they were presented in the context of Markov games. Evolu 
 
 
 
-tionary game theory (Smith, 1982; Weibull, 1995) looks at strategy drift over time: if your opponent’s strategy is changing, how should you react? Textbooks on game theory from an economics point of view include those by Myerson (1991), Fudenberg and Tirole (1991), Osborne (2004), and Osborne and Rubinstein (1994); Mailath and Samuelson (2006) concen- trate on repeated games. From an AI perspective we have Nisan _et al._ (2007), Leyton-Brown and Shoham (2008), and Shoham and Leyton-Brown (2009).
+tionary game theory (Smith, 1982; Weibull, 1995) looks at strategy drift over time: if your opponent’s strategy is changing, how should you react? Textbooks on game theory from an economics point of view include those by Myerson (1991), Fudenberg and Tirole (1991), Osborne (2004), and Osborne and Rubinstein (1994); Mailath and Samuelson (2006) concentrate on repeated games. From an AI perspective we have Nisan _et al._ (2007), Leyton-Brown and Shoham (2008), and Shoham and Leyton-Brown (2009).
 
-The 2007 Nobel Memorial Prize in Economics went to Hurwicz, Maskin, and Myerson “for having laid the foundations of mechanism design theory” (Hurwicz, 1973). The tragedy of the commons, a motivating problem for the field, was presented by Hardin (1968). The rev- elation principle is due to Myerson (1986), and the revenue equivalence theorem was devel- oped independently by Myerson (1981) and Riley and Samuelson (1981). Two economists, Milgrom (1997) and Klemperer (2002), write about the multibillion-dollar spectrum auctions they were involved in.
+The 2007 Nobel Memorial Prize in Economics went to Hurwicz, Maskin, and Myerson “for having laid the foundations of mechanism design theory” (Hurwicz, 1973). The tragedy of the commons, a motivating problem for the field, was presented by Hardin (1968). The revelation principle is due to Myerson (1986), and the revenue equivalence theorem was developed independently by Myerson (1981) and Riley and Samuelson (1981). Two economists, Milgrom (1997) and Klemperer (2002), write about the multibillion-dollar spectrum auctions they were involved in.
 
 Mechanism design is used in multiagent planning (Hunsberger and Grosz, 2000; Stone _et al._, 2009) and scheduling (Rassenti _et al._, 1982). Varian (1995) gives a brief overview with connections to the computer science literature, and Rosenschein and Zlotkin (1994) present a book-length treatment with applications to distributed AI. Related work on distributed AI also goes under other names, including collective intelligence (Tumer and Wolpert, 2000; Segaran, 2007) and market-based control (Clearwater, 1996). Since 2001 there has been an annual Trading Agents Competition (TAC), in which agents try to make the best profit on a series of auctions (Wellman _et al._, 2001; Arunachalam and Sadeh, 2005). Papers on computational issues in auctions often appear in the ACM Conferences on Electronic Commerce.
 
@@ -9287,7 +9287,7 @@ EXERCISES
 
 **17.2** Select a specific member of the set of policies that are optimal for R(s) > 0 as shown in Figure 17.2(b), and calculate the fraction of time the agent spends in each state, in the limit, if the policy is executed forever. (_Hint_: Construct the state-to-state transition probability matrix corresponding to the policy and see Exercise 15.2.)
 
-**17.3** Suppose that we define the utility of a state sequence to be the _maximum_ reward ob- tained in any state in the sequence. Show that this utility function does not result in stationary preferences between state sequences. Is it still possible to define a utility function on states such that MEU decision making gives optimal behavior?
+**17.3** Suppose that we define the utility of a state sequence to be the _maximum_ reward obtained in any state in the sequence. Show that this utility function does not result in stationary preferences between state sequences. Is it still possible to define a utility function on states such that MEU decision making gives optimal behavior?
 
 **17.4** Sometimes MDPs are formulated with a reward function R(s, a) that depends on the action taken or with a reward function R(s, a, s
 
@@ -9299,11 +9299,11 @@ Exercises 689
 
 **b**. Show how an MDP with reward function R(s, a, s ′) can be transformed into a different
 
-MDP with reward function R(s, a), such that optimal policies in the new MDP corre- spond exactly to optimal policies in the original MDP.
+MDP with reward function R(s, a), such that optimal policies in the new MDP correspond exactly to optimal policies in the original MDP.
 
 **c**. Now do the same to convert MDPs with R(s, a) into MDPs with R(s).
 
-**17.5** For the environment shown in Figure 17.1, find all the threshold values for R(s) such that the optimal policy changes when the threshold is crossed. You will need a way to calcu- late the optimal policy and its value for fixed R(s). (_Hint_: Prove that the value of any fixed policy varies linearly with R(s).)
+**17.5** For the environment shown in Figure 17.1, find all the threshold values for R(s) such that the optimal policy changes when the threshold is crossed. You will need a way to calculate the optimal policy and its value for fixed R(s). (_Hint_: Prove that the value of any fixed policy varies linearly with R(s).)
 
 **17.6** Equation (17.7) on page 654 states that the Bellman operator is a contraction.
 
@@ -9383,11 +9383,11 @@ _r_ \-1
 
 and b. The transition model is as follows:
 
-• In state 1, action a moves the agent to state 2 with probability 0.8 and makes the agent stay put with probability 0.2.
+- In state 1, action a moves the agent to state 2 with probability 0.8 and makes the agent stay put with probability 0.2.
 
-• In state 2, action a moves the agent to state 1 with probability 0.8 and makes the agent stay put with probability 0.2.
+- In state 2, action a moves the agent to state 1 with probability 0.8 and makes the agent stay put with probability 0.2.
 
-• In either state 1 or state 2, action b moves the agent to state 3 with probability 0.1 and makes the agent stay put with probability 0.9.
+- In either state 1 or state 2, action b moves the agent to state 3 with probability 0.1 and makes the agent stay put with probability 0.9.
 
 Answer the following questions:
 
@@ -9399,17 +9399,17 @@ Answer the following questions:
 
 **17.11** Consider the 4× 3 world shown in Figure 17.1.
 
-**a**. Implement an environment simulator for this environment, such that the specific geog- raphy of the environment is easily altered. Some code for doing this is already in the online code repository.  
+**a**. Implement an environment simulator for this environment, such that the specific geography of the environment is easily altered. Some code for doing this is already in the online code repository.  
 
 Exercises 691
 
-**b**. Create an agent that uses policy iteration, and measure its performance in the environ- ment simulator from various starting states. Perform several experiments from each starting state, and compare the average total reward received per run with the utility of the state, as determined by your algorithm.
+**b**. Create an agent that uses policy iteration, and measure its performance in the environment simulator from various starting states. Perform several experiments from each starting state, and compare the average total reward received per run with the utility of the state, as determined by your algorithm.
 
 **c**. Experiment with increasing the size of the environment. How does the run time for policy iteration vary with the size of the environment?
 
 **17.12** How can the value determination algorithm be used to calculate the expected loss experienced by an agent using a given set of utility estimates U and an estimated model P , compared with an agent using correct values?
 
-**17.13** Let the initial belief state b0 for the 4× 3 POMDP on page 658 be the uniform dis- tribution over the nonterminal states, i.e., 〈1
+**17.13** Let the initial belief state b0 for the 4× 3 POMDP on page 658 be the uniform distribution over the nonterminal states, i.e., 〈1
 
 9 ,
 
@@ -9463,7 +9463,7 @@ Pol: do nothing F = 8, P = 2 F = 5, P = 5 F = 4, P = 9
 
 Pol: expand F = 3, P = 3 F = 2, P = 7 F = 1, P = 8
 
-Politicians can expand or contract fiscal policy, while the Fed can expand or contract mon- etary policy. (And of course either side can choose to do nothing.) Each side also has pref- erences for who should do what—neither side wants to look like the bad guys. The payoffs shown are simply the rank orderings: 9 for first choice through 1 for last choice. Find the Nash equilibrium of the game in pure strategies. Is this a Pareto-optimal solution? You might wish to analyze the policies of recent administrations in this light.  
+Politicians can expand or contract fiscal policy, while the Fed can expand or contract monetary policy. (And of course either side can choose to do nothing.) Each side also has preferences for who should do what—neither side wants to look like the bad guys. The payoffs shown are simply the rank orderings: 9 for first choice through 1 for last choice. Find the Nash equilibrium of the game in pure strategies. Is this a Pareto-optimal solution? You might wish to analyze the policies of recent administrations in this light.  
 
 
 
@@ -9479,4 +9479,4 @@ Politicians can expand or contract fiscal policy, while the Fed can expand or co
 
 **c**. Imagine that it were legal and ethical for the two teams to enter into a pact where they agree that they will skate to a tie in regulation time, and then both try in earnest to win in overtime. Under what conditions, in terms of p and q, would it be rational for both teams to agree to this pact?
 
-**d**. Longley and Sankaran (2005) report that since the rule change, the percentage of games with a winner in overtime went up 18.2%, as desired, but the percentage of overtime games also went up 3.6%. What does that suggest about possible collusion or conser- vative play after the rule change?
+**d**. Longley and Sankaran (2005) report that since the rule change, the percentage of games with a winner in overtime went up 18.2%, as desired, but the percentage of overtime games also went up 3.6%. What does that suggest about possible collusion or conservative play after the rule change?
