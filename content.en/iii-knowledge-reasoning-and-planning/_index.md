@@ -13,9 +13,9 @@ Humans, it seems, know things; and what they know helps them do things. These ar
 
 The problem-solving agents of Chapters 3 and 4 know things, but only in a very limited, inflexible sense. For example, the transition model for the 8-puzzle—knowledge of what the actions do—is hidden inside the domain-specific code of the RESULT function. It can be used to predict the outcome of actions but not to deduce that two tiles cannot occupy the same space or that states with odd parity cannot be reached from states with even parity. The atomic representations used by problem-solving agents are also very limiting. In a partially observable environment, an agent’s only choice for representing what it knows about the current state is to list all possible concrete states—a hopeless prospect in large environments.
 
-Chapter 6 introduced the idea of representing states as assignments of values to vari- ables; this is a step in the right direction, enabling some parts of the agent to work in a domain-independent way and allowing for more efficient algorithms. In this chapter and those that follow, we take this step to its logical conclusion, so to speak—we develop **logic** as a general class of representations to support knowledge-based agents. Such agents can combine and recombine information to suit myriad purposes. Often, this process can be quite far removed from the needs of the moment—as when a mathematician proves a theorem or an astronomer calculates the earth’s life expectancy. Knowledge-based agents can accept new tasks in the form of explicitly described goals; they can achieve competence quickly by being told or learning new knowledge about the environment; and they can adapt to changes in the environment by updating the relevant knowledge.
+Chapter 6 introduced the idea of representing states as assignments of values to variables; this is a step in the right direction, enabling some parts of the agent to work in a domain-independent way and allowing for more efficient algorithms. In this chapter and those that follow, we take this step to its logical conclusion, so to speak—we develop **logic** as a general class of representations to support knowledge-based agents. Such agents can combine and recombine information to suit myriad purposes. Often, this process can be quite far removed from the needs of the moment—as when a mathematician proves a theorem or an astronomer calculates the earth’s life expectancy. Knowledge-based agents can accept new tasks in the form of explicitly described goals; they can achieve competence quickly by being told or learning new knowledge about the environment; and they can adapt to changes in the environment by updating the relevant knowledge.
 
-We begin in Section 7.1 with the overall agent design. Section 7.2 introduces a sim- ple new environment, the wumpus world, and illustrates the operation of a knowledge-based agent without going into any technical detail. Then we explain the general principles of **logic** in Section 7.3 and the specifics of **propositional logic** in Section 7.4. While less expressive than **first-order logic** (Chapter 8), propositional logic illustrates all the basic concepts of logic; it also comes with well-developed inference technologies, which we describe in sec- tions 7.5 and 7.6. Finally, Section 7.7 combines the concept of knowledge-based agents with the technology of propositional logic to build some simple agents for the wumpus world.
+We begin in Section 7.1 with the overall agent design. Section 7.2 introduces a simple new environment, the wumpus world, and illustrates the operation of a knowledge-based agent without going into any technical detail. Then we explain the general principles of **logic** in Section 7.3 and the specifics of **propositional logic** in Section 7.4. While less expressive than **first-order logic** (Chapter 8), propositional logic illustrates all the basic concepts of logic; it also comes with well-developed inference technologies, which we describe in sections 7.5 and 7.6. Finally, Section 7.7 combines the concept of knowledge-based agents with the technology of propositional logic to build some simple agents for the wumpus world.
 
 ## KNOWLEDGE-BASED AGENTS
 
@@ -25,9 +25,9 @@ There must be a way to add new sentences to the knowledge base and a way to quer
 
 Figure 7.1 shows the outline of a knowledge-based agent program. Like all our agents, it takes a percept as input and returns an action. The agent maintains a knowledge base, KB , which may initially contain some **background knowledge**.
 
-Each time the agent program is called, it does three things. First, it TELLs the knowl- edge base what it perceives. Second, it ASKs the knowledge base what action it should perform. In the process of answering this query, extensive reasoning may be done about the current state of the world, about the outcomes of possible action sequences, and so on. Third, the agent program TELLs the knowledge base which action was chosen, and the agent executes the action.
+Each time the agent program is called, it does three things. First, it TELLs the knowledge base what it perceives. Second, it ASKs the knowledge base what action it should perform. In the process of answering this query, extensive reasoning may be done about the current state of the world, about the outcomes of possible action sequences, and so on. Third, the agent program TELLs the knowledge base which action was chosen, and the agent executes the action.
 
-The details of the representation language are hidden inside three functions that imple- ment the interface between the sensors and actuators on one side and the core representation and reasoning system on the other. MAKE-PERCEPT-SENTENCE constructs a sentence as- serting that the agent perceived the given percept at the given time. constructs a sentence that asks what action should be done at the current time. Finally, MAKE-ACTION-SENTENCE constructs a sentence asserting that the chosen action was ex- ecuted. The details of the inference mechanisms are hidden inside TELL and ASK. Later sections will reveal these details.
+The details of the representation language are hidden inside three functions that implement the interface between the sensors and actuators on one side and the core representation and reasoning system on the other. MAKE-PERCEPT-SENTENCE constructs a sentence asserting that the agent perceived the given percept at the given time. constructs a sentence that asks what action should be done at the current time. Finally, MAKE-ACTION-SENTENCE constructs a sentence asserting that the chosen action was executed. The details of the inference mechanisms are hidden inside TELL and ASK. Later sections will reveal these details.
 
 The agent in Figure 7.1 appears quite similar to the agents with internal state described in Chapter 2. Because of the definitions of TELL and ASK, however, the knowledge-based agent is not an arbitrary program for calculating actions. It is amenable to a description at  
 
@@ -58,7 +58,7 @@ A sample wumpus world is shown in Figure 7.2. The precise definition of the task
 
 - **Performance measure**: +1000 for climbing out of the cave with the gold, –1000 for falling into a pit or being eaten by the wumpus, –1 for each action taken and –10 for using up the arrow. The game ends either when the agent dies or when the agent climbs out of the cave.
 
-- **Environment**: A 4× 4 grid of rooms. The agent always starts in the square labeled [1,1], facing to the right. The locations of the gold and the wumpus are chosen ran- domly, with a uniform distribution, from the squares other than the start square. In addition, each square other than the start can be a pit, with probability 0.2.
+- **Environment**: A 4× 4 grid of rooms. The agent always starts in the square labeled [1,1], facing to the right. The locations of the gold and the wumpus are chosen randomly, with a uniform distribution, from the squares other than the start square. In addition, each square other than the start can be a pit, with probability 0.2.
 
 - **Actuators**: The agent can move _Forward_, _TurnLeft_ by 90◦, or _TurnRight_ by 90◦. The agent dies a miserable death if it enters a square containing a pit or a live wumpus. (It is safe, albeit smelly, to enter a square with a dead wumpus.) If an agent tries to move forward and bumps into a wall, then theagent does not move. The action _Grab_ can be used to pick up the gold if it is in the same square as the agent. The action _Shoot_ can be used to fire an arrow in a straight line in the direction the agent is facing. The arrow continues until it either hits (and hence kills) the wumpus or hits a wall. The agent has only one arrow, so only the first _Shoot_ action has any effect. Finally, the action _Climb_ can be used to climb out of the cave, but only from square [1,1].
 
@@ -73,19 +73,19 @@ A sample wumpus world is shown in Figure 7.2. The precise definition of the task
 
 The percepts will be given to the agent program in the form of a list of five symbols; for example, if there is a stench and a breeze, but no glitter, bump, or scream, the agent program will get [Stench,Breeze ,None,None,None ].
 
-We can characterize the wumpus environment along the various dimensions given in Chap- ter 2. Clearly, it is discrete, static, and single-agent. (The wumpus doesn’t move, fortunately.) It is sequential, because rewards may come only after many actions are taken. It is partially observable, because some aspects of the state are not directly perceivable: the agent’s lo- cation, the wumpus’s state of health, and the availability of an arrow. As for the locations of the pits and the wumpus: we could treat them as unobserved parts of the state that hap- pen to be immutable—in which case, the transition model for the environment is completely  
+We can characterize the wumpus environment along the various dimensions given in Chapter 2. Clearly, it is discrete, static, and single-agent. (The wumpus doesn’t move, fortunately.) It is sequential, because rewards may come only after many actions are taken. It is partially observable, because some aspects of the state are not directly perceivable: the agent’s location, the wumpus’s state of health, and the availability of an arrow. As for the locations of the pits and the wumpus: we could treat them as unobserved parts of the state that happen to be immutable—in which case, the transition model for the environment is completely  
 
 ![Alt text](image/7img/figure-7.2.png)
 
 known; or we could say that the transition model itself is unknown because the agent doesn’t know which _Forward_ actions are fatal—in which case, discovering the locations of pits and wumpus completes the agent’s knowledge of the transition model.
 
-For an agent in the environment, the main challenge is its initial ignorance of the con- figuration of the environment; overcoming this ignorance seems to require logical reasoning. In most instances of the wumpus world, it is possible for the agent to retrieve the gold safely. Occasionally, the agent must choose between going home empty-handed and risking death to find the gold. About 21% of the environments are utterly unfair, because the gold is in a pit or surrounded by pits.
+For an agent in the environment, the main challenge is its initial ignorance of the configuration of the environment; overcoming this ignorance seems to require logical reasoning. In most instances of the wumpus world, it is possible for the agent to retrieve the gold safely. Occasionally, the agent must choose between going home empty-handed and risking death to find the gold. About 21% of the environments are utterly unfair, because the gold is in a pit or surrounded by pits.
 
 Let us watch a knowledge-based wumpus agent exploring the environment shown in Figure 7.2. We use an informal knowledge representation language consisting of writing down symbols in a grid (as in Figures 7.3 and 7.4).
 
 The agent’s initial knowledge base contains the rules of the environment, as described previously; in particular, it knows that it is in [1,1] and that [1,1] is a safe square; we denote that with an “A” and “OK,” respectively, in square [1,1].
 
-The first percept is [None,None,None,None ,None], from which the agent can con- clude that its neighboring squares, [1,2] and [2,1], are free of dangers—they are OK. Fig- ure 7.3(a) shows the agent’s state of knowledge at this point.
+The first percept is [None,None,None,None ,None], from which the agent can conclude that its neighboring squares, [1,2] and [2,1], are free of dangers—they are OK. Figure 7.3(a) shows the agent’s state of knowledge at this point.
 
 A cautious agent will move only into a square that it knows to be OK. Let us suppose the agent decides to move forward to [2,1]. The agent perceives a breeze (denoted by “B”) in [2,1], so there must be a pit in a neighboring square. The pit cannot be in [1,1], by the rules of the game, so there must be a pit in [2,2] or [3,1] or both. The notation “P?” in Figure 7.3(b) indicates a possible pit in those squares. At this point, there is only one known square that is OK and that has not yet been visited. So the prudent agent will turn around, go back to [1,1], and then proceed to [1,2].
 
@@ -100,7 +100,7 @@ wumpus cannot be in [1,1], by the rules of the game, and it cannot be in [2,2] (
 
 The agent has now proved to itself that there is neither a pit nor a wumpus in [2,2], so it is OK to move there. We do not show the agent’s state of knowledge at [2,2]; we just assume that the agent turns and moves to [2,3], giving us Figure 7.4(b). In [2,3], the agent detects a glitter, so it should grab the gold and then return home.
 
-Note that in each case for which the agent draws a conclusion from the available in- formation, that conclusion is _guaranteed_ to be correct if the available information is correct. This is a fundamental property of logical reasoning. In the rest of this chapter, we describe how to build logical agents that can represent information and draw conclusions such as those described in the preceding paragraphs.
+Note that in each case for which the agent draws a conclusion from the available information, that conclusion is _guaranteed_ to be correct if the available information is correct. This is a fundamental property of logical reasoning. In the rest of this chapter, we describe how to build logical agents that can represent information and draw conclusions such as those described in the preceding paragraphs.
 
 ## LOGIC
 
@@ -159,7 +159,7 @@ Hence, KB |≠ α2: the agent _cannot_ conclude that there is no pit in [2,2]. (
 
 The preceding example not only illustrates entailment but also shows how the definition of entailment can be applied to derive conclusions—that is, to carry out **logical inference**. The inference algorithm illustrated in Figure 7.5 is called **model checking**, because it enumerates all possible models to check that α is true in all models in which KB is true, that is, that M(KB) ⊆ M(α).
 
-In understanding entailment and inference, it might help to think of the set of all conse- quences of KB as a haystack and of α as a needle. Entailment is like the needle being in the haystack; inference is like finding it. This distinction is embodied in some formal notation: if an inference algorithm i can derive α from KB , we write
+In understanding entailment and inference, it might help to think of the set of all consequences of KB as a haystack and of α as a needle. Entailment is like the needle being in the haystack; inference is like finding it. This distinction is embodied in some formal notation: if an inference algorithm i can derive α from KB , we write
 
 KB |-~i~ α ,
 
@@ -181,7 +181,7 @@ The final issue to consider is **grounding**—the connection between logical re
 
 ## PROPOSITIONAL LOGIC: A VERY SIMPLE LOGIC
 
-We now present a simple but powerful logic called **propositional logic**. We cover the syntax of propositional logic and its semantics—the way in which the truth of sentences is deter- mined. Then we look at **entailment**—the relation between a sentence and another sentence that follows from it—and see how this leads to a simple algorithm for logical inference. Ev- erything takes place, of course, in the wumpus world.
+We now present a simple but powerful logic called **propositional logic**. We cover the syntax of propositional logic and its semantics—the way in which the truth of sentences is determined. Then we look at **entailment**—the relation between a sentence and another sentence that follows from it—and see how this leads to a simple algorithm for logical inference. Everything takes place, of course, in the wumpus world.
 ```
 6 As Wittgenstein (1922) put it in his famous _Tractatus_: “The world is everything that is the case.”  
 ```
@@ -226,7 +226,7 @@ Figure 7.7 gives a formal grammar of propositional logic; see page 1060 if you a
 
 ### Semantics
 
-Having specified the syntax of propositional logic, we now specify its semantics. The se- mantics defines the rules for determining the truth of a sentence with respect to a particular model. In propositional logic, a model simply fixes the **truth value**—true or false—for every proposition symbol. For example, if the sentences in the knowledge base make use of the proposition symbols P~1,2~, P~2,2~, and P~3,1~, then one possible model is
+Having specified the syntax of propositional logic, we now specify its semantics. The semantics defines the rules for determining the truth of a sentence with respect to a particular model. In propositional logic, a model simply fixes the **truth value**—true or false—for every proposition symbol. For example, if the sentences in the knowledge base make use of the proposition symbols P~1,2~, P~2,2~, and P~3,1~, then one possible model is
 
 M~1~ = {P~1,2~ = false, P~2,2~ = false, P~3,1~ = true} .
 
@@ -377,7 +377,7 @@ TT-CHECK-ALL(KB , α, rest ,model ∪ {P = false }))
 
 ## PROPOSITIONAL THEOREM PROVING
 
-So far, we have shown how to determine entailment by _model checking_: enumerating models and showing that the sentence must hold in all models. In this section, we show how entail- ment can be done by **theorem proving** applying rules of inference directly to the sentences in our knowledge base to construct a proof of the desired sentence without consulting models. If the number of models is large but the length of the proof is short, then theorem proving can be more efficient than model checking.
+So far, we have shown how to determine entailment by _model checking_: enumerating models and showing that the sentence must hold in all models. In this section, we show how entailment can be done by **theorem proving** applying rules of inference directly to the sentences in our knowledge base to construct a proof of the desired sentence without consulting models. If the number of models is large but the length of the proof is short, then theorem proving can be more efficient than model checking.
 
 Before we plunge into the details of theorem-proving algorithms, we will need some additional concepts related to entailment. The first concept is **logical equivalence**: two sentences α and β are logically equivalent if they are true in the same set of models. We write this as α ≡ β. For example, we can easily show (using truth tables) that P ∧ Q and Q ∧ P are logically equivalent; other equivalences are shown in Figure 7.11. These equivalences play much the same role in logic as arithmetic identities do in ordinary mathematics. An alternative definition of equivalence is as follows: any two sentences α and β are equivalent only if each of them entails the other:
 
@@ -416,7 +416,7 @@ For example, from (WumpusAhead ∧ WumpusAlive), WumpusAlive can be inferred.
 
 By considering the possible truth values of α and β, one can show easily that Modus Ponens and And-Elimination are sound once and for all. These rules can then be used in any particular instances where they apply, generating sound inferences without the need for enumerating models.
 
-All of the logical equivalences in Figure 7.11 can be used as inference rules. For exam- ple, the equivalence for biconditional elimination yields the two inference rules
+All of the logical equivalences in Figure 7.11 can be used as inference rules. For example, the equivalence for biconditional elimination yields the two inference rules
 
 α ⇔ β / (α ⇒ β) ∧ (β ⇒ α) and (α ⇒ β) ∧ (β ⇒ α) / α ⇔ β .  
 
@@ -448,7 +448,7 @@ to find a sequence of steps that constitutes a proof. We just need to define a p
 
 - INITIAL STATE: the initial knowledge base.
 
-- ACTIONS: the set of actions consists of all the inference rules applied to all the sen- tences that match the top half of the inference rule.
+- ACTIONS: the set of actions consists of all the inference rules applied to all the sentences that match the top half of the inference rule.
 
 - RESULT: the result of an action is to add the sentence in the bottom half of the inference rule.
 
@@ -462,11 +462,11 @@ tailed sentences can only _increase_ as information is added to the knowledge ba
 
 if KB |= α then KB ∧ β |= α .
 ```
-8 **Nonmonotonic** logics, which violate the monotonicity property, capture a common property of human rea- soning: changing one’s mind. They are discussed in Section 12.6.  
+8 **Nonmonotonic** logics, which violate the monotonicity property, capture a common property of human reasoning: changing one’s mind. They are discussed in Section 12.6.  
 ```
 
 
-For example, suppose the knowledge base contains the additional assertion β stating that there are exactly eight pits in the world. This knowledge might help the agent draw _additional_ con- clusions, but it cannot invalidate any conclusion α already inferred—such as the conclusion that there is no pit in [1,2]. Monotonicity means that inference rules can be applied whenever suitable premises are found in the knowledge base—the conclusion of the rule must follow _regardless of what else is in the knowledge base_.
+For example, suppose the knowledge base contains the additional assertion β stating that there are exactly eight pits in the world. This knowledge might help the agent draw _additional_ conclusions, but it cannot invalidate any conclusion α already inferred—such as the conclusion that there is no pit in [1,2]. Monotonicity means that inference rules can be applied whenever suitable premises are found in the knowledge base—the conclusion of the rule must follow _regardless of what else is in the knowledge base_.
 
 ### Proof by resolution
 
@@ -538,7 +538,7 @@ The resolution rule applies only to clauses (that is, disjunctions of literals),
 ```
 
 
-3. CNF requires ¬ to appear only in literals, so we “move ¬ inwards” by repeated appli- cation of the following equivalences from Figure 7.11:
+3. CNF requires ¬ to appear only in literals, so we “move ¬ inwards” by repeated application of the following equivalences from Figure 7.11:
 
 ¬(¬α) ≡ α (double-negation elimination) ¬(α ∧ β) ≡ (¬α ∨ ¬β) (De Morgan) ¬(α ∨ β) ≡ (¬α ∧ ¬β) (De Morgan)
 
@@ -1034,7 +1034,7 @@ This section has described a declarative approach to agent construction: the age
 
 We have introduced knowledge-based agents and have shown how to define a logic with which such agents can reason about the world. The main points are as follows:
 
-- Intelligent agents need knowledge about the world in order to reach good decisions. - Knowledge is contained in agents in the form of **sentences** in a **knowledge representation language** that are stored in a **knowledge base**. 
+- Intelligent agents need knowledge about the world in order to reach good decisions. Knowledge is contained in agents in the form of **sentences** in a **knowledge representation language** that are stored in a **knowledge base**. 
 
 - A knowledge-based agent is composed of a knowledge base and an inference mechanism. It operates by storing sentences about the world in its knowledge base, using the inference mechanism to infer new sentences, and using these sentences to decide what action to take.
 
@@ -1053,7 +1053,7 @@ We have introduced knowledge-based agents and have shown how to define a logic w
 
 - **Local search** methods such as WALKSAT can be used to find solutions. Such algorithms are sound but not complete.
 
-- Logical **state estimation** involves maintaining a logical sentence that describes the set of possible states consistent with the observation history. Each update step requires inference using the transition model of the environment, which is built from **successor- state axioms** that specify how each **fluent** changes.
+- Logical **state estimation** involves maintaining a logical sentence that describes the set of possible states consistent with the observation history. Each update step requires inference using the transition model of the environment, which is built from **successorstate axioms** that specify how each **fluent** changes.
 
 - Decisions within a logical agent can be made by SAT solving: finding possible models specifying future action sequences that reach the goal. This approach works only for fully observable or sensorless environments.
 
@@ -2817,7 +2817,7 @@ which corresponds to the reduced CSP shown in Figure 6.12 on page 224. Algorithm
 
 **Incremental forward chaining**
 
-When we showed how forward chaining works on the crime example, we cheated; in partic- ular, we omitted some of the rule matching done by the algorithm shown in Figure 9.3. For example, on the second iteration, the rule
+When we showed how forward chaining works on the crime example, we cheated; in particular, we omitted some of the rule matching done by the algorithm shown in Figure 9.3. For example, on the second iteration, the rule
 
 Missile(x) ⇒Weapon(x)
 
@@ -2825,9 +2825,9 @@ matches against Missile(M~1~) (again), and of course the conclusion Weapon(M~1~)
 
 This observation leads naturally to an incremental forward-chaining algorithm where, at iteration t, we check a rule only if its premise includes a conjunct p~i~ that unifies with a fact p ′~i~ newly inferred at iteration t − 1. The rule-matching step then fixes p~i~ to match with p ′~i~, but allows the other conjuncts of the rule to match with facts from any previous iteration. This algorithm generates exactly the same facts at each iteration as the algorithm in Figure 9.3, but is much more efficient.
 
-With suitable indexing, it is easy to identify all the rules that can be triggered by any given fact, and indeed many real systems operate in an “update” mode wherein forward chain- ing occurs in response to each new fact that is TELLed to the system. Inferences cascade through the set of rules until the fixed point is reached, and then the process begins again for the next new fact.
+With suitable indexing, it is easy to identify all the rules that can be triggered by any given fact, and indeed many real systems operate in an “update” mode wherein forward chaining occurs in response to each new fact that is TELLed to the system. Inferences cascade through the set of rules until the fixed point is reached, and then the process begins again for the next new fact.
 
-Typically, only a small fraction of the rules in the knowledge base are actually triggered by the addition of a given fact. This means that a great deal of redundant work is done in repeatedly constructing partial matches that have some unsatisfied premises. Our crime ex- ample is rather too small to show this effectively, but notice that a partial match is constructed on the first iteration between the rule
+Typically, only a small fraction of the rules in the knowledge base are actually triggered by the addition of a given fact. This means that a great deal of redundant work is done in repeatedly constructing partial matches that have some unsatisfied premises. Our crime example is rather too small to show this effectively, but notice that a partial match is constructed on the first iteration between the rule
 
 American(x) ∧Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x)
 
@@ -2838,17 +2838,17 @@ The **rete** algorithm3 was the first to address this problem. The algorithm pre
 3 Rete is Latin for net. The English pronunciation rhymes with treaty.  
 ```
 
-node is a literal from a rule premise. Variable bindings flow through the network and are filtered out when they fail to match a literal. If two literals in a rule share a variable—for example, Sells(x, y, z) ∧ Hostile(z) in the crime example—then the bindings from each literal are filtered through an equality node. A variable binding reaching a node for an n- ary literal such as Sells(x, y, z) might have to wait for bindings for the other variables to be established before the process can continue. At any given point, the state of a rete network captures all the partial matches of the rules, avoiding a great deal of recomputation.
+node is a literal from a rule premise. Variable bindings flow through the network and are filtered out when they fail to match a literal. If two literals in a rule share a variable—for example, Sells(x, y, z) ∧ Hostile(z) in the crime example—then the bindings from each literal are filtered through an equality node. A variable binding reaching a node for an nary literal such as Sells(x, y, z) might have to wait for bindings for the other variables to be established before the process can continue. At any given point, the state of a rete network captures all the partial matches of the rules, avoiding a great deal of recomputation.
 
-Rete networks, and various improvements thereon, have been a key component of so- called **production systems**, which were among the earliest forward-chaining systems in widespread use.4 The XCON system (originally called R~1~; McDermott, 1982) was built with a production-system architecture. XCON contained several thousand rules for designing configurations of computer components for customers of the Digital Equipment Corporation. It was one of the first clear commercial successes in the emerging field of expert systems. Many other similar systems have been built with the same underlying technology, which has been implemented in the general-purpose language OPS-5.
+Rete networks, and various improvements thereon, have been a key component of socalled **production systems**, which were among the earliest forward-chaining systems in widespread use.4 The XCON system (originally called R~1~; McDermott, 1982) was built with a production-system architecture. XCON contained several thousand rules for designing configurations of computer components for customers of the Digital Equipment Corporation. It was one of the first clear commercial successes in the emerging field of expert systems. Many other similar systems have been built with the same underlying technology, which has been implemented in the general-purpose language OPS-5.
 
-Production systems are also popular in **cognitive architectures**—that is, models of human reasoning—such as ACT (Anderson, 1983) and SOAR (Laird _et al._, 1987). In such sys- tems, the “working memory” of the system models human short-term memory, and the pro- ductions are part of long-term memory. On each cycle of operation, productions are matched against the working memory of facts. A production whose conditions are satisfied can add or delete facts in working memory. In contrast to the typical situation in databases, production systems often have many rules and relatively few facts. With suitably optimized matching technology, some modern systems can operate in real time with tens of millions of rules.
+Production systems are also popular in **cognitive architectures**—that is, models of human reasoning—such as ACT (Anderson, 1983) and SOAR (Laird _et al._, 1987). In such systems, the “working memory” of the system models human short-term memory, and the productions are part of long-term memory. On each cycle of operation, productions are matched against the working memory of facts. A production whose conditions are satisfied can add or delete facts in working memory. In contrast to the typical situation in databases, production systems often have many rules and relatively few facts. With suitably optimized matching technology, some modern systems can operate in real time with tens of millions of rules.
 
 **Irrelevant facts**
 
 The final source of inefficiency in forward chaining appears to be intrinsic to the approach and also arises in the propositional context. Forward chaining makes all allowable inferences based on the known facts, _even if they are irrelevant to the goal at hand_. In our crime example, there were no rules capable of drawing irrelevant conclusions, so the lack of directedness was not a problem. In other cases (e.g., if many rules describe the eating habits of Americans and the prices of missiles), FOL-FC-ASK will generate many irrelevant conclusions.
 
-One way to avoid drawing irrelevant conclusions is to use backward chaining, as de- scribed in Section 9.4. Another solution is to restrict forward chaining to a selected subset of rules, as in PL-FC-ENTAILS? (page 258). A third approach has emerged in the field of **de- ductive databases**, which are large-scale databases, like relational databases, but which use forward chaining as the standard inference tool rather than SQL queries. The idea is to rewrite the rule set, using information from the goal, so that only relevant variable bindings—those belonging to a so-called **magic set**—are considered during forward inference. For example, if the goal is Criminal(West), the rule that concludes Criminal(x) will be rewritten to include an extra conjunct that constrains the value of x:
+One way to avoid drawing irrelevant conclusions is to use backward chaining, as described in Section 9.4. Another solution is to restrict forward chaining to a selected subset of rules, as in PL-FC-ENTAILS? (page 258). A third approach has emerged in the field of **deductive databases**, which are large-scale databases, like relational databases, but which use forward chaining as the standard inference tool rather than SQL queries. The idea is to rewrite the rule set, using information from the goal, so that only relevant variable bindings—those belonging to a so-called **magic set**—are considered during forward inference. For example, if the goal is Criminal(West), the rule that concludes Criminal(x) will be rewritten to include an extra conjunct that constrains the value of x:
 
 Magic(x) ∧ American(x) ∧Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x) .
 ```
@@ -2859,7 +2859,7 @@ The fact Magic(West) is also added to the KB. In this way, even if the knowledge
 
 ## BACKWARD CHAINING
 
-The second major family of logical inference algorithms uses the **backward chaining** ap- proach introduced in Section 7.5 for definite clauses. These algorithms work backward from the goal, chaining through rules to find known facts that support the proof. We describe the basic algorithm, and then we describe how it is used in **logic programming**, which is the most widely used form of automated reasoning. We also see that backward chaining has some disadvantages compared with forward chaining, and we look at ways to overcome them. Fi- nally, we look at the close connection between logic programming and constraint satisfaction problems.
+The second major family of logical inference algorithms uses the **backward chaining** approach introduced in Section 7.5 for definite clauses. These algorithms work backward from the goal, chaining through rules to find known facts that support the proof. We describe the basic algorithm, and then we describe how it is used in **logic programming**, which is the most widely used form of automated reasoning. We also see that backward chaining has some disadvantages compared with forward chaining, and we look at ways to overcome them. Finally, we look at the close connection between logic programming and constraint satisfaction problems.
 
 ### A backward-chaining algorithm
 
@@ -2912,7 +2912,7 @@ The notation [E|L] denotes a list whose first element is E and whose rest is L. 
 append([],Y,Y). 
 append([A|X],Y,[A|Z]) :- append(X,Y,Z).
 ```
-In English, we can read these clauses as (1) appending an empty list with a list Y produces the same list Y and (2) [A|Z] is the result of appending [A|X] onto Y, provided that Z is the result of appending X onto Y. In most high-level languages we can write a similar recur- sive function that describes how to append two lists. The Prolog definition is actually much more powerful, however, because it describes a _relation_ that holds among three arguments, rather than a _function_ computed from two arguments. For example, we can ask the query append(X,Y,[1,2]): what two lists can be appended to give [1,2]? We get back the solutions
+In English, we can read these clauses as (1) appending an empty list with a list Y produces the same list Y and (2) [A|Z] is the result of appending [A|X] onto Y, provided that Z is the result of appending X onto Y. In most high-level languages we can write a similar recursive function that describes how to append two lists. The Prolog definition is actually much more powerful, however, because it describes a _relation_ that holds among three arguments, rather than a _function_ computed from two arguments. For example, we can ask the query append(X,Y,[1,2]): what two lists can be appended to give [1,2]? We get back the solutions
 ```
 X=[] Y=[1,2]; 
 X=[1] Y=[2]; 
@@ -2938,9 +2938,9 @@ The execution of a Prolog program can happen in two modes: interpreted and compi
 
 First, our implementation had to explicitly manage the iteration over possible results generated by each of the subfunctions. Prolog interpreters have a global data structure, a stack of **choice points**, to keep track of the multiple possibilities that we considered in FOL-BC-OR. This global stack is more efficient, and it makes debugging easier, because the debugger can move up and down the stack.
 
-Second, our simple implementation of FOL-BC-ASK spends a good deal of time gener- ating substitutions. Instead of explicitly constructing substitutions, Prolog has logic variables that remember their current binding. At any point in time, every variable in the program ei- ther is unbound or is bound to some value. Together, these variables and values implicitly define the substitution for the current branch of the proof. Extending the path can only add new variable bindings, because an attempt to add a different binding for an already bound variable results in a failure of unification. When a path in the search fails, Prolog will back up to a previous choice point, and then it might have to unbind some variables. This is done by keeping track of all the variables that have been bound in a stack called the **trail**. As each new variable is bound by UNIFY-VAR, the variable is pushed onto the trail. When a goal fails and it is time to back up to a previous choice point, each of the variables is unbound as it is removed from the trail.
+Second, our simple implementation of FOL-BC-ASK spends a good deal of time generating substitutions. Instead of explicitly constructing substitutions, Prolog has logic variables that remember their current binding. At any point in time, every variable in the program either is unbound or is bound to some value. Together, these variables and values implicitly define the substitution for the current branch of the proof. Extending the path can only add new variable bindings, because an attempt to add a different binding for an already bound variable results in a failure of unification. When a path in the search fails, Prolog will back up to a previous choice point, and then it might have to unbind some variables. This is done by keeping track of all the variables that have been bound in a stack called the **trail**. As each new variable is bound by UNIFY-VAR, the variable is pushed onto the trail. When a goal fails and it is time to back up to a previous choice point, each of the variables is unbound as it is removed from the trail.
 
-Even the most efficient Prolog interpreters require several thousand machine instruc- tions per inference step because of the cost of index lookup, unification, and building the recursive call stack. In effect, the interpreter always behaves as if it has never seen the pro- gram before; for example, it has to _find_ clauses that match the goal. A compiled Prolog
+Even the most efficient Prolog interpreters require several thousand machine instructions per inference step because of the cost of index lookup, unification, and building the recursive call stack. In effect, the interpreter always behaves as if it has never seen the program before; for example, it has to _find_ clauses that match the goal. A compiled Prolog
 ```
 5 Note that if the Peano axioms are provided, such goals can be solved by inference within a Prolog program.  
 ```
@@ -2955,11 +2955,11 @@ a, x , z ←NEW-VARIABLE(), NEW-VARIABLE(), NEW-VARIABLE()
 
 **Figure 9.8** Pseudocode representing the result of compiling the Append predicate. The function NEW-VARIABLE returns a new variable, distinct from all other variables used so far. The procedure CALL(continuation) continues execution with the specified continuation.
 
-program, on the other hand, is an inference procedure for a specific set of clauses, so it _knows_ what clauses match the goal. Prolog basically generates a miniature theorem prover for each different predicate, thereby eliminating much of the overhead of interpretation. It is also pos- sible to **open-code** the unification routine for each different call, thereby avoiding explicit analysis of term structure. (For details of open-coded unification, see Warren _et al._ (1977).) 
+program, on the other hand, is an inference procedure for a specific set of clauses, so it _knows_ what clauses match the goal. Prolog basically generates a miniature theorem prover for each different predicate, thereby eliminating much of the overhead of interpretation. It is also possible to **open-code** the unification routine for each different call, thereby avoiding explicit analysis of term structure. (For details of open-coded unification, see Warren _et al._ (1977).) 
 
-The instruction sets of today’s computers give a poor match with Prolog’s semantics, so most Prolog compilers compile into an intermediate language rather than directly into ma- chine language. The most popular intermediate language is the Warren Abstract Machine, or WAM, named after David H. D. Warren, one of the implementers of the first Prolog com- piler. The WAM is an abstract instruction set that is suitable for Prolog and can be either interpreted or translated into machine language. Other compilers translate Prolog into a high- level language such as Lisp or C and then use that language’s compiler to translate to machine language. For example, the definition of the Append predicate can be compiled into the code shown in Figure 9.8. Several points are worth mentioning:
+The instruction sets of today’s computers give a poor match with Prolog’s semantics, so most Prolog compilers compile into an intermediate language rather than directly into machine language. The most popular intermediate language is the Warren Abstract Machine, or WAM, named after David H. D. Warren, one of the implementers of the first Prolog compiler. The WAM is an abstract instruction set that is suitable for Prolog and can be either interpreted or translated into machine language. Other compilers translate Prolog into a highlevel language such as Lisp or C and then use that language’s compiler to translate to machine language. For example, the definition of the Append predicate can be compiled into the code shown in Figure 9.8. Several points are worth mentioning:
 
-- Rather than having to search the knowledge base for Append clauses, the clauses be- come a procedure and the inferences are carried out simply by calling the procedure.
+Rather than having to search the knowledge base for Append clauses, the clauses become a procedure and the inferences are carried out simply by calling the procedure.
 
 - As described earlier, the current variable bindings are kept on a trail. The first step of the procedure saves the current state of the trail, so that it can be restored by if the first clause fails. This will undo any bindings generated by the first call to UNIFY.
 
@@ -2972,7 +2972,7 @@ Parallelization can also provide substantial speedup. There are two principal so
 
 ### Redundant inference and infinite loops
 
-We now turn to the Achilles heel of Prolog: the mismatch between depth-first search and search trees that include repeated states and infinite paths. Consider the following logic pro- gram that decides if a path exists between two points on a directed graph:
+We now turn to the Achilles heel of Prolog: the mismatch between depth-first search and search trees that include repeated states and infinite paths. Consider the following logic program that decides if a path exists between two points on a directed graph:
 
 path(X,Z) :- link(X,Z). 
 path(X,Z) :- path(X,Y), link(Y,Z).
@@ -2992,7 +2992,7 @@ Forward chaining on graph search problems is an example of **dynamic programming
 
 ![Alt text](image/9img/figure-9.10.png)
 
-subproblems and are cached to avoid recomputation. We can obtain a similar effect in a backward chaining system using **memoization**—that is, caching solutions to subgoals as they are found and then reusing those solutions when the subgoal recurs, rather than repeat- ing the previous computation. This is the approach taken by **tabled logic programming** systems, which use efficient storage and retrieval mechanisms to perform memoization. Tabled logic programming combines the goal-directedness of backward chaining with the dynamic- programming efficiency of forward chaining. It is also complete for Datalog knowledge bases, which means that the programmer need worry less about infinite loops. (It is still pos- sible to get an infinite loop with predicates like father(X,Y) that refer to a potentially unbounded number of objects.)
+subproblems and are cached to avoid recomputation. We can obtain a similar effect in a backward chaining system using **memoization**—that is, caching solutions to subgoals as they are found and then reusing those solutions when the subgoal recurs, rather than repeating the previous computation. This is the approach taken by **tabled logic programming** systems, which use efficient storage and retrieval mechanisms to perform memoization. Tabled logic programming combines the goal-directedness of backward chaining with the dynamicprogramming efficiency of forward chaining. It is also complete for Datalog knowledge bases, which means that the programmer need worry less about infinite loops. (It is still possible to get an infinite loop with predicates like father(X,Y) that refer to a potentially unbounded number of objects.)
 
 ### Database semantics of Prolog
 
@@ -3014,13 +3014,13 @@ x = y ⇔ (x = CS ∧ y = CS ) ∨ (x = EE ∧ y = EE) ∨ (x = 101 ∧ y = 101)
 
 ∨ (x = 102 ∧ y = 102) ∨ (x = 106 ∧ y = 106) .
 
-The completion is useful for understanding database semantics, but for practical purposes, if your problem can be described with database semantics, it is more efficient to reason with Prolog or some other database semantics system, rather than translating into FOL and rea- soning with a full FOL theorem prover.
+The completion is useful for understanding database semantics, but for practical purposes, if your problem can be described with database semantics, it is more efficient to reason with Prolog or some other database semantics system, rather than translating into FOL and reasoning with a full FOL theorem prover.
 
 ### Constraint logic programming
 
 In our discussion of forward chaining (Section 9.3), we showed how constraint satisfaction problems (CSPs) can be encoded as definite clauses. Standard Prolog solves such problems in exactly the same way as the backtracking algorithm given in Figure 6.5.
 
-Because backtracking enumerates the domains of the variables, it works only for **finite- domain** CSPs. In Prolog terms, there must be a finite number of solutions for any goal with unbound variables. (For example, the goal diff(Q,SA), which says that Queensland and South Australia must be different colors, has six solutions if three colors are allowed.) Infinite-domain CSPs—for example, with integer or real-valued variables—require quite dif- ferent algorithms, such as bounds propagation or linear programming.
+Because backtracking enumerates the domains of the variables, it works only for **finitedomain** CSPs. In Prolog terms, there must be a finite number of solutions for any goal with unbound variables. (For example, the goal diff(Q,SA), which says that Queensland and South Australia must be different colors, has six solutions if three colors are allowed.) Infinite-domain CSPs—for example, with integer or real-valued variables—require quite different algorithms, such as bounds propagation or linear programming.
 
 Consider the following example. We define triangle(X,Y,Z) as a predicate that holds if the three arguments are numbers that satisfy the triangle inequality:
 
@@ -3031,13 +3031,13 @@ If we ask Prolog the query triangle(3,4,5), it succeeds. On the other hand, if w
 
 **Constraint logic programming** (CLP) allows variables to be _constrained_ rather than _bound_. A CLP solution is the most specific set of constraints on the query variables that can be derived from the knowledge base. For example, the solution to the triangle(3,4,Z) query is the constraint 7 >= Z >= 1. Standard logic programs are just a special case of CLP in which the solution constraints must be equality constraints—that is, bindings.
 
-CLP systems incorporate various constraint-solving algorithms for the constraints al- lowed in the language. For example, a system that allows linear inequalities on real-valued variables might include a linear programming algorithm for solving those constraints. CLP systems also adopt a much more flexible approach to solving standard logic programming queries. For example, instead of depth-first, left-to-right backtracking, they might use any of the more efficient algorithms discussed in Chapter 6, including heuristic conjunct ordering, backjumping, cutset conditioning, and so on. CLP systems therefore combine elements of constraint satisfaction algorithms, logic programming, and deductive databases.
+CLP systems incorporate various constraint-solving algorithms for the constraints allowed in the language. For example, a system that allows linear inequalities on real-valued variables might include a linear programming algorithm for solving those constraints. CLP systems also adopt a much more flexible approach to solving standard logic programming queries. For example, instead of depth-first, left-to-right backtracking, they might use any of the more efficient algorithms discussed in Chapter 6, including heuristic conjunct ordering, backjumping, cutset conditioning, and so on. CLP systems therefore combine elements of constraint satisfaction algorithms, logic programming, and deductive databases.
 
-Several systems that allow the programmer more control over the search order for in- ference have been defined. The MRS language (Genesereth and Smith, 1981; Russell, 1985) allows the programmer to write **metarules** to determine which conjuncts are tried first. The user could write a rule saying that the goal with the fewest variables should be tried first or could write domain-specific rules for particular predicates.
+Several systems that allow the programmer more control over the search order for inference have been defined. The MRS language (Genesereth and Smith, 1981; Russell, 1985) allows the programmer to write **metarules** to determine which conjuncts are tried first. The user could write a rule saying that the goal with the fewest variables should be tried first or could write domain-specific rules for particular predicates.
 
 ## RESOLUTION
 
-The last of our three families of logical systems is based on **resolution**. We saw on page 250 that propositional resolution using refutation is a complete inference procedure for proposi- tional logic. In this section, we describe how to extend resolution to first-order logic.
+The last of our three families of logical systems is based on **resolution**. We saw on page 250 that propositional resolution using refutation is a complete inference procedure for propositional logic. In this section, we describe how to extend resolution to first-order logic.
 
 ### Conjunctive normal form for first-order logic
 
@@ -3084,7 +3084,7 @@ Notice how a universal quantifier (∀ y) in the premise of the implication has 
 
 ∀ x [∃ y Animal(y) ∧ ¬Loves(x, y)] ∨ [∃ z Loves(z, x)] .
 
-- **Skolemize**: **Skolemization** is the process of removing existential quantifiers by elimination. In the simple case, it is just like the Existential Instantiation rule of Section 9.1: translate ∃x P (x) into P (A), where A is a new constant. However, we can’t apply Ex- istential Instantiation to our sentence above because it doesn’t match the pattern ∃ v α; only parts of the sentence match the pattern. If we blindly apply the rule to the two matching parts we get
+- **Skolemize**: **Skolemization** is the process of removing existential quantifiers by elimination. In the simple case, it is just like the Existential Instantiation rule of Section 9.1: translate ∃x P (x) into P (A), where A is a new constant. However, we can’t apply Existential Instantiation to our sentence above because it doesn’t match the pattern ∃ v α; only parts of the sentence match the pattern. If we blindly apply the rule to the two matching parts we get
 
 ∀ x [Animal(A) ∧ ¬Loves(x,A)] ∨ Loves(B,x) ,
 
@@ -3616,7 +3616,7 @@ Consider a forward chaining algorithm that, on the jth iteration, terminates if 
 
 **9.26** We said in this chapter that resolution cannot be used to generate all logical consequences of a set of sentences. Can any algorithm do this?  
 
-10 CLASSICAL PLANNING
+# CLASSICAL PLANNING
 
 _In which we see how an agent can take advantage of the structure of a problem to construct complex plans of action._
 
@@ -3626,54 +3626,37 @@ Section 10.1 develops an expressive yet carefully constrained language for repre
 
 This chapter covers fully observable, deterministic, static environments with single agents. Chapters 11 and 17 cover partially observable, stochastic, dynamic environments with multiple agents.
 
-10.1 DEFINITION OF CLASSICAL PLANNING
+## DEFINITION OF CLASSICAL PLANNING
 
-The problem-solving agent of Chapter 3 can find sequences of actions that result in a goal state. But it deals with atomic representations of states and thus needs good domain-specific heuristics to perform well. The hybrid propositional logical agent of Chapter 7 can find plans without domain-specific heuristics because it uses domain-independent heuristics based on the logical structure of the problem. But it relies on ground (variable-free) propositional inference, which means that it may be swamped when there are many actions and states. For example, in the wumpus world, the simple action of moving a step forward had to be repeated for all four agent orientations, T time steps, and n
+The problem-solving agent of Chapter 3 can find sequences of actions that result in a goal state. But it deals with atomic representations of states and thus needs good domain-specific heuristics to perform well. The hybrid propositional logical agent of Chapter 7 can find plans without domain-specific heuristics because it uses domain-independent heuristics based on the logical structure of the problem. But it relies on ground (variable-free) propositional inference, which means that it may be swamped when there are many actions and states. For example, in the wumpus world, the simple action of moving a step forward had to be repeated for all four agent orientations, T time steps, and n^2^ current locations.
 
-2 current locations.
+In response to this, planning researchers have settled on a **factored representation**— one in which a state of the world is represented by a collection of variables. We use a language called **PDDL**, the Planning Domain Definition Language, that allows us to express all 4Tn^2^ actions with one action schema. There have been several versions of PDDL; we select a simple version and alter its syntax to be consistent with the rest of the book.1 We now show how PDDL describes the four things we need to define a search problem: the initial state, the actions that are available in a state, the result of applying an action, and the goal test.
 
-366  
+Each **state** is represented as a conjunction of fluents that are ground, functionless atoms. For example, Poor ∧ Unknown might represent the state of a hapless agent, and a state in a package delivery problem might be At(Truck~1~,Melbourne) ∧ At(Truck~2~,Sydney). **Database semantics** is used: the closed-world assumption means that any fluents that are not mentioned are false, and the unique names assumption means that Truck~1~ and Truck~2~ are distinct. The following fluents are _not_ allowed in a state: At(x, y) (because it is non-ground), ¬Poor (because it is a negation), and At(Father (Fred ),Sydney) (because it uses a function symbol). The representation of states is carefully designed so that a state can be treated either as a conjunction of fluents, which can be manipulated by logical inference, or as a _set_ of fluents, which can be manipulated with set operations. The **set semantics** is sometimes easier to deal with. 
 
-Section 10.1. Definition of Classical Planning 367
+**Actions** are described by a set of action schemas that implicitly define the ACTIONS(s) and RESULT(s, a) functions needed to do a problem-solving search. We saw in Chapter 7 that any system for action description needs to solve the frame problem—to say what changes and what stays the same as the result of the action. Classical planning concentrates on problems where most actions leave most things unchanged. Think of a world consisting of a bunch of objects on a flat surface. The action of nudging an object causes that object to change its location by a vector Δ. A concise description of the action should mention only Δ; it shouldn’t have to mention all the objects that stay in place. PDDL does that by specifying the result of an action in terms of what changes; everything that stays the same is left unmentioned.
 
-In response to this, planning researchers have settled on a **factored representation**— one in which a state of the world is represented by a collection of variables. We use a language called **PDDL**, the Planning Domain Definition Language, that allows us to express all 4Tn
-
-2PDDL
-
-actions with one action schema. There have been several versions of PDDL; we select a simple version and alter its syntax to be consistent with the rest of the book.1 We now show how PDDL describes the four things we need to define a search problem: the initial state, the actions that are available in a state, the result of applying an action, and the goal test.
-
-Each **state** is represented as a conjunction of fluents that are ground, functionless atoms. For example, Poor ∧ Unknown might represent the state of a hapless agent, and a state in a package delivery problem might be At(Truck1,Melbourne) ∧ At(Truck2,Sydney). **Database semantics** is used: the closed-world assumption means that any fluents that are not mentioned are false, and the unique names assumption means that Truck1 and Truck2 are distinct. The following fluents are _not_ allowed in a state: At(x, y) (because it is non-ground), ¬Poor (because it is a negation), and At(Father (Fred ),Sydney) (because it uses a function symbol). The representation of states is carefully designed so that a state can be treated either as a conjunction of fluents, which can be manipulated by logical inference, or as a _set_ of fluents, which can be manipulated with set operations. The **set semantics** is sometimesSET SEMANTICS
-
-easier to deal with. **Actions** are described by a set of action schemas that implicitly define the ACTIONS(s)
-
-and RESULT(s, a) functions needed to do a problem-solving search. We saw in Chapter 7 that any system for action description needs to solve the frame problem—to say what changes and what stays the same as the result of the action. Classical planning concentrates on problems where most actions leave most things unchanged. Think of a world consisting of a bunch of objects on a flat surface. The action of nudging an object causes that object to change its location by a vector Δ. A concise description of the action should mention only Δ; it shouldn’t have to mention all the objects that stay in place. PDDL does that by specifying the result of an action in terms of what changes; everything that stays the same is left unmentioned.
-
-A set of ground (variable-free) actions can be represented by a single **action schema**.ACTION SCHEMA
-
-The schema is a **lifted** representation—it lifts the level of reasoning from propositional logic to a restricted subset of first-order logic. For example, here is an action schema for flying a plane from one location to another:
-
+A set of ground (variable-free) actions can be represented by a single **action schema**. The schema is a **lifted** representation—it lifts the level of reasoning from propositional logic to a restricted subset of first-order logic. For example, here is an action schema for flying a plane from one location to another:
+```
 Action(Fly(p, from , to),
 
 PRECOND:At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
 
 EFFECT:¬At(p, from) ∧ At(p, to))
-
-The schema consists of the action name, a list of all the variables used in the schema, a **precondition** and an **effect**. Although we haven’t said yet how the action schema convertsPRECONDITION
-
-EFFECT into logical sentences, think of the variables as being universally quantified. We are free to choose whatever values we want to instantiate the variables. For example, here is one ground
-
+```
+The schema consists of the action name, a list of all the variables used in the schema, a **precondition** and an **effect**. Although we haven’t said yet how the action schema converts into logical sentences, think of the variables as being universally quantified. We are free to choose whatever values we want to instantiate the variables. For example, here is one ground
+```
 1 PDDL was derived from the original STRIPS planning language(Fikes and Nilsson, 1971). which is slightly more restricted than PDDL: STRIPS preconditions and goals cannot contain negative literals.  
-
-
+```
 
 action that results from substituting values for all the variables:
-
+```
 Action(Fly(P~1~,SFO , JFK ),
 
 PRECOND:At(P~1~,SFO) ∧ Plane(P~1~) ∧ Airport(SFO) ∧ Airport(JFK )
 
-EFFECT:¬At(P~1~,SFO) ∧At(P~1~, JFK ))
-
+EFFECT:¬At(P~1~,SFO) ∧ At(P~1~, JFK ))
+```
 The precondition and effect of an action are each conjunctions of literals (positive or negated atomic sentences). The precondition defines the states in which the action can be executed, and the effect defines the result of executing the action. An action a can be executed in state s if s entails the precondition of a. Entailment can also be expressed with the set semantics: s |= q iff every positive literal in q is in s and every negated literal in q is not. In formal notation we say
 
 (a ∈ ACTIONS(s)) ⇔ s |= PRECOND(a) ,
@@ -3686,155 +3669,129 @@ s |= (At(p, from) ∧ Plane(p) ∧Airport(from) ∧ Airport(to))
 
 We say that action a is **applicable** in state s if the preconditions are satisfied by s. WhenAPPLICABLE
 
-an action schema a contains variables, it may have multiple applicable instantiations. For example, with the initial state defined in Figure 10.1, the Fly action can be instantiated as Fly(P~1~,SFO , JFK ) or as Fly(p~2~, JFK ,SFO), both of which are applicable in the initial state. If an action a has v variables, then, in a domain with k unique names of objects, it takes O(vk) time in the worst case to find the applicable ground actions.
+an action schema a contains variables, it may have multiple applicable instantiations. For example, with the initial state defined in Figure 10.1, the Fly action can be instantiated as Fly(P~1~,SFO , JFK ) or as Fly(p~2~, JFK ,SFO), both of which are applicable in the initial state. If an action a has v variables, then, in a domain with k unique names of objects, it takes O(v^k^) time in the worst case to find the applicable ground actions.
 
-Sometimes we want to **propositionalize** a PDDL problem—replace each action schemaPROPOSITIONALIZE
+Sometimes we want to **propositionalize** a PDDL problem—replace each action scheme with a set of ground actions and then use a propositional solver such as SATP~LAN~ to find a solution. However, this is impractical when v and k are large.
 
-with a set of ground actions and then use a propositional solver such as SATP~LAN~ to find a solution. However, this is impractical when v and k are large.
+The **result** of executing action a in state s is defined as a state s ′ which is represented by the set of fluents formed by starting with s, removing the fluents that appear as negative literals in the action’s effects (what we call the **delete list** or DEL(a)), and adding the fluentsDELETE LIST
 
-The **result** of executing action a in state s is defined as a state s ′ which is represented
+that are positive literals in the action’s effects (what we call the **add list** or ADD(a)):
 
-by the set of fluents formed by starting with s, removing the fluents that appear as negative literals in the action’s effects (what we call the **delete list** or DEL(a)), and adding the fluentsDELETE LIST
-
-that are positive literals in the action’s effects (what we call the **add list** or ADD(a)):ADD LIST
-
-RESULT(s, a) = (s− DEL(a))∪ADD(a) . (10.1)
+RESULT(s, a) = (s− DEL(a))∪ ADD(a) . (10.1)
 
 For example, with the action Fly(P~1~,SFO , JFK ), we would remove At(P~1~,SFO) and add At(P~1~, JFK ). It is a requirement of action schemas that any variable in the effect must also appear in the precondition. That way, when the precondition is matched against the state s, all the variables will be bound, and RESULT(s, a) will therefore have only ground atoms. In other words, ground states are closed under the RESULT operation.
 
 Also note that the fluents do not explicitly refer to time, as they did in Chapter 7. There we needed superscripts for time, and successor-state axioms of the form
 
-F t+1 ⇔ ActionCausesF t ∨ (F
-
-t ∧ ¬ActionCausesNotF t ) .
+F^t+1^ ⇔ ActionCausesF^t^ ∨ (F^t^ ∧ ¬ActionCausesNotF^t^ ) .
 
 In PDDL the times and states are implicit in the action schemas: the precondition always refers to time t and the effect to time t + 1.
 
 A set of action schemas serves as a definition of a planning _domain_. A specific _problem_ within the domain is defined with the addition of an initial state and a goal. The **initial**  
 
-Section 10.1. Definition of Classical Planning 369
-
+```
 Init(At(C~1~, SFO) ∧ At(C~2~, JFK ) ∧ At(P~1~, SFO) ∧ At(p~2~, JFK )
 
-∧ Cargo(C~1~) ∧ Cargo(C~2~) ∧ Plane(P~1~) ∧ Plane(p~2~)
+    ∧ Cargo(C~1~) ∧ Cargo(C~2~) ∧ Plane(P~1~) ∧ Plane(p~2~)
 
-∧ Airport(JFK ) ∧ Airport(SFO))
+    ∧ Airport(JFK ) ∧ Airport(SFO))
 
 Goal (At(C~1~, JFK ) ∧ At(C~2~, SFO))
 
 Action(Load(c, p, a),
 
-PRECOND: At(c, a) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+    PRECOND: At(c, a) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
 
-EFFECT: ¬ At(c, a) ∧ In(c, p))
+    EFFECT: ¬ At(c, a) ∧ In(c, p))
 
 Action(Unload(c, p, a),
 
-PRECOND: In(c, p) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+    PRECOND: In(c, p) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
 
-EFFECT: At(c, a) ∧ ¬ In(c, p))
+    EFFECT: At(c, a) ∧ ¬ In(c, p))
 
 Action(Fly(p, from , to),
 
-PRECOND: At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
+    PRECOND: At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
 
-EFFECT: ¬ At(p, from) ∧ At(p, to))
-
+    EFFECT: ¬ At(p, from) ∧ At(p, to))
+```
 **Figure 10.1** A PDDL description of an air cargo transportation planning problem.
 
-**state** is a conjunction of ground atoms. (As with all states, the closed-world assumption isINITIAL STATE
+**state** is a conjunction of ground atoms. (As with all states, the closed-world assumption is used, which means that any atoms that are not mentioned are false.) The **goal** is just like a precondition: a conjunction of literals (positive or negative) that may contain variables, such as At(p,SFO) ∧ Plane(p). Any variables are treated as existentially quantified, so this goal is to have _any_ plane at SFO. The problem is solved when we can find a sequence of actions that end in a state s that entails the goal. For example, the state Rich ∧ Famous ∧ Miserable entails the goal Rich ∧ Famous , and the state Plane(Plane~1~) ∧ At(Plane~1~,SFO) entails the goal At(p,SFO) ∧ Plane(p).
 
-used, which means that any atoms that are not mentioned are false.) The **goal** is just like aGOAL
+Now we have defined planning as a search problem: we have an initial state, an function, a RESULT function, and a goal test. We’ll look at some example problems before investigating efficient search algorithms.
 
-precondition: a conjunction of literals (positive or negative) that may contain variables, such as At(p,SFO) ∧ Plane(p). Any variables are treated as existentially quantified, so this goal is to have _any_ plane at SFO. The problem is solved when we can find a sequence of actions that end in a state s that entails the goal. For example, the state Rich ∧Famous ∧Miserable
-
-entails the goal Rich ∧ Famous , and the state Plane(Plane1) ∧ At(Plane1,SFO) entails the goal At(p,SFO) ∧ Plane(p).
-
-Now we have defined planning as a search problem: we have an initial state, an ACTIONS
-
-function, a RESULT function, and a goal test. We’ll look at some example problems before investigating efficient search algorithms.
-
-**10.1.1 Example: Air cargo transport**
+### Example: Air cargo transport
 
 Figure 10.1 shows an air cargo transport problem involving loading and unloading cargo and flying it from place to place. The problem can be defined with three actions: Load , Unload , and Fly . The actions affect two predicates: In(c, p) means that cargo c is inside plane p, and At(x, a) means that object x (either plane or cargo) is at airport a. Note that some care must be taken to make sure the At predicates are maintained properly. When a plane flies from one airport to another, all the cargo inside the plane goes with it. In first-order logic it would be easy to quantify over all objects that are inside the plane. But basic PDDL does not have a universal quantifier, so we need a different solution. The approach we use is to say that a piece of cargo ceases to be At anywhere when it is In a plane; the cargo only becomes At the new airport when it is unloaded. So At really means “available for use at a given location.” The following plan is a solution to the problem:
 
 [Load (C~1~, P~1~,SFO),Fly(P~1~,SFO , JFK ),Unload (C~1~, P~1~, JFK ),
-
 Load (C~2~, p~2~, JFK ),Fly(p~2~, JFK ,SFO),Unload (C~2~, p~2~,SFO)] .  
-
-
 
 Finally, there is the problem of spurious actions such as Fly(P~1~, JFK , JFK ), which should be a no-op, but which has contradictory effects (according to the definition, the effect would include At(P~1~, JFK ) ∧ ¬At(P~1~, JFK )). It is common to ignore such problems, because they seldom cause incorrect plans to be produced. The correct approach is to add inequality preconditions saying that the from and to airports must be different; see another example of this in Figure 10.3.
 
-**10.1.2 Example: The spare tire problem**
+### Example: The spare tire problem
 
 Consider the problem of changing a flat tire (Figure 10.2). The goal is to have a good spare tire properly mounted onto the car’s axle, where the initial state has a flat tire on the axle and a good spare tire in the trunk. To keep it simple, our version of the problem is an abstract one, with no sticky lug nuts or other complications. There are just four actions: removing the spare from the trunk, removing the flat tire from the axle, putting the spare on the axle, and leaving the car unattended overnight. We assume that the car is parked in a particularly bad neighborhood, so that the effect of leaving it overnight is that the tires disappear. A solution to the problem is [Remove(Flat ,Axle),Remove(Spare ,Trunk ),PutOn(Spare ,Axle)].
-
+```
 Init(Tire(Flat) ∧ Tire(Spare) ∧ At(Flat ,Axle) ∧ At(Spare,Trunk))
 
 Goal(At(Spare,Axle))
 
-Action(Remove(obj , loc), PRECOND: At(obj , loc)
+Action(Remove(obj , loc), 
 
-EFFECT: ¬ At(obj , loc) ∧ At(obj ,Ground))
+    PRECOND: At(obj , loc)
 
-Action(PutOn(t , Axle), PRECOND: Tire(t) ∧ At(t ,Ground) ∧ ¬ At(Flat ,Axle)
+    EFFECT: ¬ At(obj , loc) ∧ At(obj ,Ground))
 
-EFFECT: ¬ At(t ,Ground) ∧ At(t ,Axle))
+Action(PutOn(t , Axle), 
 
-Action(LeaveOvernight , PRECOND: EFFECT: ¬ At(Spare,Ground) ∧ ¬ At(Spare,Axle) ∧ ¬ At(Spare,Trunk)
+    PRECOND: Tire(t) ∧ At(t ,Ground) ∧ ¬ At(Flat ,Axle)
 
-∧ ¬ At(Flat ,Ground) ∧ ¬ At(Flat ,Axle) ∧ ¬ At(Flat , Trunk))
+    EFFECT: ¬ At(t ,Ground) ∧ At(t ,Axle))
 
+Action(LeaveOvernight , 
+  
+    PRECOND: EFFECT: ¬ At(Spare,Ground) ∧ ¬ At(Spare,Axle) ∧ ¬ At(Spare,Trunk)
+
+    ∧ ¬ At(Flat ,Ground) ∧ ¬ At(Flat ,Axle) ∧ ¬ At(Flat , Trunk))
+```
 **Figure 10.2** The simple spare tire problem.
 
-**10.1.3 Example: The blocks world**
+### Example: The blocks world
 
-One of the most famous planning domains is known as the **blocks world**. This domainBLOCKS WORLD
-
-consists of a set of cube-shaped blocks sitting on a table.2 The blocks can be stacked, but only one block can fit directly on top of another. A robot arm can pick up a block and move it to another position, either on the table or on top of another block. The arm can pick up only one block at a time, so it cannot pick up a block that has another one on it. The goal will always be to build one or more stacks of blocks, specified in terms of what blocks are on top
-
+One of the most famous planning domains is known as the **blocks world**. This domain consists of a set of cube-shaped blocks sitting on a table.2 The blocks can be stacked, but only one block can fit directly on top of another. A robot arm can pick up a block and move it to another position, either on the table or on top of another block. The arm can pick up only one block at a time, so it cannot pick up a block that has another one on it. The goal will always be to build one or more stacks of blocks, specified in terms of what blocks are on top
+```
 2 The blocks world used in planning research is much simpler than SHRDLU’s version, shown on page 20.  
-
-Section 10.1. Definition of Classical Planning 371
-
+```
+```
 Init(On(A,Table) ∧ On(B,Table) ∧ On(C, A)
 
-∧ Block (A) ∧ Block (B) ∧ Block (C) ∧ Clear (B) ∧ Clear (C))
+    ∧ Block (A) ∧ Block (B) ∧ Block (C) ∧ Clear (B) ∧ Clear (C))
 
 Goal (On(A, B) ∧ On(B, C))
 
 Action(Move(b, x, y),
 
-PRECOND: On(b, x) ∧ Clear (b) ∧ Clear (y) ∧ Block (b) ∧ Block (y) ∧
+    PRECOND: On(b, x) ∧ Clear (b) ∧ Clear (y) ∧ Block (b) ∧ Block (y) ∧
 
-(b ≠x) ∧ (b ≠y) ∧ (x≠y), EFFECT: On(b, y) ∧ Clear (x) ∧ ¬On(b, x) ∧ ¬Clear (y))
+            (b ≠x) ∧ (b ≠y) ∧ (x≠y), 
+    EFFECT: On(b, y) ∧ Clear (x) ∧ ¬On(b, x) ∧ ¬Clear (y))
 
 Action(MoveToTable(b, x),
 
-PRECOND: On(b, x) ∧ Clear (b) ∧ Block (b) ∧ (b ≠x), EFFECT: On(b,Table) ∧ Clear (x) ∧ ¬On(b, x))
-
+    PRECOND: On(b, x) ∧ Clear (b) ∧ Block (b) ∧ (b ≠x), 
+    
+    EFFECT: On(b,Table) ∧ Clear (x) ∧ ¬On(b, x))
+```
 **Figure 10.3** A planning problem in the blocks world: building a three-block tower. One solution is the sequence [MoveToTable(C, A),Move(B,Table , C),Move(A,Table , B)].
 
-Start State Goal State
+![Alt text](image/10img/figure-10.4.png)
 
-B A
+of what other blocks. For example, a goal might be to get block A on B and block B on C (see Figure 10.4). 
 
-C
-
-A
-
-B
-
-C
-
-**Figure 10.4** Diagram of the blocks-world problem in Figure 10.3.
-
-of what other blocks. For example, a goal might be to get block A on B and block B on C
-
-(see Figure 10.4). We use On(b, x) to indicate that block b is on x, where x is either another block or the
-
-table. The action for moving block b from the top of x to the top of y will be Move(b, x, y). Now, one of the preconditions on moving b is that no other block be on it. In first-order logic, this would be ¬∃x On(x, b) or, alternatively, ∀x ¬On(x, b). Basic PDDL does not allow quantifiers, so instead we introduce a predicate Clear(x) that is true when nothing is on x. (The complete problem description is in Figure 10.3.)
+We use On(b, x) to indicate that block b is on x, where x is either another block or the table. The action for moving block b from the top of x to the top of y will be Move(b, x, y). Now, one of the preconditions on moving b is that no other block be on it. In first-order logic, this would be ¬∃x On(x, b) or, alternatively, ∀x ¬On(x, b). Basic PDDL does not allow quantifiers, so instead we introduce a predicate Clear(x) that is true when nothing is on x. (The complete problem description is in Figure 10.3.)
 
 The action Move moves a block b from x to y if both b and y are clear. After the move is made, b is still clear but y is not. A first attempt at the Move schema is
 
@@ -3844,11 +3801,7 @@ PRECOND:On(b, x) ∧ Clear(b) ∧ Clear(y),
 
 EFFECT:On(b, y) ∧ Clear(x) ∧ ¬On(b, x) ∧ ¬Clear(y)) .
 
-Unfortunately, this does not maintain Clear properly when x or y is the table. When x is the Table , this action has the effect Clear(Table), but the table should not become clear; and when y =Table , it has the precondition Clear(Table), but the table does not have to be clear  
-
-
-
-for us to move a block onto it. To fix this, we do two things. First, we introduce another action to move a block b from x to the table:
+Unfortunately, this does not maintain Clear properly when x or y is the table. When x is the Table , this action has the effect Clear(Table), but the table should not become clear; and when y =Table , it has the precondition Clear(Table), but the table does not have to be clear for us to move a block onto it. To fix this, we do two things. First, we introduce another action to move a block b from x to the table:
 
 Action(MoveToTable(b, x),
 
@@ -3856,167 +3809,75 @@ PRECOND:On(b, x) ∧ Clear(b),
 
 EFFECT:On(b,Table) ∧ Clear(x) ∧ ¬On(b, x)) .
 
-Second, we take the interpretation of Clear(x) to be “there is a clear space on x to hold a block.” Under this interpretation, Clear(Table) will always be true. The only problem is that nothing prevents the planner from using Move(b, x,Table) instead of MoveToTable(b, x). We could live with this problem—it will lead to a larger-than-necessary search space, but will not lead to incorrect answers—or we could introduce the predicate Block and add Block(b)∧
+Second, we take the interpretation of Clear(x) to be “there is a clear space on x to hold a block.” Under this interpretation, Clear(Table) will always be true. The only problem is that nothing prevents the planner from using Move(b, x,Table) instead of MoveToTable(b, x). We could live with this problem—it will lead to a larger-than-necessary search space, but will not lead to incorrect answers—or we could introduce the predicate Block and add Block(b) ∧ Block(y) to the precondition of Move.
 
-Block(y) to the precondition of Move.
+### The complexity of classical planning
 
-**10.1.4 The complexity of classical planning**
+In this subsection we consider the theoretical complexity of planning and distinguish two decision problems. **PlanSAT** is the question of whether there exists any plan that solves a planning problem. **Bounded PlanSAT** asks whether there is a solution of length k or less; this can be used to find an optimal plan. \
 
-In this subsection we consider the theoretical complexity of planning and distinguish two decision problems. **PlanSAT** is the question of whether there exists any plan that solves aPLANSAT
-
-planning problem. **Bounded PlanSAT** asks whether there is a solution of length k or less;BOUNDED PLANSAT
-
-this can be used to find an optimal plan. The first result is that both decision problems are decidable for classical planning. The
-
-proof follows from the fact that the number of states is finite. But if we add function symbols to the language, then the number of states becomes infinite, and PlanSAT becomes only semidecidable: an algorithm exists that will terminate with the correct answer for any solvable problem, but may not terminate on unsolvable problems. The Bounded PlanSAT problem remains decidable even in the presence of function symbols. For proofs of the assertions in this section, see Ghallab _et al._ (2004).
+The first result is that both decision problems are decidable for classical planning. The proof follows from the fact that the number of states is finite. But if we add function symbols to the language, then the number of states becomes infinite, and PlanSAT becomes only semidecidable: an algorithm exists that will terminate with the correct answer for any solvable problem, but may not terminate on unsolvable problems. The Bounded PlanSAT problem remains decidable even in the presence of function symbols. For proofs of the assertions in this section, see Ghallab _et al._ (2004).
 
 Both PlanSAT and Bounded PlanSAT are in the complexity class PSPACE, a class that is larger (and hence more difficult) than NP and refers to problems that can be solved by a deterministic Turing machine with a polynomial amount of space. Even if we make some rather severe restrictions, the problems remain quite difficult. For example, if we disallow negative effects, both problems are still NP-hard. However, if we also disallow negative preconditions, PlanSAT reduces to the class P.
 
 These worst-case results may seem discouraging. We can take solace in the fact that agents are usually not asked to find plans for arbitrary worst-case problem instances, but rather are asked for plans in specific domains (such as blocks-world problems with n blocks), which can be much easier than the theoretical worst case. For many domains (including the blocks world and the air cargo world), Bounded PlanSAT is NP-complete while PlanSAT is in P; in other words, optimal planning is usually hard, but sub-optimal planning is sometimes easy. To do well on easier-than-worst-case problems, we will need good search heuristics. That’s the true advantage of the classical planning formalism: it has facilitated the development of very accurate domain-independent heuristics, whereas systems based on successorstate axioms in first-order logic have had less success in coming up with good heuristics.  
 
-Section 10.2. Algorithms for Planning as State-Space Search 373
-
-10.2 ALGORITHMS FOR PLANNING AS STATE-SPACE SEARCH
+## ALGORITHMS FOR PLANNING AS STATE-SPACE SEARCH
 
 Now we turn our attention to planning algorithms. We saw how the description of a planning problem defines a search problem: we can search from the initial state through the space of states, looking for a goal. One of the nice advantages of the declarative representation of action schemas is that we can also search backward from the goal, looking for the initial state. Figure 10.5 compares forward and backward searches.
 
-**10.2.1 Forward (progression) state-space search**
+### Forward (progression) state-space search
 
 Now that we have shown how a planning problem maps into a search problem, we can solve planning problems with any of the heuristic search algorithms from Chapter 3 or a local search algorithm from Chapter 4 (provided we keep track of the actions used to reach the goal). From the earliest days of planning research (around 1961) until around 1998 it was assumed that forward state-space search was too inefficient to be practical. It is not hard to come up with reasons why.
 
 First, forward search is prone to exploring irrelevant actions. Consider the noble task of buying a copy of _AI: A Modern Approach_ from an online bookseller. Suppose there is an
 
-(a)
-
-(b)
-
-_At_(_P_1_, A_) Fly(_P_1_, A, B_)
-
-Fly(_P_2_, A, B_)
-
-Fly(_P_1_, A, B_)
-
-Fly(_P_2_, A, B_)
-
-_At_(_P_2_, A_)
-
-_At_(_P_1_, B_)
-
-_At_(_P_2_, A_)
-
-_At_(_P_1_, A_)
-
-_At_(_P_2_, B_)
-
-_At_(_P_1_, B_)
-
-_At_(_P_2_, B_)
-
-_At_(_P_1_, B_)
-
-_At_(_P_2_, A_)
-
-_At_(_P_1_, A_)
-
-_At_(_P_2_, B_)
-
-**Figure 10.5** Two approaches to searching for a plan. (a) Forward (progression) search through the space of states, starting in the initial state and using the problem’s actions to search forward for a member of the set of goal states. (b) Backward (regression) search through sets of relevant states, starting at the set of states representing the goal and using the inverse of the actions to search backward for the initial state.  
-
-
+![Alt text](image/10img/figure-10.5.png)
 
 action schema Buy(isbn) with effect Own(isbn). ISBNs are 10 digits, so this action schema represents 10 billion ground actions. An uninformed forward-search algorithm would have to start enumerating these 10 billion actions to find one that leads to the goal.
 
-Second, planning problems often have large state spaces. Consider an air cargo problem with 10 airports, where each airport has 5 planes and 20 pieces of cargo. The goal is to move all the cargo at airport A to airport B. There is a simple solution to the problem: load the 20 pieces of cargo into one of the planes at A, fly the plane to B, and unload the cargo. Finding the solution can be difficult because the average branching factor is huge: each of the 50 planes can fly to 9 other airports, and each of the 200 packages can be either unloaded (if it is loaded) or loaded into any plane at its airport (if it is unloaded). So in any state there is a minimum of 450 actions (when all the packages are at airports with no planes) and a maximum of 10,450 (when all packages and planes are at the same airport). On average, let’s say there are about 2000 possible actions per state, so the search graph up to the depth of the obvious solution has about 200041 nodes.
+Second, planning problems often have large state spaces. Consider an air cargo problem with 10 airports, where each airport has 5 planes and 20 pieces of cargo. The goal is to move all the cargo at airport A to airport B. There is a simple solution to the problem: load the 20 pieces of cargo into one of the planes at A, fly the plane to B, and unload the cargo. Finding the solution can be difficult because the average branching factor is huge: each of the 50 planes can fly to 9 other airports, and each of the 200 packages can be either unloaded (if it is loaded) or loaded into any plane at its airport (if it is unloaded). So in any state there is a minimum of 450 actions (when all the packages are at airports with no planes) and a maximum of 10,450 (when all packages and planes are at the same airport). On average, let’s say there are about 2000 possible actions per state, so the search graph up to the depth of the obvious solution has about 2000^41^ nodes.
 
 Clearly, even this relatively small problem instance is hopeless without an accurate heuristic. Although many real-world applications of planning have relied on domain-specific heuristics, it turns out (as we see in Section 10.2.3) that strong domain-independent heuristics can be derived automatically; that is what makes forward search feasible.
 
-**10.2.2 Backward (regression) relevant-states search**
+### Backward (regression) relevant-states search
 
-In regression search we start at the goal and apply the actions backward until we find a sequence of steps that reaches the initial state. It is called **relevant-states** search because weRELEVANT-STATES
-
-only consider actions that are relevant to the goal (or current state). As in belief-state search (Section 4.4), there is a _set_ of relevant states to consider at each step, not just a single state.
+In regression search we start at the goal and apply the actions backward until we find a sequence of steps that reaches the initial state. It is called **relevant-states** search because we only consider actions that are relevant to the goal (or current state). As in belief-state search (Section 4.4), there is a _set_ of relevant states to consider at each step, not just a single state.
 
 We start with the goal, which is a conjunction of literals forming a description of a set of states—for example, the goal ¬Poor ∧Famous describes those states in which Poor is false, Famous is true, and any other fluent can have any value. If there are n ground fluents in a domain, then there are 2^n^ ground states (each fluent can be true or false), but 3n descriptions of sets of goal states (each fluent can be positive, negative, or not mentioned).
 
-In general, backward search works only when we know how to regress from a state description to the predecessor state description. For example, it is hard to search backwards for a solution to the n-queens problem because there is no easy way to describe the states that are one move away from the goal. Happily, the PDDL representation was designed to make it easy to regress actions—if a domain can be expressed in PDDL, then we can do regression search on it. Given a ground goal description g and a ground action a, the regression from g
+In general, backward search works only when we know how to regress from a state description to the predecessor state description. For example, it is hard to search backwards for a solution to the n-queens problem because there is no easy way to describe the states that are one move away from the goal. Happily, the PDDL representation was designed to make it easy to regress actions—if a domain can be expressed in PDDL, then we can do regression search on it. Given a ground goal description g and a ground action a, the regression from g over a gives us a state description g ′ defined by
 
-over a gives us a state description g ′ defined by
-
-g ′
-
-= (g − ADD(a))∪Precond(a) .
+g′ = (g − ADD(a)) ∪ Precond(a) .
 
 That is, the effects that were added by the action need not have been true before, and also the preconditions must have held before, or else the action could not have been executed. Note that DEL(a) does not appear in the formula; that’s because while we know the fluents in DEL(a) are no longer true after the action, we don’t know whether or not they were true before, so there’s nothing to be said about them.  
+ 
+To get the full advantage of backward search, we need to deal with partially uninstantiated actions and states, not just ground ones. For example, suppose the goal is to deliver a specific piece of cargo to SFO: At(C~2~,SFO). That suggests the action Unload(C~2~, p′ ,SFO): 
 
-Section 10.2. Algorithms for Planning as State-Space Search 375
+Action(Unload(C~2~, p ′,SFO)),
+ PRECOND:In(C~2~, p ′) ∧ At(p′,SFO) ∧ Cargo(C~2~) ∧ Plane(p′) ∧ Airport(SFO)
+ EFFECT:At(C~2~,SFO) ∧ ¬In(C~2~, p ′) .
 
-To get the full advantage of backward search, we need to deal with partially uninstantiated actions and states, not just ground ones. For example, suppose the goal is to deliver a specific piece of cargo to SFO: At(C~2~,SFO). That suggests the action Unload(C~2~, p
+(Note that we have **standardized** variable names (changing p to p ′ in this case) so that there will be no confusion between variable names if we happen to use the same action schema twice in a plan. The same approach was used in Chapter 9 for first-order logical inference.) This represents unloading the package from an _unspecified_ plane at SFO; any plane will do, but we need not say which one now. We can take advantage of the power of first-order representations: a single description summarizes the possibility of using _any_ of the planes by implicitly quantifying over p′. The regressed state description is
 
-′
+g′ = In(C~2~, p′ ) ∧ At(p′,SFO) ∧ Cargo(C~2~) ∧ Plane(p′ ) ∧ Airport(SFO) .
 
-,SFO):
-
-Action(Unload(C~2~, p ′
-
-,SFO),
-
-PRECOND:In(C~2~, p ′) ∧ At(p′,SFO) ∧ Cargo(C~2~) ∧ Plane(p′) ∧ Airport(SFO)
-
-EFFECT:At(C~2~,SFO) ∧ ¬In(C~2~, p ′) .
-
-(Note that we have **standardized** variable names (changing p to p ′ in this case) so that there
-
-will be no confusion between variable names if we happen to use the same action schema twice in a plan. The same approach was used in Chapter 9 for first-order logical inference.) This represents unloading the package from an _unspecified_ plane at SFO; any plane will do, but we need not say which one now. We can take advantage of the power of first-order representations: a single description summarizes the possibility of using _any_ of the planes by implicitly quantifying over p
-
-′. The regressed state description is
-
-g ′
-
-= In(C~2~, p ′
-
-) ∧ At(p′,SFO) ∧ Cargo(C~2~) ∧ Plane(p ′
-
-) ∧ Airport(SFO) .
-
-The final issue is deciding which actions are candidates to regress over. In the forward direction we chose actions that were **applicable**—those actions that could be the next step in the plan. In backward search we want actions that are **relevant**—those actions that could be theRELEVANCE
-
-_last_ step in a plan leading up to the current goal state. For an action to be relevant to a goal it obviously must contribute to the goal: at least
+The final issue is deciding which actions are candidates to regress over. In the forward direction we chose actions that were **applicable**—those actions that could be the next step in the plan. In backward search we want actions that are **relevant**—those actions that could be the _last_ step in a plan leading up to the current goal state. For an action to be relevant to a goal it obviously must contribute to the goal: at least
 
 one of the action’s effects (either positive or negative) must unify with an element of the goal. What is less obvious is that the action must not have any effect (positive or negative) that negates an element of the goal. Now, if the goal is A ∧ B ∧ C and an action has the effect A∧B∧¬C then there is a colloquial sense in which that action is very relevant to the goal—it gets us two-thirds of the way there. But it is not relevant in the technical sense defined here, because this action could not be the _final_ step of a solution—we would always need at least one more step to achieve C .
 
-Given the goal At(C~2~,SFO), several instantiations of Unload are relevant: we could chose any specific plane to unload from, or we could leave the plane unspecified by using the action Unload(C~2~, p
-
-′
-
-,SFO). We can reduce the branching factor without ruling out any solutions by always using the action formed by substituting the most general unifier into the (standardized) action schema.
+Given the goal At(C~2~,SFO), several instantiations of Unload are relevant: we could chose any specific plane to unload from, or we could leave the plane unspecified by using the action Unload(C~2~ p′,SFO). We can reduce the branching factor without ruling out any solutions by always using the action formed by substituting the most general unifier into the (standardized) action schema.
 
 As another example, consider the goal Own(0136042597), given an initial state with 10 billion ISBNs, and the single action schema
 
 A = Action(Buy(i), PRECOND:ISBN (i), EFFECT:Own(i)) .
 
-As we mentioned before, forward search without a heuristic would have to start enumerating the 10 billion ground Buy actions. But with backward search, we would unify the goal Own(0136042597) with the (standardized) effect Own(i′), yielding the substitution θ = {i′/0136042597}. Then we would regress over the action Subst(θ,A
+As we mentioned before, forward search without a heuristic would have to start enumerating the 10 billion ground Buy actions. But with backward search, we would unify the goal Own(0136042597) with the (standardized) effect Own(i′), yielding the substitution θ = {i′/0136042597}. Then we would regress over the action Subst(θ,A′) to yield the predecessor state description ISBN (0136042597). This is part of, and thus entailed by, the initial state, so we are done.  
 
-′) to yield the predecessor state description ISBN (0136042597). This is part of, and thus entailed by, the initial state, so we are done.  
-
-
-
-We can make this more formal. Assume a goal description g which contains a goal literal gi and an action schema A that is standardized to produce A
-
-′. If A ′ has an effect literal
-
-e ′
-
-j where Unify(gi, e ′
-
-j)= θ and where we define a ′ = SUBST(θ,A
-
-′) and if there is no effect in a
-
-′ that is the negation of a literal in g, then a ′ is a relevant action towards g.
+We can make this more formal. Assume a goal description g which contains a goal literal gi and an action schema A that is standardized to produce A′. If A ′ has an effect literal e′j where Unify(gi, e′j)= θ and where we define a ′ = SUBST(θ,A′) and if there is no effect in a′ that is the negation of a literal in g, then a ′ is a relevant action towards g.
 
 Backward search keeps the branching factor lower than forward search, for most problem domains. However, the fact that backward search uses state sets rather than individual states makes it harder to come up with good heuristics. That is the main reason why the majority of current systems favor forward search.
 
-**10.2.3 Heuristics for planning**
+### Heuristics for planning
 
 Neither forward nor backward search is efficient without a good heuristic function. Recall from Chapter 3 that a heuristic function h(s) estimates the distance from a state s to the goal and that if we can derive an **admissible** heuristic for this distance—one that does not overestimate—then we can use A∗ search to find optimal solutions. An admissible heuristic can be derived by defining a **relaxed problem** that is easier to solve. The exact cost of a solution to this easier problem then becomes the heuristic for the original problem.
 
@@ -4024,19 +3885,12 @@ By definition, there is no way to analyze an atomic state, and thus it it requir
 
 Think of a search problem as a graph where the nodes are states and the edges are actions. The problem is to find a path connecting the initial state to a goal state. There are two ways we can relax this problem to make it easier: by adding more edges to the graph, making it strictly easier to find a path, or by grouping multiple nodes together, forming an abstraction of the state space that has fewer states, and thus is easier to search.
 
-We look first at heuristics that add edges to the graph. For example, the **ignore preconditions heuristic** drops all preconditions from actions. Every action becomes applicable
-
-IGNORE PRECONDITIONS HEURISTIC
-
-in every state, and any single goal fluent can be achieved in one step (if there is an applicable action—if not, the problem is impossible). This almost implies that the number of steps required to solve the relaxed problem is the number of unsatisfied goals—almost but not quite, because (1) some action may achieve multiple goals and (2) some actions may undo the effects of others. For many problems an accurate heuristic is obtained by considering (1) and ignoring (2). First, we relax the actions by removing all preconditions and all effects except those that are literals in the goal. Then, we count the minimum number of actions required such that the union of those actions’ effects satisfies the goal. This is an instance of the **set-cover problem**. There is one minor irritation: the set-cover problem is NP-hard.SET-COVER
-
-PROBLEM
+We look first at heuristics that add edges to the graph. For example, the **ignore preconditions heuristic** drops all preconditions from actions. Every action becomes applicable in every state, and any single goal fluent can be achieved in one step (if there is an applicable action—if not, the problem is impossible). This almost implies that the number of steps required to solve the relaxed problem is the number of unsatisfied goals—almost but not quite, because (1) some action may achieve multiple goals and (2) some actions may undo the effects of others. For many problems an accurate heuristic is obtained by considering (1) and ignoring (2). First, we relax the actions by removing all preconditions and all effects except those that are literals in the goal. Then, we count the minimum number of actions required such that the union of those actions’ effects satisfies the goal. This is an instance of the **set-cover problem**. There is one minor irritation: the set-cover problem is NP-hard. 
 
 Fortunately a simple greedy algorithm is guaranteed to return a set covering whose size is within a factor of log n of the true minimum covering, where n is the number of literals in the goal. Unfortunately, the greedy algorithm loses the guarantee of admissibility.
 
 It is also possible to ignore only _selected_ preconditions of actions. Consider the slidingblock puzzle (8-puzzle or 15-puzzle) from Section 3.2. We could encode this as a planning  
 
-Section 10.2. Algorithms for Planning as State-Space Search 377
 
 problem involving tiles with a single schema _Slide_:
 
@@ -4046,199 +3900,118 @@ PRECOND:On(t, s~1~) ∧ Tile(t) ∧ Blank (s~2~) ∧ Adjacent(s~1~, s~2~)
 
 EFFECT:On(t, s~2~) ∧ Blank(s~1~) ∧ ¬On(t, s~1~) ∧ ¬Blank(s~2~))
 
-As we saw in Section 3.6, if we remove the preconditions Blank (s~2~) ∧ Adjacent(s~1~, s~2~)
+As we saw in Section 3.6, if we remove the preconditions Blank (s~2~) ∧ Adjacent(s~1~, s~2~) then any tile can move in one action to any space and we get the number-of-misplaced-tiles heuristic. If we remove Blank(s~2~) then we get the Manhattan-distance heuristic. It is easy to see how these heuristics could be derived automatically from the action schema description. The ease of manipulating the schemas is the great advantage of the factored representation of planning problems, as compared with the atomic representation of search problems.
 
-then any tile can move in one action to any space and we get the number-of-misplaced-tiles heuristic. If we remove Blank(s~2~) then we get the Manhattan-distance heuristic. It is easy to see how these heuristics could be derived automatically from the action schema description. The ease of manipulating the schemas is the great advantage of the factored representation of planning problems, as compared with the atomic representation of search problems.
+Another possibility is the **ignore delete lists** heuristic. Assume for a moment that allgoals and preconditions contain only positive literals3 We want to create a relaxed version of the original problem that will be easier to solve, and where the length of the solution will serve as a good heuristic. We can do that by removing the delete lists from all actions (i.e., removing all negative literals from effects). That makes it possible to make monotonic progress towards the goal—no action will ever undo progress made by another action. It turns out it is still NPhard to find the optimal solution to this relaxed problem, but an approximate solution can be found in polynomial time by hill-climbing. Figure 10.6 diagrams part of the state space for two planning problems using the ignore-delete-lists heuristic. The dots represent states and the edges actions, and the height of each dot above the bottom plane represents the heuristic value. States on the bottom plane are solutions. In both these problems, there is a wide path to the goal. There are no dead ends, so no need for backtracking; a simple hillclimbing search will easily find a solution to these problems (although it may not be an optimal solution).
 
-Another possibility is the **ignore delete lists** heuristic. Assume for a moment that allIGNORE DELETE LISTS
+The relaxed problems leave us with a simplified—but still expensive—planning problem just to calculate the value of the heuristic function. Many planning problems have 10^100^ states or more, and relaxing the _actions_ does nothing to reduce the number of states. Therefore, we now look at relaxations that decrease the number of states by forming a **state abstraction**—a many-to-one mapping from states in the ground representation of the problem to the abstract representation. 
 
-goals and preconditions contain only positive literals3 We want to create a relaxed version of the original problem that will be easier to solve, and where the length of the solution will serve as a good heuristic. We can do that by removing the delete lists from all actions (i.e., removing all negative literals from effects). That makes it possible to make monotonic progress towards the goal—no action will ever undo progress made by another action. It turns out it is still NPhard to find the optimal solution to this relaxed problem, but an approximate solution can be found in polynomial time by hill-climbing. Figure 10.6 diagrams part of the state space for two planning problems using the ignore-delete-lists heuristic. The dots represent states and the edges actions, and the height of each dot above the bottom plane represents the heuristic value. States on the bottom plane are solutions. In both these problems, there is a wide path to the goal. There are no dead ends, so no need for backtracking; a simple hillclimbing search will easily find a solution to these problems (although it may not be an optimal solution).
-
-The relaxed problems leave us with a simplified—but still expensive—planning problem just to calculate the value of the heuristic function. Many planning problems have 10100
-
-states or more, and relaxing the _actions_ does nothing to reduce the number of states. Therefore, we now look at relaxations that decrease the number of states by forming a **state abstraction**—a many-to-one mapping from states in the ground representation of the problemSTATE ABSTRACTION
-
-to the abstract representation. The easiest form of state abstraction is to ignore some fluents. For example, consider
-
-an air cargo problem with 10 airports, 50 planes, and 200 pieces of cargo. Each plane can be at one of 10 airports and each package can be either in one of the planes or unloaded at one of the airports. So there are 5010 × 20050+10 ≈ 10155 states. Now consider a particular problem in that domain in which it happens that all the packages are at just 5 of the airports, and all packages at a given airport have the same destination. Then a useful abstraction of the problem is to drop all the At fluents except for the ones involving one plane and one package at each of the 5 airports. Now there are only 510 × 55+10 ≈ 1017 states. A solution in this abstract state space will be shorter than a solution in the original space (and thus will be an admissible heuristic), and the abstract solution is easy to extend to a solution to the original problem (by adding additional Load and Unload actions).
-
+The easiest form of state abstraction is to ignore some fluents. For example, consider an air cargo problem with 10 airports, 50 planes, and 200 pieces of cargo. Each plane can be at one of 10 airports and each package can be either in one of the planes or unloaded at one of the airports. So there are 50^10^ × 200^50+10^ ≈ 10^155^ states. Now consider a particular problem in that domain in which it happens that all the packages are at just 5 of the airports, and all packages at a given airport have the same destination. Then a useful abstraction of the problem is to drop all the At fluents except for the ones involving one plane and one package at each of the 5 airports. Now there are only 5^10^ × 5^5+10^ ≈ 10^17^ states. A solution in this abstract state space will be shorter than a solution in the original space (and thus will be an admissible heuristic), and the abstract solution is easy to extend to a solution to the original problem (by adding additional Load and Unload actions).
+```
 3 Many problems are written with this convention. For problems that aren’t, replace every negative literal ¬P
-
+```
 in a goal or precondition with a new positive literal, P ′.  
 
+![Alt text](image/10img/figure-10.6.png)
 
+A key idea in defining heuristics is **decomposition**: dividing a problem into parts, solving each part independently, and then combining the parts. The **subgoal independence** assumption is that the cost of solving a conjunction of subgoals is approximated by the sum of the costs of solving each subgoal _independently_. The subgoal independence assumption can be optimistic or pessimistic. It is optimistic when there are negative interactions between the subplans for each subgoal—for example, when an action in one subplan deletes a goal achieved by another subplan. It is pessimistic, and therefore inadmissible, when subplans contain redundant actions—for instance, two actions that could be replaced by a single action in the merged plan.
 
-**Figure 10.6** Two state spaces from planning problems with the ignore-delete-lists heuristic. The height above the bottom plane is the heuristic score of a state; states on the bottom plane are goals. There are no local minima, so search for the goal is straightforward. From Hoffmann (2005).
+Suppose the goal is a set of fluents G, which we divide into disjoint subsets G~1~, . . . , G~n~. We then find plans P~1~, . . . , p~n~ that solve the respective subgoals. What is an estimate of the cost of the plan for achieving all of G? We can think of each Cost(p~i~) as a heuristic estimate, and we know that if we combine estimates by taking their maximum value, we always get an admissible heuristic. So maxi COST(p~i~) is admissible, and sometimes it is exactly correct: it could be that P~1~ serendipitously achieves all the G~i~. But in most cases, in practice the estimate is too low. Could we sum the costs instead? For many problems that is a reasonable estimate, but it is not admissible. The best case is when we can determine that G~i~ and G~j~ are **independent**. If the effects of p~i~ leave all the preconditions and goals of P~j~ unchanged, then the estimate COST(p~i~) + COST(P~j~) is admissible, and more accurate than the max estimate. We show in Section 10.3.1 that planning graphs can help provide better heuristic estimates.
 
-A key idea in defining heuristics is **decomposition**: dividing a problem into parts, solv-DECOMPOSITION
+It is clear that there is great potential for cutting down the search space by forming abstractions. The trick is choosing the right abstractions and using them in a way that makes the total cost—defining an abstraction, doing an abstract search, and mapping the abstraction back to the original problem—less than the cost of solving the original problem. The techniques of **pattern databases** from Section 3.6.3 can be useful, because the cost of creating the pattern database can be amortized over multiple problem instances.
 
-ing each part independently, and then combining the parts. The **subgoal independence** as-SUBGOAL INDEPENDENCE
+An example of a system that makes use of effective heuristics is FF, or FASTFORWARD (Hoffmann, 2005), a forward state-space searcher that uses the ignore-delete-lists heuristic, estimating the heuristic with the help of a planning graph (see Section 10.3). FF then uses hill-climbing search (modified to keep track of the plan) with the heuristic to find a solution. When it hits a plateau or local maximum—when no action leads to a state with better heuristic score—then FF uses iterative deepening search until it finds a state that is better, or it gives up and restarts hill-climbing.
 
-sumption is that the cost of solving a conjunction of subgoals is approximated by the sum of the costs of solving each subgoal _independently_. The subgoal independence assumption can be optimistic or pessimistic. It is optimistic when there are negative interactions between the subplans for each subgoal—for example, when an action in one subplan deletes a goal achieved by another subplan. It is pessimistic, and therefore inadmissible, when subplans contain redundant actions—for instance, two actions that could be replaced by a single action in the merged plan.
+## PLANNING GRAPHS
 
-Suppose the goal is a set of fluents G, which we divide into disjoint subsets G1, . . . , Gn. We then find plans P~1~, . . . , p~n~ that solve the respective subgoals. What is an estimate of the cost of the plan for achieving all of G? We can think of each Cost(p~i~) as a heuristic estimate, and we know that if we combine estimates by taking their maximum value, we always get an admissible heuristic. So maxi COST(p~i~) is admissible, and sometimes it is exactly correct: it could be that P~1~ serendipitously achieves all the Gi. But in most cases, in practice the estimate is too low. Could we sum the costs instead? For many problems that is a reasonable estimate, but it is not admissible. The best case is when we can determine that Gi and Gj are **independent**. If the effects of p~i~ leave all the preconditions and goals of Pj unchanged, then the estimate COST(p~i~) + COST(Pj) is admissible, and more accurate than the max estimate. We show in Section 10.3.1 that planning graphs can help provide better heuristic estimates.
+All of the heuristics we have suggested can suffer from inaccuracies. This section shows how a special data structure called a **planning graph** can be used to give better heuristic estimates. These heuristics can be applied to any of the search techniques we have seen so far. Alternatively, we can search for a solution over the space formed by the planning graph, using an algorithm called GRAPHPLAN.
 
-It is clear that there is great potential for cutting down the search space by forming abstractions. The trick is choosing the right abstractions and using them in a way that makes the total cost—defining an abstraction, doing an abstract search, and mapping the abstraction back to the original problem—less than the cost of solving the original problem. The tech 
+A planning problem asks if we can reach a goal state from the initial state. Suppose we are given a tree of all possible actions from the initial state to successor states, and their successors, and so on. If we indexed this tree appropriately, we could answer the planning question “can we reach state G from state S~0~” immediately, just by looking it up. Of course, the tree is of exponential size, so this approach is impractical. A planning graph is polynomialsize approximation to this tree that can be constructed quickly. The planning graph can’t answer definitively whether G is reachable from S~0~, but it can _estimate_ how many steps it takes to reach G. The estimate is always correct when it reports the goal is not reachable, and it never overestimates the number of steps, so it is an admissible heuristic.
 
-Section 10.3. Planning Graphs 379
+A planning graph is a directed graph organized into **levels**: first a level S~0~ for the initial state, consisting of nodes representing each fluent that holds in S~0~; then a level A~0~ consisting of nodes for each ground action that might be applicable in S~0~; then alternating levels S~i~
 
-niques of **pattern databases** from Section 3.6.3 can be useful, because the cost of creating the pattern database can be amortized over multiple problem instances.
+followed by A~i~; until we reach a termination condition (to be discussed later). Roughly speaking, S~i~ contains all the literals that _could_ hold at time i, depending on
 
-An example of a system that makes use of effective heuristics is FF, or FASTFORWARD
-
-(Hoffmann, 2005), a forward state-space searcher that uses the ignore-delete-lists heuristic, estimating the heuristic with the help of a planning graph (see Section 10.3). FF then uses hill-climbing search (modified to keep track of the plan) with the heuristic to find a solution. When it hits a plateau or local maximum—when no action leads to a state with better heuristic score—then FF uses iterative deepening search until it finds a state that is better, or it gives up and restarts hill-climbing.
-
-10.3 PLANNING GRAPHS
-
-All of the heuristics we have suggested can suffer from inaccuracies. This section shows how a special data structure called a **planning graph** can be used to give better heuristicPLANNING GRAPH
-
-estimates. These heuristics can be applied to any of the search techniques we have seen so far. Alternatively, we can search for a solution over the space formed by the planning graph, using an algorithm called GRAPHPLAN.
-
-A planning problem asks if we can reach a goal state from the initial state. Suppose we are given a tree of all possible actions from the initial state to successor states, and their successors, and so on. If we indexed this tree appropriately, we could answer the planning question “can we reach state G from state S0” immediately, just by looking it up. Of course, the tree is of exponential size, so this approach is impractical. A planning graph is polynomialsize approximation to this tree that can be constructed quickly. The planning graph can’t answer definitively whether G is reachable from S0, but it can _estimate_ how many steps it takes to reach G. The estimate is always correct when it reports the goal is not reachable, and it never overestimates the number of steps, so it is an admissible heuristic.
-
-A planning graph is a directed graph organized into **levels**: first a level S0 for the initialLEVEL
-
-state, consisting of nodes representing each fluent that holds in S0; then a level A0 consisting of nodes for each ground action that might be applicable in S0; then alternating levels Si
-
-followed by Ai; until we reach a termination condition (to be discussed later). Roughly speaking, Si contains all the literals that _could_ hold at time i, depending on
-
-the actions executed at preceding time steps. If it is possible that either P or ¬P could hold, then both will be represented in Si. Also roughly speaking, Ai contains all the actions that _could_ have their preconditions satisfied at time i. We say “roughly speaking” because the planning graph records only a restricted subset of the possible negative interactions among actions; therefore, a literal might show up at level Sj when actually it could not be true until a later level, if at all. (A literal will never show up too late.) Despite the possible error, the level j at which a literal first appears is a good estimate of how difficult it is to achieve the literal from the initial state.
+the actions executed at preceding time steps. If it is possible that either P or ¬P could hold, then both will be represented in S~i~. Also roughly speaking, A~i~ contains all the actions that _could_ have their preconditions satisfied at time i. We say “roughly speaking” because the planning graph records only a restricted subset of the possible negative interactions among actions; therefore, a literal might show up at level S~j~ when actually it could not be true until a later level, if at all. (A literal will never show up too late.) Despite the possible error, the level j at which a literal first appears is a good estimate of how difficult it is to achieve the literal from the initial state.
 
 Planning graphs work only for propositional planning problems—ones with no variables. As we mentioned on page 368, it is straightforward to propositionalize a set of ac 
 
-
-
+```
 Init(Have(Cake))
 
 Goal (Have(Cake) ∧ Eaten(Cake))
 
 Action(Eat(Cake)
 
-PRECOND: Have(Cake)
+    PRECOND: Have(Cake)
 
-EFFECT: ¬ Have(Cake) ∧ Eaten(Cake))
+    EFFECT: ¬ Have(Cake) ∧ Eaten(Cake))
 
 Action(Bake(Cake)
 
-PRECOND: ¬ Have(Cake)
+    PRECOND: ¬ Have(Cake)
 
-EFFECT: Have(Cake))
-
+    EFFECT: Have(Cake))
+```
 **Figure 10.7** The “have cake and eat cake too” problem.
 
-Bake(Cake)
-
-Eat(Cake)
-
-_Have_(_Cake_)
-
-_S_0 A0 _S_1 A~1~ _S_2
-
-_Have_(_Cake_) _Have_(_Cake_) _Have_(_Cake_)
-
-_Have_(_Cake_)
-
-_Eaten_(_Cake_)
-
-_Eaten_(_Cake_) _Eaten_(_Cake_)_Eaten_(_Cake_)
-
-_Eaten_(_Cake_)
-
-Eat(Cake) ¬
-
-¬ ¬
-
-¬
-
-¬
-
-**Figure 10.8** The planning graph for the “have cake and eat cake too” problem up to level s~2~. Rectangles indicate actions (small squares indicate persistence actions), and straight lines indicate preconditions and effects. Mutex links are shown as curved gray lines. Not all mutex links are shown, because the graph would be too cluttered. In general, if two literals are mutex at Si, then the persistence actions for those literals will be mutex at Ai and we need not draw that mutex link.
+![Alt text](image/10img/figure-10.8.png)
 
 tion schemas. Despite the resulting increase in the size of the problem description, planning graphs have proved to be effective tools for solving hard planning problems.
 
-Figure 10.7 shows a simple planning problem, and Figure 10.8 shows its planning graph. Each action at level Ai is connected to its preconditions at Si and its effects at Si+1. So a literal appears because an action caused it, but we also want to say that a literal can persist if no action negates it. This is represented by a **persistence action** (sometimes calledPERSISTENCE
+Figure 10.7 shows a simple planning problem, and Figure 10.8 shows its planning graph. Each action at level A~i~ is connected to its preconditions at S~i~ and its effects at S~i+1~. So a literal appears because an action caused it, but we also want to say that a literal can persist if no action negates it. This is represented by a **persistence action** (sometimes called a _no-op_). For every literal C , we add to the problem a persistence action with precondition C and effect C . Level A~0~ in Figure 10.8 shows one “real” action, Eat(Cake), along with two persistence actions drawn as small square boxes.
 
-ACTION
+Level A~0~ contains all the actions that _could_ occur in state S~0~, but just as important it records conflicts between actions that would prevent them from occurring together. The gray lines in Figure 10.8 indicate **mutual exclusion** (or **mutex**) links. For example, Eat(Cake) is mutually exclusive with the persistence of either Have(Cake) or ¬Eaten(Cake). We shall see shortly how mutex links are computed.
 
-a _no-op_). For every literal C , we add to the problem a persistence action with precondition C
+Level s~1~ contains all the literals that could result from picking any subset of the actions in A~0~, as well as mutex links (gray lines) indicating literals that could not appear together, regardless of the choice of actions. For example, Have(Cake) and Eaten(Cake) are mutex:  
 
-and effect C . Level A0 in Figure 10.8 shows one “real” action, Eat(Cake), along with two persistence actions drawn as small square boxes.
+depending on the choice of actions in A~0~, either, but not both, could be the result. In other words, s~1~ represents a belief state: a set of possible states. The members of this set are all subsets of the literals such that there is no mutex link between any members of the subset.
 
-Level A0 contains all the actions that _could_ occur in state S0, but just as important it records conflicts between actions that would prevent them from occurring together. The gray lines in Figure 10.8 indicate **mutual exclusion** (or **mutex**) links. For example, Eat(Cake) isMUTUAL EXCLUSION
+We continue in this way, alternating between state level Si and action level Ai until we reach a point where two consecutive levels are identical. At this point, we say that the graph has **leveled off**. The graph in Figure 10.8 levels off at s~2~.
 
-MUTEX mutually exclusive with the persistence of either Have(Cake) or ¬Eaten(Cake). We shall see shortly how mutex links are computed.
-
-Level s~1~ contains all the literals that could result from picking any subset of the actions in A0, as well as mutex links (gray lines) indicating literals that could not appear together, regardless of the choice of actions. For example, Have(Cake) and Eaten(Cake) are mutex:  
-
-Section 10.3. Planning Graphs 381
-
-depending on the choice of actions in A0, either, but not both, could be the result. In other words, s~1~ represents a belief state: a set of possible states. The members of this set are all subsets of the literals such that there is no mutex link between any members of the subset.
-
-We continue in this way, alternating between state level Si and action level Ai until we reach a point where two consecutive levels are identical. At this point, we say that the graph has **leveled off**. The graph in Figure 10.8 levels off at s~2~.LEVELED OFF
-
-What we end up with is a structure where every Ai level contains all the actions that are applicable in Si, along with constraints saying that two actions cannot both be executed at the same level. Every Si level contains all the literals that could result from any possible choice of actions in Ai−1, along with constraints saying which pairs of literals are not possible. It is important to note that the process of constructing the planning graph does _not_ require choosing among actions, which would entail combinatorial search. Instead, it just records the impossibility of certain choices using mutex links.
+What we end up with is a structure where every A~i~ level contains all the actions that are applicable in S~i~, along with constraints saying that two actions cannot both be executed at the same level. Every S~i~ level contains all the literals that could result from any possible choice of actions in A~i−1~, along with constraints saying which pairs of literals are not possible. It is important to note that the process of constructing the planning graph does _not_ require choosing among actions, which would entail combinatorial search. Instead, it just records the impossibility of certain choices using mutex links.
 
 We now define mutex links for both actions and literals. A mutex relation holds between two _actions_ at a given level if any of the following three conditions holds:
 
-- _Inconsistent effects:_ one action negates an effect of the other. For example, Eat(Cake)
-
-and the persistence of Have(Cake) have inconsistent effects because they disagree on the effect Have(Cake).
+- _Inconsistent effects:_ one action negates an effect of the other. For example, Eat(Cake) and the persistence of Have(Cake) have inconsistent effects because they disagree on the effect Have(Cake).
 
 - _Interference:_ one of the effects of one action is the negation of a precondition of the other. For example Eat(Cake) interferes with the persistence of Have(Cake) by negating its precondition.
 
 - _Competing needs:_ one of the preconditions of one action is mutually exclusive with a precondition of the other. For example, Bake(Cake) and Eat(Cake) are mutex because they compete on the value of the Have(Cake) precondition.
 
-A mutex relation holds between two _literals_ at the same level if one is the negation of the other or if each possible pair of actions that could achieve the two literals is mutually exclusive. This condition is called _inconsistent support_. For example, Have(Cake) and Eaten(Cake)
+A mutex relation holds between two _literals_ at the same level if one is the negation of the other or if each possible pair of actions that could achieve the two literals is mutually exclusive. This condition is called _inconsistent support_. For example, Have(Cake) and Eaten(Cake) are mutex in s~1~ because the only way of achieving Have(Cake), the persistence action, is mutex with the only way of achieving Eaten(Cake), namely Eat(Cake). In s~2~ the two literals are not mutex, because there are new ways of achieving them, such as Bake(Cake) and the persistence of Eaten(Cake), that are not mutex. 
 
-are mutex in s~1~ because the only way of achieving Have(Cake), the persistence action, is mutex with the only way of achieving Eaten(Cake), namely Eat(Cake). In s~2~ the two literals are not mutex, because there are new ways of achieving them, such as Bake(Cake)
+A planning graph is polynomial in the size of the planning problem. For a planning problem with l literals and a actions, each Si has no more than l nodes and l^2^ mutex links, and each Ai has no more than a + l nodes (including the no-ops), (a + l)^2^ mutex links, and 2(al + l) precondition and effect links. Thus, an entire graph with n levels has a size of O(n(a + l)^2^). The time to build the graph has the same complexity.
 
-and the persistence of Eaten(Cake), that are not mutex. A planning graph is polynomial in the size of the planning problem. For a planning
+### Planning graphs for heuristic estimation
 
-problem with l literals and a actions, each Si has no more than l nodes and l 2 mutex links,
+A planning graph, once constructed, is a rich source of information about the problem. First, if any goal literal fails to appear in the final level of the graph, then the problem is unsolvable. Second, we can estimate the cost of achieving any goal literal gi from state s as the level at which gi first appears in the planning graph constructed from initial state s. We call this the **level cost** of gi. In Figure 10.8, Have(Cake) has level cost 0 and Eaten(Cake) has level costLEVEL COST
 
-and each Ai has no more than a + l nodes (including the no-ops), (a + l)2 mutex links, and 2(al + l) precondition and effect links. Thus, an entire graph with n levels has a size of O(n(a + l)2). The time to build the graph has the same complexity.
+1. It is easy to show (Exercise 10.10) that these estimates are admissible for the individual goals. The estimate might not always be accurate, however, because planning graphs allow several actions at each level, whereas the heuristic counts just the level and not the number of actions. For this reason, it is common to use a **serial planning graph** for computing heuristics. A serial graph insists that only one action can actually occur at any given time step; this is done by adding mutex links between every pair of nonpersistence actions. Level costs extracted from serial graphs are often quite reasonable estimates of actual costs.
 
-**10.3.1 Planning graphs for heuristic estimation**
+To estimate the cost of a _conjunction_ of goals, there are three simple approaches. The **max-level** heuristic simply takes the maximum level cost of any of the goals; this is admissible, but not necessarily accurate. 
 
-A planning graph, once constructed, is a rich source of information about the problem. First, if any goal literal fails to appear in the final level of the graph, then the problem is unsolvable. Second, we can estimate the cost of achieving any goal literal gi from state s as the level at which gi first appears in the planning graph constructed from initial state s. We call this the  
+The **level sum** heuristic, following the subgoal independence assumption, returns the sum of the level costs of the goals; this can be inadmissible but works well in practice for problems that are largely decomposable. It is much more accurate than the numberof-unsatisfied-goals heuristic from Section 10.2. For our problem, the level-sum heuristic estimate for the conjunctive goal Have(Cake) ∧ Eaten(Cake) will be 0 + 1 = 1, whereas the correct answer is 2, achieved by the plan [Eat(Cake),Bake(Cake)]. That doesn’t seem so bad. A more serious error is that if Bake(Cake) were not in the set of actions, then the estimate would still be 1, when in fact the conjunctive goal would be impossible.
 
-
-
-**level cost** of gi. In Figure 10.8, Have(Cake) has level cost 0 and Eaten(Cake) has level costLEVEL COST
-
-1. It is easy to show (Exercise 10.10) that these estimates are admissible for the individual goals. The estimate might not always be accurate, however, because planning graphs allow several actions at each level, whereas the heuristic counts just the level and not the number of actions. For this reason, it is common to use a **serial planning graph** for computingSERIAL PLANNING
-
-GRAPH
-
-heuristics. A serial graph insists that only one action can actually occur at any given time step; this is done by adding mutex links between every pair of nonpersistence actions. Level costs extracted from serial graphs are often quite reasonable estimates of actual costs.
-
-To estimate the cost of a _conjunction_ of goals, there are three simple approaches. The **max-level** heuristic simply takes the maximum level cost of any of the goals; this is admissi-MAX-LEVEL
-
-ble, but not necessarily accurate. The **level sum** heuristic, following the subgoal independence assumption, returns theLEVEL SUM
-
-sum of the level costs of the goals; this can be inadmissible but works well in practice for problems that are largely decomposable. It is much more accurate than the numberof-unsatisfied-goals heuristic from Section 10.2. For our problem, the level-sum heuristic estimate for the conjunctive goal Have(Cake) ∧ Eaten(Cake) will be 0 + 1 = 1, whereas the correct answer is 2, achieved by the plan [Eat(Cake),Bake(Cake)]. That doesn’t seem so bad. A more serious error is that if Bake(Cake) were not in the set of actions, then the estimate would still be 1, when in fact the conjunctive goal would be impossible.
-
-Finally, the **set-level** heuristic finds the level at which all the literals in the conjunctiveSET-LEVEL
-
-goal appear in the planning graph without any pair of them being mutually exclusive. This heuristic gives the correct values of 2 for our original problem and infinity for the problem without Bake(Cake). It is admissible, it dominates the max-level heuristic, and it works extremely well on tasks in which there is a good deal of interaction among subplans. It is not perfect, of course; for example, it ignores interactions among three or more literals.
+Finally, the **set-level** heuristic finds the level at which all the literals in the conjunctive goal appear in the planning graph without any pair of them being mutually exclusive. This heuristic gives the correct values of 2 for our original problem and infinity for the problem without Bake(Cake). It is admissible, it dominates the max-level heuristic, and it works extremely well on tasks in which there is a good deal of interaction among subplans. It is not perfect, of course; for example, it ignores interactions among three or more literals.
 
 As a tool for generating accurate heuristics, we can view the planning graph as a relaxed problem that is efficiently solvable. To understand the nature of the relaxed problem, we need to understand exactly what it means for a literal g to appear at level Si in the planning graph. Ideally, we would like it to be a guarantee that there exists a plan with i action levels that achieves g, and also that if g does not appear, there is no such plan. Unfortunately, making that guarantee is as difficult as solving the original planning problem. So the planning graph makes the second half of the guarantee (if g does not appear, there is no plan), but if g does appear, then all the planning graph promises is that there is a plan that _possibly_ achieves g and has no “obvious” flaws. An obvious flaw is defined as a flaw that can be detected by considering two actions or two literals at a time—in other words, by looking at the mutex relations. There could be more subtle flaws involving three, four, or more actions, but experience has shown that it is not worth the computational effort to keep track of these possible flaws. This is similar to a lesson learned from constraint satisfaction problems—that it is often worthwhile to compute 2-consistency before searching for a solution, but less often worthwhile to compute 3-consistency or higher. (See page 211.)
 
-One example of an unsolvable problem that cannot be recognized as such by a planning graph is the blocks-world problem where the goal is to get block A on B, B on C , and C on A. This is an impossible goal; a tower with the bottom on top of the top. But a planning graph  
+One example of an unsolvable problem that cannot be recognized as such by a planning graph is the blocks-world problem where the goal is to get block A on B, B on C , and C on A. This is an impossible goal; a tower with the bottom on top of the top. But a planning graph cannot detect the impossibility, because any two of the three subgoals are achievable. There are no mutexes between any pair of literals, only between the three as a whole. To detect that this problem is impossible, we would have to search over the planning graph.
 
-Section 10.3. Planning Graphs 383
-
-cannot detect the impossibility, because any two of the three subgoals are achievable. There are no mutexes between any pair of literals, only between the three as a whole. To detect that this problem is impossible, we would have to search over the planning graph.
-
-**10.3.2 The** GRAPHPLAN **algorithm**
+### The GRAPHPLAN algorithm
 
 This subsection shows how to extract a plan directly from the planning graph, rather than just using the graph to provide a heuristic. The GRAPHPLAN algorithm (Figure 10.9) repeatedly adds a level to a planning graph with EXPAND-GRAPH. Once all the goals show up as nonmutex in the graph, GRAPHPLAN calls EXTRACT-SOLUTION to search for a plan that solves the problem. If that fails, it expands another level and tries again, terminating with failure when there is no reason to go on.
 
 **function** GRAPHPLAN(problem) **returns** solution or failure
 
-graph← INITIAL-PLANNING-GRAPH(problem) goals←CONJUNCTS(problem .GOAL) nogoods← an empty hash table **for** tl = 0 **to**∞ **do**
+graph← INITIAL-PLANNING-GRAPH(problem) 
+goals←CONJUNCTS(problem .GOAL) 
+nogoods← an empty hash table 
+**for** tl = 0 **to**∞ **do**
 
-**if** goals all non-mutex in St of graph **then** solution←EXTRACT-SOLUTION(graph , goals , NUMLEVELS(graph), nogoods) **if** solution ≠ failure **then return** solution
+**if** goals all non-mutex in St of graph **then** solution←EXTRACT-SOLUTION(graph , goals , NUMLEVELS(graph), nogoods) 
+**if** solution ≠ failure **then return** solution
 
 **if** graph and nogoods have both leveled off **then return** failure
 
@@ -4246,105 +4019,13 @@ graph← EXPAND-GRAPH(graph , problem)
 
 **Figure 10.9** The GRAPHPLAN algorithm. GRAPHPLAN calls EXPAND-GRAPH to add a level until either a solution is found by EXTRACT-SOLUTION, or no solution is possible.
 
-Let us now trace the operation of GRAPHPLAN on the spare tire problem from page 370. The graph is shown in Figure 10.10. The first line of GRAPHPLAN initializes the planning graph to a one-level (S0) graph representing the initial state. The positive fluents from the problem description’s initial state are shown, as are the relevant negative fluents. Not shown are the unchanging positive literals (such as Tire(Spare)) and the irrelevant negative literals. The goal At(Spare ,Axle) is not present in S0, so we need not call EXTRACT-SOLUTION— we are certain that there is no solution yet. Instead, EXPAND-GRAPH adds into A0 the three actions whose preconditions exist at level S0 (i.e., all the actions except PutOn(Spare ,Axle)), along with persistence actions for all the literals in S0. The effects of the actions are added at level s~1~. EXPAND-GRAPH then looks for mutex relations and adds them to the graph.
+Let us now trace the operation of GRAPHPLAN on the spare tire problem from page 370. The graph is shown in Figure 10.10. The first line of GRAPHPLAN initializes the planning graph to a one-level (S~0~) graph representing the initial state. The positive fluents from the problem description’s initial state are shown, as are the relevant negative fluents. Not shown are the unchanging positive literals (such as Tire(Spare)) and the irrelevant negative literals. The goal At(Spare ,Axle) is not present in S~0~, so we need not call EXTRACT-SOLUTION— we are certain that there is no solution yet. Instead, EXPAND-GRAPH adds into A~0~ the three actions whose preconditions exist at level S~0~ (i.e., all the actions except PutOn(Spare ,Axle)), along with persistence actions for all the literals in S~0~. The effects of the actions are added at level s~1~. EXPAND-GRAPH then looks for mutex relations and adds them to the graph.
 
 At(Spare ,Axle) is still not present in s~1~, so again we do not call EXTRACT-SOLUTION. We call EXPAND-GRAPH again, adding A~1~ and s~1~ and giving us the planning graph shown in Figure 10.10. Now that we have the full complement of actions, it is worthwhile to look at some of the examples of mutex relations and their causes:
 
 - _Inconsistent effects:_ Remove(Spare ,Trunk ) is mutex with LeaveOvernight because one has the effect At(Spare ,Ground) and the other has its negation.  
 
-
-
-_S_0 A~1~ _S_2 _At(Spare,Trunk)_
-
-_At(Spare,Trunk)_
-
-_At(Flat,Axle)_
-
-_At(Flat,Axle)_
-
-_At(Spare,Axle)_
-
-_At(Flat,Ground)_
-
-_At(Flat,Ground)_
-
-_At(Spare,Ground)_
-
-_At(Spare,Ground)_
-
-_At(Spare,Trunk)_
-
-_At(Spare,Trunk)_
-
-_At(Flat,Axle)_
-
-_At(Flat,Axle)_
-
-_At(Spare,Axle)_
-
-_At(Flat,Ground)_
-
-_At(Flat,Ground)_
-
-_At(Spare,Ground)_
-
-_At(Spare,Ground)_
-
-_At(Spare,Axle)_
-
-_At(Spare,Trunk)_
-
-_At(Flat,Axle)_
-
-_At(Spare,Axle)_
-
-_At(Flat,Ground)_
-
-_At(Spare,Ground)_
-
-PutOn(Spare,Axle)
-
-LeaveOvernight
-
-Remove(Flat,Axle)
-
-Remove(Spare,Trunk)
-
-Remove(Spare,Trunk)
-
-Remove(Flat,Axle)
-
-LeaveOvernight
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-¬
-
-A0 _S_1
-
-**Figure 10.10** The planning graph for the spare tire problem after expansion to level s~2~. Mutex links are shown as gray lines. Not all links are shown, because the graph would be too cluttered if we showed them all. The solution is indicated by bold lines and outlines.
+![Alt text](image/10img/figure-10.10.png)
 
 - _Interference:_ Remove(Flat ,Axle) is mutex with LeaveOvernight because one has the precondition At(Flat ,Axle) and the other has its negation as an effect.
 
@@ -4356,27 +4037,24 @@ This time, when we go back to the start of the loop, all the literals from the g
 
 Alternatively, we can define EXTRACT-SOLUTION as a backward search problem, where each state in the search contains a pointer to a level in the planning graph and a set of unsatisfied goals. We define this search problem as follows:
 
-- The initial state is the last level of the planning graph, Sn, along with the set of goals from the planning problem.
+- The initial state is the last level of the planning graph, S~n~, along with the set of goals from the planning problem.
 
-- The actions available in a state at level Si are to select any conflict-free subset of the actions in Ai−1 whose effects cover the goals in the state. The resulting state has level Si−1 and has as its set of goals the preconditions for the selected set of actions. By “conflict free,” we mean a set of actions such that no two of them are mutex and no two of their preconditions are mutex.  
+- The actions available in a state at level S~i~ are to select any conflict-free subset of the actions in A~i−1~ whose effects cover the goals in the state. The resulting state has level S~i−1~ and has as its set of goals the preconditions for the selected set of actions. By “conflict free,” we mean a set of actions such that no two of them are mutex and no two of their preconditions are mutex.  
 
-Section 10.3. Planning Graphs 385
+- The goal is to reach a state at level S~0~ such that all the goals are satisfied. 
 
-- The goal is to reach a state at level S0 such that all the goals are satisfied. - The cost of each action is 1.
+- The cost of each action is 1.
 
-For this particular problem, we start at s~2~ with the goal At(Spare ,Axle). The only choice we have for achieving the goal set is PutOn(Spare ,Axle). That brings us to a search state at s~1~
-
-with goals At(Spare ,Ground) and ¬At(Flat ,Axle). The former can be achieved only by Remove(Spare ,Trunk), and the latter by either Remove(Flat ,Axle) or LeaveOvernight . But LeaveOvernight is mutex with Remove(Spare ,Trunk ), so the only solution is to choose Remove(Spare ,Trunk) and Remove(Flat ,Axle). That brings us to a search state at S0 with the goals At(Spare ,Trunk) and At(Flat ,Axle). Both of these are present in the state, so we have a solution: the actions Remove(Spare , Trunk) and Remove(Flat , Axle) in level A0, followed by PutOn(Spare , Axle) in A~1~.
+For this particular problem, we start at s~2~ with the goal At(Spare ,Axle). The only choice we have for achieving the goal set is PutOn(Spare ,Axle). That brings us to a search state at s~1~ with goals At(Spare ,Ground) and ¬At(Flat ,Axle). The former can be achieved only by Remove(Spare ,Trunk), and the latter by either Remove(Flat ,Axle) or LeaveOvernight . But LeaveOvernight is mutex with Remove(Spare ,Trunk ), so the only solution is to choose Remove(Spare ,Trunk) and Remove(Flat ,Axle). That brings us to a search state at S~0~ with the goals At(Spare ,Trunk) and At(Flat ,Axle). Both of these are present in the state, so we have a solution: the actions Remove(Spare , Trunk) and Remove(Flat , Axle) in level A~0~, followed by PutOn(Spare , Axle) in A~1~.
 
 In the case where EXTRACT-SOLUTION fails to find a solution for a set of goals at a given level, we record the (level , goals) pair as a **no-good**, just as we did in constraint learning for CSPs (page 220). Whenever EXTRACT-SOLUTION is called again with the same level and goals, we can find the recorded no-good and immediately return failure rather than searching again. We see shortly that no-goods are also used in the termination test.
 
 We know that planning is PSPACE-complete and that constructing the planning graph takes polynomial time, so it must be the case that solution extraction is intractable in the worst case. Therefore, we will need some heuristic guidance for choosing among actions during the backward search. One approach that works well in practice is a greedy algorithm based on the level cost of the literals. For any set of goals, we proceed in the following order:
 
-1. Pick first the literal with the highest level cost. 2. To achieve that literal, prefer actions with easier preconditions. That is, choose an action
+1. Pick first the literal with the highest level cost. 
+2. To achieve that literal, prefer actions with easier preconditions. That is, choose an action such that the sum (or maximum) of the level costs of its preconditions is smallest.
 
-such that the sum (or maximum) of the level costs of its preconditions is smallest.
-
-**10.3.3 Termination of** GRAPHPLAN
+### Termination of GRAPHPLAN
 
 So far, we have skated over the question of termination. Here we show that GRAPHPLAN will in fact terminate and return failure when there is no solution.
 
@@ -4384,31 +4062,23 @@ The first thing to understand is why we can’t stop expanding the graph as soon
 
 How long do we have to keep expanding after the graph has leveled off? If the function EXTRACT-SOLUTION fails to find a solution, then there must have been at least one set of goals that were not achievable and were marked as a no-good. So if it is possible that there might be fewer no-goods in the next level, then we should continue. As soon as the graph itself and the no-goods have both leveled off, with no solution found, we can terminate with failure because there is no possibility of a subsequent change that could add a solution.  
 
-
-
 Now all we have to do is prove that the graph and the no-goods will always level off. The key to this proof is that certain properties of planning graphs are monotonically increasing or decreasing. “X increases monotonically” means that the set of Xs at level i + 1 is a superset (not necessarily proper) of the set at level i. The properties are as follows:
 
 - _Literals increase monotonically:_ Once a literal appears at a given level, it will appear at all subsequent levels. This is because of the persistence actions; once a literal shows up, persistence actions cause it to stay forever.
 
 - _Actions increase monotonically:_ Once an action appears at a given level, it will appear at all subsequent levels. This is a consequence of the monotonic increase of literals; if the preconditions of an action appear at one level, they will appear at subsequent levels, and thus so will the action.
 
-- _Mutexes decrease monotonically:_ If two actions are mutex at a given level Ai, then they will also be mutex for all _previous_ levels at which they both appear. The same holds for mutexes between literals. It might not always appear that way in the figures, because the figures have a simplification: they display neither literals that cannot hold at level Si nor actions that cannot be executed at level Ai. We can see that “mutexes decrease monotonically” is true if you consider that these invisible literals and actions are mutex with everything.
+- _Mutexes decrease monotonically:_ If two actions are mutex at a given level Ai, then they will also be mutex for all _previous_ levels at which they both appear. The same holds for mutexes between literals. It might not always appear that way in the figures, because the figures have a simplification: they display neither literals that cannot hold at level S~i~ nor actions that cannot be executed at level A~i~. We can see that “mutexes decrease monotonically” is true if you consider that these invisible literals and actions are mutex with everything.
 
-The proof can be handled by cases: if actions A and B are mutex at level Ai, it must be because of one of the three types of mutex. The first two, inconsistent effects and interference, are properties of the actions themselves, so if the actions are mutex at Ai, they will be mutex at every level. The third case, competing needs, depends on conditions at level Si: that level must contain a precondition of A that is mutex with a precondition of B. Now, these two preconditions can be mutex if they are negations of each other (in which case they would be mutex in every level) or if all actions for achieving one are mutex with all actions for achieving the other. But we already know that the available actions are increasing monotonically, so, by induction, the mutexes must be decreasing.
+The proof can be handled by cases: if actions A and B are mutex at level A~i~, it must be because of one of the three types of mutex. The first two, inconsistent effects and interference, are properties of the actions themselves, so if the actions are mutex at A~i~, they will be mutex at every level. The third case, competing needs, depends on conditions at level S~i~: that level must contain a precondition of A that is mutex with a precondition of B. Now, these two preconditions can be mutex if they are negations of each other (in which case they would be mutex in every level) or if all actions for achieving one are mutex with all actions for achieving the other. But we already know that the available actions are increasing monotonically, so, by induction, the mutexes must be decreasing.
 
 - _No-goods decrease monotonically:_ If a set of goals is not achievable at a given level, then they are not achievable in any _previous_ level. The proof is by contradiction: if they were achievable at some previous level, then we could just add persistence actions to make them achievable at a subsequent level.
 
 Because the actions and literals increase monotonically and because there are only a finite number of actions and literals, there must come a level that has the same number of actions and literals as the previous level. Because mutexes and no-goods decrease, and because there can never be fewer than zero mutexes or no-goods, there must come a level that has the same number of mutexes and no-goods as the previous level. Once a graph has reached this state, then if one of the goals is missing or is mutex with another goal, then we can stop the GRAPHPLAN algorithm and return failure. That concludes a sketch of the proof; for more details see Ghallab _et al._ (2004).  
 
-Section 10.4. Other Classical Planning Approaches 387
+![Alt text](image/10img/figure-10.11.png)
 
-**Year Track Winning Systems (approaches)**
-
-2008 Optimal GAMER (model checking, bidirectional search) 2008 Satisficing LAMA (fast downward search with FF heuristic) 2006 Optimal SATP~LAN~, MAXPLAN (Boolean satisfiability) 2006 Satisficing SGPLAN (forward search; partitions into independent subproblems) 2004 Optimal SATP~LAN~ (Boolean satisfiability) 2004 Satisficing FAST DIAGONALLY DOWNWARD (forward search with causal graph) 2002 Automated LPG (local search, planning graphs converted to CSPs) 2002 Hand-coded TLPLAN (temporal action logic with control rules for forward search) 2000 Automated FF (forward search) 2000 Hand-coded TALPLANNER (temporal action logic with control rules for forward search) 1998 Automated IPP (planning graphs); HSP (forward search)
-
-**Figure 10.11** Some of the top-performing systems in the International Planning Compe- tition. Each year there are various tracks: “Optimal” means the planners must produce the shortest possible plan, while “Satisficing” means nonoptimal solutions are accepted. “Hand- coded” means domain-specific heuristics are allowed; “Automated” means they are not.
-
-10.4 OTHER CLASSICAL PLANNING APPROACHES
+## OTHER CLASSICAL PLANNING APPROACHES
 
 Currently the most popular and effective approaches to fully automated planning are:
 
@@ -4418,103 +4088,47 @@ Currently the most popular and effective approaches to fully automated planning 
 
 - Search using a planning graph (Section 10.3)
 
-These three approaches are not the only ones tried in the 40-year history of automated plan- ning. Figure 10.11 shows some of the top systems in the International Planning Competitions, which have been held every even year since 1998. In this section we first describe the transla- tion to a satisfiability problem and then describe three other influential approaches: planning as first-order logical deduction; as constraint satisfaction; and as plan refinement.
+These three approaches are not the only ones tried in the 40-year history of automated planning. Figure 10.11 shows some of the top systems in the International Planning Competitions, which have been held every even year since 1998. In this section we first describe the translation to a satisfiability problem and then describe three other influential approaches: planning as first-order logical deduction; as constraint satisfaction; and as plan refinement.
 
-**10.4.1 Classical planning as Boolean satisfiability**
+### Classical planning as Boolean satisfiability
 
-In Section 7.7.4 we saw how SATP~LAN~ solves planning problems that are expressed in propo- sitional logic. Here we show how to translate a PDDL description into a form that can be processed by SATP~LAN~. The translation is a series of straightforward steps:
+In Section 7.7.4 we saw how SATP~LAN~ solves planning problems that are expressed in propositional logic. Here we show how to translate a PDDL description into a form that can be processed by SATP~LAN~. The translation is a series of straightforward steps:
 
 - Propositionalize the actions: replace each action schema with a set of ground actions formed by substituting constants for each of the variables. These ground actions are not part of the translation, but will be used in subsequent steps.
 
-- Define the initial state: assert F 0 for every fluent F in the problem’s initial state, and
+- Define the initial state: assert F^0^ for every fluent F in the problem’s initial state, and ¬F for every fluent not mentioned in the initial state.
 
-¬F for every fluent not mentioned in the initial state.
-
-- Propositionalize the goal: for every variable in the goal, replace the literals that contain the variable with a disjunction over constants. For example, the goal of having block A  
-
-
-
-on another block, On(A,x) ∧ Block(x) in a world with objects A,B and C , would be replaced by the goal
+- Propositionalize the goal: for every variable in the goal, replace the literals that contain the variable with a disjunction over constants. For example, the goal of having block A on another block, On(A,x) ∧ Block(x) in a world with objects A,B and C , would be replaced by the goal 
 
 (On(A,A) ∧ Block (A)) ∨ (On(A,B) ∧ Block (B)) ∨ (On(A,C) ∧ Block (C)) .
 
 - Add successor-state axioms: For each fluent F , add an axiom of the form
 
-F t+1 ⇔ ActionCausesF t ∨ (F
-
-t ∧ ¬ActionCausesNotF t ) ,
+F^t+1^ ⇔ ActionCausesF^t^ ∨ (F^t^ ∧ ¬ActionCausesNotF^t^ ) ,
 
 where ActionCausesF is a disjunction of all the ground actions that have F in their add list, and ActionCausesNotF is a disjunction of all the ground actions that have F
 
 in their delete list.
 
-- Add precondition axioms: For each ground action A, add the axiom A t ⇒ PRE(A)t,
-
-that is, if an action is taken at time t, then the preconditions must have been true.
+- Add precondition axioms: For each ground action A, add the axiom A^t^ ⇒ PRE(A)^t^, that is, if an action is taken at time t, then the preconditions must have been true.
 
 - Add action exclusion axioms: say that every action is distinct from every other action.
 
 The resulting translation is in the form that we can hand to SATP~LAN~ to find a solution.
 
-**10.4.2 Planning as first-order logical deduction: Situation calculus**
+### Planning as first-order logical deduction: Situation calculus
 
 PDDL is a language that carefully balances the expressiveness of the language with the com- plexity of the algorithms that operate on it. But some problems remain difficult to express in PDDL. For example, we can’t express the goal “move all the cargo from A to B regardless of how many pieces of cargo there are” in PDDL, but we can do it in first-order logic, using a universal quantifier. Likewise, first-order logic can concisely express global constraints such as “no more than four robots can be in the same place at the same time.” PDDL can only say this with repetitious preconditions on every possible action that involves a move.
 
-The propositional logic representation of planning problems also has limitations, such as the fact that the notion of time is tied directly to fluents. For example, South2 means “the agent is facing south at time 2.” With that representation, there is no way to say “the agent would be facing south at time 2 if it executed a right turn at time 1; otherwise it would be facing east.” First-order logic lets us get around this limitation by replacing the notion of linear time with a notion of branching _situations_, using a representation called **situation calculus** that works like this:SITUATION
+The propositional logic representation of planning problems also has limitations, such as the fact that the notion of time is tied directly to fluents. For example, South~2~ means “the agent is facing south at time 2.” With that representation, there is no way to say “the agent would be facing south at time 2 if it executed a right turn at time 1; otherwise it would be facing east.” First-order logic lets us get around this limitation by replacing the notion of linear time with a notion of branching _situations_, using a representation called **situation calculus** that works like this:
 
-CALCULUS
+- The initial state is called a **situation**. If s is a situation and a is an action, then RESULT(s, a) is also a situation. There are no other situations. Thus, a situation corresponds to a sequence, or history, of actions. You can also think of a situation as the result of applying the actions, but note that two situations are the same only if their start and actions are the same: (RESULT(s, a) = RESULT(s′, a′)) ⇔ (s = s′ ∧ a = a ′). Some examples of actions and situations are shown in Figure 10.12.
 
-- The initial state is called a **situation**. If s is a situation and a is an action, thenSITUATION
+- A function or relation that can vary from one situation to the next is a **fluent.** By convention, the situation s is always the last argument to the fluent, for example At(x, l, s) is a relational fluent that is true when object x is at location l in situation s, and Location is a functional fluent such that Location(x, s) = l holds in the same situations as At(x, l, s).
 
-RESULT(s, a) is also a situation. There are no other situations. Thus, a situation cor- responds to a sequence, or history, of actions. You can also think of a situation as the result of applying the actions, but note that two situations are the same only if their start and actions are the same: (RESULT(s, a) = RESULT(s′, a′)) ⇔ (s = s
+- Each action’s preconditions are described with a **possibility axiom** that says when the action can be taken. It has the form Φ(s) ⇒ Poss(a, s) where Φ(s) is some formula  
 
-′ ∧ a = a ′).
-
-Some examples of actions and situations are shown in Figure 10.12.
-
-- A function or relation that can vary from one situation to the next is a **fluent.** By conven- tion, the situation s is always the last argument to the fluent, for example At(x, l, s) is a relational fluent that is true when object x is at location l in situation s, and Location is a functional fluent such that Location(x, s) = l holds in the same situations as At(x, l, s).
-
-- Each action’s preconditions are described with a **possibility axiom** that says when thePOSSIBILITY AXIOM
-
-action can be taken. It has the form Φ(s) ⇒ Poss(a, s) where Φ(s) is some formula  
-
-Section 10.4. Other Classical Planning Approaches 389
-
-**PIT**
-
-**PIT**
-
-**PIT**
-
-Gold
-
-**PIT**
-
-**PIT**
-
-**PIT**
-
-Gold
-
-**PIT**
-
-**PIT**
-
-**PIT**
-
-Gold
-
-_S_0
-
-_Forward_
-
-_Result_(_S_0_, Forward_)
-
-_Result_(_Result_(_S_0_, Forward_), _Turn_(_Right_))
-
-_Turn_(_Right_)
-
-**Figure 10.12** Situations as the results of actions in the wumpus world.
+![Alt text](image/10img/figure-10.12.png)
 
 involving s that describes the preconditions. An example from the wumpus world says that it is possible to shoot if the agent is alive and has an arrow:
 
@@ -4522,13 +4136,12 @@ Alive(Agent , s) ∧ Have(Agent ,Arrow , s) ⇒ Poss(Shoot , s)
 
 - Each fluent is described with a **successor-state axiom** that says what happens to the fluent, depending on what action is taken. This is similar to the approach we took for propositional logic. The axiom has the form
 
-_Action is possible_ ⇒ (_Fluent is true in result state_ ⇔ _Action’s effect made it true_
+_Action is possible_ ⇒ 
+(_Fluent is true in result state_ ⇔ _Action’s effect made it true_
 
 ∨ _It was true before and action left it alone_) .
 
-For example, the axiom for the relational fluent Holding says that the agent is holding some gold g after executing a possible action if and only if the action was a Grab of g
-
-or if the agent was already holding g and the action was not releasing it:
+For example, the axiom for the relational fluent Holding says that the agent is holding some gold g after executing a possible action if and only if the action was a Grab of g or if the agent was already holding g and the action was not releasing it:
 
 Poss(a, s) ⇒
 
@@ -4536,157 +4149,84 @@ Poss(a, s) ⇒
 
 a= Grab(g) ∨ (Holding(Agent , g, s) ∧ a ≠ Release(g))) .
 
-- We need **unique action axioms** so that the agent can deduce that, for example, a ≠UNIQUE ACTION AXIOMS
+- We need **unique action axioms** so that the agent can deduce that, for example, a ≠ Release(g). For each distinct pair of action names A~i~ and A~j~ we have an axiom that says the actions are different:
 
-Release(g). For each distinct pair of action names Ai and Aj we have an axiom that says the actions are different:
-
-Ai(x, . . .) ≠ Aj(y, . . .)  
+A~i~(x, . . .) ≠ A~j~(y, . . .)  
 
 
 
-and for each action name Ai we have an axiom that says two uses of that action name are equal if and only if all their arguments are equal:
+and for each action name A~i~ we have an axiom that says two uses of that action name are equal if and only if all their arguments are equal:
 
-Ai(X~1~, . . . , X~n~)= Ai(y1, . . . , yn) ⇔ X~1~ = y1 ∧ . . . ∧ X~n~ = yn .
+A~i~(X~1~, . . . , X~n~)= A~i~(y~1~, . . . , y~n~) ⇔ X~1~ = y~1~ ∧ . . . ∧ X~n~ = y~n~ .
 
 - A solution is a situation (and hence a sequence of actions) that satisfies the goal.
 
 Work in situation calculus has done a lot to define the formal semantics of planning and to open up new areas of investigation. But so far there have not been any practical large-scale planning programs based on logical deduction over the situation calculus. This is in part because of the difficulty of doing efficient inference in FOL, but is mainly because the field has not yet developed effective heuristics for planning with situation calculus.
 
-**10.4.3 Planning as constraint satisfaction**
+### Planning as constraint satisfaction
 
-We have seen that constraint satisfaction has a lot in common with Boolean satisfiability, and we have seen that CSP techniques are effective for scheduling problems, so it is not surprising that it is possible to encode a bounded planning problem (i.e., the problem of finding a plan of length k) as a constraint satisfaction problem (CSP). The encoding is similar to the encoding to a SAT problem (Section 10.4.1), with one important simplification: at each time step we need only a single variable, Actiont, whose domain is the set of possible actions. We no longer need one variable for every action, and we don’t need the action exclusion axioms. It is also possible to encode a planning graph into a CSP. This is the approach taken by GP-CSP (Do and Kambhampati, 2003).
+We have seen that constraint satisfaction has a lot in common with Boolean satisfiability, and we have seen that CSP techniques are effective for scheduling problems, so it is not surprising that it is possible to encode a bounded planning problem (i.e., the problem of finding a plan of length k) as a constraint satisfaction problem (CSP). The encoding is similar to the encoding to a SAT problem (Section 10.4.1), with one important simplification: at each time step we need only a single variable, Action^t^, whose domain is the set of possible actions. We no longer need one variable for every action, and we don’t need the action exclusion axioms. It is also possible to encode a planning graph into a CSP. This is the approach taken by GP-CSP (Do and Kambhampati, 2003).
 
-**10.4.4 Planning as refinement of partially ordered plans**
+### Planning as refinement of partially ordered plans
 
 All the approaches we have seen so far construct _totally ordered_ plans consisting of a strictly linear sequences of actions. This representation ignores the fact that many subproblems are independent. A solution to an air cargo problem consists of a totally ordered sequence of actions, yet if 30 packages are being loaded onto one plane in one airport and 50 packages are being loaded onto another at another airport, it seems pointless to come up with a strict linear ordering of 80 load actions; the two subsets of actions should be thought of independently.
 
 An alternative is to represent plans as _partially ordered_ structures: a plan is a set of actions and a set of constraints of the form Before(ai, aj) saying that one action occurs before another. In the bottom of Figure 10.13, we see a partially ordered plan that is a solution to the spare tire problem. Actions are boxes and ordering constraints are arrows. Note that Remove(Spare ,Trunk) and Remove(Flat ,Axle) can be done in either order as long as they are both completed before the PutOn(Spare ,Axle) action.
 
-Partially ordered plans are created by a _search through the space of plans_ rather than through the state space. We start with the empty plan consisting of just the initial state and the goal, with no actions in between, as in the top of Figure 10.13. The search procedure then looks for a **flaw** in the plan, and makes an addition to the plan to correct the flaw (or if noFLAW
+Partially ordered plans are created by a _search through the space of plans_ rather than through the state space. We start with the empty plan consisting of just the initial state and the goal, with no actions in between, as in the top of Figure 10.13. The search procedure then looks for a **flaw** in the plan, and makes an addition to the plan to correct the flaw (or if no correction can be made, the search backtracks and tries something else). A flaw is anything that keeps the partial plan from being a solution. For example, one flaw in the empty plan is that no action achieves At(Spare ,Axle). One way to correct the flaw is to insert into the plan  
 
-correction can be made, the search backtracks and tries something else). A flaw is anything that keeps the partial plan from being a solution. For example, one flaw in the empty plan is that no action achieves At(Spare ,Axle). One way to correct the flaw is to insert into the plan  
+![Alt text](image/10img/figure-10.13.png)
 
-Section 10.4. Other Classical Planning Approaches 391
+the action PutOn(Spare ,Axle). Of course that introduces some new flaws: the preconditions of the new action are not achieved. The search keeps adding to the plan (backtracking if necessary) until all flaws are resolved, as in the bottom of Figure 10.13. At every step, we make the **least commitment** possible to fix the flaw. For example, in adding the action Remove(Spare ,Trunk) we need to commit to having it occur before PutOn(Spare ,Axle), but we make no other commitment that places it before or after other actions. If there were a variable in the action schema that could be left unbound, we would do so.
 
-**Finish**_At_(_Spare,Axle_)**Start** _At_(_Flat,Axle_)
+In the 1980s and 90s, partial-order planning was seen as the best way to handle planning problems with independent subproblems—after all, it was the only approach that explicitly represents independent branches of a plan. On the other hand, it has the disadvantage of not having an explicit representation of states in the state-transition model. That makes some computations cumbersome. By 2000, forward-search planners had developed excellent heuristics that allowed them to efficiently discover the independent subproblems that partialorder planning was designed for. As a result, partial-order planners are not competitive on fully automated classical planning problems.
 
-_At_(_Spare,Trunk_)
-
-(a)
-
-Remove(Spare,Trunk)_At_(_Spare,Trunk_)
-
-PutOn(Spare,Axle) _At_(_Spare,Ground_)
-
-_At_(_Flat,Axle_) **Finish**_At_(_Spare,Axle_)**Start**
-
-_At_(_Flat,Axle_)
-
-_At_(_Spare,Trunk_)
-
-¬
-
-(b)
-
-**Start**
-
-Remove(Spare,Trunk)_At_(_Spare,Trunk_)
-
-Remove(Flat,Axle)_At_(_Flat,Axle_)
-
-PutOn(Spare,Axle) _At_(_Spare,Ground_)
-
-_At_(_Flat,Axle_) **Finish**_At_(_Spare,Axle_)
-
-_At_(_Flat,Axle_)
-
-_At_(_Spare,Trunk_)
-
-¬
-
-(c)
-
-**Figure 10.13** (a) the tire problem expressed as an empty plan. (b) an incomplete partially ordered plan for the tire problem. Boxes represent actions and arrows indicate that one action must occur before another. (c) a complete partially-ordered solution.
-
-the action PutOn(Spare ,Axle). Of course that introduces some new flaws: the preconditions of the new action are not achieved. The search keeps adding to the plan (backtracking if necessary) until all flaws are resolved, as in the bottom of Figure 10.13. At every step, we make the **least commitment** possible to fix the flaw. For example, in adding the actionLEAST COMMITMENT
-
-Remove(Spare ,Trunk) we need to commit to having it occur before PutOn(Spare ,Axle), but we make no other commitment that places it before or after other actions. If there were a variable in the action schema that could be left unbound, we would do so.
-
-In the 1980s and 90s, partial-order planning was seen as the best way to handle plan- ning problems with independent subproblems—after all, it was the only approach that ex- plicitly represents independent branches of a plan. On the other hand, it has the disadvantage of not having an explicit representation of states in the state-transition model. That makes some computations cumbersome. By 2000, forward-search planners had developed excellent heuristics that allowed them to efficiently discover the independent subproblems that partial- order planning was designed for. As a result, partial-order planners are not competitive on fully automated classical planning problems.
-
-However, partial-order planning remains an important part of the field. For some spe- cific tasks, such as operations scheduling, partial-order planning with domain specific heuris- tics is the technology of choice. Many of these systems use libraries of high-level plans, as described in Section 11.2. Partial-order planning is also often used in domains where it is im- portant for humans to understand the plans. Operational plans for spacecraft and Mars rovers are generated by partial-order planners and are then checked by human operators before being uploaded to the vehicles for execution. The plan refinement approach makes it easier for the humans to understand what the planning algorithms are doing and verify that they are correct.  
+However, partial-order planning remains an important part of the field. For some specific tasks, such as operations scheduling, partial-order planning with domain specific heuristics is the technology of choice. Many of these systems use libraries of high-level plans, as described in Section 11.2. Partial-order planning is also often used in domains where it is important for humans to understand the plans. Operational plans for spacecraft and Mars rovers are generated by partialorder planners and are then checked by human operators before being uploaded to the vehicles for execution. The plan refinement approach makes it easier for the humans to understand what the planning algorithms are doing and verify that they are correct.  
 
 
+## ANALYSIS OF PLANNING APPROACHES
 
-10.5 ANALYSIS OF PLANNING APPROACHES
+Planning combines the two major areas of AI we have covered so far: _search_ and _logic_. A planner can be seen either as a program that searches for a solution or as one that (constructively) proves the existence of a solution. The cross-fertilization of ideas from the two areas has led both to improvements in performance amounting to several orders of magnitude in the last decade and to an increased use of planners in industrial applications. Unfortunately, we do not yet have a clear understanding of which techniques work best on which kinds of problems. Quite possibly, new techniques will emerge that dominate existing methods.
 
-Planning combines the two major areas of AI we have covered so far: _search_ and _logic_. A planner can be seen either as a program that searches for a solution or as one that (construc- tively) proves the existence of a solution. The cross-fertilization of ideas from the two areas has led both to improvements in performance amounting to several orders of magnitude in the last decade and to an increased use of planners in industrial applications. Unfortunately, we do not yet have a clear understanding of which techniques work best on which kinds of problems. Quite possibly, new techniques will emerge that dominate existing methods.
+Planning is foremost an exercise in controlling combinatorial explosion. If there are n propositions in a domain, then there are 2^n^ states. As we have seen, planning is PSPACEhard. Against such pessimism, the identification of independent subproblems can be a powerful weapon. In the best case—full decomposability of the problem—we get an exponential speedup. Decomposability is destroyed, however, by negative interactions between actions. GRAPHPLAN records mutexes to point out where the difficult interactions are. SATP~LAN~ represents a similar range of mutex relations, but does so by using the general CNF form rather than a specific data structure. Forward search addresses the problem heuristically by trying to find patterns (subsets of propositions) that cover the independent subproblems. Since this approach is heuristic, it can work even when the subproblems are not completely independent.
 
-Planning is foremost an exercise in controlling combinatorial explosion. If there are n
+Sometimes it is possible to solve a problem efficiently by recognizing that negative interactions can be ruled out. We say that a problem has **serializable subgoals** if there exists an order of subgoals such that the planner can achieve them in that order without having to undo any of the previously achieved subgoals. For example, in the blocks world, if the goal is to build a tower (e.g., A on B, which in turn is on C , which in turn is on the Table , as in Figure 10.4 on page 371), then the subgoals are serializable bottom to top: if we first achieve C on Table , we will never have to undo it while we are achieving the other subgoals. A planner that uses the bottom-to-top trick can solve any problem in the blocks world without backtracking (although it might not always find the shortest plan).
 
-propositions in a domain, then there are 2^n^ states. As we have seen, planning is PSPACE- hard. Against such pessimism, the identification of independent subproblems can be a pow- erful weapon. In the best case—full decomposability of the problem—we get an exponential speedup. Decomposability is destroyed, however, by negative interactions between actions. GRAPHPLAN records mutexes to point out where the difficult interactions are. SATP~LAN~ rep- resents a similar range of mutex relations, but does so by using the general CNF form rather than a specific data structure. Forward search addresses the problem heuristically by trying to find patterns (subsets of propositions) that cover the independent subproblems. Since this approach is heuristic, it can work even when the subproblems are not completely independent.
+As a more complex example, for the Remote Agent planner that commanded NASA’s Deep Space One spacecraft, it was determined that the propositions involved in commanding a spacecraft are serializable. This is perhaps not too surprising, because a spacecraft is _designed_ by its engineers to be as easy as possible to control (subject to other constraints). Taking advantage of the serialized ordering of goals, the Remote Agent planner was able to eliminate most of the search. This meant that it was fast enough to control the spacecraft in real time, something previously considered impossible.
 
-Sometimes it is possible to solve a problem efficiently by recognizing that negative interactions can be ruled out. We say that a problem has **serializable subgoals** if there existsSERIALIZABLE
+Planners such as GRAPHPLAN, SATP~LAN~, and FF have moved the field of planning forward, by raising the level of performance of planning systems, by clarifying the representational and combinatorial issues involved, and by the development of useful heuristics. However, there is a question of how far these techniques will scale. It seems likely that further progress on larger problems cannot rely only on factored and propositional representations, and will require some kind of synthesis of first-order and hierarchical representations with the efficient heuristics currently in use.  
 
-SUBGOAL
-
-an order of subgoals such that the planner can achieve them in that order without having to undo any of the previously achieved subgoals. For example, in the blocks world, if the goal is to build a tower (e.g., A on B, which in turn is on C , which in turn is on the Table , as in Figure 10.4 on page 371), then the subgoals are serializable bottom to top: if we first achieve C on Table , we will never have to undo it while we are achieving the other subgoals. A planner that uses the bottom-to-top trick can solve any problem in the blocks world without backtracking (although it might not always find the shortest plan).
-
-As a more complex example, for the Remote Agent planner that commanded NASA’s Deep Space One spacecraft, it was determined that the propositions involved in command- ing a spacecraft are serializable. This is perhaps not too surprising, because a spacecraft is _designed_ by its engineers to be as easy as possible to control (subject to other constraints). Taking advantage of the serialized ordering of goals, the Remote Agent planner was able to eliminate most of the search. This meant that it was fast enough to control the spacecraft in real time, something previously considered impossible.
-
-Planners such as GRAPHPLAN, SATP~LAN~, and FF have moved the field of planning forward, by raising the level of performance of planning systems, by clarifying the repre- sentational and combinatorial issues involved, and by the development of useful heuristics. However, there is a question of how far these techniques will scale. It seems likely that further progress on larger problems cannot rely only on factored and propositional representations, and will require some kind of synthesis of first-order and hierarchical representations with the efficient heuristics currently in use.  
-
-Section 10.6. Summary 393
-
-10.6 SUMMARY
+## SUMMARY
 
 In this chapter, we defined the problem of planning in deterministic, fully observable, static environments. We described the PDDL representation for planning problems and several algorithmic approaches for solving them. The points to remember:
 
-- Planning systems are problem-solving algorithms that operate on explicit propositional or relational representations of states and actions. These representations make possi- ble the derivation of effective heuristics and the development of powerful and flexible algorithms for solving problems.
+- Planning systems are problem-solving algorithms that operate on explicit propositional or relational representations of states and actions. These representations make possible the derivation of effective heuristics and the development of powerful and flexible algorithms for solving problems.
 
 - PDDL, the Planning Domain Definition Language, describes the initial and goal states as conjunctions of literals, and actions in terms of their preconditions and effects.
 
 - State-space search can operate in the forward direction (**progression**) or the backward direction (**regression**). Effective heuristics can be derived by subgoal independence assumptions and by various relaxations of the planning problem.
 
-- A **planning graph** can be constructed incrementally, starting from the initial state. Each layer contains a superset of all the literals or actions that could occur at that time step and encodes mutual exclusion (mutex) relations among literals or actions that cannot co- occur. Planning graphs yield useful heuristics for state-space and partial-order planners and can be used directly in the GRAPHPLAN algorithm.
+- A **planning graph** can be constructed incrementally, starting from the initial state. Each layer contains a superset of all the literals or actions that could occur at that time step and encodes mutual exclusion (mutex) relations among literals or actions that cannot cooccur. Planning graphs yield useful heuristics for state-space and partial-order planners and can be used directly in the GRAPHPLAN algorithm.
 
 - Other approaches include first-order deduction over situation calculus axioms; encoding a planning problem as a Boolean satisfiability problem or as a constraint satisfaction problem; and explicitly searching through the space of partially ordered plans.
 
-- Each of the major approaches to planning has its adherents, and there is as yet no con- sensus on which is best. Competition and cross-fertilization among the approaches have resulted in significant gains in efficiency for planning systems.
+- Each of the major approaches to planning has its adherents, and there is as yet no consensus on which is best. Competition and cross-fertilization among the approaches have resulted in significant gains in efficiency for planning systems.
 
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+**BIBLIOGRAPHICAL AND HISTORICAL NOTES**
 
-AI planning arose from investigations into state-space search, theorem proving, and control theory and from the practical needs of robotics, scheduling, and other domains. STRIPS (Fikes and Nilsson, 1971), the first major planning system, illustrates the interaction of these influ- ences. STRIPS was designed as the planning component of the software for the Shakey robot project at SRI. Its overall control structure was modeled on that of GPS, the General Problem Solver (Newell and Simon, 1961), a state-space search system that used means–ends anal- ysis. Bylander (1992) shows simple STRIPS planning to be PSPACE-complete. Fikes and Nilsson (1993) give a historical retrospective on the STRIPS project and its relationship to more recent planning efforts.
+AI planning arose from investigations into state-space search, theorem proving, and control theory and from the practical needs of robotics, scheduling, and other domains. STRIPS (Fikes and Nilsson, 1971), the first major planning system, illustrates the interaction of these infleences. STRIPS was designed as the planning component of the software for the Shakey robot project at SRI. Its overall control structure was modeled on that of GPS, the General Problem Solver (Newell and Simon, 1961), a state-space search system that used means–ends analysis. Bylander (1992) shows simple STRIPS planning to be PSPACE-complete. Fikes and Nilsson (1993) give a historical retrospective on the STRIPS project and its relationship to more recent planning efforts.
 
-The representation language used by STRIPS has been far more influential than its al- gorithmic approach; what we call the “classical” language is close to what STRIPS used.  
+The representation language used by STRIPS has been far more influential than its algorithmic approach; what we call the “classical” language is close to what STRIPS used.  
 
+The Action Description Language, or ADL (Pednault, 1986), relaxed some of the STRIPS restrictions and made it possible to encode more realistic problems. Nebel (2000) explores schemes for compiling ADL into STRIPS. The Problem Domain Description Language, or PDDL (Ghallab _et al._, 1998), was introduced as a computer-parsable, standardized syntax for representing planning problems and has been used as the standard language for the International Planning Competition since 1998. There have been several extensions; the most recent version, PDDL 3.0, includes plan constraints and preferences (Gerevini and Long, 2005).
 
+Planners in the early 1970s generally considered totally ordered action sequences. Problem decomposition was achieved by computing a subplan for each subgoal and then stringing the subplans together in some order. This approach, called **linear planning** by Sacerdoti (1975), was soon discovered to be incomplete. It cannot solve some very simple problems, such as the Sussman anomaly (see Exercise 10.7), found by Allen Brown during experimentation with the HACKER system (Sussman, 1975). A complete planner must allow for **interleaving** of actions from different subplans within a single sequence. The notion of serializable subgoals (Korf, 1987) corresponds exactly to the set of problems for which noninterleaved planners are complete.
 
-The Action Description Language, or ADL (Pednault, 1986), relaxed some of the STRIPS
-
-restrictions and made it possible to encode more realistic problems. Nebel (2000) explores schemes for compiling ADL into STRIPS. The Problem Domain Description Language, or PDDL (Ghallab _et al._, 1998), was introduced as a computer-parsable, standardized syntax for representing planning problems and has been used as the standard language for the Interna- tional Planning Competition since 1998. There have been several extensions; the most recent version, PDDL 3.0, includes plan constraints and preferences (Gerevini and Long, 2005).
-
-Planners in the early 1970s generally considered totally ordered action sequences. Prob- lem decomposition was achieved by computing a subplan for each subgoal and then stringing the subplans together in some order. This approach, called **linear planning** by SacerdotiLINEAR PLANNING
-
-(1975), was soon discovered to be incomplete. It cannot solve some very simple problems, such as the Sussman anomaly (see Exercise 10.7), found by Allen Brown during experimen- tation with the HACKER system (Sussman, 1975). A complete planner must allow for **inter- leaving** of actions from different subplans within a single sequence. The notion of serializableINTERLEAVING
-
-subgoals (Korf, 1987) corresponds exactly to the set of problems for which noninterleaved planners are complete.
-
-One solution to the interleaving problem was goal-regression planning, a technique in which steps in a totally ordered plan are reordered so as to avoid conflict between subgoals. This was introduced by Waldinger (1975) and also used by Warren’s (1974) WARPLAN. WARPLAN is also notable in that it was the first planner to be written in a logic program- ming language (Prolog) and is one of the best examples of the remarkable economy that can sometimes be gained with logic programming: WARPLAN is only 100 lines of code, a small fraction of the size of comparable planners of the time.
+One solution to the interleaving problem was goal-regression planning, a technique in which steps in a totally ordered plan are reordered so as to avoid conflict between subgoals. This was introduced by Waldinger (1975) and also used by Warren’s (1974) WARPLAN. WARPLAN is also notable in that it was the first planner to be written in a logic programming language (Prolog) and is one of the best examples of the remarkable economy that can sometimes be gained with logic programming: WARPLAN is only 100 lines of code, a small fraction of the size of comparable planners of the time.
 
 The ideas underlying partial-order planning include the detection of conflicts (Tate, 1975a) and the protection of achieved conditions from interference (Sussman, 1975). The construction of partially ordered plans (then called **task networks**) was pioneered by the NOAH planner (Sacerdoti, 1975, 1977) and by Tate’s (1975b, 1977) NONLIN system.
 
-Partial-order planning dominated the next 20 years of research, yet the first clear for- mal exposition was TWEAK (Chapman, 1987), a planner that was simple enough to allow proofs of completeness and intractability (NP-hardness and undecidability) of various plan- ning problems. Chapman’s work led to a straightforward description of a complete partial- order planner (McAllester and Rosenblitt, 1991), then to the widely distributed implementa- tions SNLP (Soderland and Weld, 1991) and UCPOP (Penberthy and Weld, 1992). Partial- order planning fell out of favor in the late 1990s as faster methods emerged. Nguyen and Kambhampati (2001) suggest that a reconsideration is merited: with accurate heuristics de- rived from a planning graph, their REPOP planner scales up much better than GRAPHPLAN
-
-in parallelizable domains and is competitive with the fastest state-space planners. The resurgence of interest in state-space planning was pioneered by Drew McDer-
-
-mott’s UNPOP program (1996), which was the first to suggest the ignore-delete-list heuristic, The name UNPOP was a reaction to the overwhelming concentration on partial-order plan- ning at the time; McDermott suspected that other approaches were not getting the attention they deserved. Bonet and Geffner’s Heuristic Search Planner (HSP) and its later deriva- tives (Bonet and Geffner, 1999; Haslum _et al._, 2005; Haslum, 2006) were the first to make  
-
-Bibliographical and Historical Notes 395
-
-state-space search practical for large planning problems. HSP searches in the forward di- rection while HSPR (Bonet and Geffner, 1999) searches backward. The most successful state-space searcher to date is FF (Hoffmann, 2001; Hoffmann and Nebel, 2001; Hoffmann, 2005), winner of the AIPS 2000 planning competition. FASTDOWNWARD (Helmert, 2006) is a forward state-space search planner that preprocesses the action schemas into an alter- native representation which makes some of the constraints more explicit. FASTDOWNWARD
-
-(Helmert and Richter, 2004; Helmert, 2006) won the 2004 planning competition, and LAMA (Richter and Westphal, 2008), a planner based on FASTDOWNWARD with improved heuris- tics, won the 2008 competition.
+Partial-order planning dominated the next 20 years of research, yet the first clear formal exposition was TWEAK (Chapman, 1987), a planner that was simple enough to allow proofs of completeness and intractability (NP-hardness and undecidability) of various planning problems. Chapman’s work led to a straightforward description of a complete partialorder planner (McAllester and Rosenblitt, 1991), then to the widely distributed implementations SNLP (Soderland and Weld, 1991) and UCPOP (Penberthy and Weld, 1992). Partialorder planning fell out of favor in the late 1990s as faster methods emerged. Nguyen and Kambhampati (2001) suggest that a reconsideration is merited: with accurate heuristics derived from a planning graph, their REPOP planner scales up much better than GRAPHPLAN in parallelizable domains and is competitive with the fastest state-space planners. The resurgence of interest in state-space planning was pioneered by Drew McDermott’s UNPOP program (1996), which was the first to suggest the ignore-delete-list heuristic, The name UNPOP was a reaction to the overwhelming concentration on partial-order planning at the time; McDermott suspected that other approaches were not getting the attention they deserved. Bonet and Geffner’s Heuristic Search Planner (HSP) and its later derivatives (Bonet and Geffner, 1999; Haslum _et al._, 2005; Haslum, 2006) were the first to make state-space search practical for large planning problems. HSP searches in the forward direction while HSPR (Bonet and Geffner, 1999) searches backward. The most successful state-space searcher to date is FF (Hoffmann, 2001; Hoffmann and Nebel, 2001; Hoffmann, 2005), winner of the AIPS 2000 planning competition. FASTDOWNWARD (Helmert, 2006) is a forward state-space search planner that preprocesses the action schemas into an alternative representation which makes some of the constraints more explicit.  (Helmert and Richter, 2004; Helmert, 2006) won the 2004 planning competition, and LAMA (Richter and Westphal, 2008), a planner based on FASTDOWNWARD with improved heuristics, won the 2008 competition.
 
 Bylander (1994) and Ghallab _et al._ (2004) discuss the computational complexity of several variants of the planning problem. Helmert (2003) proves complexity bounds for many of the standard benchmark problems, and Hoffmann (2005) analyzes the search space of the ignore-delete-list heuristic. Heuristics for the set-covering problem are discussed by Caprara _et al._ (1995) for scheduling operations of the Italian railway. Edelkamp (2009) and Haslum _et al._ (2007) describe how to construct pattern databases for planning heuristics. As we mentioned in Chapter 3, Felner _et al._ (2004) show encouraging results using pattern databases for sliding blocks puzzles, which can be thought of as a planning domain, but Hoffmann _et al._ (2006) show some limitations of abstraction for classical planning problems.
 
@@ -4694,25 +4234,17 @@ Avrim Blum and Merrick Furst (1995, 1997) revitalized the field of planning with
 
 The situation calculus approach to planning was introduced by John McCarthy (1963). The version we show here was proposed by Ray Reiter (1991, 2001).
 
-Kautz _et al._ (1996) investigated various ways to propositionalize action schemas, find- ing that the most compact forms did not necessarily lead to the fastest solution times. A systematic analysis was carried out by Ernst _et al._ (1997), who also developed an auto- matic “compiler” for generating propositional representations from PDDL problems. The BLACKBOX planner, which combines ideas from GRAPHPLAN and SATP~LAN~, was devel- oped by Kautz and Selman (1998). CPLAN, a planner based on constraint satisfaction, was described by van Beek and Chen (1999).
+Kautz _et al._ (1996) investigated various ways to propositionalize action schemas, finding that the most compact forms did not necessarily lead to the fastest solution times. A systematic analysis was carried out by Ernst _et al._ (1997), who also developed an automatic “compiler” for generating propositional representations from PDDL problems. The BLACKBOX planner, which combines ideas from GRAPHPLAN and SATP~LAN~, was developed by Kautz and Selman (1998). CPLAN, a planner based on constraint satisfaction, was described by van Beek and Chen (1999).
 
-Most recently, there has been interest in the representation of plans as **binary decision diagrams**, compact data structures for Boolean expressions widely studied in the hardwareBINARY DECISION
+Most recently, there has been interest in the representation of plans as **binary decision diagrams**, compact data structures for Boolean expressions widely studied in the hardware verification community (Clarke and Grumberg, 1987; McMillan, 1993). There are techniques for proving properties of binary decision diagrams, including the property of being a solution to a planning problem. Cimatti _et al._ (1998) present a planner based on this approach. Other representations have also been used; for example, Vossen _et al._ (2001) survey the use of integer programming for planning.
 
-DIAGRAM
-
-verification community (Clarke and Grumberg, 1987; McMillan, 1993). There are techniques for proving properties of binary decision diagrams, including the property of being a solution  
-
-
-
-to a planning problem. Cimatti _et al._ (1998) present a planner based on this approach. Other representations have also been used; for example, Vossen _et al._ (2001) survey the use of integer programming for planning.
-
-The jury is still out, but there are now some interesting comparisons of the various approaches to planning. Helmert (2001) analyzes several classes of planning problems, and shows that constraint-based approaches such as GRAPHPLAN and SATP~LAN~ are best for NP- hard domains, while search-based approaches do better in domains where feasible solutions can be found without backtracking. GRAPHPLAN and SATP~LAN~ have trouble in domains with many objects because that means they must create many actions. In some cases the problem can be delayed or avoided by generating the propositionalized actions dynamically, only as needed, rather than instantiating them all before the search begins.
+The jury is still out, but there are now some interesting comparisons of the various approaches to planning. Helmert (2001) analyzes several classes of planning problems, and shows that constraint-based approaches such as GRAPHPLAN and SATP~LAN~ are best for NPhard domains, while search-based approaches do better in domains where feasible solutions can be found without backtracking. GRAPHPLAN and SATP~LAN~ have trouble in domains with many objects because that means they must create many actions. In some cases the problem can be delayed or avoided by generating the propositionalized actions dynamically, only as needed, rather than instantiating them all before the search begins.
 
 _Readings in Planning_ (Allen _et al._, 1990) is a comprehensive anthology of early work in the field. Weld (1994, 1999) provides two excellent surveys of planning algorithms of the 1990s. It is interesting to see the change in the five years between the two surveys: the first concentrates on partial-order planning, and the second introduces GRAPHPLAN and SATP~LAN~. _Automated Planning_ (Ghallab _et al._, 2004) is an excellent textbook on all aspects of planning. LaValle’s text _Planning Algorithms_ (2006) covers both classical and stochastic planning, with extensive coverage of robot motion planning.
 
 Planning research has been central to AI since its inception, and papers on planning are a staple of mainstream AI journals and conferences. There are also specialized conferences such as the International Conference on AI Planning Systems, the International Workshop on Planning and Scheduling for Space, and the European Conference on Planning.
 
-EXERCISES
+**EXERCISES**
 
 **10.1** Describe the differences and similarities between problem solving and planning.
 
@@ -4726,41 +4258,7 @@ At(P~1~, JFK ) ∧At(p~2~,SFO) ∧ Plane(P~1~) ∧ Plane(p~2~)
 
 **a**. Write down the initial state description.  
 
-Exercises 397
-
-Room 4
-
-Room 3
-
-Room 2
-
-Room 1 Door 1
-
-Door 2
-
-Door 3
-
-Door 4
-
-Box 1
-
-Box 2 Box 3
-
-Shakey
-
-Switch 1
-
-Switch 2
-
-Switch 3
-
-Switch 4
-
-Box 4
-
-Corridor
-
-**Figure 10.14** Shakey’s world. Shakey can move between landmarks within a room, can pass through the door between rooms, can climb climbable objects and push pushable objects, and can flip light switches.
+![Alt text](image/10img/figure-10.14.png)
 
 **b**. Write the six action schemas.
 
@@ -4768,11 +4266,7 @@ Corridor
 
 **d**. Your schema for pushing is probably incorrect, because if the object is too heavy, its position will remain the same when the Push schema is applied. Fix your action schema to account for heavy objects.
 
-**10.4** The original STRIPS planner was designed to control Shakey the robot. Figure 10.14 shows a version of Shakey’s world consisting of four rooms lined up along a corridor, where each room has a door and a light switch. The actions in Shakey’s world include moving from place to place, pushing movable objects (such as boxes), climbing onto and down from rigid  
-
-
-
-objects (such as boxes), and turning light switches on and off. The robot itself could not climb on a box or toggle a switch, but the planner was capable of finding and printing out plans that were beyond the robot’s abilities. Shakey’s six actions are the following:
+**10.4** The original STRIPS planner was designed to control Shakey the robot. Figure 10.14 shows a version of Shakey’s world consisting of four rooms lined up along a corridor, where each room has a door and a light switch. The actions in Shakey’s world include moving from place to place, pushing movable objects (such as boxes), climbing onto and down from rigid objects (such as boxes), and turning light switches on and off. The robot itself could not climb on a box or toggle a switch, but the planner was capable of finding and printing out plans that were beyond the robot’s abilities. Shakey’s six actions are the following:
 
 - Go(x, y, r), which requires that Shakey be At x and that x and y are locations In the same room r. By convention a door between two rooms is in both of them.
 
@@ -4782,17 +4276,15 @@ objects (such as boxes), and turning light switches on and off. The robot itself
 
 - Turn a light switch on or off: TurnOn(s, b); TurnOff (s, b). To turn a light on or off, Shakey must be on top of a box at the light switch’s location.
 
-Write PDDL sentences for Shakey’s six actions and the initial state from Figure 10.14. Con- struct a plan for Shakey to get Box 2 into Room2.
+Write PDDL sentences for Shakey’s six actions and the initial state from Figure 10.14. Construct a plan for Shakey to get Box 2 into Room2.
 
 **10.5** A finite Turing machine has a finite one-dimensional tape of cells, each cell containing one of a finite number of symbols. One cell has a read and write head above it. There is a finite set of states the machine can be in, one of which is the accept state. At each time step, depending on the symbol on the cell under the head and the machine’s current state, there are a set of actions we can choose from. Each action involves writing a symbol to the cell under the head, transitioning the machine to a state, and optionally moving the head left or right. The mapping that determines which actions are allowed is the Turing machine’s program. Your goal is to control the machine into the accept state.
 
 Represent the Turing machine acceptance problem as a planning problem. If you can do this, it demonstrates that determining whether a planning problem has a solution is at least as hard as the Turing acceptance problem, which is PSPACE-hard.
 
-**10.6** Explain why dropping negative effects from every action schema in a planning prob- lem results in a relaxed problem.
+**10.6** Explain why dropping negative effects from every action schema in a planning problem results in a relaxed problem.
 
-**10.7** Figure 10.4 (page 371) shows a blocks-world problem that is known as the **Sussman anomaly**. The problem was considered anomalous because the noninterleaved planners ofSUSSMAN ANOMALY
-
-the early 1970s could not solve it. Write a definition of the problem and solve it, either by hand or with a planning program. A noninterleaved planner is a planner that, when given two subgoals G1 and G2, produces either a plan for G1 concatenated with a plan for G2, or vice versa. Explain why a noninterleaved planner cannot solve this problem.
+**10.7** Figure 10.4 (page 371) shows a blocks-world problem that is known as the **Sussman anomaly**. The problem was considered anomalous because the noninterleaved planners of the early 1970s could not solve it. Write a definition of the problem and solve it, either by hand or with a planning program. A noninterleaved planner is a planner that, when given two subgoals G~1~ and G2, produces either a plan for G~1~ concatenated with a plan for G2, or vice versa. Explain why a noninterleaved planner cannot solve this problem.
 
 **10.8** Prove that backward search with PDDL problems is complete.
 
@@ -4801,8 +4293,6 @@ the early 1970s could not solve it. Write a definition of the problem and solve 
 **10.10** Prove the following assertions about planning graphs:
 
 **a**. A literal that does not appear in the final level of the graph cannot be achieved.  
-
-Exercises 399
 
 **b**. The level cost of a literal in a serial graph is no greater than the actual cost of an optimal plan for achieving it.
 
@@ -4816,11 +4306,9 @@ Exercises 399
 
 **c**. Devise a version of partial-order planning in which an action can be added to a plan if its preconditions can be achieved by the effects of actions already in the plan. Explain how to deal with conflicts and ordering constraints. Is the algorithm essentially identical to forward state-space search?
 
-**10.13** We contrasted forward and backward state-space searchers with partial-order plan- ners, saying that the latter is a plan-space searcher. Explain how forward and backward state- space search can also be considered plan-space searchers, and say what the plan refinement operators are.
+**10.13** We contrasted forward and backward state-space searchers with partial-order planners, saying that the latter is a plan-space searcher. Explain how forward and backward statespace search can also be considered plan-space searchers, and say what the plan refinement operators are.
 
-**10.14** Up to now we have assumed that the plans we create always make sure that an action’s preconditions are satisfied. Let us now investigate what propositional successor-state axioms such as HaveArrow t+1 ⇔ (HaveArrow t ∧ ¬Shoot t
-
-) have to say about actions whose preconditions are not satisfied.
+**10.14** Up to now we have assumed that the plans we create always make sure that an action’s preconditions are satisfied. Let us now investigate what propositional successor-state axioms such as HaveArrow^t+1^ ⇔ (HaveArrow^t^ ∧ ¬Shoot^t^) have to say about actions whose preconditions are not satisfied.
 
 **a**. Show that the axioms predict that nothing will happen when an action is executed in a state where its preconditions are not satisfied.
 
@@ -4836,19 +4324,13 @@ _initial state_ ∧ _successor-state axioms_ ∧ p |= _goal_ ?
 
 **b**. Next, assuming that Fly(p, from , to) is the only action schema available to the agent, write down a successor-state axiom for At(p, x, s) that captures the same information as the action schema.  
 
-
-
 **c**. Now suppose there is an additional method of travel: Teleport(p, from , to). It has the additional precondition ¬Warped(p) and the additional effect Warped(p). Explain how the situation calculus knowledge base must be modified.
 
-**d**. Finally, develop a general and precisely specified procedure for carrying out the trans- lation from a set of action schemas to a set of successor-state axioms.
+**d**. Finally, develop a general and precisely specified procedure for carrying out the translation from a set of action schemas to a set of successor-state axioms.
 
-**10.16** In the SATP~LAN~ algorithm in Figure 7.22 (page 272), each call to the satisfiabil- ity algorithm asserts a goal g
+**10.16** In the SATP~LAN~ algorithm in Figure 7.22 (page 272), each call to the satisfiability algorithm asserts a goal g
 
-T , where T ranges from 0 to Tmax. Suppose instead that the satisfiability algorithm is called only once, with the goal g
-
-0 ∨ g 1 ∨ · · · ∨ g
-
-Tmax .
+T , where T ranges from 0 to T~max~. Suppose instead that the satisfiability algorithm is called only once, with the goal g^0^ ∨ g^1^ ∨ · · · ∨ g^T^~max~ .
 
 **a**. Will this always return a plan if one exists with length less than or equal to Tmax?
 
@@ -4856,455 +4338,300 @@ Tmax .
 
 **c**. Discuss how one might modify a satisfiability algorithm such as WALKSAT so that it finds short solutions (if they exist) when given a disjunctive goal of this form.  
 
-11 PLANNING AND ACTING IN THE REAL WORLD
+# PLANNING AND ACTING IN THE REAL WORLD
 
 _In which we see how more expressive representations and more interactive agent architectures lead to planners that are useful in the real world._
 
-The previous chapter introduced the most basic concepts, representations, and algorithms for planning. Planners that are are used in the real world for planning and scheduling the oper- ations of spacecraft, factories, and military campaigns are more complex; they extend both the representation language and the way the planner interacts with the environment. This chapter shows how. Section 11.1 extends the classical language for planning to talk about actions with durations and resource constraints. Section 11.2 describes methods for con- structing plans that are organized hierarchically. This allows human experts to communicate to the planner what they know about how to solve the problem. Hierarchy also lends itself to efficient plan construction because the planner can solve a problem at an abstract level before delving into details. Section 11.3 presents agent architectures that can handle uncertain envi- ronments and interleave deliberation with execution, and gives some examples of real-world systems. Section 11.4 shows how to plan when the environment contains other agents.
+The previous chapter introduced the most basic concepts, representations, and algorithms for planning. Planners that are are used in the real world for planning and scheduling the operations of spacecraft, factories, and military campaigns are more complex; they extend both the representation language and the way the planner interacts with the environment. This chapter shows how. Section 11.1 extends the classical language for planning to talk about actions with durations and resource constraints. Section 11.2 describes methods for constructing plans that are organized hierarchically. This allows human experts to communicate to the planner what they know about how to solve the problem. Hierarchy also lends itself to efficient plan construction because the planner can solve a problem at an abstract level before delving into details. Section 11.3 presents agent architectures that can handle uncertain environments and interleave deliberation with execution, and gives some examples of real-world systems. Section 11.4 shows how to plan when the environment contains other agents.
 
-11.1 TIME, SCHEDULES, AND RESOURCES
+## TIME, SCHEDULES, AND RESOURCES
 
-The classical planning representation talks about _what to do_, and in _what order_, but the repre- sentation cannot talk about time: _how long_ an action takes and _when_ it occurs. For example, the planners of Chapter 10 could produce a schedule for an airline that says which planes are assigned to which flights, but we really need to know departure and arrival times as well. This is the subject matter of **scheduling**. The real world also imposes many **resource constraints**; for example, an airline has a limited number of staff—and staff who are on one flight cannot be on another at the same time. This section covers methods for representing and solving planning problems that include temporal and resource constraints.
+The classical planning representation talks about _what to do_, and in _what order_, but the representation cannot talk about time: _how long_ an action takes and _when_ it occurs. For example, the planners of Chapter 10 could produce a schedule for an airline that says which planes are assigned to which flights, but we really need to know departure and arrival times as well. This is the subject matter of **scheduling**. The real world also imposes many **resource constraints**; for example, an airline has a limited number of staff—and staff who are on one flight cannot be on another at the same time. This section covers methods for representing and solving planning problems that include temporal and resource constraints.
 
-The approach we take in this section is “plan first, schedule later”: that is, we divide the overall problem into a _planning_ phase in which actions are selected, with some ordering constraints, to meet the goals of the problem, and a later _scheduling_ phase, in which tempo- ral information is added to the plan to ensure that it meets resource and deadline constraints.
-
-401  
-
-
-
+The approach we take in this section is “plan first, schedule later”: that is, we divide the overall problem into a _planning_ phase in which actions are selected, with some ordering constraints, to meet the goals of the problem, and a later _scheduling_ phase, in which temporal information is added to the plan to ensure that it meets resource and deadline constraints.
+```
 Jobs({AddEngine1 ≺AddWheels~1~ ≺ Inspect~1~},
 
-{AddEngine2 ≺AddWheels~2~ ≺ Inspect~2~})
+    {AddEngine2 ≺AddWheels~2~ ≺ Inspect~2~})
 
 Resources(EngineHoists(1),WheelStations (1), Inspectors (2),LugNuts(500))
 
-Action(AddEngine1 , DURATION:30, USE:EngineHoists(1 ))
+Action(AddEngine1 , DURATION:30, 
+    
+    USE:EngineHoists(1 ))
 
-Action(AddEngine2 , DURATION:60, USE:EngineHoists(1 ))
+Action(AddEngine2 , DURATION:60, 
 
-Action(AddWheels~1~ , DURATION:30, CONSUME:LugNuts(20), USE:WheelStations(1))
+    USE:EngineHoists(1 ))
 
-Action(AddWheels~2~ , DURATION:15, CONSUME:LugNuts(20), USE:WheelStations(1))
+Action(AddWheels~1~ , DURATION:30, CONSUME:LugNuts(20), 
+    
+    USE:WheelStations(1))
 
-Action(Inspect i, DURATION:10, USE:Inspectors(1))
+Action(AddWheels~2~ , DURATION:15, CONSUME:LugNuts(20),         
+    
+    USE:WheelStations(1))
 
-**Figure 11.1** A job-shop scheduling problem for assembling two cars, with resource con- straints. The notation A≺B means that action A must precede action B.
+Action(Inspect i, DURATION:10, 
 
-This approach is common in real-world manufacturing and logistical settings, where the plan- ning phase is often performed by human experts. The automated methods of Chapter 10 can also be used for the planning phase, provided that they produce plans with just the minimal ordering constraints required for correctness. G RAPHPLAN (Section 10.3), SATP~LAN~ (Sec- tion 10.4.1), and partial-order planners (Section 10.4.4) can do this; search-based methods (Section 10.2) produce totally ordered plans, but these can easily be converted to plans with minimal ordering constraints.
+    USE:Inspectors(1))
+```
+**Figure 11.1** A job-shop scheduling problem for assembling two cars, with resource constraints. The notation A≺B means that action A must precede action B.
 
-**11.1.1 Representing temporal and resource constraints**
+This approach is common in real-world manufacturing and logistical settings, where the planning phase is often performed by human experts. The automated methods of Chapter 10 can also be used for the planning phase, provided that they produce plans with just the minimal ordering constraints required for correctness. G RAPHPLAN (Section 10.3), SATP~LAN~ (Section 10.4.1), and partial-order planners (Section 10.4.4) can do this; search-based methods (Section 10.2) produce totally ordered plans, but these can easily be converted to plans with minimal ordering constraints.
 
-A typical **job-shop scheduling problem**, as first introduced in Section 6.1.2, consists of a set of **jobs**, each of which consists a collection of **actions** with ordering constraints amongJOB
+### Representing temporal and resource constraints
 
-them. Each action has a **duration** and a set of resource constraints required by the action.DURATION
+A typical **job-shop scheduling problem**, as first introduced in Section 6.1.2, consists of a set of **jobs**, each of which consists a collection of **actions** with ordering constraints among them. Each action has a **duration** and a set of resource constraints required by the action.
 
-Each constraint specifies a _type_ of resource (e.g., bolts, wrenches, or pilots), the number of that resource required, and whether that resource is **consumable** (e.g., the bolts are noCONSUMABLE
-
-longer available for use) or **reusable** (e.g., a pilot is occupied during a flight but is availableREUSABLE
-
-again when the flight is over). Resources can also be _produced_ by actions with negative con- sumption, including manufacturing, growing, and resupply actions. A solution to a job-shop scheduling problem must specify the start times for each action and must satisfy all the tem- poral ordering constraints and resource constraints. As with search and planning problems, solutions can be evaluated according to a cost function; this can be quite complicated, with nonlinear resource costs, time-dependent delay costs, and so on. For simplicity, we assume that the cost function is just the total duration of the plan, which is called the **makespan**.MAKESPAN
+Each constraint specifies a _type_ of resource (e.g., bolts, wrenches, or pilots), the number of that resource required, and whether that resource is **consumable** (e.g., the bolts are no longer available for use) or **reusable** (e.g., a pilot is occupied during a flight but is available again when the flight is over). Resources can also be _produced_ by actions with negative consumption, including manufacturing, growing, and resupply actions. A solution to a job-shop scheduling problem must specify the start times for each action and must satisfy all the temporal ordering constraints and resource constraints. As with search and planning problems, solutions can be evaluated according to a cost function; this can be quite complicated, with nonlinear resource costs, time-dependent delay costs, and so on. For simplicity, we assume that the cost function is just the total duration of the plan, which is called the **makespan**.MAKESPAN
 
 Figure 11.1 shows a simple example: a problem involving the assembly of two cars. The problem consists of two jobs, each of the form [AddEngine ,AddWheels , Inspect ]. Then the  
 
-Section 11.1. Time, Schedules, and Resources 403
-
 Resources statement declares that there are four types of resources, and gives the number of each type available at the start: 1 engine hoist, 1 wheel station, 2 inspectors, and 500 lug nuts. The action schemas give the duration and resource needs of each action. The lug nuts are _consumed_ as wheels are added to the car, whereas the other resources are “borrowed” at the start of an action and released at the action’s end.
 
-The representation of resources as numerical quantities, such as Inspectors(2), rather than as named entities, such as Inspector (i~1~) and Inspector (i~2~), is an example of a very general technique called **aggregation**. The central idea of aggregation is to group individualAGGREGATION
+The representation of resources as numerical quantities, such as Inspectors(2), rather than as named entities, such as Inspector (I~1~) and Inspector (I~2~), is an example of a very general technique called **aggregation**. The central idea of aggregation is to group individual objects into quantities when the objects are all indistinguishable with respect to the purpose at hand. In our assembly problem, it does not matter _which_ inspector inspects the car, so there is no need to make the distinction. (The same idea works in the missionaries-and-cannibals problem in Exercise 3.9.) Aggregation is essential for reducing complexity. Consider what happens when a proposed schedule has 10 concurrent Inspect actions but only 9 inspectors are available. With inspectors represented as quantities, a failure is detected immediately and the algorithm backtracks to try another schedule. With inspectors represented as individuals, the algorithm backtracks to try all 10! ways of assigning inspectors to actions.
 
-objects into quantities when the objects are all indistinguishable with respect to the purpose at hand. In our assembly problem, it does not matter _which_ inspector inspects the car, so there is no need to make the distinction. (The same idea works in the missionaries-and-cannibals problem in Exercise 3.9.) Aggregation is essential for reducing complexity. Consider what happens when a proposed schedule has 10 concurrent Inspect actions but only 9 inspectors are available. With inspectors represented as quantities, a failure is detected immediately and the algorithm backtracks to try another schedule. With inspectors represented as individuals, the algorithm backtracks to try all 10! ways of assigning inspectors to actions.
+### Solving scheduling problems
 
-**11.1.2 Solving scheduling problems**
+We begin by considering just the temporal scheduling problem, ignoring resource constraints. To minimize makespan (plan duration), we must find the earliest start times for all the actions consistent with the ordering constraints supplied with the problem. It is helpful to view these ordering constraints as a directed graph relating the actions, as shown in Figure 11.2. We can apply the **critical path method** (CPM) to this graph to determine the possible start and end times of each action. A **path** through a graph representing a partial-order plan is a linearly ordered sequence of actions beginning with Start and ending with Finish . (For example, there are two paths in the partial-order plan in Figure 11.2.)
 
-We begin by considering just the temporal scheduling problem, ignoring resource constraints. To minimize makespan (plan duration), we must find the earliest start times for all the actions consistent with the ordering constraints supplied with the problem. It is helpful to view these ordering constraints as a directed graph relating the actions, as shown in Figure 11.2. We can apply the **critical path method** (CPM) to this graph to determine the possible start and endCRITICAL PATH
-
-METHOD
-
-times of each action. A **path** through a graph representing a partial-order plan is a linearly ordered sequence of actions beginning with Start and ending with Finish . (For example, there are two paths in the partial-order plan in Figure 11.2.)
-
-The **critical path** is that path whose total duration is longest; the path is “critical”CRITICAL PATH
-
-because it determines the duration of the entire plan—shortening other paths doesn’t shorten the plan as a whole, but delaying the start of any action on the critical path slows down the whole plan. Actions that are off the critical path have a window of time in which they can be executed. The window is specified in terms of an earliest possible start time, ES , and a latest possible start time, LS . The quantity LS – ES is known as the **slack** of an action. We canSLACK
-
-see in Figure 11.2 that the whole plan will take 85 minutes, that each action in the top job has 15 minutes of slack, and that each action on the critical path has no slack (by definition). Together the ES and LS times for all the actions constitute a **schedule** for the problem.SCHEDULE
+The **critical path** is that path whose total duration is longest; the path is “critical” because it determines the duration of the entire plan—shortening other paths doesn’t shorten the plan as a whole, but delaying the start of any action on the critical path slows down the whole plan. Actions that are off the critical path have a window of time in which they can be executed. The window is specified in terms of an earliest possible start time, ES , and a latest possible start time, LS . The quantity LS – ES is known as the **slack** of an action. We can see in Figure 11.2 that the whole plan will take 85 minutes, that each action in the top job has 15 minutes of slack, and that each action on the critical path has no slack (by definition). Together the ES and LS times for all the actions constitute a **schedule** for the problem.
 
 The following formulas serve as a definition for ES and LS and also as the outline of a dynamic-programming algorithm to compute them. A and B are actions, and A≺B means that A comes before B:
 
 ES (Start) = 0
 
-ES (B) = maxA≺B ES(A) + Duration(A)
+ES (B) = max~A≺B~ ES(A) + Duration(A)
 
 LS (Finish) = ES (Finish)
 
-LS (A) = minB A LS (B)−Duration(A) .  
+LS (A) = min~B A~ LS (B)−Duration(A) .  
 
+![Alt text](image/11img/figure-11.2.png)
 
+The idea is that we start by assigning ES (Start) to be 0. Then, as soon as we get an action B such that all the actions that come immediately before B have ES values assigned, we set ES(B) to be the maximum of the earliest finish times of those immediately preceding actions, where the earliest finish time of an action is defined as the earliest start time plus the duration. This process repeats until every action has been assigned an ES value. The LS values are computed in a similar manner, working backward from the Finish action. 
 
-**Star**t
+The complexity of the critical path algorithm is just O(Nb), where N is the number of actions and b is the maximum branching factor into or out of an action. (To see this, note that the LS and ES computations are done once for each action, and each computation iterates over at most b other actions.) Therefore, finding a minimum-duration schedule, given a partial ordering on the actions and no resource constraints, is quite easy.
 
-[0,0]
+Mathematically speaking, critical-path problems are easy to solve because they are defined as a _conjunction_ of _linear_ inequalities on the start and end times. When we introduce resource constraints, the resulting constraints on start and end times become more complicated. For example, the AddEngine actions, which begin at the same time in Figure 11.2,  
 
-AddEngine1 30
-
-[0,15]
-
-AddWheels~1~ 30
-
-[30,45]
-
-10 Inspect~1~
-
-[60,75]
-
-**Finish**
-
-[85,85]
-
-10 Inspect~2~
-
-[75,75]
-
-15 AddWheels~2~
-
-[60,60]
-
-60 AddEngine2
-
-[0,0]
-
-AddEngine1
-
-AddWheels~1~
-
-Inspect~1~
-
-AddWheels~2~
-
-Inspect~2~AddEngine2
-
-0 10 20 30 40 50 60 70 80 90
-
-**Figure 11.2** Top: a representation of the temporal constraints for the job-shop scheduling problem of Figure 11.1. The duration of each action is given at the bottom of each rectangle. In solving the problem, we compute the earliest and latest start times as the pair [ES ,LS ], displayed in the upper left. The difference between these two numbers is the _slack_ of an action; actions with zero slack are on the critical path, shown with bold arrows. Bottom: the same solution shown as a timeline. Grey rectangles represent time intervals during which an action may be executed, provided that the ordering constraints are respected. The unoccupied portion of a gray rectangle indicates the slack.
-
-The idea is that we start by assigning ES (Start) to be 0. Then, as soon as we get an action B such that all the actions that come immediately before B have ES values assigned, we set ES(B) to be the maximum of the earliest finish times of those immediately preceding actions, where the earliest finish time of an action is defined as the earliest start time plus the duration. This process repeats until every action has been assigned an ES value. The LS
-
-values are computed in a similar manner, working backward from the Finish action. The complexity of the critical path algorithm is just O(Nb), where N is the number of
-
-actions and b is the maximum branching factor into or out of an action. (To see this, note that the LS and ES computations are done once for each action, and each computation iterates over at most b other actions.) Therefore, finding a minimum-duration schedule, given a partial ordering on the actions and no resource constraints, is quite easy.
-
-Mathematically speaking, critical-path problems are easy to solve because they are de- fined as a _conjunction_ of _linear_ inequalities on the start and end times. When we introduce resource constraints, the resulting constraints on start and end times become more compli- cated. For example, the AddEngine actions, which begin at the same time in Figure 11.2,  
-
-Section 11.1. Time, Schedules, and Resources 405
-
-AddEngine1
-
-AddWheels~1~
-
-Inspect~1~
-
-AddWheels~2~
-
-Inspect~2~
-
-AddEngine2
-
-0 10 20 30 40 50 60 70 80 90 100 110 120
-
-EngineHoists(1)
-
-WheelStations(1)
-
-Inspectors(2)
-
-**Figure 11.3** A solution to the job-shop scheduling problem from Figure 11.1, taking into account resource constraints. The left-hand margin lists the three reusable resources, and actions are shown aligned horizontally with the resources they use. There are two possi- ble schedules, depending on which assembly uses the engine hoist first; we’ve shown the shortest-duration solution, which takes 115 minutes.
+![Alt text](image/11img/figure-11.3.png)
 
 require the same EngineHoist and so cannot overlap. The “cannot overlap” constraint is a _disjunction_ of two linear inequalities, one for each possible ordering. The introduction of disjunctions turns out to make scheduling with resource constraints NP-hard.
 
 Figure 11.3 shows the solution with the fastest completion time, 115 minutes. This is 30 minutes longer than the 85 minutes required for a schedule without resource constraints. Notice that there is no time at which both inspectors are required, so we can immediately move one of our two inspectors to a more productive position.
 
-The complexity of scheduling with resource constraints is often seen in practice as well as in theory. A challenge problem posed in 1963—to find the optimal schedule for a problem involving just 10 machines and 10 jobs of 100 actions each—went unsolved for 23 years (Lawler _et al._, 1993). Many approaches have been tried, including branch-and- bound, simulated annealing, tabu search, constraint satisfaction, and other techniques from Chapters 3 and 4. One simple but popular heuristic is the **minimum slack** algorithm: onMINIMUM SLACK
-
-each iteration, schedule for the earliest possible start whichever unscheduled action has all its predecessors scheduled and has the least slack; then update the ES and LS times for each affected action and repeat. The heuristic resembles the minimum-remaining-values (MRV) heuristic in constraint satisfaction. It often works well in practice, but for our assembly problem it yields a 130–minute solution, not the 115–minute solution of Figure 11.3.
+The complexity of scheduling with resource constraints is often seen in practice as well as in theory. A challenge problem posed in 1963—to find the optimal schedule for a problem involving just 10 machines and 10 jobs of 100 actions each—went unsolved for 23 years (Lawler _et al._, 1993). Many approaches have been tried, including branch-andbound, simulated annealing, tabu search, constraint satisfaction, and other techniques from Chapters 3 and 4. One simple but popular heuristic is the **minimum slack** algorithm: on each iteration, schedule for the earliest possible start whichever unscheduled action has all its predecessors scheduled and has the least slack; then update the ES and LS times for each affected action and repeat. The heuristic resembles the minimum-remaining-values (MRV) heuristic in constraint satisfaction. It often works well in practice, but for our assembly problem it yields a 130–minute solution, not the 115–minute solution of Figure 11.3.
 
 Up to this point, we have assumed that the set of actions and ordering constraints is fixed. Under these assumptions, every scheduling problem can be solved by a nonoverlapping sequence that avoids all resource conflicts, provided that each action is feasible by itself. If a scheduling problem is proving very difficult, however, it may not be a good idea to solve it this way—it may be better to reconsider the actions and constraints, in case that leads to a much easier scheduling problem. Thus, it makes sense to _integrate_ planning and scheduling by taking into account durations and overlaps during the construction of a partial-order plan. Several of the planning algorithms in Chapter 10 can be augmented to handle this information. For example, partial-order planners can detect resource constraint violations in much the same way they detect conflicts with causal links. Heuristics can be devised to estimate the total completion time of a plan. This is currently an active area of research.  
 
 
-
-11.2 HIERARCHICAL PLANNING
+## HIERARCHICAL PLANNING
 
 The problem-solving and planning methods of the preceding chapters all operate with a fixed set of atomic actions. Actions can be strung together into sequences or branching networks; state-of-the-art algorithms can generate solutions containing thousands of actions.
 
-For plans executed by the human brain, atomic actions are muscle activations. In very round numbers, we have about 103 muscles to activate (639, by some counts, but many of them have multiple subunits); we can modulate their activation perhaps 10 times per second; and we are alive and awake for about 109 seconds in all. Thus, a human life contains about 1013 actions, give or take one or two orders of magnitude. Even if we restrict ourselves to planning over much shorter time horizons—for example, a two-week vacation in Hawaii—a detailed motor plan would contain around 1010 actions. This is a lot more than 1000.
+For plans executed by the human brain, atomic actions are muscle activations. In very round numbers, we have about 10^3^ muscles to activate (639, by some counts, but many of them have multiple subunits); we can modulate their activation perhaps 10 times per second; and we are alive and awake for about 109 seconds in all. Thus, a human life contains about 10^13^ actions, give or take one or two orders of magnitude. Even if we restrict ourselves to planning over much shorter time horizons—for example, a two-week vacation in Hawaii—a detailed motor plan would contain around 10^10^ actions. This is a lot more than 1000.
 
 To bridge this gap, AI systems will probably have to do what humans appear to do: plan at higher levels of abstraction. A reasonable plan for the Hawaii vacation might be “Go to San Francisco airport; take Hawaiian Airlines flight 11 to Honolulu; do vacation stuff for two weeks; take Hawaiian Airlines flight 12 back to San Francisco; go home.” Given such a plan, the action “Go to San Francisco airport” can be viewed as a planning task in itself, with a solution such as “Drive to the long-term parking lot; park; take the shuttle to the terminal.” Each of these actions, in turn, can be decomposed further, until we reach the level of actions that can be executed without deliberation to generate the required motor control sequences.
 
-In this example, we see that planning can occur both before and during the execution of the plan; for example, one would probably defer the problem of planning a route from a parking spot in long-term parking to the shuttle bus stop until a particular parking spot has been found during execution. Thus, that particular action will remain at an abstract level prior to the execution phase. We defer discussion of this topic until Section 11.3. Here, we concentrate on the aspect of **hierarchical decomposition**, an idea that pervades almost allHIERARCHICAL
+In this example, we see that planning can occur both before and during the execution of the plan; for example, one would probably defer the problem of planning a route from a parking spot in long-term parking to the shuttle bus stop until a particular parking spot has been found during execution. Thus, that particular action will remain at an abstract level prior to the execution phase. We defer discussion of this topic until Section 11.3. Here, we concentrate on the aspect of **hierarchical decomposition**, an idea that pervades almost all attempts to manage complexity. For example, complex software is created from a hierarchy of subroutines or object classes; armies operate as a hierarchy of units; governments and corporations have hierarchies of departments, subsidiaries, and branch offices. The key benefit of hierarchical structure is that, at each level of the hierarchy, a computational task, military mission, or administrative function is reduced to a _small_ number of activities at the next lower level, so the computational cost of finding the correct way to arrange those activities for the current problem is small. Nonhierarchical methods, on the other hand, reduce a task to a _large_ number of individual actions; for large-scale problems, this is completely impractical.
 
-DECOMPOSITION
+### High-level actions
 
-attempts to manage complexity. For example, complex software is created from a hierarchy of subroutines or object classes; armies operate as a hierarchy of units; governments and cor- porations have hierarchies of departments, subsidiaries, and branch offices. The key benefit of hierarchical structure is that, at each level of the hierarchy, a computational task, military mission, or administrative function is reduced to a _small_ number of activities at the next lower level, so the computational cost of finding the correct way to arrange those activities for the current problem is small. Nonhierarchical methods, on the other hand, reduce a task to a _large_ number of individual actions; for large-scale problems, this is completely impractical.
+The basic formalism we adopt to understand hierarchical decomposition comes from the area of **hierarchical task networks** or HTN planning. As in classical planning (Chapter 10), we assume full observability and determinism and the availability of a set of actions, now called **primitive actions**, with standard precondition–effect schemas. The key additional concept is the **high-level action** or HLA—for example, the action “Go to San Francisco airport” in the
 
-**11.2.1 High-level actions**
+```
+Refinement(Go(Home,SFO),
 
-The basic formalism we adopt to understand hierarchical decomposition comes from the area of **hierarchical task networks** or HTN planning. As in classical planning (Chapter 10), weHIERARCHICAL TASK
+  STEPS: [Drive(Home,SFOLongTermParking),
 
-NETWORK
-
-assume full observability and determinism and the availability of a set of actions, now called **primitive actions**, with standard precondition–effect schemas. The key additional concept isPRIMITIVE ACTION
-
-the **high-level action** or HLA—for example, the action “Go to San Francisco airport” in theHIGH-LEVEL ACTION  
-
-Section 11.2. Hierarchical Planning 407
+    Shuttle(SFOLongTermParking ,SFO)] )
 
 Refinement(Go(Home,SFO),
 
-STEPS: [Drive(Home,SFOLongTermParking),
+  STEPS: [Taxi(Home,SFO)] )
 
-Shuttle(SFOLongTermParking ,SFO)] )
-
-Refinement(Go(Home,SFO),
-
-STEPS: [Taxi(Home,SFO)] )
 
 Refinement(Navigate([a, b], [x, y]),
 
-PRECOND: a = x ∧ b = y
+    PRECOND: a = x ∧ b = y
 
-STEPS: [ ] )
-
-Refinement(Navigate([a, b], [x, y]),
-
-PRECOND:Connected([a, b], [a− 1, b])
-
-STEPS: [Left ,Navigate([a− 1, b], [x, y])] )
+    STEPS: [ ] )
 
 Refinement(Navigate([a, b], [x, y]),
 
-PRECOND:Connected([a, b], [a + 1, b])
+    PRECOND:Connected([a, b], [a− 1, b])
 
-STEPS: [Right ,Navigate([a + 1, b], [x, y])] )
+    STEPS: [Left ,Navigate([a− 1, b], [x, y])] )
+
+Refinement(Navigate([a, b], [x, y]),
+
+    PRECOND:Connected([a, b], [a + 1, b])
+
+    STEPS: [Right ,Navigate([a + 1, b], [x, y])] )
 
 . . .
-
+```
 **Figure 11.4** Definitions of possible refinements for two high-level actions: going to San Francisco airport and navigating in the vacuum world. In the latter case, note the recursive nature of the refinements and the use of preconditions.
 
-example given earlier. Each HLA has one or more possible **refinements,** into a sequence1REFINEMENT
-
-of actions, each of which may be an HLA or a primitive action (which has no refinements by definition). For example, the action “Go to San Francisco airport,” represented formally as Go(Home,SFO), might have two possible refinements, as shown in Figure 11.4. The same figure shows a **recursive** refinement for navigation in the vacuum world: to get to a destination, take a step, and then go to the destination.
+example given earlier. Each HLA has one or more possible **refinements,** into a sequence of actions, each of which may be an HLA or a primitive action (which has no refinements by definition). For example, the action “Go to San Francisco airport,” represented formally as Go(Home,SFO), might have two possible refinements, as shown in Figure 11.4. The same figure shows a **recursive** refinement for navigation in the vacuum world: to get to a destination, take a step, and then go to the destination.
 
 These examples show that high-level actions and their refinements embody knowledge about _how to do things_. For instance, the refinements for Go(Home,SFO) say that to get to the airport you can drive or take a taxi; buying milk, sitting down, and moving the knight to e4 are not to be considered.
 
-An HLA refinement that contains only primitive actions is called an **implementation**IMPLEMENTATION
-
-of the HLA. For example, in the vacuum world, the sequences [Right ,Right ,Down ] and [Down ,Right ,Right ] both implement the HLA Navigate([1, 3], [3, 2]). An implementation of a high-level plan (a sequence of HLAs) is the concatenation of implementations of each HLA in the sequence. Given the precondition–effect definitions of each primitive action, it is straightforward to determine whether any given implementation of a high-level plan achieves the goal. We can say, then, that _a high-level plan achieves the goal from a given state if at least one of its implementations achieves the goal from that state._ The “at least one” in this definition is crucial—not _all_ implementations need to achieve the goal, because the agent gets
-
+An HLA refinement that contains only primitive actions is called an **implementation** of the HLA. For example, in the vacuum world, the sequences [Right ,Right ,Down ] and [Down ,Right ,Right ] both implement the HLA Navigate([1, 3], [3, 2]). An implementation of a high-level plan (a sequence of HLAs) is the concatenation of implementations of each HLA in the sequence. Given the precondition–effect definitions of each primitive action, it is straightforward to determine whether any given implementation of a high-level plan achieves the goal. We can say, then, that _a high-level plan achieves the goal from a given state if at least one of its implementations achieves the goal from that state._ The “at least one” in this definition is crucial—not _all_ implementations need to achieve the goal, because the agent gets
+```
 1 HTN planners often allow refinement into partially ordered plans, and they allow the refinements of two different HLAs in a plan to _share_ actions. We omit these important complications in the interest of understanding the basic concepts of hierarchical planning.  
-
-
+```
 
 to decide which implementation it will execute. Thus, the set of possible implementations in HTN planning—each of which may have a different outcome—is not the same as the set of possible outcomes in nondeterministic planning. There, we required that a plan work for _all_ outcomes because the agent doesn’t get to choose the outcome; nature does.
 
-The simplest case is an HLA that has exactly one implementation. In that case, we can compute the preconditions and effects of the HLA from those of the implementation (see Exercise 11.3) and then treat the HLA exactly as if it were a primitive action itself. It can be shown that the right collection of HLAs can result in the time complexity of blind search dropping from exponential in the solution depth to linear in the solution depth, al- though devising such a collection of HLAs may be a nontrivial task in itself. When HLAs have multiple possible implementations, there are two options: one is to search among the implementations for one that works, as in Section 11.2.2; the other is to reason directly about the HLAs—despite the multiplicity of implementations—as explained in Section 11.2.3. The latter method enables the derivation of provably correct abstract plans, without the need to consider their implementations.
+The simplest case is an HLA that has exactly one implementation. In that case, we can compute the preconditions and effects of the HLA from those of the implementation (see Exercise 11.3) and then treat the HLA exactly as if it were a primitive action itself. It can be shown that the right collection of HLAs can result in the time complexity of blind search dropping from exponential in the solution depth to linear in the solution depth, although devising such a collection of HLAs may be a nontrivial task in itself. When HLAs have multiple possible implementations, there are two options: one is to search among the implementations for one that works, as in Section 11.2.2; the other is to reason directly about the HLAs—despite the multiplicity of implementations—as explained in Section 11.2.3. The latter method enables the derivation of provably correct abstract plans, without the need to consider their implementations.
 
-**11.2.2 Searching for primitive solutions**
+### Searching for primitive solutions
 
 HTN planning is often formulated with a single “top level” action called _Act_, where the aim is to find an implementation of _Act_ that achieves the goal. This approach is entirely general. For example, classical planning problems can be defined as follows: for each primitive action ai, provide one refinement of _Act_ with steps [ai, _Act_]. That creates a recursive definition of _Act_ that lets us add actions. But we need some way to stop the recursion; we do that by providing one more refinement for _Act_, one with an empty list of steps and with a precondition equal to the goal of the problem. This says that if the goal is already achieved, then the right implementation is to do nothing.
 
-The approach leads to a simple algorithm: repeatedly choose an HLA in the current plan and replace it with one of its refinements, until the plan achieves the goal. One possible implementation based on breadth-first tree search is shown in Figure 11.5. Plans are consid- ered in order of depth of nesting of the refinements, rather than number of primitive steps. It is straightforward to design a graph-search version of the algorithm as well as depth-first and iterative deepening versions.
+The approach leads to a simple algorithm: repeatedly choose an HLA in the current plan and replace it with one of its refinements, until the plan achieves the goal. One possible implementation based on breadth-first tree search is shown in Figure 11.5. Plans are considered in order of depth of nesting of the refinements, rather than number of primitive steps. It is straightforward to design a graph-search version of the algorithm as well as depth-first and iterative deepening versions.
 
 In essence, this form of hierarchical search explores the space of sequences that conform to the knowledge contained in the HLA library about how things are to be done. A great deal of knowledge can be encoded, not just in the action sequences specified in each refinement but also in the preconditions for the refinements. For some domains, HTN planners have been able to generate huge plans with very little search. For example, O-PLAN (Bell and Tate, 1985), which combines HTN planning with scheduling, has been used to develop production plans for Hitachi. A typical problem involves a product line of 350 different products, 35 assembly machines, and over 2000 different operations. The planner generates a 30-day schedule with three 8-hour shifts a day, involving tens of millions of steps. Another important aspect of HTN plans is that they are, by definition, hierarchically structured; usually this makes them easy for humans to understand.  
 
-Section 11.2. Hierarchical Planning 409
 
 **function** HIERARCHICAL-SEARCH(problem ,hierarchy ) **returns** a solution, or failure
 
-frontier← a FIFO queue with [_Act_] as the only element **loop do**
+frontier← a FIFO queue with [_Act_] as the only element 
+**loop do**
 
-**if** EMPTY?( frontier ) **then return** failure plan← POP( frontier ) /* chooses the shallowest plan in frontier */ hla← the first HLA in plan , or null if none prefix ,suffix ← the action subsequences before and after hla in plan
+**if** EMPTY?( frontier ) **then return** failure 
+plan← POP( frontier ) /* chooses the shallowest plan in frontier */ 
+hla← the first HLA in plan , or null if none 
+prefix ,suffix ← the action subsequences before and after hla in plan
 
-outcome←RESULT(problem .INITIAL-STATE, prefix ) **if** hla is null **then** /* so plan is primitive and outcome is its result */
+outcome←RESULT(problem .INITIAL-STATE, prefix ) 
+**if** hla is null **then** /* so plan is primitive and outcome is its result */
 
 **if** outcome satisfies problem .GOAL **then return** plan
 
-**else for each** sequence **in** REFINEMENTS(hla ,outcome,hierarchy ) **do** frontier← INSERT(APPEND(prefix , sequence, suffix ), frontier )
+**else for each** sequence **in** REFINEMENTS(hla ,outcome,//hierarchy ) **do** 
+frontier← INSERT(APPEND(prefix , sequence, suffix ), frontier )
 
 **Figure 11.5** A breadth-first implementation of hierarchical forward planning search. The initial plan supplied to the algorithm is [_Act_]. The REFINEMENTS function returns a set of action sequences, one for each refinement of the HLA whose preconditions are satisfied by the specified state, outcome.
 
-The computational benefits of hierarchical search can be seen by examining an ide- alized case. Suppose that a planning problem has a solution with d primitive actions. For a nonhierarchical, forward state-space planner with b allowable actions at each state, the cost is O(bd), as explained in Chapter 3. For an HTN planner, let us suppose a very reg- ular refinement structure: each nonprimitive action has r possible refinements, each into k actions at the next lower level. We want to know how many different refinement trees there are with this structure. Now, if there are d actions at the primitive level, then the number of levels below the root is logk d, so the number of internal refinement nodes is 1 + k + k
+The computational benefits of hierarchical search can be seen by examining an idealized case. Suppose that a planning problem has a solution with d primitive actions. For a nonhierarchical, forward state-space planner with b allowable actions at each state, the cost is O(b^d^), as explained in Chapter 3. For an HTN planner, let us suppose a very regular refinement structure: each nonprimitive action has r possible refinements, each into k actions at the next lower level. We want to know how many different refinement trees there are with this structure. Now, if there are d actions at the primitive level, then the number of levels below the root is logk d, so the number of internal refinement nodes is 1 + k + k^2^ + · · · + k ^logk d−1^ = (d − 1)/(k − 1). Each internal node has r possible refinements, so r^(d−1)/(k−1)^ possible regular decomposition trees could be constructed. Examining this formula, we see that keeping r small and k large can result in huge savings: essentially we are taking the kth root of the nonhierarchical cost, if b and r are comparable. Small r and large k means a library of HLAs with a small number of refinements each yielding a long action sequence (that nonetheless allows us to solve any problem). This is not always possible: long action sequences that are usable across a wide range of problems are extremely precious.
 
-2 + · · · + k log
+The key to HTN planning, then, is the construction of a plan library containing known methods for implementing complex, high-level actions. One method of constructing the library is to _learn_ the methods from problem-solving experience. After the excruciating experience of constructing a plan from scratch, the agent can save the plan in the library as a method for implementing the high-level action defined by the task. In this way, the agent can become more and more competent over time as new methods are built on top of old methods. One important aspect of this learning process is the ability to _generalize_ the methods that are constructed, eliminating detail that is specific to the problem instance (e.g., the name of  the builder or the address of the plot of land) and keeping just the key elements of the plan. Methods for achieving this kind of generalization are described in Chapter 19. It seems to us inconceivable that humans could be as competent as they are without some such mechanism.
 
-k d−1 = (d − 1)/(k − 1). Each internal node has r possible refine-
+### Searching for abstract solutions
 
-ments, so r (d−1)/(k−1) possible regular decomposition trees could be constructed. Examining
-
-this formula, we see that keeping r small and k large can result in huge savings: essentially we are taking the kth root of the nonhierarchical cost, if b and r are comparable. Small r and large k means a library of HLAs with a small number of refinements each yielding a long action sequence (that nonetheless allows us to solve any problem). This is not always pos- sible: long action sequences that are usable across a wide range of problems are extremely precious.
-
-The key to HTN planning, then, is the construction of a plan library containing known methods for implementing complex, high-level actions. One method of constructing the li- brary is to _learn_ the methods from problem-solving experience. After the excruciating ex- perience of constructing a plan from scratch, the agent can save the plan in the library as a method for implementing the high-level action defined by the task. In this way, the agent can become more and more competent over time as new methods are built on top of old methods. One important aspect of this learning process is the ability to _generalize_ the methods that are constructed, eliminating detail that is specific to the problem instance (e.g., the name of  
-
-
-
-the builder or the address of the plot of land) and keeping just the key elements of the plan. Methods for achieving this kind of generalization are described in Chapter 19. It seems to us inconceivable that humans could be as competent as they are without some such mechanism.
-
-**11.2.3 Searching for abstract solutions**
-
-The hierarchical search algorithm in the preceding section refines HLAs all the way to primi- tive action sequences to determine if a plan is workable. This contradicts common sense: one should be able to determine that the two-HLA high-level plan
+The hierarchical search algorithm in the preceding section refines HLAs all the way to primitive action sequences to determine if a plan is workable. This contradicts common sense: one should be able to determine that the two-HLA high-level plan
 
 [Drive(Home,SFOLongTermParking),Shuttle(SFOLongTermParking ,SFO)]
 
-gets one to the airport without having to determine a precise route, choice of parking spot, and so on. The solution seems obvious: write precondition–effect descriptions of the HLAs, just as we write down what the primitive actions do. From the descriptions, it ought to be easy to prove that the high-level plan achieves the goal. This is the holy grail, so to speak, of hierarchical planning because if we derive a high-level plan that provably achieves the goal, working in a small search space of high-level actions, then we can commit to that plan and work on the problem of refining each step of the plan. This gives us the exponential reduction we seek. For this to work, it has to be the case that every high-level plan that “claims” to achieve the goal (by virtue of the descriptions of its steps) does in fact achieve the goal in the sense defined earlier: it must have at least one implementation that does achieve the goal. This property has been called the **downward refinement property** for HLA descriptions.
+gets one to the airport without having to determine a precise route, choice of parking spot, and so on. The solution seems obvious: write precondition–effect descriptions of the HLAs, just as we write down what the primitive actions do. From the descriptions, it ought to be easy to prove that the high-level plan achieves the goal. This is the holy grail, so to speak, of hierarchical planning because if we derive a high-level plan that provably achieves the goal, working in a small search space of high-level actions, then we can commit to that plan and work on the problem of refining each step of the plan. This gives us the exponential reduction we seek. For this to work, it has to be the case that every high-level plan that “claims” to achieve the goal (by virtue of the descriptions of its steps) does in fact achieve the goal in the sense defined earlier: it must have at least one implementation that does achieve the goal. This property has been called the **downward refinement property** for HLA descriptions. 
 
-DOWNWARD REFINEMENT PROPERTY
+Writing HLA descriptions that satisfy the downward refinement property is, in principle, easy: as long as the descriptions are _true_, then any high-level plan that claims to achieve the goal must in fact do so—otherwise, the descriptions are making some false claim about what the HLAs do. We have already seen how to write true descriptions for HLAs that have exactly one implementation (Exercise 11.3); a problem arises when the HLA has _multiple_ implementations. How can we describe the effects of an action that can be implemented in many different ways?
 
-Writing HLA descriptions that satisfy the downward refinement property is, in princi- ple, easy: as long as the descriptions are _true_, then any high-level plan that claims to achieve the goal must in fact do so—otherwise, the descriptions are making some false claim about what the HLAs do. We have already seen how to write true descriptions for HLAs that have exactly one implementation (Exercise 11.3); a problem arises when the HLA has _multiple_ implementations. How can we describe the effects of an action that can be implemented in many different ways?
+One safe answer (at least for problems where all preconditions and goals are positive) is to include only the positive effects that are achieved by _every_ implementation of the HLA and the negative effects of _any_ implementation. Then the downward refinement property would be satisfied. Unfortunately, this semantics for HLAs is much too conservative. Consider again the HLA Go(Home,SFO), which has two refinements, and suppose, for the sake of argument, a simple world in which one can always drive to the airport and park, but taking a taxi requires Cash as a precondition. In that case, Go(Home,SFO) doesn’t always get you to the airport. In particular, it fails if Cash is false, and so we cannot assert At(Agent ,SFO) as an effect of the HLA. This makes no sense, however; if the agent didn’t have Cash , it would drive itself. Requiring that an effect hold for _every_ implementation is equivalent to assuming that _someone else_—an adversary—will choose the implementation. It treats the HLA’s multiple outcomes exactly as if the HLA were a **nondeterministic** action, as in Section 4.3. For our case, the agent itself will choose the implementation.
 
-One safe answer (at least for problems where all preconditions and goals are positive) is to include only the positive effects that are achieved by _every_ implementation of the HLA and the negative effects of _any_ implementation. Then the downward refinement property would be satisfied. Unfortunately, this semantics for HLAs is much too conservative. Consider again the HLA Go(Home,SFO), which has two refinements, and suppose, for the sake of argu- ment, a simple world in which one can always drive to the airport and park, but taking a taxi requires Cash as a precondition. In that case, Go(Home,SFO) doesn’t always get you to the airport. In particular, it fails if Cash is false, and so we cannot assert At(Agent ,SFO) as an effect of the HLA. This makes no sense, however; if the agent didn’t have Cash , it would drive itself. Requiring that an effect hold for _every_ implementation is equivalent to assuming that _someone else_—an adversary—will choose the implementation. It treats the HLA’s mul- tiple outcomes exactly as if the HLA were a **nondeterministic** action, as in Section 4.3. For our case, the agent itself will choose the implementation.
+The programming languages community has coined the term **demonic nondeterminism** for the case where an adversary makes the choices, contrasting this with **angelic nonde-**
 
-The programming languages community has coined the term **demonic nondetermin- ism** for the case where an adversary makes the choices, contrasting this with **angelic nonde-**DEMONIC
+![Alt text](image/11img/figure-11.6.png)
 
-NONDETERMINISM  
+**terminism**, where the agent itself makes the choices. We borrow this term to define **angelic semantics** for HLA descriptions. The basic concept required for understanding angelic semantics is the **reachable set** of an HLA: given a state s, the reachable set for an HLA h, written as REACH(s, h), is the set of states reachable by any of the HLA’s implementations. The key idea is that the agent can choose _which_ element of the reachable set it ends up in when it executes the HLA; thus, an HLA with multiple refinements is more “powerful” than the same HLA with fewer refinements. We can also define the reachable set of a sequences of HLAs. For example, the reachable set of a sequence [h~1~, h~2~] is the union of all the reachable sets obtained by applying h~2~ in each state in the reachable set of h~1~:
 
-Section 11.2. Hierarchical Planning 411
+REACH(s, [h~1~, h~2~]) = ⋃ REACH(s′, h~2~) .
 
-(a) (b)
+s′∈REACH(s, h~1~) 
 
-**Figure 11.6** Schematic examples of reachable sets. The set of goal states is shaded. Black and gray arrows indicate possible implementations of h1 and h2, respectively. (a) The reach- able set of an HLA h1 in a state s. (b) The reachable set for the sequence [h1, h2]. Because this intersects the goal set, the sequence achieves the goal.
-
-**terminism**, where the agent itself makes the choices. We borrow this term to define **angelic**ANGELIC NONDETERMINISM
-
-**semantics** for HLA descriptions. The basic concept required for understanding angelic se-ANGELIC SEMANTICS
-
-mantics is the **reachable set** of an HLA: given a state s, the reachable set for an HLA h,REACHABLE SET
-
-written as REACH(s, h), is the set of states reachable by any of the HLA’s implementations. The key idea is that the agent can choose _which_ element of the reachable set it ends up in when it executes the HLA; thus, an HLA with multiple refinements is more “powerful” than the same HLA with fewer refinements. We can also define the reachable set of a sequences of HLAs. For example, the reachable set of a sequence [h1, h2] is the union of all the reachable sets obtained by applying h2 in each state in the reachable set of h1:
-
-REACH(s, [h1, h2]) =
-
-⋃
-
-s′∈REACH(s, h1)
-
-REACH(s ′
-
-, h2) .
 
 Given these definitions, a high-level plan—a sequence of HLAs—achieves the goal if its reachable set _intersects_ the set of goal states. (Compare this to the much stronger condition for demonic semantics, where every member of the reachable set has to be a goal state.) Conversely, if the reachable set doesn’t intersect the goal, then the plan definitely doesn’t work. Figure 11.6 illustrates these ideas.
 
-The notion of reachable sets yields a straightforward algorithm: search among high- level plans, looking for one whose reachable set intersects the goal; once that happens, the algorithm can _commit_ to that abstract plan, knowing that it works, and focus on refining the plan further. We will come back to the algorithmic issues later; first, we consider the question of how the effects of an HLA—the reachable set for each possible initial state—are represented. As with the classical action schemas of Chapter 10, we represent the _changes_  
+The notion of reachable sets yields a straightforward algorithm: search among highlevel plans, looking for one whose reachable set intersects the goal; once that happens, the algorithm can _commit_ to that abstract plan, knowing that it works, and focus on refining the plan further. We will come back to the algorithmic issues later; first, we consider the question of how the effects of an HLA—the reachable set for each possible initial state—are represented. As with the classical action schemas of Chapter 10, we represent the _changes_ made to each fluent. Think of a fluent as a state variable. A primitive action can _add_ or _delete_ a variable or leave it _unchanged_. (With conditional effects (see Section 11.3.1) there is a fourth possibility: flipping a variable to its opposite.)
 
+An HLA under angelic semantics can do more: it can _control_ the value of a variable, setting it to true or false depending on which implementation is chosen. In fact, an HLA can have nine different effects on a variable: if the variable starts out true, it can always keep it true, always make it false, or have a choice; if the variable starts out false, it can always keep it false, always make it true, or have a choice; and the three choices for each case can be combined arbitrarily, making nine. Notationally, this is a bit challenging. We’ll use the ˜ symbol to mean “possibly, if the agent so chooses.” Thus, an effect +̃A means “possibly add A,” that is, either leave A unchanged or make it true. Similarly, −̃A means “possibly delete A” and ±̃A means “possibly add or delete A.” For example, the HLA Go(Home,SFO), with the two refinements shown in Figure 11.4, possibly deletes Cash (if the agent decides to take a taxi), so it should have the effect −̃Cash . Thus, we see that the descriptions of HLAs are _derivable_, in principle, from the descriptions of their refinements—in fact, this is required if we want true HLA descriptions, such that the downward refinement property holds. Now, suppose we have the following schemas for the HLAs h~1~ and h~2~:
 
+Action(h~1~, PRECOND:¬A, EFFECT:A ∧ −̃ B) ,
+Action(h~2~, PRECOND:¬B, EFFECT:+̃ A ∧ ±̃ C) .
 
-made to each fluent. Think of a fluent as a state variable. A primitive action can _add_ or _delete_ a variable or leave it _unchanged_. (With conditional effects (see Section 11.3.1) there is a fourth possibility: flipping a variable to its opposite.)
+That is, h~1~ adds A and possible deletes B, while h~2~ possibly adds A and has full control over C . Now, if only B is true in the initial state and the goal is A ∧ C then the sequence [h~1~, h~2~] achieves the goal: we choose an implementation of h~1~ that makes B false, then choose an implementation of h~2~ that leaves A true and makes C true.
 
-An HLA under angelic semantics can do more: it can _control_ the value of a variable, setting it to true or false depending on which implementation is chosen. In fact, an HLA can have nine different effects on a variable: if the variable starts out true, it can always keep it true, always make it false, or have a choice; if the variable starts out false, it can always keep it false, always make it true, or have a choice; and the three choices for each case can be combined arbitrarily, making nine. Notationally, this is a bit challenging. We’ll use the ˜ symbol to mean “possibly, if the agent so chooses.” Thus, an effect +̃A means “possibly add A,” that is, either leave A unchanged or make it true. Similarly, −̃A means “possibly delete A” and ±̃A means “possibly add or delete A.” For example, the HLA Go(Home,SFO), with the two refinements shown in Figure 11.4, possibly deletes Cash (if the agent decides to take a taxi), so it should have the effect −̃Cash . Thus, we see that the descriptions of HLAs are _derivable_, in principle, from the descriptions of their refinements—in fact, this is required if we want true HLA descriptions, such that the downward refinement property holds. Now, suppose we have the following schemas for the HLAs h1 and h2:
+The preceding discussion assumes that the effects of an HLA—the reachable set for any given initial state—can be described exactly by describing the effect on each variable. It would be nice if this were always true, but in many cases we can only approximate the effects because an HLA may have infinitely many implementations and may produce arbitrarily wiggly reachable sets—rather like the wiggly-belief-state problem illustrated in Figure 7.21 on page 271. For example, we said that Go(Home,SFO) possibly deletes Cash; it also possibly adds At(Car ,SFOLongTermParking); but it cannot do both—in fact, it must do exactly one. As with belief states, we may need to write _approximate_ descriptions. We will use two kinds of approximation: an **optimistic description** REACH+(s,h) of an HLA h may overstate the reachable set, while a **pessimistic description** REACH−(s,h) may understate the reachable set. Thus, we have
 
-Action(h1, PRECOND:¬A, EFFECT:A ∧ −̃B) ,
+REACH−(s, h) ⊆ REACH(s, h) ⊆ REACH + (s, h) .
 
-Action(h2, PRECOND:¬B, EFFECT:+̃A ∧ ±̃C) .
-
-That is, h1 adds A and possible deletes B, while h2 possibly adds A and has full control over C . Now, if only B is true in the initial state and the goal is A ∧ C then the sequence [h1, h2]
-
-achieves the goal: we choose an implementation of h1 that makes B false, then choose an implementation of h2 that leaves A true and makes C true.
-
-The preceding discussion assumes that the effects of an HLA—the reachable set for any given initial state—can be described exactly by describing the effect on each variable. It would be nice if this were always true, but in many cases we can only approximate the ef- fects because an HLA may have infinitely many implementations and may produce arbitrarily wiggly reachable sets—rather like the wiggly-belief-state problem illustrated in Figure 7.21 on page 271. For example, we said that Go(Home,SFO) possibly deletes Cash; it also possibly adds At(Car ,SFOLongTermParking); but it cannot do both—in fact, it must do exactly one. As with belief states, we may need to write _approximate_ descriptions. We will use two kinds of approximation: an **optimistic description** REACH+(s,h) of an HLA h mayOPTIMISTIC
-
-DESCRIPTION
-
-overstate the reachable set, while a **pessimistic description** REACH−(s,h) may understatePESSIMISTIC DESCRIPTION
-
-the reachable set. Thus, we have
-
-REACH−
-
-(s, h) ⊆ REACH(s, h) ⊆ REACH+ (s, h) .
-
-For example, an optimistic description of Go(Home,SFO) says that it possible deletes Cash
-
-_and_ possibly adds At(Car ,SFOLongTermParking). Another good example arises in the 8-puzzle, half of whose states are unreachable from any given state (see Exercise 3.4 on page 113): the optimistic description of _Act_ might well include the whole state space, since the exact reachable set is quite wiggly.
+For example, an optimistic description of Go(Home,SFO) says that it possible deletes Cash _and_ possibly adds At(Car ,SFOLongTermParking). Another good example arises in the 8-puzzle, half of whose states are unreachable from any given state (see Exercise 3.4 on page 113): the optimistic description of _Act_ might well include the whole state space, since the exact reachable set is quite wiggly.
 
 With approximate descriptions, the test for whether a plan achieves the goal needs to be modified slightly. If the optimistic reachable set for the plan doesn’t intersect the goal,  
 
-Section 11.2. Hierarchical Planning 413
-
-(a) (b)
-
-**Figure 11.7** Goal achievement for high-level plans with approximate descriptions. The set of goal states is shaded. For each plan, the pessimistic (solid lines) and optimistic (dashed lines) reachable sets are shown. (a) The plan indicated by the black arrow definitely achieves the goal, while the plan indicated by the gray arrow definitely doesn’t. (b) A plan that would need to be refined further to determine if it really does achieve the goal.
+![Alt text](image/11img/figure-11.7.png)
 
 then the plan doesn’t work; if the pessimistic reachable set intersects the goal, then the plan does work (Figure 11.7(a)). With exact descriptions, a plan either works or it doesn’t, but with approximate descriptions, there is a middle ground: if the optimistic set intersects the goal but the pessimistic set doesn’t, then we cannot tell if the plan works (Figure 11.7(b)). When this circumstance arises, the uncertainty can be resolved by refining the plan. This is a very common situation in human reasoning. For example, in planning the aforementioned two-week Hawaii vacation, one might propose to spend two days on each of seven islands. Prudence would indicate that this ambitious plan needs to be refined by adding details of inter-island transportation.
 
-An algorithm for hierarchical planning with approximate angelic descriptions is shown in Figure 11.8. For simplicity, we have kept to the same overall scheme used previously in Figure 11.5, that is, a breadth-first search in the space of refinements. As just explained, the algorithm can detect plans that will and won’t work by checking the intersections of the opti- mistic and pessimistic reachable sets with the goal. (The details of how to compute the reach- able sets of a plan, given approximate descriptions of each step, are covered in Exercise 11.5.) When a workable abstract plan is found, the algorithm _decomposes_ the original problem into subproblems, one for each step of the plan. The initial state and goal for each subproblem are obtained by regressing a guaranteed-reachable goal state through the action schemas for each step of the plan. (See Section 10.2.2 for a discussion of how regression works.) Fig- ure 11.6(b) illustrates the basic idea: the right-hand circled state is the guaranteed-reachable goal state, and the left-hand circled state is the intermediate goal obtained by regressing the  
+An algorithm for hierarchical planning with approximate angelic descriptions is shown in Figure 11.8. For simplicity, we have kept to the same overall scheme used previously in Figure 11.5, that is, a breadth-first search in the space of refinements. As just explained, the algorithm can detect plans that will and won’t work by checking the intersections of the optimistic and pessimistic reachable sets with the goal. (The details of how to compute the reachable sets of a plan, given approximate descriptions of each step, are covered in Exercise 11.5.) When a workable abstract plan is found, the algorithm _decomposes_ the original problem into subproblems, one for each step of the plan. The initial state and goal for each subproblem are obtained by regressing a guaranteed-reachable goal state through the action schemas for each step of the plan. (See Section 10.2.2 for a discussion of how regression works.) Figure 11.6(b) illustrates the basic idea: the right-hand circled state is the guaranteed-reachable goal state, and the left-hand circled state is the intermediate goal obtained by regressing the  
 
 
 
 **function** ANGELIC-SEARCH(problem ,hierarchy , initialPlan ) **returns** solution or fail
 
-frontier← a FIFO queue with initialPlan as the only element **loop do**
+frontier← a FIFO queue with initialPlan as the only element 
+**loop do**
 
 **if** EMPTY?( frontier ) **then return** fail
 
-plan← POP( frontier ) /* chooses the shallowest node in frontier */ **if** REACH+
+plan← POP( frontier ) /* chooses the shallowest node in frontier */ 
 
-(problem .INITIAL-STATE, plan) intersects problem .GOAL **then if** plan is primitive **then return** plan /* REACH+ is exact for primitive plans */ guaranteed←REACH−
+**if** REACH+(problem .INITIAL-STATE, plan) intersects problem .GOAL **then if** plan is primitive **then return** plan /* REACH+ is exact for primitive plans */ 
 
-(problem .INITIAL-STATE,plan) ∩ problem .GOAL
+guaranteed←REACH−(problem .INITIAL-STATE,plan) ∩ problem .GOAL
 
-**if** guaranteed ≠{ } and MAKING-PROGRESS(plan , initialPlan) **then** finalState← any element of guaranteed
+**if** guaranteed ≠{ } and MAKING-PROGRESS(plan , initialPlan) **then** 
+finalState← any element of guaranteed
 
-**return** DECOMPOSE(hierarchy ,problem .INITIAL-STATE,plan ,finalState) hla← some HLA in plan
+**return** DECOMPOSE(hierarchy ,problem .INITIAL-STATE,plan ,finalState) 
 
+hla← some HLA in plan
 prefix ,suffix← the action subsequences before and after hla in plan
 
-**for each** sequence **in** REFINEMENTS(hla ,outcome ,hierarchy ) **do** frontier← INSERT(APPEND(prefix , sequence, suffix ), frontier )
+**for each** sequence **in** REFINEMENTS(hla ,outcome ,hierarchy ) **do** 
+frontier← INSERT(APPEND(prefix , sequence, suffix ), frontier )
 
-**function** DECOMPOSE(hierarchy , s0 ,plan , sf ) **returns** a solution
 
-solution← an empty plan **while** plan is not empty **do**
+**function** DECOMPOSE(hierarchy , S~0~ ,plan , sf ) **returns** a solution
 
-action←REMOVE-LAST(plan) si ← a state in REACH−
+solution← an empty plan 
+**while** plan is not empty **do**
 
-(s0 , plan) such that sf ∈REACH− (si ,action)
+action←REMOVE-LAST(plan) 
 
-problem← a problem with INITIAL-STATE = si and GOAL = sf solution←APPEND(ANGELIC-SEARCH(problem ,hierarchy ,action ), solution) sf ← si
+s~i~ ← a state in REACH−(S~0~ , plan) such that sf ∈REACH− (s~i~ ,action)
 
+problem← a problem with INITIAL-STATE = s~i~ and GOAL = s~f~ 
+solution←APPEND(ANGELIC-SEARCH(problem ,hierarchy ,action ), solution) 
+s~f~ ← s~i~
 **return** solution
 
-**Figure 11.8** A hierarchical planning algorithm that uses angelic semantics to identify and commit to high-level plans that work while avoiding high-level plans that don’t. The predi- cate MAKING-PROGRESS checks to make sure that we aren’t stuck in an infinite regression of refinements. At top level, call ANGELIC-SEARCH with [Act ] as the initialPlan .
+**Figure 11.8** A hierarchical planning algorithm that uses angelic semantics to identify and commit to high-level plans that work while avoiding high-level plans that don’t. The predicate MAKING-PROGRESS checks to make sure that we aren’t stuck in an infinite regression of refinements. At top level, call ANGELIC-SEARCH with [Act ] as the initialPlan .
 
-goal through the final action. The ability to commit to or reject high-level plans can give ANGELIC-SEARCH a sig-
+goal through the final action. 
 
-nificant computational advantage over HIERARCHICAL-SEARCH, which in turn may have a large advantage over plain old BREADTH-FIRST-SEARCH. Consider, for example, clean- ing up a large vacuum world consisting of rectangular rooms connected by narrow corri- dors. It makes sense to have an HLA for _Navigate_ (as shown in Figure 11.4) and one for _CleanWholeRoom_. (Cleaning the room could be implemented with the repeated application of another HLA to clean each row.) Since there are five actions in this domain, the cost for BREADTH-FIRST-SEARCH grows as 5d, where d is the length of the shortest solution (roughly twice the total number of squares); the algorithm cannot manage even two 2× 2
+The ability to commit to or reject high-level plans can give ANGELIC-SEARCH a significant computational advantage over HIERARCHICAL-SEARCH, which in turn may have a large advantage over plain old BREADTH-FIRST-SEARCH. Consider, for example, cleaning up a large vacuum world consisting of rectangular rooms connected by narrow corridors. It makes sense to have an HLA for _Navigate_ (as shown in Figure 11.4) and one for _CleanWholeRoom_. (Cleaning the room could be implemented with the repeated application of another HLA to clean each row.) Since there are five actions in this domain, the cost for BREADTH-FIRST-SEARCH grows as 5^d^, where d is the length of the shortest solution (roughly twice the total number of squares); the algorithm cannot manage even two 2 × 2 rooms. HIERARCHICAL-SEARCH is more efficient, but still suffers from exponential growth because it tries all ways of cleaning that are consistent with the hierarchy. 
+scales approximately linearly in the number of squares—it commits to a good high-level sequence and prunes away the other options. Notice that cleaning a set of rooms by cleaning each room in turn is hardly rocket science: it is easy for humans precisely because of the hierarchical structure of the task. When we consider how difficult humans find it to solve small puzzles such as the 8-puzzle, it seems likely that the human capacity for solving complex problems derives to a great extent from their skill in abstracting and decomposing the problem to eliminate combinatorics.
 
-rooms. HIERARCHICAL-SEARCH is more efficient, but still suffers from exponential growth because it tries all ways of cleaning that are consistent with the hierarchy. ANGELIC-SEARCH
+The angelic approach can be extended to find least-cost solutions by generalizing the notion of reachable set. Instead of a state being reachable or not, it has a cost for the most efficient way to get there. (The cost is ∞ for unreachable states.) The optimistic and pessimistic descriptions bound these costs. In this way, angelic search can find provably optimal abstract plans without considering their implementations. The same approach can be used to obtain effective **hierarchical lookahead** algorithms for online search, in the style of (page 152). In some ways, such algorithms mirror aspects of human deliberation in tasks such as planning a vacation to Hawaii—consideration of alternatives is done initially at an abstract level over long time scales; some parts of the plan are left quite abstract until execution time, such as how to spend two lazy days on Molokai, while others parts are planned in detail, such as the flights to be taken and lodging to be reserved—without these refinements, there is no guarantee that the plan would be feasible.
 
-scales approximately linearly in the number of squares—it commits to a good high-level se-  
+## PLANNING AND ACTING IN NONDETERMINISTIC DOMAINS
 
-Section 11.3. Planning and Acting in Nondeterministic Domains 415
+In this section we extend planning to handle partially observable, nondeterministic, and unknown environments. Chapter 4 extended search in similar ways, and the methods here are also similar: **sensorless planning** (also known as **conformant planning**) for environments with no observations; **contingency planning** for partially observable and nondeterministic environments; and **online planning** and **replanning** for unknown environments.
 
-quence and prunes away the other options. Notice that cleaning a set of rooms by cleaning each room in turn is hardly rocket science: it is easy for humans precisely because of the hierarchical structure of the task. When we consider how difficult humans find it to solve small puzzles such as the 8-puzzle, it seems likely that the human capacity for solving com- plex problems derives to a great extent from their skill in abstracting and decomposing the problem to eliminate combinatorics.
-
-The angelic approach can be extended to find least-cost solutions by generalizing the notion of reachable set. Instead of a state being reachable or not, it has a cost for the most efficient way to get there. (The cost is ∞ for unreachable states.) The optimistic and pes- simistic descriptions bound these costs. In this way, angelic search can find provably optimal abstract plans without considering their implementations. The same approach can be used to obtain effective **hierarchical lookahead** algorithms for online search, in the style of LRTA∗HIERARCHICAL
-
-LOOKAHEAD
-
-(page 152). In some ways, such algorithms mirror aspects of human deliberation in tasks such as planning a vacation to Hawaii—consideration of alternatives is done initially at an abstract level over long time scales; some parts of the plan are left quite abstract until execution time, such as how to spend two lazy days on Molokai, while others parts are planned in detail, such as the flights to be taken and lodging to be reserved—without these refinements, there is no guarantee that the plan would be feasible.
-
-11.3 PLANNING AND ACTING IN NONDETERMINISTIC DOMAINS
-
-In this section we extend planning to handle partially observable, nondeterministic, and un- known environments. Chapter 4 extended search in similar ways, and the methods here are also similar: **sensorless planning** (also known as **conformant planning**) for environments with no observations; **contingency planning** for partially observable and nondeterministic environments; and **online planning** and **replanning** for unknown environments.
-
-While the basic concepts are the same as in Chapter 4, there are also significant dif- ferences. These arise because planners deal with factored representations rather than atomic representations. This affects the way we represent the agent’s capability for action and obser- vation and the way we represent **belief states**—the sets of possible physical states the agent might be in—for unobservable and partially observable environments. We can also take ad- vantage of many of the domain-independent methods given in Chapter 10 for calculating search heuristics.
+While the basic concepts are the same as in Chapter 4, there are also significant differences. These arise because planners deal with factored representations rather than atomic representations. This affects the way we represent the agent’s capability for action and observation and the way we represent **belief states**—the sets of possible physical states the agent might be in—for unobservable and partially observable environments. We can also take advantage of many of the domain-independent methods given in Chapter 10 for calculating search heuristics.
 
 Consider this problem: given a chair and a table, the goal is to have them match—have the same color. In the initial state we have two cans of paint, but the colors of the paint and the furniture are unknown. Only the table is initially in the agent’s field of view:
 
-Init(Object(Table) ∧Object(Chair) ∧Can(C~1~) ∧ Can(C~2~) ∧ InView(Table))
+Init(Object(Table) ∧ Object(Chair) ∧ Can(C~1~) ∧ Can(C~2~) ∧ InView(Table))
 
 Goal (Color (Chair , c) ∧ Color(Table, c))
 
-There are two actions: removing the lid from a paint can and painting an object using the paint from an open can. The action schemas are straightforward, with one exception: we now allow preconditions and effects to contain variables that are not part of the action’s variable  
-
-
-
-list. That is, Paint(x, can) does not mention the variable c, representing the color of the paint in the can. In the fully observable case, this is not allowed—we would have to name the action Paint(x, can , c). But in the partially observable case, we might or might not know what color is in the can. (The variable c is universally quantified, just like all the other variables in an action schema.)
+ There are two actions: removing the lid from a paint can and painting an object using the paint from an open can. The action schemas are straightforward, with one exception: we now allow preconditions and effects to contain variables that are not part of the action’s variable list. That is, Paint(x, can) does not mention the variable c, representing the color of the paint in the can. In the fully observable case, this is not allowed—we would have to name the action Paint(x, can , c). But in the partially observable case, we might or might not know what color is in the can. (The variable c is universally quantified, just like all the other variables in an action schema.)
 
 Action(RemoveLid(can),
 
@@ -5314,19 +4641,19 @@ EFFECT:Open(can))
 
 Action(Paint(x , can),
 
-PRECOND:Object(x) ∧ Can(can) ∧ Color(can , c) ∧Open(can)
+PRECOND:Object(x) ∧ Can(can) ∧ Color(can , c) ∧ Open(can)
 
 EFFECT:Color(x , c))
 
-To solve a partially observable problem, the agent will have to reason about the percepts it will obtain when it is executing the plan. The percept will be supplied by the agent’s sensors when it is actually acting, but when it is planning it will need a model of its sensors. In Chapter 4, this model was given by a function, PERCEPT(s). For planning, we augment PDDL with a new type of schema, the **percept schema**:PERCEPT SCHEMA
+To solve a partially observable problem, the agent will have to reason about the percepts it will obtain when it is executing the plan. The percept will be supplied by the agent’s sensors when it is actually acting, but when it is planning it will need a model of its sensors. In Chapter 4, this model was given by a function, PERCEPT(s). For planning, we augment PDDL with a new type of schema, the **percept schema**:
 
-Percept(Color(x, c),
+Percept(Color(x, c)),
 
 PRECOND:Object(x) ∧ InView(x)
 
-Percept(Color(can, c),
+Percept(Color(can, c)),
 
-PRECOND:Can(can) ∧ InView(can) ∧Open(can)
+PRECOND:Can(can) ∧ InView(can) ∧ Open(can)
 
 The first schema says that whenever an object is in view, the agent will perceive the color of the object (that is, for the object x, the agent will learn the truth value of Color(x, c) for all c). The second schema says that if an open can is in view, then the agent perceives the color of the paint in the can. Because there are no exogenous events in this world, the color of an object will remain the same, even if it is not being perceived, until the agent performs an action to change the object’s color. Of course, the agent will need an action that causes objects (one at a time) to come into view:
 
@@ -5340,105 +4667,75 @@ For a fully observable environment, we would have a Percept axiom with no precon
 
 A contingent planning agent with sensors can generate a better plan. First, look at the table and chair to obtain their colors; if they are already the same then the plan is done. If not, look at the paint cans; if the paint in a can is the same color as one piece of furniture, then apply that paint to the other piece. Otherwise, paint both pieces with any color.
 
-Finally, an online planning agent might generate a contingent plan with fewer branches at first—perhaps ignoring the possibility that no cans match any of the furniture—and deal  
-
-Section 11.3. Planning and Acting in Nondeterministic Domains 417
-
-with problems when they arise by replanning. It could also deal with incorrectness of its action schemas. Whereas a contingent planner simply assumes that the effects of an action always succeed—that painting the chair does the job—a replanning agent would check the result and make an additional plan to fix any unexpected failure, such as an unpainted area or the original color showing through.
+Finally, an online planning agent might generate a contingent plan with fewer branches at first—perhaps ignoring the possibility that no cans match any of the furniture—and deal with problems when they arise by replanning. It could also deal with incorrectness of its action schemas. Whereas a contingent planner simply assumes that the effects of an action always succeed—that painting the chair does the job—a replanning agent would check the result and make an additional plan to fix any unexpected failure, such as an unpainted area or the original color showing through.
 
 In the real world, agents use a combination of approaches. Car manufacturers sell spare tires and air bags, which are physical embodiments of contingent plan branches designed to handle punctures or crashes. On the other hand, most car drivers never consider these possibilities; when a problem arises they respond as replanning agents. In general, agents plan only for contingencies that have important consequences and a nonnegligible chance of happening. Thus, a car driver contemplating a trip across the Sahara desert should make explicit contingency plans for breakdowns, whereas a trip to the supermarket requires less advance planning. We next look at each of the three approaches in more detail.
 
-**11.3.1 Sensorless planning**
+### Sensorless planning
 
-Section 4.4.1 (page 138) introduced the basic idea of searching in belief-state space to find a solution for sensorless problems. Conversion of a sensorless planning problem to a belief- state planning problem works much the same way as it did in Section 4.4.1; the main differ- ences are that the underlying physical transition model is represented by a collection of action schemas and the belief state can be represented by a logical formula instead of an explicitly enumerated set of states. For simplicity, we assume that the underlying planning problem is deterministic.
+Section 4.4.1 (page 138) introduced the basic idea of searching in belief-state space to find a solution for sensorless problems. Conversion of a sensorless planning problem to a beliefstate planning problem works much the same way as it did in Section 4.4.1; the main differences are that the underlying physical transition model is represented by a collection of action schemas and the belief state can be represented by a logical formula instead of an explicitly enumerated set of states. For simplicity, we assume that the underlying planning problem is deterministic.
 
-The initial belief state for the sensorless painting problem can ignore InView fluents because the agent has no sensors. Furthermore, we take as given the unchanging facts Object(Table) ∧ Object(Chair) ∧ Can(C~1~) ∧ Can(C~2~) because these hold in every be- lief state. The agent doesn’t know the colors of the cans or the objects, or whether the cans are open or closed, but it does know that objects and cans have colors: ∀x ∃ c Color (x, c). After Skolemizing, (see Section 9.5), we obtain the initial belief state:
+The initial belief state for the sensorless painting problem can ignore InView fluents because the agent has no sensors. Furthermore, we take as given the unchanging facts Object(Table) ∧ Object(Chair) ∧ Can(C~1~) ∧ Can(C~2~) because these hold in every belief state. The agent doesn’t know the colors of the cans or the objects, or whether the cans are open or closed, but it does know that objects and cans have colors: ∀x ∃ c Color (x, c). After Skolemizing, (see Section 9.5), we obtain the initial belief state:
 
-b0 = Color(x,C(x)) .
+b~0~ = Color(x,C(x)) .
 
-In classical planning, where the **closed-world assumption** is made, we would assume that any fluent not mentioned in a state is false, but in sensorless (and partially observable) plan- ning we have to switch to an **open-world assumption** in which states contain both positive and negative fluents, and if a fluent does not appear, its value is unknown. Thus, the belief state corresponds exactly to the set of possible worlds that satisfy the formula. Given this initial belief state, the following action sequence is a solution:
+In classical planning, where the **closed-world assumption** is made, we would assume that any fluent not mentioned in a state is false, but in sensorless (and partially observable) planning we have to switch to an **open-world assumption** in which states contain both positive and negative fluents, and if a fluent does not appear, its value is unknown. Thus, the belief state corresponds exactly to the set of possible worlds that satisfy the formula. Given this initial belief state, the following action sequence is a solution:
 
-[RemoveLid(Can1),Paint(Chair ,Can1),Paint(Table,Can1)] .
+[RemoveLid(Can~1~),Paint(Chair ,Can~1~),Paint(Table,Can~1~)] .
 
 We now show how to progress the belief state through the action sequence to show that the final belief state satisfies the goal.
 
-First, note that in a given belief state b, the agent can consider any action whose pre- conditions are satisfied by b. (The other actions cannot be used because the transition model doesn’t define the effects of actions whose preconditions might be unsatisfied.) According  
+First, note that in a given belief state b, the agent can consider any action whose preconditions are satisfied by b. (The other actions cannot be used because the transition model doesn’t define the effects of actions whose preconditions might be unsatisfied.) According to Equation (4.4) (page 139), the general formula for updating the belief state b given an applicable action a in a deterministic world is as follows:
 
-
-
-to Equation (4.4) (page 139), the general formula for updating the belief state b given an applicable action a in a deterministic world is as follows:
-
-b ′
-
-= RESULT(b, a) = {s′ : s ′
-
-= RESULTP (s, a) and s ∈ b}
+b′= RESULT(b, a) = {s′ : s′= RESULTP (s, a) and s ∈ b}
 
 where RESULTP defines the physical transition model. For the time being, we assume that the initial belief state is always a conjunction of literals, that is, a 1-CNF formula. To construct the new belief state b
 
 ′, we must consider what happens to each literal l in each physical state s in b when action a is applied. For literals whose truth value is already known in b, the truth value in b
 
-′ is computed from the current value and the add list and delete list of the action. (For example, if  is in the delete list of the action, then ¬ is added to b
+′ is computed from the current value and the add list and delete list of the action. (For example, if l is in the delete list of the action, then ¬l is added to b
 
 ′.) What about a literal whose truth value is unknown in b? There are three cases:
 
-1. If the action adds , then  will be true in b ′ regardless of its initial value.
+1. If the action adds l, then l will be true in b′ regardless of its initial value.
 
-2. If the action deletes , then  will be false in b ′ regardless of its initial value.
+2. If the action deletes l, then l will be false in b′ regardless of its initial value.
 
-3. If the action does not affect , then  will retain its initial value (which is unknown) and will not appear in b
+3. If the action does not affect l, then l will retain its initial value (which is unknown) and will not appear in b′.
 
-′.
-
-Hence, we see that the calculation of b ′ is almost identical to the observable case, which was
+Hence, we see that the calculation of b′ is almost identical to the observable case, which was
 
 specified by Equation (10.1) on page 368:
 
-b ′
+b′= RESULT(b, a) = (b− DEL(a)) ∪ ADD(a) .
 
-= RESULT(b, a) = (b− DEL(a))∪ADD(a) .
+We cannot quite use the set semantics because (1) we must make sure that b′ does not contain both l and ¬l, and (2) atoms may contain unbound variables. But it is still the case that RESULT(b, a) is computed by starting with b, setting any atom that appears in DEL(a) to false, and setting any atom that appears in ADD(a) to true. For example, if we apply _RemoveLid_(Can~1~) to the initial belief state b~0~, we get
 
-We cannot quite use the set semantics because (1) we must make sure that b ′ does not con-
+b~1~ = Color(x,C(x)) ∧Open(Can~1~) .
 
-tain both  and ¬, and (2) atoms may contain unbound variables. But it is still the case that RESULT(b, a) is computed by starting with b, setting any atom that appears in DEL(a)
+When we apply the action Paint(Chair ,Can~1~), the precondition Color (Can~1~, c) is satisfied by the known literal Color(x,C(x)) with binding {x/Can~1~, c/C(Can~1~)} and the new belief state is
 
-to false, and setting any atom that appears in ADD(a) to true. For example, if we apply _RemoveLid_(Can1) to the initial belief state b0, we get
+b~2~ = Color(x,C(x)) ∧Open(Can~1~) ∧ Color(Chair , C(Can~1~)) .
 
-b1 = Color(x,C(x)) ∧Open(Can1) .
+Finally, we apply the action Paint(Table ,Can~1~) to obtain
 
-When we apply the action Paint(Chair ,Can1), the precondition Color (Can1, c) is satisfied by the known literal Color(x,C(x)) with binding {x/Can1, c/C(Can1)} and the new belief state is
+b~3~ = Color(x,C(x)) ∧Open(Can~1~) ∧ Color(Chair , C(Can~1~))
 
-b2 = Color(x,C(x)) ∧Open(Can1) ∧ Color(Chair , C(Can1)) .
+∧ Color(Table , C(Can~1~)) .
 
-Finally, we apply the action Paint(Table ,Can1) to obtain
+The final belief state satisfies the goal, Color(Table , c)∧Color (Chair , c), with the variable c bound to C(Can~1~).
 
-b3 = Color(x,C(x)) ∧Open(Can1) ∧ Color(Chair , C(Can1))
+The preceding analysis of the update rule has shown a very important fact: _the family of belief states defined as conjunctions of literals is closed under updates defined by PDDL action schemas._ That is, if the belief state starts as a conjunction of literals, then any update will yield a conjunction of literals. That means that in a world with n fluents, any belief state can be represented by a conjunction of size O(n). This is a very comforting result, considering that there are 2^n^ states in the world. It says we can compactly represent all the subsets of those 2^n^ states that we will ever need. Moreover, the process of checking for belief states that are subsets or supersets of previously visited belief states is also easy, at least in the propositional case.
 
-∧ Color(Table , C(Can1)) .
-
-The final belief state satisfies the goal, Color(Table , c)∧Color (Chair , c), with the variable c bound to C(Can1).
-
-The preceding analysis of the update rule has shown a very important fact: _the family of belief states defined as conjunctions of literals is closed under updates defined by PDDL action schemas._ That is, if the belief state starts as a conjunction of literals, then any update will yield a conjunction of literals. That means that in a world with n fluents, any belief state can be represented by a conjunction of size O(n). This is a very comforting result, considering that there are 2^n^ states in the world. It says we can compactly represent all the subsets of those 2^n^ states that we will ever need. Moreover, the process of checking for belief  
-
-Section 11.3. Planning and Acting in Nondeterministic Domains 419
-
-states that are subsets or supersets of previously visited belief states is also easy, at least in the propositional case.
-
-The fly in the ointment of this pleasant picture is that it only works for action schemas that have the _same effects_ for all states in which their preconditions are satisfied. It is this property that enables the preservation of the 1-CNF belief-state representation. As soon as the effect can depend on the state, dependencies are introduced between fluents and the 1-CNF property is lost. Consider, for example, the simple vacuum world defined in Section 3.2.1. Let the fluents be AtL and AtR for the location of the robot and CleanL and CleanR for the state of the squares. According to the definition of the problem, the _Suck_ action has no precondition—it can always be done. The difficulty is that its effect depends on the robot’s lo- cation: when the robot is AtL, the result is CleanL, but when it is AtR, the result is CleanR. For such actions, our action schemas will need something new: a **conditional effect**. TheseCONDITIONAL
-
-EFFECT
-
-have the syntax “**when** condition : effect ,” where _condition_ is a logical formula to be com- pared against the current state, and _effect_ is a formula describing the resulting state. For the vacuum world, we have
+The fly in the ointment of this pleasant picture is that it only works for action schemas that have the _same effects_ for all states in which their preconditions are satisfied. It is this property that enables the preservation of the 1-CNF belief-state representation. As soon as the effect can depend on the state, dependencies are introduced between fluents and the 1-CNF property is lost. Consider, for example, the simple vacuum world defined in Section 3.2.1. Let the fluents be AtL and AtR for the location of the robot and CleanL and CleanR for the state of the squares. According to the definition of the problem, the _Suck_ action has no precondition—it can always be done. The difficulty is that its effect depends on the robot’s location: when the robot is AtL, the result is CleanL, but when it is AtR, the result is CleanR. For such actions, our action schemas will need something new: a **conditional effect**. These have the syntax “**when** condition : effect ,” where _condition_ is a logical formula to be compared against the current state, and _effect_ is a formula describing the resulting state. For the vacuum world, we have
 
 Action(Suck ,
 
 EFFECT:**when** AtL: CleanL ∧ **when** AtR: CleanR) .
 
-When applied to the initial belief state True , the resulting belief state is (AtL ∧ CleanL) ∨
+When applied to the initial belief state True , the resulting belief state is (AtL ∧ CleanL) ∨ (AtR ∧ CleanR), which is no longer in 1-CNF. (This transition can be seen in Figure 4.14 on page 141.) In general, conditional effects can induce arbitrary dependencies among the fluents in a belief state, leading to belief states of exponential size in the worst case.
 
-(AtR ∧ CleanR), which is no longer in 1-CNF. (This transition can be seen in Figure 4.14 on page 141.) In general, conditional effects can induce arbitrary dependencies among the fluents in a belief state, leading to belief states of exponential size in the worst case.
-
-It is important to understand the difference between preconditions and conditional ef- fects. _All_ conditional effects whose conditions are satisfied have their effects applied to gener- ate the resulting state; if none are satisfied, then the resulting state is unchanged. On the other hand, if a _precondition_ is unsatisfied, then the action is inapplicable and the resulting state is undefined. From the point of view of sensorless planning, it is better to have conditional effects than an inapplicable action. For example, we could split Suck into two actions with unconditional effects as follows:
+It is important to understand the difference between preconditions and conditional effects. _All_ conditional effects whose conditions are satisfied have their effects applied to generate the resulting state; if none are satisfied, then the resulting state is unchanged. On the other hand, if a _precondition_ is unsatisfied, then the action is inapplicable and the resulting state is undefined. From the point of view of sensorless planning, it is better to have conditional effects than an inapplicable action. For example, we could split Suck into two actions with unconditional effects as follows:
 
 Action(SuckL,
 
@@ -5448,136 +4745,86 @@ Action(SuckR,
 
 PRECOND:AtR; EFFECT:CleanR) .
 
-Now we have only unconditional schemas, so the belief states all remain in 1-CNF; unfortu- nately, we cannot determine the applicability of SuckL and SuckR in the initial belief state.
+Now we have only unconditional schemas, so the belief states all remain in 1-CNF; unfortunately, we cannot determine the applicability of SuckL and SuckR in the initial belief state.
 
-It seems inevitable, then, that nontrivial problems will involve wiggly belief states, just like those encountered when we considered the problem of state estimation for the wumpus world (see Figure 7.21 on page 271). The solution suggested then was to use a **conservative approximation** to the exact belief state; for example, the belief state can remain in 1-CNF if it contains all literals whose truth values can be determined and treats all other literals as unknown. While this approach is _sound_, in that it never generates an incorrect plan, it is _incomplete_ because it may be unable to find solutions to problems that necessarily involve interactions among literals. To give a trivial example, if the goal is for the robot to be on  
-
-
-
-a clean square, then [Suck ] is a solution but a sensorless agent that insists on 1-CNF belief states will not find it.
+It seems inevitable, then, that nontrivial problems will involve wiggly belief states, just like those encountered when we considered the problem of state estimation for the wumpus world (see Figure 7.21 on page 271). The solution suggested then was to use a **conservative approximation** to the exact belief state; for example, the belief state can remain in 1-CNF if it contains all literals whose truth values can be determined and treats all other literals as unknown. While this approach is _sound_, in that it never generates an incorrect plan, it is _incomplete_ because it may be unable to find solutions to problems that necessarily involve interactions among literals. To give a trivial example, if the goal is for the robot to be on a clean square, then [Suck ] is a solution but a sensorless agent that insists on 1-CNF belief states will not find it.
 
 Perhaps a better solution is to look for action sequences that keep the belief state as simple as possible. For example, in the sensorless vacuum world, the action sequence [Right ,Suck ,Left ,Suck ] generates the following sequence of belief states:
 
-b0 = True
+b~0~ = True
 
-b1 = AtR
+b~1~ = AtR
 
-b2 = AtR ∧CleanR
+b~2~ = AtR ∧ CleanR
 
-b3 = AtL ∧ CleanR
+b~3~ = AtL ∧ CleanR
 
-b4 = AtL ∧ CleanR ∧CleanL
+b4 = AtL ∧ CleanR ∧ CleanL
 
 That is, the agent _can_ solve the problem while retaining a 1-CNF belief state, even though some sequences (e.g., those beginning with _Suck_) go outside 1-CNF. The general lesson is not lost on humans: we are always performing little actions (checking the time, patting our pockets to make sure we have the car keys, reading street signs as we navigate through a city) to eliminate uncertainty and keep our belief state manageable.
 
-There is another, quite different approach to the problem of unmanageably wiggly be- lief states: don’t bother computing them at all. Suppose the initial belief state is b0 and we would like to know the belief state resulting from the action sequence [A~1~, . . . , am]. Instead of computing it explicitly, just represent it as “b0 then [A~1~, . . . , am].” This is a lazy but un- ambiguous representation of the belief state, and it’s quite concise—O(n + m) where n is the size of the initial belief state (assumed to be in 1-CNF) and m is the maximum length of an action sequence. As a belief-state representation, it suffers from one drawback, how- ever: determining whether the goal is satisfied, or an action is applicable, may require a lot of computation.
+There is another, quite different approach to the problem of unmanageably wiggly belief states: don’t bother computing them at all. Suppose the initial belief state is b~0~ and we would like to know the belief state resulting from the action sequence [A~1~, . . . , am]. Instead of computing it explicitly, just represent it as “b~0~ then [A~1~, . . . , am].” This is a lazy but unambiguous representation of the belief state, and it’s quite concise—O(n + m) where n is the size of the initial belief state (assumed to be in 1-CNF) and m is the maximum length of an action sequence. As a belief-state representation, it suffers from one drawback, however: determining whether the goal is satisfied, or an action is applicable, may require a lot of computation.
 
-The computation can be implemented as an entailment test: if Am represents the collec- tion of successor-state axioms required to define occurrences of the actions A~1~, . . . , am—as explained for SATP~LAN~ in Section 10.4.1—and Gm asserts that the goal is true after m steps, then the plan achieves the goal if b0 ∧Am |= Gm, that is, if b0 ∧Am ∧ ¬Gm is unsatisfiable. Given a modern SAT solver, it may be possible to do this much more quickly than computing the full belief state. For example, if none of the actions in the sequence has a particular goal fluent in its add list, the solver will detect this immediately. It also helps if partial results about the belief state—for example, fluents known to be true or false—are cached to simplify subsequent computations.
+The computation can be implemented as an entailment test: if Am represents the collection of successor-state axioms required to define occurrences of the actions A~1~, . . . , am—as explained for SATP~LAN~ in Section 10.4.1—and Gm asserts that the goal is true after m steps, then the plan achieves the goal if b~0~ ∧Am |= Gm, that is, if b~0~ ∧Am ∧ ¬Gm is unsatisfiable. Given a modern SAT solver, it may be possible to do this much more quickly than computing the full belief state. For example, if none of the actions in the sequence has a particular goal fluent in its add list, the solver will detect this immediately. It also helps if partial results about the belief state—for example, fluents known to be true or false—are cached to simplify subsequent computations.
 
-The final piece of the sensorless planning puzzle is a heuristic function to guide the search. The meaning of the heuristic function is the same as for classical planning: an esti- mate (perhaps admissible) of the cost of achieving the goal from the given belief state. With belief states, we have one additional fact: solving any subset of a belief state is necessarily easier than solving the belief state:
+The final piece of the sensorless planning puzzle is a heuristic function to guide the search. The meaning of the heuristic function is the same as for classical planning: an estimate (perhaps admissible) of the cost of achieving the goal from the given belief state. With belief states, we have one additional fact: solving any subset of a belief state is necessarily easier than solving the belief state:
 
-if b1 ⊆ b2 then h ∗
+if b~1~ ⊆ b~2~ then h ∗(b~1~) ≤ h ∗(b~2~) .
 
-(b1) ≤ h ∗
+Hence, any admissible heuristic computed for a subset is admissible for the belief state itself. The most obvious candidates are the singleton subsets, that is, individual physical states. We  can take any random collection of states s~1~, . . . , s~N~ that are in the belief state b, apply any admissible heuristic h from Chapter 10, and return
 
-(b2) .
-
-Hence, any admissible heuristic computed for a subset is admissible for the belief state itself. The most obvious candidates are the singleton subsets, that is, individual physical states. We  
-
-Section 11.3. Planning and Acting in Nondeterministic Domains 421
-
-can take any random collection of states s~1~, . . . , sN that are in the belief state b, apply any admissible heuristic h from Chapter 10, and return
-
-H(b) = max{h(s~1~), . . . , h(sN )}
+H(b) = max{h(s~1~), . . . , h(s~N~ )}
 
 as the heuristic estimate for solving b. We could also use a planning graph directly on b itself: if it is a conjunction of literals (1-CNF), simply set those literals to be the initial state layer of the graph. If b is not in 1-CNF, it may be possible to find sets of literals that together entail b. For example, if b is in disjunctive normal form (DNF), each term of the DNF formula is a conjunction of literals that entails b and can form the initial layer of a planning graph. As before, we can take the maximum of the heuristics obtained from each set of literals. We can also use inadmissible heuristics such as the ignore-delete-lists heuristic (page 377), which seems to work quite well in practice.
 
-**11.3.2 Contingent planning**
+### Contingent planning
 
-We saw in Chapter 4 that contingent planning—the generation of plans with conditional branching based on percepts—is appropriate for environments with partial observability, non- determinism, or both. For the partially observable painting problem with the percept axioms given earlier, one possible contingent solution is as follows:
+We saw in Chapter 4 that contingent planning—the generation of plans with conditional branching based on percepts—is appropriate for environments with partial observability, nondeterminism, or both. For the partially observable painting problem with the percept axioms given earlier, one possible contingent solution is as follows:
 
 [LookAt(Table),LookAt(Chair),
 
 **if** Color(Table , c) ∧ Color(Chair , c) **then** NoOp
 
-**else** [RemoveLid(Can1),LookAt(Can1),RemoveLid (Can2),LookAt(Can2),
+**else** [RemoveLid(Can~1~),LookAt(Can~1~),RemoveLid (Can~2~),LookAt(Can~2~),
 
 **if** Color (Table, c) ∧ Color (can , c) **then** Paint(Chair , can)
 
 **else if** Color(Chair , c) ∧ Color(can , c) **then** Paint(Table , can)
 
-**else** [Paint(Chair ,Can1),Paint(Table ,Can1)]]]
+**else** [Paint(Chair ,Can~1~),Paint(Table ,Can~1~)]]]
 
-Variables in this plan should be considered existentially quantified; the second line says that if there exists some color c that is the color of the table and the chair, then the agent need not do anything to achieve the goal. When executing this plan, a contingent-planning agent can maintain its belief state as a logical formula and evaluate each branch condition by determining if the belief state entails the condition formula or its negation. (It is up to the contingent-planning algorithm to make sure that the agent will never end up in a be- lief state where the condition formula’s truth value is unknown.) Note that with first-order conditions, the formula may be satisfied in more than one way; for example, the condition Color(Table , c) ∧ Color (can , c) might be satisfied by {can/Can1} and by {can/Can2} if both cans are the same color as the table. In that case, the agent can choose any satisfying substitution to apply to the rest of the plan.
+Variables in this plan should be considered existentially quantified; the second line says that if there exists some color c that is the color of the table and the chair, then the agent need not do anything to achieve the goal. When executing this plan, a contingent-planning agent can maintain its belief state as a logical formula and evaluate each branch condition by determining if the belief state entails the condition formula or its negation. (It is up to the contingent-planning algorithm to make sure that the agent will never end up in a belief state where the condition formula’s truth value is unknown.) Note that with first-order conditions, the formula may be satisfied in more than one way; for example, the condition Color(Table , c) ∧ Color (can , c) might be satisfied by {can/Can~1~} and by {can/Can~2~} if both cans are the same color as the table. In that case, the agent can choose any satisfying substitution to apply to the rest of the plan.
 
-As shown in Section 4.4.2, calculating the new belief state after an action and subse- quent percept is done in two stages. The first stage calculates the belief state after the action, just as for the sensorless agent:
+As shown in Section 4.4.2, calculating the new belief state after an action and subsequent percept is done in two stages. The first stage calculates the belief state after the action, just as for the sensorless agent:
 
-b̂ = (b− DEL(a))∪ADD(a)
+b̂ = (b− DEL(a)) ∪ ADD(a)
 
-where, as before, we have assumed a belief state represented as a conjunction of literals. The second stage is a little trickier. Suppose that percept literals P~1~, . . . , P~k~ are received. One might think that we simply need to add these into the belief state; in fact, we can also infer  
-
-
-
-that the preconditions for sensing are satisfied. Now, if a percept p has exactly one percept axiom, Percept(p, PRECOND:c), where c is a conjunction of literals, then those literals can be thrown into the belief state along with p. On the other hand, if p has more than one percept axiom whose preconditions might hold according to the predicted belief state b̂, then we have to add in the _disjunction_ of the preconditions. Obviously, this takes the belief state outside 1-CNF and brings up the same complications as conditional effects, with much the same classes of solutions.
+where, as before, we have assumed a belief state represented as a conjunction of literals. The second stage is a little trickier. Suppose that percept literals P~1~, . . . , P~k~ are received. One might think that we simply need to add these into the belief state; in fact, we can also infer that the preconditions for sensing are satisfied. Now, if a percept p has exactly one percept axiom, Percept(p, PRECOND:c), where c is a conjunction of literals, then those literals can be thrown into the belief state along with p. On the other hand, if p has more than one percept axiom whose preconditions might hold according to the predicted belief state b̂, then we have to add in the _disjunction_ of the preconditions. Obviously, this takes the belief state outside 1-CNF and brings up the same complications as conditional effects, with much the same classes of solutions.
 
 Given a mechanism for computing exact or approximate belief states, we can generate contingent plans with an extension of the AND–OR forward search over belief states used in Section 4.4. Actions with nondeterministic effects—which are defined simply by using a disjunction in the EFFECT of the action schema—can be accommodated with minor changes to the belief-state update calculation and no change to the search algorithm.2 For the heuristic function, many of the methods suggested for sensorless planning are also applicable in the partially observable, nondeterministic case.
 
-**11.3.3 Online replanning**
+### Online replanning
 
-Imagine watching a spot-welding robot in a car plant. The robot’s fast, accurate motions are repeated over and over again as each car passes down the line. Although technically im- pressive, the robot probably does not seem at all _intelligent_ because the motion is a fixed, preprogrammed sequence; the robot obviously doesn’t “know what it’s doing” in any mean- ingful sense. Now suppose that a poorly attached door falls off the car just as the robot is about to apply a spot-weld. The robot quickly replaces its welding actuator with a gripper, picks up the door, checks it for scratches, reattaches it to the car, sends an email to the floor supervisor, switches back to the welding actuator, and resumes its work. All of a sudden, the robot’s behavior seems _purposive_ rather than rote; we assume it results not from a vast, precomputed contingent plan but from an online replanning process—which means that the robot _does_ need to know what it’s trying to do.
+Imagine watching a spot-welding robot in a car plant. The robot’s fast, accurate motions are repeated over and over again as each car passes down the line. Although technically impressive, the robot probably does not seem at all _intelligent_ because the motion is a fixed, preprogrammed sequence; the robot obviously doesn’t “know what it’s doing” in any meaningful sense. Now suppose that a poorly attached door falls off the car just as the robot is about to apply a spot-weld. The robot quickly replaces its welding actuator with a gripper, picks up the door, checks it for scratches, reattaches it to the car, sends an email to the floor supervisor, switches back to the welding actuator, and resumes its work. All of a sudden, the robot’s behavior seems _purposive_ rather than rote; we assume it results not from a vast, precomputed contingent plan but from an online replanning process—which means that the robot _does_ need to know what it’s trying to do.
 
-Replanning presupposes some form of **execution monitoring** to determine the need forEXECUTION MONITORING
-
-a new plan. One such need arises when a contingent planning agent gets tired of planning for every little contingency, such as whether the sky might fall on its head.3 Some branches of a partially constructed contingent plan can simply say Replan ; if such a branch is reached during execution, the agent reverts to planning mode. As we mentioned earlier, the decision as to how much of the problem to solve in advance and how much to leave to replanning is one that involves tradeoffs among possible events with different costs and probabilities of occurring. Nobody wants to have their car break down in the middle of the Sahara desert and only then think about having enough water.
-
+Replanning presupposes some form of **execution monitoring** to determine the need for a new plan. One such need arises when a contingent planning agent gets tired of planning for every little contingency, such as whether the sky might fall on its head.3 Some branches of a partially constructed contingent plan can simply say Replan ; if such a branch is reached during execution, the agent reverts to planning mode. As we mentioned earlier, the decision as to how much of the problem to solve in advance and how much to leave to replanning is one that involves tradeoffs among possible events with different costs and probabilities of occurring. Nobody wants to have their car break down in the middle of the Sahara desert and only then think about having enough water.
+```
 2 If cyclic solutions are required for a nondeterministic problem, AND–OR search must be generalized to a loopy version such as LAO∗ (Hansen and Zilberstein, 2001). 3 In 1954, a Mrs. Hodges of Alabama was hit by meteorite that crashed through her roof. In 1992, a piece of the Mbale meteorite hit a small boy on the head; fortunately, its descent was slowed by banana leaves (Jenniskens _et al._, 1994). And in 2009, a German boy claimed to have been hit in the hand by a pea-sized meteorite. No serious injuries resulted from any of these incidents, suggesting that the need for preplanning against such contingencies is sometimes overstated.  
+```
 
-Section 11.3. Planning and Acting in Nondeterministic Domains 423
+![Alt text](image/11img/figure-11.9.png)
 
-_whole plan_
+Replanning may also be needed if the agent’s model of the world is incorrect. The model for an action may have a **missing precondition**—for example, the agent may not know that removing the lid of a paint can often requires a screwdriver; the model may have a **missing effect**—for example, painting an object may get paint on the floor as well; or the model may have a **missing state variable**—for example, the model given earlier has no notion of the amount of paint in a can, of how its actions affect this amount, or of the need for the amount to be nonzero. The model may also lack provision for **exogenous events** such as someone knocking over the paint can. Exogenous events can also include changes in the goal, such as the addition of the requirement that the table and chair not be painted black. Without the ability to monitor and replan, an agent’s behavior is likely to be extremely fragile if it relies on absolute correctness of its model.
 
-_plan_
+The online agent has a choice of how carefully to monitor the environment. We distinguish three levels:
 
-_repair_
+- **Action monitoring**: before executing an action, the agent verifies that all the preconditions still hold.
 
-_S P_
+- **Plan monitoring**: before executing an action, the agent verifies that the remaining plan will still succeed.
 
-_O_
-
-_E G_
-
-_continuation_
-
-**Figure 11.9** Before execution, the planner comes up with a plan, here called whole plan , to get from S to G. The agent executes steps of the plan until it expects to be in state E, but observes it is actually in O. The agent then replans for the minimal repair plus continuation to reach G.
-
-Replanning may also be needed if the agent’s model of the world is incorrect. The model for an action may have a **missing precondition**—for example, the agent may not know thatMISSING
-
-PRECONDITION
-
-removing the lid of a paint can often requires a screwdriver; the model may have a **missing effect**—for example, painting an object may get paint on the floor as well; or the model mayMISSING EFFECT
-
-have a **missing state variable**—for example, the model given earlier has no notion of theMISSING STATE VARIABLE
-
-amount of paint in a can, of how its actions affect this amount, or of the need for the amount to be nonzero. The model may also lack provision for **exogenous events** such as someoneEXOGENOUS EVENT
-
-knocking over the paint can. Exogenous events can also include changes in the goal, such as the addition of the requirement that the table and chair not be painted black. Without the ability to monitor and replan, an agent’s behavior is likely to be extremely fragile if it relies on absolute correctness of its model.
-
-The online agent has a choice of how carefully to monitor the environment. We distin- guish three levels:
-
-- **Action monitoring**: before executing an action, the agent verifies that all the precondi-ACTION MONITORING
-
-tions still hold.
-
-- **Plan monitoring**: before executing an action, the agent verifies that the remaining planPLAN MONITORING
-
-will still succeed.
-
-- **Goal monitoring**: before executing an action, the agent checks to see if there is a betterGOAL MONITORING
-
-set of goals it could be trying to achieve.
+- **Goal monitoring**: before executing an action, the agent checks to see if there is a better set of goals it could be trying to achieve.
 
 In Figure 11.9 we see a schematic of action monitoring. The agent keeps track of both its original plan, wholeplan , and the part of the plan that has not been executed yet, which is denoted by plan . After executing the first few steps of the plan, the agent expects to be in state E. But the agent observes it is actually in state O. It then needs to repair the plan by finding some point P on the original plan that it can get back to. (It may be that P is the goal state, G.) The agent tries to minimize the total cost of the plan: the repair part (from O to P ) plus the continuation (from P to G).  
-
 
 
 Now let’s return to the example problem of achieving a chair and table of matching color. Suppose the agent comes up with this plan:
@@ -5586,23 +4833,22 @@ Now let’s return to the example problem of achieving a chair and table of matc
 
 **if** Color(Table , c) ∧ Color(Chair , c) **then** NoOp
 
-**else** [RemoveLid(Can1),LookAt(Can1),
+**else** [RemoveLid(Can~1~),LookAt(Can~1~),
 
-**if** Color (Table, c) ∧ Color (Can1, c) **then** Paint(Chair ,Can1)
+**if** Color (Table, c) ∧ Color (Can~1~, c) **then** Paint(Chair ,Can~1~)
 
 **else** REPLAN]] .
 
-Now the agent is ready to execute the plan. Suppose the agent observes that the table and can of paint are white and the chair is black. It then executes Paint(Chair ,Can1). At this point a classical planner would declare victory; the plan has been executed. But an online execution monitoring agent needs to check the preconditions of the remaining empty plan— that the table and chair are the same color. Suppose the agent perceives that they do not have the same color—in fact, the chair is now a mottled gray because the black paint is showing through. The agent then needs to figure out a position in whole plan to aim for and a repair action sequence to get there. The agent notices that the current state is identical to the precondition before the Paint(Chair ,Can1) action, so the agent chooses the empty sequence for repair and makes its plan be the same [Paint ] sequence that it just attempted. With this new plan in place, execution monitoring resumes, and the Paint action is retried. This behavior will loop until the chair is perceived to be completely painted. But notice that the loop is created by a process of plan–execute–replan, rather than by an explicit loop in a plan. Note also that the original plan need not cover every contingency. If the agent reaches the step marked REPLAN, it can then generate a new plan (perhaps involving Can2).
+Now the agent is ready to execute the plan. Suppose the agent observes that the table and can of paint are white and the chair is black. It then executes Paint(Chair ,Can~1~). At this point a classical planner would declare victory; the plan has been executed. But an online execution monitoring agent needs to check the preconditions of the remaining empty plan— that the table and chair are the same color. Suppose the agent perceives that they do not have the same color—in fact, the chair is now a mottled gray because the black paint is showing through. The agent then needs to figure out a position in whole plan to aim for and a repair action sequence to get there. The agent notices that the current state is identical to the precondition before the Paint(Chair ,Can~1~) action, so the agent chooses the empty sequence for repair and makes its plan be the same [Paint ] sequence that it just attempted. With this new plan in place, execution monitoring resumes, and the Paint action is retried. This behavior will loop until the chair is perceived to be completely painted. But notice that the loop is created by a process of plan–execute–replan, rather than by an explicit loop in a plan. Note also that the original plan need not cover every contingency. If the agent reaches the step marked REPLAN, it can then generate a new plan (perhaps involving Can~2~).
 
 Action monitoring is a simple method of execution monitoring, but it can sometimes lead to less than intelligent behavior. For example, suppose there is no black or white paint, and the agent constructs a plan to solve the painting problem by painting both the chair and table red. Suppose that there is only enough red paint for the chair. With action monitoring, the agent would go ahead and paint the chair red, then notice that it is out of paint and cannot paint the table, at which point it would replan a repair—perhaps painting both chair and table green. A plan-monitoring agent can detect failure whenever the current state is such that the remaining plan no longer works. Thus, it would not waste time painting the chair red. Plan monitoring achieves this by checking the preconditions for success of the entire remaining plan—that is, the preconditions of each step in the plan, except those preconditions that are achieved by another step in the remaining plan. Plan monitoring cuts off execution of a doomed plan as soon as possible, rather than continuing until the failure actually occurs.4
 
 Plan monitoring also allows for **serendipity**—accidental success. If someone comes along and paints the table red at the same time that the agent is painting the chair red, then the final plan preconditions are satisfied (the goal has been achieved), and the agent can go home early.
 
 It is straightforward to modify a planning algorithm so that each action in the plan is annotated with the action’s preconditions, thus enabling action monitoring. It is slightly
-
+```
 4 Plan monitoring means that finally, after 424 pages, we have an agent that is smarter than a dung beetle (see page 39). A plan-monitoring agent would notice that the dung ball was missing from its grasp and would replan to get another ball and plug its hole.  
-
-Section 11.4. Multiagent Planning 425
+```
 
 more complex to enable plan monitoring. Partial-order and planning-graph planners have the advantage that they have already built up structures that contain the relations necessary for plan monitoring. Augmenting state-space planners with the necessary annotations can be done by careful bookkeeping as the goal fluents are regressed through the plan.
 
@@ -5610,49 +4856,31 @@ Now that we have described a method for monitoring and replanning, we need to as
 
 Trouble occurs when an action is actually not nondeterministic, but rather depends on some precondition that the agent does not know about. For example, sometimes a paint can may be empty, so painting from that can has no effect. No amount of retrying is going to change this.5 One solution is to choose randomly from among the set of possible repair plans, rather than to try the same one each time. In this case, the repair plan of opening another can might work. A better approach is to **learn** a better model. Every prediction failure is an opportunity for learning; an agent should be able to modify its model of the world to accord with its percepts. From then on, the replanner will be able to come up with a repair that gets at the root problem, rather than relying on luck to choose a good repair. This kind of learning is described in Chapters 18 and 19.
 
-11.4 MULTIAGENT PLANNING
+## MULTIAGENT PLANNING
 
-So far, we have assumed that only one agent is doing the sensing, planning, and acting. When there are multiple agents in the environment, each agent faces a **multiagent planning problem** in which it tries to achieve its own goals with the help or hindrance of others.MULTIAGENT
+So far, we have assumed that only one agent is doing the sensing, planning, and acting. When there are multiple agents in the environment, each agent faces a **multiagent planning problem** in which it tries to achieve its own goals with the help or hindrance of others.
 
-PLANNING PROBLEM
-
-Between the purely single-agent and truly multiagent cases is a wide spectrum of prob- lems that exhibit various degrees of decomposition of the monolithic agent. An agent with multiple effectors that can operate concurrently—for example, a human who can type and speak at the same time—needs to do **multieffector planning** to manage each effector whileMULTIEFFECTOR
-
-PLANNING
-
-handling positive and negative interactions among the effectors. When the effectors are physically decoupled into detached units—as in a fleet of delivery robots in a factory— multieffector planning becomes **multibody planning**. A multibody problem is still a “stan-MULTIBODY
-
-PLANNING
-
-dard” single-agent problem as long as the relevant sensor information collected by each body can be pooled—either centrally or within each body—to form a common estimate of the world state that then informs the execution of the overall plan; in this case, the multiple bod- ies act as a single body. When communication constraints make this impossible, we have
-
+Between the purely single-agent and truly multiagent cases is a wide spectrum of problems that exhibit various degrees of decomposition of the monolithic agent. An agent with multiple effectors that can operate concurrently—for example, a human who can type and speak at the same time—needs to do **multieffector planning** to manage each effector while handling positive and negative interactions among the effectors. When the effectors are physically decoupled into detached units—as in a fleet of delivery robots in a factory— multieffector planning becomes **multibody planning**. A multibody problem is still a “standard” single-agent problem as long as the relevant sensor information collected by each body can be pooled—either centrally or within each body—to form a common estimate of the world state that then informs the execution of the overall plan; in this case, the multiple bodies act as a single body. When communication constraints make this impossible, we have
+```
 5 Futile repetition of a plan repair is exactly the behavior exhibited by the sphex wasp (page 39).  
+```
 
+what is sometimes called a **decentralized planning** problem; this is perhaps a misnomer, because the planning phase is centralized but the execution phase is at least partially decoupled. In this case, the subplan constructed for each body may need to include explicit communicative actions with other bodies. For example, multiple reconnaissance robots covering a wide area may often be out of radio contact with each other and should share their findings during times when communication is feasible.
 
+When a single entity is doing the planning, there is really only one goal, which all the bodies necessarily share. When the bodies are distinct agents that do their own planning, they may still share identical goals; for example, two human tennis players who form a doubles team share the goal of winning the match. Even with shared goals, however, the multibody and multiagent cases are quite different. In a multibody robotic doubles team, a single plan dictates which body will go where on the court and which body will hit the ball. In a multiagent doubles team, on the other hand, each agent decides what to do; without some method for **coordination**, both agents may decide to cover the same part of the court and each may leave the ball for the other to hit. The clearest case of a multiagent problem, of course, is when the agents have different goals. In tennis, the goals of two opposing teams are in direct conflict, leading to the zerosum situation of Chapter 5. Spectators could be viewed as agents if their support or disdain is a significant factor and can be influenced by the players’ conduct; otherwise, they can be treated as an aspect of nature—just like the weather—that is assumed to be indifferent to the players’ intentions.6
 
-what is sometimes called a **decentralized planning** problem; this is perhaps a misnomer, be-DECENTRALIZED PLANNING
+Finally, some systems are a mixture of centralized and multiagent planning. For example, a delivery company may do centralized, offline planning for the routes of its trucks and planes each day, but leave some aspects open for autonomous decisions by drivers and pilots who can respond individually to traffic and weather situations. Also, the goals of the company and its employees are brought into alignment, to some extent, by the payment of **incentives** (salaries and bonuses)—a sure sign that this is a true multiagent system.
 
-cause the planning phase is centralized but the execution phase is at least partially decoupled. In this case, the subplan constructed for each body may need to include explicit communica- tive actions with other bodies. For example, multiple reconnaissance robots covering a wide area may often be out of radio contact with each other and should share their findings during times when communication is feasible.
+The issues involved in multiagent planning can be divided roughly into two sets. The first, covered in Section 11.4.1, involves issues of representing and planning for multiple simultaneous actions; these issues occur in all settings from multieffector to multiagent planning. The second, covered in Section 11.4.2, involves issues of cooperation, coordination, and competition arising in true multiagent settings.
 
-When a single entity is doing the planning, there is really only one goal, which all the bodies necessarily share. When the bodies are distinct agents that do their own planning, they may still share identical goals; for example, two human tennis players who form a doubles team share the goal of winning the match. Even with shared goals, however, the multibody and multiagent cases are quite different. In a multibody robotic doubles team, a single plan dictates which body will go where on the court and which body will hit the ball. In a multi- agent doubles team, on the other hand, each agent decides what to do; without some method for **coordination**, both agents may decide to cover the same part of the court and each mayCOORDINATION
-
-leave the ball for the other to hit. The clearest case of a multiagent problem, of course, is when the agents have different
-
-goals. In tennis, the goals of two opposing teams are in direct conflict, leading to the zero- sum situation of Chapter 5. Spectators could be viewed as agents if their support or disdain is a significant factor and can be influenced by the players’ conduct; otherwise, they can be treated as an aspect of nature—just like the weather—that is assumed to be indifferent to the players’ intentions.6
-
-Finally, some systems are a mixture of centralized and multiagent planning. For ex- ample, a delivery company may do centralized, offline planning for the routes of its trucks and planes each day, but leave some aspects open for autonomous decisions by drivers and pilots who can respond individually to traffic and weather situations. Also, the goals of the company and its employees are brought into alignment, to some extent, by the payment of **incentives** (salaries and bonuses)—a sure sign that this is a true multiagent system.INCENTIVE
-
-The issues involved in multiagent planning can be divided roughly into two sets. The first, covered in Section 11.4.1, involves issues of representing and planning for multiple simultaneous actions; these issues occur in all settings from multieffector to multiagent plan- ning. The second, covered in Section 11.4.2, involves issues of cooperation, coordination, and competition arising in true multiagent settings.
-
-**11.4.1 Planning with multiple simultaneous actions**
+### Planning with multiple simultaneous actions
 
 For the time being, we will treat the multieffector, multibody, and multiagent settings in the same way, labeling them generically as **multiactor** settings, using the generic term **actor** toMULTIACTOR
 
 ACTOR cover effectors, bodies, and agents. The goal of this section is to work out how to define transition models, correct plans, and efficient planning algorithms for the multiactor setting. A correct plan is one that, if executed by the actors, achieves the goal. (In the true multiagent setting, of course, the agents may not agree to execute any particular plan, but at least they
-
+```
 6 We apologize to residents of the United Kingdom, where the mere act of contemplating a game of tennis guarantees rain.  
-
-Section 11.4. Multiagent Planning 427
+```
 
 Actors(A, B)
 
@@ -5676,37 +4904,22 @@ EFFECT:At(actor , to) ∧ ¬ At(actor , loc))
 
 **Figure 11.10** The doubles tennis problem. Two actors A and B are playing together and can be in one of four locations: LeftBaseline , RightBaseline , LeftNet , and RightNet . The ball can be returned only if a player is in the right place. Note that each action must include the actor as an argument.
 
-will know what plans _would_ work if they _did_ agree to execute them.) For simplicity, we assume perfect **synchronization**: each action takes the same amount of time and actions atSYNCHRONIZATION
+will know what plans _would_ work if they _did_ agree to execute them.) For simplicity, we assume perfect **synchronization**: each action takes the same amount of time and actions at each point in the joint plan are simultaneous. 
 
-each point in the joint plan are simultaneous. We begin with the transition model; for the deterministic case, this is the function
+We begin with the transition model; for the deterministic case, this is the function RESULT(s, a). In the single-agent setting, there might be b different choices for the action; b can be quite large, especially for first-order representations with many objects to act on, but action schemas provide a concise representation nonetheless. In the multiactor setting with n actors, the single action a is replaced by a **joint action** 〈a~1~, . . . , a~n~〉, where ai is the action taken by the ith actor. Immediately, we see two problems: first, we have to describe the transition model for b~n~ different joint actions; second, we have a joint planning problem with a branching factor of b~n~. Having put the actors together into a multiactor system with a huge branching factor,
 
-RESULT(s, a). In the single-agent setting, there might be b different choices for the action; b can be quite large, especially for first-order representations with many objects to act on, but action schemas provide a concise representation nonetheless. In the multiactor setting with n actors, the single action a is replaced by a **joint action** 〈A~1~, . . . , an〉, where ai is theJOINT ACTION
+the principal focus of research on multiactor planning has been to _decouple_ the actors to the extent possible, so that the complexity of the problem grows linearly with n rather than exponentially. If the actors have no interaction with one another—for example, n actors each playing a game of solitaire—then we can simply solve n separate problems. If the actors are **loosely coupled**, can we attain something close to this exponential improvement? This is, of course, a central question in many areas of AI. We have seen it explicitly in the context of CSPs, where “tree like” constraint graphs yielded efficient solution methods (see page 225), as well as in the context of disjoint pattern databases (page 106) and additive heuristics for planning (page 378).
 
-action taken by the ith actor. Immediately, we see two problems: first, we have to describe the transition model for b
-
-n different joint actions; second, we have a joint planning problem with a branching factor of b
-
-n. Having put the actors together into a multiactor system with a huge branching factor,
-
-the principal focus of research on multiactor planning has been to _decouple_ the actors to the extent possible, so that the complexity of the problem grows linearly with n rather than exponentially. If the actors have no interaction with one another—for example, n actors each playing a game of solitaire—then we can simply solve n separate problems. If the actors are **loosely coupled**, can we attain something close to this exponential improvement? This is, ofLOOSELY COUPLED
-
-course, a central question in many areas of AI. We have seen it explicitly in the context of CSPs, where “tree like” constraint graphs yielded efficient solution methods (see page 225), as well as in the context of disjoint pattern databases (page 106) and additive heuristics for planning (page 378).
-
-The standard approach to loosely coupled problems is to pretend the problems are com- pletely decoupled and then fix up the interactions. For the transition model, this means writing action schemas as if the actors acted independently. Let’s see how this works for the doubles tennis problem. Let’s suppose that at one point in the game, the team has the goal of returning the ball that has been hit to them and ensuring that at least one of them is covering the net.  
+The standard approach to loosely coupled problems is to pretend the problems are completely decoupled and then fix up the interactions. For the transition model, this means writing action schemas as if the actors acted independently. Let’s see how this works for the doubles tennis problem. Let’s suppose that at one point in the game, the team has the goal of returning the ball that has been hit to them and ensuring that at least one of them is covering the net.  
 
 
+A first pass at a multiactor definition might look like Figure 11.10. With this definition, it is easy to see that the following **joint plan** plan works:
 
-A first pass at a multiactor definition might look like Figure 11.10. With this definition, it is easy to see that the following **joint plan** plan works:JOINT PLAN
-
-PLAN 1: A : [Go(A,RightBaseline),Hit(A,Ball )]
-
+PLAN 1: 
+A : [Go(A,RightBaseline),Hit(A,Ball )]
 B : [NoOp(B),NoOp(B)] .
 
-Problems arise, however, when a plan has both agents hitting the ball at the same time. In the real world, this won’t work, but the action schema for _Hit_ says that the ball will be returned successfully. Technically, the difficulty is that preconditions constrain the _state_ in which an action can be executed successfully, but do not constrain other actions that might mess it up. We solve this by augmenting action schemas with one new feature: a **concurrent action list**CONCURRENT
-
-ACTION LIST
-
-stating which actions must or must not be executed concurrently. For example, the Hit action could be described as follows:
+Problems arise, however, when a plan has both agents hitting the ball at the same time. In the real world, this won’t work, but the action schema for _Hit_ says that the ball will be returned successfully. Technically, the difficulty is that preconditions constrain the _state_ in which an action can be executed successfully, but do not constrain other actions that might mess it up. We solve this by augmenting action schemas with one new feature: a **concurrent action list** stating which actions must or must not be executed concurrently. For example, the Hit action could be described as follows:
 
 Action(Hit(a,Ball ),
 
@@ -5722,43 +4935,34 @@ Action(Carry(a, cooler , here , there),
 
 CONCURRENT:b ≠ a ∧ Carry(b, cooler , here , there)
 
-PRECOND:At(a, here) ∧ At(cooler , here) ∧Cooler (cooler )
+PRECOND:At(a, here) ∧ At(cooler , here) ∧ Cooler (cooler )
 
 EFFECT:At(a, there) ∧ At(cooler , there) ∧ ¬At(a, here) ∧ ¬At(cooler , here)).
 
-With these kinds of action schemas, any of the planning algorithms described in Chapter 10 can be adapted with only minor modifications to generate multiactor plans. To the extent that the coupling among subplans is loose—meaning that concurrency constraints come into play only rarely during plan search—one would expect the various heuristics derived for single- agent planning to also be effective in the multiactor context. We could extend this approach with the refinements of the last two chapters—HTNs, partial observability, conditionals, exe- cution monitoring, and replanning—but that is beyond the scope of this book.
+With these kinds of action schemas, any of the planning algorithms described in Chapter 10 can be adapted with only minor modifications to generate multiactor plans. To the extent that the coupling among subplans is loose—meaning that concurrency constraints come into play only rarely during plan search—one would expect the various heuristics derived for singleagent planning to also be effective in the multiactor context. We could extend this approach with the refinements of the last two chapters—HTNs, partial observability, conditionals, execution monitoring, and replanning—but that is beyond the scope of this book.
 
-**11.4.2 Planning with multiple agents: Cooperation and coordination**
+### Planning with multiple agents: Cooperation and coordination
 
 Now let us consider the true multiagent setting in which each agent makes its own plan. To start with, let us assume that the goals and knowledge base are shared. One might think that this reduces to the multibody case—each agent simply computes the joint solution and executes its own part of that solution. Alas, the “_the”_ in “_the joint solution_” is misleading. For our doubles team, more than one joint solution exists:
 
-PLAN 2: A : [Go(A,LeftNet),NoOp(A)]
+PLAN 2: 
 
+A : [Go(A,LeftNet),NoOp(A)]
 B : [Go(B,RightBaseline),Hit(B,Ball)] .  
 
 Section 11.4. Multiagent Planning 429
 
 If both agents can agree on either plan 1 or plan 2, the goal will be achieved. But if A chooses plan 2 and B chooses plan 1, then nobody will return the ball. Conversely, if A chooses 1 and B chooses 2, then they will both try to hit the ball. The agents may realize this, but how can they coordinate to make sure they agree on the plan?
 
-One option is to adopt a **convention** before engaging in joint activity. A convention isCONVENTION
+One option is to adopt a **convention** before engaging in joint activity. A convention is any constraint on the selection of joint plans. For example, the convention “stick to your side of the court” would rule out plan 1, causing the doubles partners to select plan 2. Drivers on a road face the problem of not colliding with each other; this is (partially) solved by adopting the convention “stay on the right side of the road” in most countries; the alternative, “stay on the left side,” works equally well as long as all agents in an environment agree. Similar considerations apply to the development of human language, where the important thing is not which language each individual should speak, but the fact that a community all speaks the same language. When conventions are widespread, they are called **social laws**.
 
-any constraint on the selection of joint plans. For example, the convention “stick to your side of the court” would rule out plan 1, causing the doubles partners to select plan 2. Drivers on a road face the problem of not colliding with each other; this is (partially) solved by adopting the convention “stay on the right side of the road” in most countries; the alternative, “stay on the left side,” works equally well as long as all agents in an environment agree. Similar considerations apply to the development of human language, where the important thing is not which language each individual should speak, but the fact that a community all speaks the same language. When conventions are widespread, they are called **social laws**.SOCIAL LAWS
+In the absence of a convention, agents can use **communication** to achieve common knowledge of a feasible joint plan. For example, a tennis player could shout “Mine!” or “Yours!” to indicate a preferred joint plan. We cover mechanisms for communication in more depth in Chapter 22, where we observe that communication does not necessarily involve a verbal exchange. For example, one player can communicate a preferred joint plan to the other simply by executing the first part of it. If agent A heads for the net, then agent B is obliged to go back to the baseline to hit the ball, because plan 2 is the only joint plan that begins with A’s heading for the net. This approach to coordination, sometimes called **plan recognition**, works when a single action (or short sequence of actions) is enough to determine a joint plan unambiguously. Note that communication can work as well with competitive agents as with cooperative ones.
 
-In the absence of a convention, agents can use **communication** to achieve common knowledge of a feasible joint plan. For example, a tennis player could shout “Mine!” or “Yours!” to indicate a preferred joint plan. We cover mechanisms for communication in more depth in Chapter 22, where we observe that communication does not necessarily involve a verbal exchange. For example, one player can communicate a preferred joint plan to the other simply by executing the first part of it. If agent A heads for the net, then agent B is obliged to go back to the baseline to hit the ball, because plan 2 is the only joint plan that begins with A’s heading for the net. This approach to coordination, sometimes called **plan recognition**,PLAN RECOGNITION
+Conventions can also arise through evolutionary processes. For example, seed-eating harvester ants are social creatures that evolved from the less social wasps. Colonies of ants execute very elaborate joint plans without any centralized control—the queen’s job is to reproduce, not to do centralized planning—and with very limited computation, communication, and memory capabilities in each ant (Gordon, 2000, 2007). The colony has many roles, including interior workers, patrollers, and foragers. Each ant chooses to perform a role according to the local conditions it observes. For example, foragers travel away from the nest, search for a seed, and when they find one, bring it back immediately. Thus, the rate at which foragers return to the nest is an approximation of the availability of food today. When the rate is high, other ants abandon their current role and take on the role of scavenger. The ants appear to have a convention on the importance of roles—foraging is the most important—and ants will easily switch into the more important roles, but not into the less important. There is some learning mechanism: a colony learns to make more successful and prudent actions over the course of its decades-long life, even though individual ants live only about a year.
 
-works when a single action (or short sequence of actions) is enough to determine a joint plan unambiguously. Note that communication can work as well with competitive agents as with cooperative ones.
+One final example of cooperative multiagent behavior appears in the flocking behavior of birds. We can obtain a reasonable simulation of a flock if each bird agent (sometimes called a **boid**) observes the positions of its nearest neighbors and then chooses the heading and acceleration that maximizes the weighted sum of these three components:  
 
-Conventions can also arise through evolutionary processes. For example, seed-eating harvester ants are social creatures that evolved from the less social wasps. Colonies of ants execute very elaborate joint plans without any centralized control—the queen’s job is to re- produce, not to do centralized planning—and with very limited computation, communica- tion, and memory capabilities in each ant (Gordon, 2000, 2007). The colony has many roles, including interior workers, patrollers, and foragers. Each ant chooses to perform a role ac- cording to the local conditions it observes. For example, foragers travel away from the nest, search for a seed, and when they find one, bring it back immediately. Thus, the rate at which foragers return to the nest is an approximation of the availability of food today. When the rate is high, other ants abandon their current role and take on the role of scavenger. The ants appear to have a convention on the importance of roles—foraging is the most important—and ants will easily switch into the more important roles, but not into the less important. There is some learning mechanism: a colony learns to make more successful and prudent actions over the course of its decades-long life, even though individual ants live only about a year.
-
-One final example of cooperative multiagent behavior appears in the flocking behavior of birds. We can obtain a reasonable simulation of a flock if each bird agent (sometimes called a **boid**) observes the positions of its nearest neighbors and then chooses the headingBOID
-
-and acceleration that maximizes the weighted sum of these three components:  
-
-
-
-(a) (b) (c)
-
-**Figure 11.11** (a) A simulated flock of birds, using Reynold’s boids model. Image courtesy Giuseppe Randazzo, novastructura.net. (b) An actual flock of starlings. Image by Eduardo (pastaboy sleeps on flickr). (c) Two competitive teams of agents attempting to capture the towers in the NERO game. Image courtesy Risto Miikkulainen.
+![Alt text](image/11img/figure-11.11.png)
 
 1. Cohesion: a positive score for getting closer to the average position of the neighbors
 
@@ -5766,25 +4970,21 @@ and acceleration that maximizes the weighted sum of these three components:
 
 3. Alignment: a positive score for getting closer to the average heading of the neighbors
 
-If all the boids execute this policy, the flock exhibits the **emergent behavior** of flying as aEMERGENT BEHAVIOR
+If all the boids execute this policy, the flock exhibits the **emergent behavior** of flying as a pseudorigid body with roughly constant density that does not disperse over time, and that occasionally makes sudden swooping motions. You can see a still images in Figure 11.11(a) and compare it to an actual flock in (b). As with ants, there is no need for each agent to possess a joint plan that models the actions of other agents.
 
-pseudorigid body with roughly constant density that does not disperse over time, and that occasionally makes sudden swooping motions. You can see a still images in Figure 11.11(a) and compare it to an actual flock in (b). As with ants, there is no need for each agent to possess a joint plan that models the actions of other agents.
+The most difficult multiagent problems involve both cooperation with members of one’s own team and competition against members of opposing teams, all without centralized control. We see this in games such as robotic soccer or the NERO game shown in Figure 11.11(c), in which two teams of software agents compete to capture the control towers. As yet, methods for efficient planning in these kinds of environments—for example, taking advantage of loose coupling—are in their infancy.
 
-The most difficult multiagent problems involve both cooperation with members of one’s own team and competition against members of opposing teams, all without centralized con- trol. We see this in games such as robotic soccer or the NERO game shown in Figure 11.11(c), in which two teams of software agents compete to capture the control towers. As yet, meth- ods for efficient planning in these kinds of environments—for example, taking advantage of loose coupling—are in their infancy.
-
-11.5 SUMMARY
+## SUMMARY
 
 This chapter has addressed some of the complications of planning and acting in the real world. The main points:
 
 - Many actions consume **resources**, such as money, gas, or raw materials. It is convenient to treat these resources as numeric measures in a pool rather than try to reason about, say, each individual coin and bill in the world. Actions can generate and consume resources, and it is usually cheap and effective to check partial plans for satisfaction of resource constraints before attempting further refinements.
 
-- Time is one of the most important resources. It can be handled by specialized schedul- ing algorithms, or scheduling can be integrated with planning.  
-
-Bibliographical and Historical Notes 431
+- Time is one of the most important resources. It can be handled by specialized scheduling algorithms, or scheduling can be integrated with planning.  
 
 - **Hierarchical task network** (HTN) planning allows the agent to take advice from the domain designer in the form of **high-level actions** (HLAs) that can be implemented in various ways by lower-level action sequences. The effects of HLAs can be defined with **angelic semantics**, allowing provably correct high-level plans to be derived without consideration of lower-level implementations. HTN methods can create the very large plans required by many real-world applications.
 
-- Standard planning algorithms assume complete and correct information and determin- istic, fully observable environments. Many domains violate this assumption.
+- Standard planning algorithms assume complete and correct information and deterministic, fully observable environments. Many domains violate this assumption.
 
 - **Contingent plans** allow the agent to sense the world during execution to decide what branch of the plan to follow. In some cases, **sensorless** or **conformant planning** can be used to construct a plan that works without the need for perception. Both conformant and contingent plans can be constructed by search in the space of **belief states**. Efficient representation or computation of belief states is a key problem.
 
@@ -5794,65 +4994,41 @@ Bibliographical and Historical Notes 431
 
 - This chapter extends classic planning to cover nondeterministic environments (where outcomes of actions are uncertain), but it is not the last word on planning. Chapter 17 describes techniques for stochastic environments (in which outcomes of actions have probabilities associated with them): Markov decision processes, partially observable Markov decision processes, and game theory. In Chapter 21 we show that reinforcement learning allows an agent to learn how to behave from past successes and failures.
 
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+**BIBLIOGRAPHICAL AND HISTORICAL NOTES**
 
-Planning with time constraints was first dealt with by DEVISER (Vere, 1983). The repre- sentation of time in plans was addressed by Allen (1984) and by Dean _et al._ (1990) in the FORBIN system. NONLIN+ (Tate and Whiter, 1984) and SIPE (Wilkins, 1988, 1990) could reason about the allocation of limited resources to various plan steps. O-PLAN (Bell and Tate, 1985), an HTN planner, had a uniform, general representation for constraints on time and resources. In addition to the Hitachi application mentioned in the text, O-PLAN has been applied to software procurement planning at Price Waterhouse and back-axle assembly planning at Jaguar Cars.
+Planning with time constraints was first dealt with by DEVISER (Vere, 1983). The representation of time in plans was addressed by Allen (1984) and by Dean _et al._ (1990) in the FORBIN system. NONLIN+ (Tate and Whiter, 1984) and SIPE (Wilkins, 1988, 1990) could reason about the allocation of limited resources to various plan steps. O-PLAN (Bell and Tate, 1985), an HTN planner, had a uniform, general representation for constraints on time and resources. In addition to the Hitachi application mentioned in the text, O-PLAN has been applied to software procurement planning at Price Waterhouse and back-axle assembly planning at Jaguar Cars.
 
-The two planners SAPA (Do and Kambhampati, 2001) and T4 (Haslum and Geffner, 2001) both used forward state-space search with sophisticated heuristics to handle actions with durations and resources. An alternative is to use very expressive action languages, but guide them by human-written domain-specific heuristics, as is done by ASPEN (Fukunaga _et al._, 1997), HSTS (Jonsson _et al._, 2000), and IxTeT (Ghallab and Laruelle, 1994).  
+The two planners SAPA (Do and Kambhampati, 2001) and t~4~ (Haslum and Geffner, 2001) both used forward state-space search with sophisticated heuristics to handle actions with durations and resources. An alternative is to use very expressive action languages, but guide them by human-written domain-specific heuristics, as is done by ASPEN (Fukunaga _et al._, 1997), HSTS (Jonsson _et al._, 2000), and IxTeT (Ghallab and Laruelle, 1994).  
 
+A number of hybrid planning-and-scheduling systems have been deployed: ISIS (Fox _et al._, 1982; Fox, 1990) has been used for job shop scheduling at Westinghouse, GARI (Descotte and Latombe, 1985) planned the machining and construction of mechanical parts, FORBIN was used for factory control, and NONLIN+ was used for naval logistics planning. We chose to present planning and scheduling as two separate problems; (Cushing _et al._, 2007) show that this can lead to incompleteness on certain problems. There is a long history of scheduling in aerospace. T-SCHED (Drabble, 1990) was used to schedule mission-command sequences for the UOSAT-II satellite. OPTIMUM-AIV (Aarup _et al._, 1994) and PLAN-ERs~1~ (Fuchs _et al._, 1990), both based on O-PLAN, were used for spacecraft assembly and observation planning, respectively, at the European Space Agency. SPIKE (Johnston and Adorf, 1992) was used for observation planning at NASA for the Hubble Space Telescope, while the Space Shuttle Ground Processing Scheduling System (Deale _et al._, 1994) does job-shop scheduling of up to 16,000 worker-shifts. Remote Agent (Muscettola _et al._, 1998) became the first autonomous planner–scheduler to control a spacecraft when it flew onboard the Deep Space One probe in 1999. Space applications have driven the development of algorithms for resource allocations; see Laborie (2003) and Muscettola (2002). The literature on scheduling is presented in a classic survey article (Lawler _et al._, 1993), a recent book (Pinedo, 2008), and an edited handbook (Blazewicz _et al._, 2007).
 
+The facility in the STRIPS program for learning **macrops**—“macro-operators” consisting of a sequence of primitive steps—could be considered the first mechanism for hierarchical planning (Fikes _et al._, 1972). Hierarchy was also used in the LAWALY system (Siklossy and Dreussi, 1973). The ABSTRIPS system (Sacerdoti, 1974) introduced the idea of an **abstraction hierarchy**, whereby planning at higher levels was permitted to ignore lower-level preconditions of actions in order to derive the general structure of a working plan. Austin Tate’s Ph.D. thesis (1975b) and work by Earl Sacerdoti (1977) developed the basic ideas of HTN planning in its modern form. Many practical planners, including O-PLAN and SIPE, are HTN planners. Yang (1990) discusses properties of actions that make HTN planning efficient. Erol, Hendler, and Nau (1994, 1996) present a complete hierarchical decomposition planner as well as a range of complexity results for pure HTN planners. Our presentation of HLAs and angelic semantics is due to Marthi _et al._ (2007, 2008). Kambhampati _et al._ (1998) have proposed an approach in which decompositions are just another form of plan refinement, similar to the refinements for non-hierarchical partial-order planning.
 
-A number of hybrid planning-and-scheduling systems have been deployed: ISIS (Fox _et al._, 1982; Fox, 1990) has been used for job shop scheduling at Westinghouse, GARI (De- scotte and Latombe, 1985) planned the machining and construction of mechanical parts, FORBIN was used for factory control, and NONLIN+ was used for naval logistics planning. We chose to present planning and scheduling as two separate problems; (Cushing _et al._, 2007) show that this can lead to incompleteness on certain problems. There is a long history of scheduling in aerospace. T-SCHED (Drabble, 1990) was used to schedule mission-command sequences for the UOSAT-II satellite. OPTIMUM-AIV (Aarup _et al._, 1994) and PLAN-ERs~1~ (Fuchs _et al._, 1990), both based on O-PLAN, were used for spacecraft assembly and obser- vation planning, respectively, at the European Space Agency. SPIKE (Johnston and Adorf, 1992) was used for observation planning at NASA for the Hubble Space Telescope, while the Space Shuttle Ground Processing Scheduling System (Deale _et al._, 1994) does job-shop scheduling of up to 16,000 worker-shifts. Remote Agent (Muscettola _et al._, 1998) became the first autonomous planner–scheduler to control a spacecraft when it flew onboard the Deep Space One probe in 1999. Space applications have driven the development of algorithms for resource allocations; see Laborie (2003) and Muscettola (2002). The literature on scheduling is presented in a classic survey article (Lawler _et al._, 1993), a recent book (Pinedo, 2008), and an edited handbook (Blazewicz _et al._, 2007).
+Beginning with the work on macro-operators in STRIPS, one of the goals of hierarchical planning has been the reuse of previous planning experience in the form of generalized plans. The technique of **explanation-based learning**, described in depth in Chapter 19, has been applied in several systems as a means of generalizing previously computed plans, including SOAR (Laird _et al._, 1986) and PRODIGY (Carbonell _et al._, 1989). An alternative approach is to store previously computed plans in their original form and then reuse them to solve new, similar problems by analogy to the original problem. This is the approach taken by the field called **case-based planning** (Carbonell, 1983; Alterman, 1988; Hammond, 1989). Kambhampati (1994) argues that case-based planning should be analyzed as a form of refinement planning and provides a formal foundation for case-based partial-order planning.  
 
-The facility in the STRIPS program for learning **macrops**—“macro-operators” consist-MACROPS
+Early planners lacked conditionals and loops, but some could use coercion to form conformant plans. Sacerdoti’s NOAH solved the “keys and boxes” problem, a planning challenge problem in which the planner knows little about the initial state, using coercion. Mason (1993) argued that sensing often can and should be dispensed with in robotic planning, and described a sensorless plan that can move a tool into a specific position on a table by a sequence of tilting actions, _regardless_ of the initial position.
 
-ing of a sequence of primitive steps—could be considered the first mechanism for hierarchi- cal planning (Fikes _et al._, 1972). Hierarchy was also used in the LAWALY system (Siklossy and Dreussi, 1973). The ABSTRIPS system (Sacerdoti, 1974) introduced the idea of an **ab- straction hierarchy**, whereby planning at higher levels was permitted to ignore lower-levelABSTRACTION
-
-HIERARCHY
-
-preconditions of actions in order to derive the general structure of a working plan. Austin Tate’s Ph.D. thesis (1975b) and work by Earl Sacerdoti (1977) developed the basic ideas of HTN planning in its modern form. Many practical planners, including O-PLAN and SIPE, are HTN planners. Yang (1990) discusses properties of actions that make HTN planning ef- ficient. Erol, Hendler, and Nau (1994, 1996) present a complete hierarchical decomposition planner as well as a range of complexity results for pure HTN planners. Our presentation of HLAs and angelic semantics is due to Marthi _et al._ (2007, 2008). Kambhampati _et al._ (1998) have proposed an approach in which decompositions are just another form of plan refinement, similar to the refinements for non-hierarchical partial-order planning.
-
-Beginning with the work on macro-operators in STRIPS, one of the goals of hierarchical planning has been the reuse of previous planning experience in the form of generalized plans. The technique of **explanation-based learning**, described in depth in Chapter 19, has been applied in several systems as a means of generalizing previously computed plans, including SOAR (Laird _et al._, 1986) and PRODIGY (Carbonell _et al._, 1989). An alternative approach is to store previously computed plans in their original form and then reuse them to solve new, similar problems by analogy to the original problem. This is the approach taken by the field called **case-based planning** (Carbonell, 1983; Alterman, 1988; Hammond, 1989). Kamb-CASE-BASED
-
-PLANNING
-
-hampati (1994) argues that case-based planning should be analyzed as a form of refinement planning and provides a formal foundation for case-based partial-order planning.  
-
-Bibliographical and Historical Notes 433
-
-Early planners lacked conditionals and loops, but some could use coercion to form conformant plans. Sacerdoti’s NOAH solved the “keys and boxes” problem, a planning chal- lenge problem in which the planner knows little about the initial state, using coercion. Ma- son (1993) argued that sensing often can and should be dispensed with in robotic planning, and described a sensorless plan that can move a tool into a specific position on a table by a sequence of tilting actions, _regardless_ of the initial position.
-
-Goldman and Boddy (1996) introduced the term **conformant planning**, noting that sen- sorless plans are often effective even if the agent has sensors. The first moderately efficient conformant planner was Smith and Weld’s (1998) Conformant Graphplan or CGP. Ferraris and Giunchiglia (2000) and Rintanen (1999) independently developed SATP~LAN~-based con- formant planners. Bonet and Geffner (2000) describe a conformant planner based on heuristic search in the space of belief states, drawing on ideas first developed in the 1960s for partially observable Markov decision processes, or POMDPs (see Chapter 17).
+Goldman and Boddy (1996) introduced the term **conformant planning**, noting that sensorless plans are often effective even if the agent has sensors. The first moderately efficient conformant planner was Smith and Weld’s (1998) Conformant Graphplan or CGP. Ferraris and Giunchiglia (2000) and Rintanen (1999) independently developed SATP~LAN~-based conformant planners. Bonet and Geffner (2000) describe a conformant planner based on heuristic search in the space of belief states, drawing on ideas first developed in the 1960s for partially observable Markov decision processes, or POMDPs (see Chapter 17).
 
 Currently, there are three main approaches to conformant planning. The first two use heuristic search in belief-state space: HSCP (Bertoli _et al._, 2001a) uses binary decision diagrams (BDDs) to represent belief states, whereas Hoffmann and Brafman (2006) adopt the lazy approach of computing precondition and goal tests on demand using a SAT solver. The third approach, championed primarily by Jussi Rintanen (2007), formulates the entire sensorless planning problem as a quantified Boolean formula (QBF) and solves it using a general-purpose QBF solver. Current conformant planners are five orders of magnitude faster than CGP. The winner of the 2006 conformant-planning track at the International Planning Competition was T0 (Palacios and Geffner, 2007), which uses heuristic search in belief-state space while keeping the belief-state representation simple by defining derived literals that cover conditional effects. Bryce and Kambhampati (2007) discuss how a planning graph can be generalized to generate good heuristics for conformant and contingent planning.
 
 There has been some confusion in the literature between the terms “conditional” and “contingent” planning. Following Majercik and Littman (2003), we use “conditional” to mean a plan (or action) that has different effects depending on the actual state of the world, and “contingent” to mean a plan in which the agent can choose different actions depending on the results of sensing. The problem of contingent planning received more attention after the publication of Drew McDermott’s (1978a) influential article, _Planning and Acting_.
 
-The contingent-planning approach described in the chapter is based on Hoffmann and Brafman (2005), and was influenced by the efficient search algorithms for cyclic AND–OR
-
-graphs developed by Jimenez and Torras (2000) and Hansen and Zilberstein (2001). Bertoli _et al._ (2001b) describe MBP (Model-Based Planner), which uses binary decision diagrams to do conformant and contingent planning.
+The contingent-planning approach described in the chapter is based on Hoffmann and Brafman (2005), and was influenced by the efficient search algorithms for cyclic AND–OR graphs developed by Jimenez and Torras (2000) and Hansen and Zilberstein (2001). Bertoli _et al._ (2001b) describe MBP (Model-Based Planner), which uses binary decision diagrams to do conformant and contingent planning.
 
 In retrospect, it is now possible to see how the major classical planning algorithms led to extended versions for uncertain domains. Fast-forward heuristic search through state space led to forward search in belief space (Bonet and Geffner, 2000; Hoffmann and Brafman, 2005); SATP~LAN~ led to stochastic SATP~LAN~ (Majercik and Littman, 2003) and to planning with quantified Boolean logic (Rintanen, 2007); partial order planning led to UWL (Etzioni _et al._, 1992) and CNLP (Peot and Smith, 1992); GRAPHPLAN led to Sensory Graphplan or SGP (Weld _et al._, 1998).  
 
-
-
 The first online planner with execution monitoring was PLANEX (Fikes _et al._, 1972), which worked with the STRIPS planner to control the robot Shakey. The NASL planner (McDermott, 1978a) treated a planning problem simply as a specification for carrying out a complex action, so that execution and planning were completely unified. SIPE (System for Interactive Planning and Execution monitoring) (Wilkins, 1988, 1990) was the first planner to deal systematically with the problem of replanning. It has been used in demonstration projects in several domains, including planning operations on the flight deck of an aircraft carrier, job-shop scheduling for an Australian beer factory, and planning the construction of multistory buildings (Kartam and Levitt, 1990).
 
-In the mid-1980s, pessimism about the slow run times of planning systems led to the proposal of reflex agents called **reactive planning** systems (Brooks, 1986; Agre and Chap-REACTIVE PLANNING
+In the mid-1980s, pessimism about the slow run times of planning systems led to the proposal of reflex agents called **reactive planning** systems (Brooks, 1986; Agre and Chapman, 1987). PENGI (Agre and Chapman, 1987) could play a (fully observable) video game by using Boolean circuits combined with a “visual” representation of current goals and the agent’s internal state. “Universal plans” (Schoppers, 1987, 1989) were developed as a lookuptable method for reactive planning, but turned out to be a rediscovery of the idea of **policies**that had long been used in Markov decision processes (see Chapter 17). A universal plan (or a policy) contains a mapping from any state to the action that should be taken in that state. Koenig (2001) surveys online planning techniques, under the name _Agent-Centered Search_.
 
-man, 1987). PENGI (Agre and Chapman, 1987) could play a (fully observable) video game by using Boolean circuits combined with a “visual” representation of current goals and the agent’s internal state. “Universal plans” (Schoppers, 1987, 1989) were developed as a lookup- table method for reactive planning, but turned out to be a rediscovery of the idea of **policies**POLICY
+Multiagent planning has leaped in popularity in recent years, although it does have a long history. Konolige (1982) formalizes multiagent planning in first-order logic, while Pednault (1986) gives a STRIPS-style description. The notion of joint intention, which is essential if agents are to execute a joint plan, comes from work on communicative acts (Cohen and Levesque, 1990; Cohen _et al._, 1990). Boutilier and Brafman (2001) show how to adapt partial-order planning to a multiactor setting. Brafman and Domshlak (2008) devise a multiactor planning algorithm whose complexity grows only linearly with the number of actors, provided that the degree of coupling (measured partly by the **tree width** of the graph of interactions among agents) is bounded. Petrik and Zilberstein (2009) show that an approach based on bilinear programming outperforms the cover-set approach we outlined in the chapter.
 
-that had long been used in Markov decision processes (see Chapter 17). A universal plan (or a policy) contains a mapping from any state to the action that should be taken in that state. Koenig (2001) surveys online planning techniques, under the name _Agent-Centered Search_.
-
-Multiagent planning has leaped in popularity in recent years, although it does have a long history. Konolige (1982) formalizes multiagent planning in first-order logic, while Pednault (1986) gives a STRIPS-style description. The notion of joint intention, which is es- sential if agents are to execute a joint plan, comes from work on communicative acts (Cohen and Levesque, 1990; Cohen _et al._, 1990). Boutilier and Brafman (2001) show how to adapt partial-order planning to a multiactor setting. Brafman and Domshlak (2008) devise a mul- tiactor planning algorithm whose complexity grows only linearly with the number of actors, provided that the degree of coupling (measured partly by the **tree width** of the graph of inter- actions among agents) is bounded. Petrik and Zilberstein (2009) show that an approach based on bilinear programming outperforms the cover-set approach we outlined in the chapter.
-
-We have barely skimmed the surface of work on negotiation in multiagent planning. Durfee and Lesser (1989) discuss how tasks can be shared out among agents by negotiation. Kraus _et al._ (1991) describe a system for playing Diplomacy, a board game requiring negoti- ation, coalition formation, and dishonesty. Stone (2000) shows how agents can cooperate as teammates in the competitive, dynamic, partially observable environment of robotic soccer. In a later article, Stone (2003) analyzes two competitive multiagent environments—RoboCup, a robotic soccer competition, and TAC, the auction-based Trading Agents Competition— and finds that the computational intractability of our current theoretically well-founded ap- proaches has led to many multiagent systems being designed by _ad hoc_ methods.
+We have barely skimmed the surface of work on negotiation in multiagent planning. Durfee and Lesser (1989) discuss how tasks can be shared out among agents by negotiation. Kraus _et al._ (1991) describe a system for playing Diplomacy, a board game requiring negotiation, coalition formation, and dishonesty. Stone (2000) shows how agents can cooperate as teammates in the competitive, dynamic, partially observable environment of robotic soccer. In a later article, Stone (2003) analyzes two competitive multiagent environments—RoboCup, a robotic soccer competition, and TAC, the auction-based Trading Agents Competition— and finds that the computational intractability of our current theoretically well-founded approaches has led to many multiagent systems being designed by _ad hoc_ methods.
 
 In his highly influential _Society of Mind_ theory, Marvin Minsky (1986, 2007) proposes that human minds are constructed from an ensemble of agents. Livnat and Pippenger (2006) prove that, for the problem of optimal path-finding, and given a limitation on the total amount of computing resources, the best architecture for an agent is an ensemble of subagents, each of which tries to optimize its own objective, and all of which are in conflict with one another.  
 
-Exercises 435
-
-The boid model on page 429 is due to Reynolds (1987), who won an Academy Award for its application to swarms of penguins in _Batman Returns_. The NERO game and the meth- ods for learning strategies are described by Bryant and Miikkulainen (2007).
+The boid model on page 429 is due to Reynolds (1987), who won an Academy Award for its application to swarms of penguins in _Batman Returns_. The NERO game and the methods for learning strategies are described by Bryant and Miikkulainen (2007).
 
 Recent book on multiagent systems include those by Weiss (2000a), Young (2004), Vlassis (2008), and Shoham and Leyton-Brown (2009). There is an annual conference on autonomous agents and multiagent systems (AAMAS).
 
@@ -5860,21 +5036,17 @@ EXERCISES
 
 **11.1** The goals we have considered so far all ask the planner to make the world satisfy the goal at just one time step. Not all goals can be expressed this way: you do not achieve the goal of suspending a chandelier above the ground by throwing it in the air. More seriously, you wouldn’t want your spacecraft life-support system to supply oxygen one day but not the next. A _maintenance goal_ is achieved when the agent’s plan causes a condition to hold continuously from a given state onward. Describe how to extend the formalism of this chapter to support maintenance goals.
 
-**11.2** You have a number of trucks with which to deliver a set of packages. Each package starts at some location on a grid map, and has a destination somewhere else. Each truck is di- rectly controlled by moving forward and turning. Construct a hierarchy of high-level actions for this problem. What knowledge about the solution does your hierarchy encode?
+**11.2** You have a number of trucks with which to deliver a set of packages. Each package starts at some location on a grid map, and has a destination somewhere else. Each truck is directly controlled by moving forward and turning. Construct a hierarchy of high-level actions for this problem. What knowledge about the solution does your hierarchy encode?
 
 **11.3** Suppose that a high-level action has exactly one implementation as a sequence of primitive actions. Give an algorithm for computing its preconditions and effects, given the complete refinement hierarchy and schemas for the primitive actions.
 
-**11.4** Suppose that the optimistic reachable set of a high-level plan is a superset of the goal set; can anything be concluded about whether the plan achieves the goal? What if the pes- simistic reachable set doesn’t intersect the goal set? Explain.
+**11.4** Suppose that the optimistic reachable set of a high-level plan is a superset of the goal set; can anything be concluded about whether the plan achieves the goal? What if the pessimistic reachable set doesn’t intersect the goal set? Explain.
 
-**11.5** Write an algorithm that takes an initial state (specified by a set of propositional literals) and a sequence of HLAs (each defined by preconditions and angelic specifications of opti- mistic and pessimistic reachable sets) and computes optimistic and pessimistic descriptions of the reachable set of the sequence.
+**11.5** Write an algorithm that takes an initial state (specified by a set of propositional literals) and a sequence of HLAs (each defined by preconditions and angelic specifications of optimistic and pessimistic reachable sets) and computes optimistic and pessimistic descriptions of the reachable set of the sequence.
 
 **11.6** In Figure 11.2 we showed how to describe actions in a scheduling problem by using separate fields for DURATION, USE, and CONSUME. Now suppose we wanted to combine scheduling with nondeterministic planning, which requires nondeterministic and conditional effects. Consider each of the three fields and explain if they should remain separate fields, or if they should become effects of the action. Give an example for each of the three.
 
-**11.7** Some of the operations in standard programming languages can be modeled as actions that change the state of the world. For example, the assignment operation changes the con- tents of a memory location, and the print operation changes the state of the output stream. A program consisting of these operations can also be considered as a plan, whose goal is given  
-
-
-
-by the specification of the program. Therefore, planning algorithms can be used to construct programs that achieve a given specification.
+**11.7** Some of the operations in standard programming languages can be modeled as actions that change the state of the world. For example, the assignment operation changes the contents of a memory location, and the print operation changes the state of the output stream. A program consisting of these operations can also be considered as a plan, whose goal is given by the specification of the program. Therefore, planning algorithms can be used to construct programs that achieve a given specification.
 
 **a**. Write an action schema for the assignment operator (assigning the value of one variable to another). Remember that the original value will be overwritten!
 
@@ -5884,13 +5056,13 @@ by the specification of the program. Therefore, planning algorithms can be used 
 
 **11.9** In the blocks world we were forced to introduce two action schemas, Move and MoveToTable , in order to maintain the Clear predicate properly. Show how conditional effects can be used to represent both of these cases with a single action.
 
-**11.10** Conditional effects were illustrated for the Suck action in the vacuum world—which square becomes clean depends on which square the robot is in. Can you think of a new set of propositional variables to define states of the vacuum world, such that Suck has an _uncondi- tional_ description? Write out the descriptions of Suck , Left , and Right , using your proposi- tions, and demonstrate that they suffice to describe all possible states of the world.
+**11.10** Conditional effects were illustrated for the Suck action in the vacuum world—which square becomes clean depends on which square the robot is in. Can you think of a new set of propositional variables to define states of the vacuum world, such that Suck has an _unconditional_ description? Write out the descriptions of Suck , Left , and Right , using your propositions, and demonstrate that they suffice to describe all possible states of the world.
 
 **11.11** Find a suitably dirty carpet, free of obstacles, and vacuum it. Draw the path taken by the vacuum cleaner as accurately as you can. Explain it, with reference to the forms of planning discussed in this chapter.
 
 **11.12** To the medication problem in the previous exercise, add a Test action that has the conditional effect CultureGrowth when Disease is true and in any case has the perceptual effect Known(CultureGrowth). Diagram a conditional plan that solves the problem and minimizes the use of the Medicate action.  
 
-12 KNOWLEDGE REPRESENTATION
+# KNOWLEDGE REPRESENTATION
 
 _In which we show how to use first-order logic to represent the most important aspects of the real world, such as action, space, time, thoughts, and shopping._
 
@@ -5898,51 +5070,28 @@ The previous chapters described the technology for knowledge-based agents: the s
 
 Section 12.1 introduces the idea of a general ontology, which organizes everything in the world into a hierarchy of categories. Section 12.2 covers the basic categories of objects, substances, and measures; Section 12.3 covers events, and Section 12.4 discusses knowledge about beliefs. We then return to consider the technology for reasoning with this content: Section 12.5 discusses reasoning systems designed for efficient inference with categories, and Section 12.6 discusses reasoning with default information. Section 12.7 brings all the knowledge together in the context of an Internet shopping environment.
 
-12.1 ONTOLOGICAL ENGINEERING
+## ONTOLOGICAL ENGINEERING
 
-In “toy” domains, the choice of representation is not that important; many choices will work. Complex domains such as shopping on the Internet or driving a car in traffic require more general and flexible representations. This chapter shows how to create these representations, concentrating on general concepts—such as _Events, Time, Physical Objects_, and _Beliefs_— that occur in many different domains. Representing these abstract concepts is sometimes called **ontological engineering**.ONTOLOGICAL
-
-ENGINEERING
+In “toy” domains, the choice of representation is not that important; many choices will work. Complex domains such as shopping on the Internet or driving a car in traffic require more general and flexible representations. This chapter shows how to create these representations, concentrating on general concepts—such as _Events, Time, Physical Objects_, and _Beliefs_— that occur in many different domains. Representing these abstract concepts is sometimes called **ontological engineering**. 
 
 The prospect of representing _everything_ in the world is daunting. Of course, we won’t actually write a complete description of everything—that would be far too much for even a 1000-page textbook—but we will leave placeholders where new knowledge for any domain can fit in. For example, we will define what it means to be a physical object, and the details of different types of objects—robots, televisions, books, or whatever—can be filled in later. This is analogous to the way that designers of an object-oriented programming framework (such as the Java Swing graphical framework) define general concepts like _Window_, expecting users to
 
-437  
+![Alt text](image/12img/figure-12.1.png)
 
+use these to define more specific concepts like _SpreadsheetWindow_. The general framework of concepts is called an **upper ontology** because of the convention of drawing graphs with the general concepts at the top and the more specific concepts below them, as in Figure 12.1. 
 
+Before considering the ontology further, we should state one important caveat. We have elected to use first-order logic to discuss the content and organization of knowledge, although certain aspects of the real world are hard to capture in FOL. The principal difficulty is that most generalizations have exceptions or hold only to a degree. For example, although “tomatoes are red” is a useful rule, some tomatoes are green, yellow, or orange. Similar exceptions can be found to almost all the rules in this chapter. The ability to handle exceptions and uncertainty is extremely important, but is orthogonal to the task of understanding the general ontology. For this reason, we delay the discussion of exceptions until Section 12.5 of this chapter, and the more general topic of reasoning with uncertainty until Chapter 13.
 
-_Anything_
+Of what use is an upper ontology? Consider the ontology for circuits in Section 8.4.2. It makes many simplifying assumptions: time is omitted completely; signals are fixed and do not propagate; the structure of the circuit remains constant. A more general ontology would consider signals at particular times, and would include the wire lengths and propagation delays. This would allow us to simulate the timing properties of the circuit, and indeed such simulations are often carried out by circuit designers. We could also introduce more interesting classes of gates, for example, by describing the technology (TTL, CMOS, and so on) as well as the input–output specification. If we wanted to discuss reliability or diagnosis, we would include the possibility that the structure of the circuit or the properties of the gates might change spontaneously. To account for stray capacitances, we would need to represent where the wires are on the board.  
 
-_AbstractObjects_
-
-_Sets Numbers RepresentationalObjects Interval Places ProcessesPhysicalObjects_
-
-_Humans_
-
-_Categories Sentences Measurements Moments Things Stuff_
-
-_Times Weights Animals Agents Solid Liquid Gas_
-
-_GeneralizedEvents_
-
-**Figure 12.1** The upper ontology of the world, showing the topics to be covered later in the chapter. Each link indicates that the lower concept is a specialization of the upper one. Specializations are not necessarily disjoint; a human is both an animal and an agent, for example. We will see in Section 12.3.3 why physical objects come under generalized events.
-
-use these to define more specific concepts like _SpreadsheetWindow_. The general framework of concepts is called an **upper ontology** because of the convention of drawing graphs withUPPER ONTOLOGY
-
-the general concepts at the top and the more specific concepts below them, as in Figure 12.1. Before considering the ontology further, we should state one important caveat. We
-
-have elected to use first-order logic to discuss the content and organization of knowledge, although certain aspects of the real world are hard to capture in FOL. The principal difficulty is that most generalizations have exceptions or hold only to a degree. For example, although “tomatoes are red” is a useful rule, some tomatoes are green, yellow, or orange. Similar exceptions can be found to almost all the rules in this chapter. The ability to handle exceptions and uncertainty is extremely important, but is orthogonal to the task of understanding the general ontology. For this reason, we delay the discussion of exceptions until Section 12.5 of this chapter, and the more general topic of reasoning with uncertainty until Chapter 13.
-
-Of what use is an upper ontology? Consider the ontology for circuits in Section 8.4.2. It makes many simplifying assumptions: time is omitted completely; signals are fixed and do not propagate; the structure of the circuit remains constant. A more general ontology would consider signals at particular times, and would include the wire lengths and propagation de- lays. This would allow us to simulate the timing properties of the circuit, and indeed such simulations are often carried out by circuit designers. We could also introduce more inter- esting classes of gates, for example, by describing the technology (TTL, CMOS, and so on) as well as the input–output specification. If we wanted to discuss reliability or diagnosis, we would include the possibility that the structure of the circuit or the properties of the gates might change spontaneously. To account for stray capacitances, we would need to represent where the wires are on the board.  
-
-Section 12.1. Ontological Engineering 439
 
 If we look at the wumpus world, similar considerations apply. Although we do represent time, it has a simple structure: Nothing happens except when the agent acts, and all changes are instantaneous. A more general ontology, better suited for the real world, would allow for simultaneous changes extended over time. We also used a Pit predicate to say which squares have pits. We could have allowed for different kinds of pits by having several individuals belonging to the class of pits, each having different properties. Similarly, we might want to allow for other animals besides wumpuses. It might not be possible to pin down the exact species from the available percepts, so we would need to build up a biological taxonomy to help the agent predict the behavior of cave-dwellers from scanty clues.
 
-For any special-purpose ontology, it is possible to make changes like these to move toward greater generality. An obvious question then arises: do all these ontologies converge on a general-purpose ontology? After centuries of philosophical and computational inves- tigation, the answer is “Maybe.” In this section, we present one general-purpose ontology that synthesizes ideas from those centuries. Two major characteristics of general-purpose ontologies distinguish them from collections of special-purpose ontologies:
+For any special-purpose ontology, it is possible to make changes like these to move toward greater generality. An obvious question then arises: do all these ontologies converge on a general-purpose ontology? After centuries of philosophical and computational investigation, the answer is “Maybe.” In this section, we present one general-purpose ontology that synthesizes ideas from those centuries. Two major characteristics of general-purpose ontologies distinguish them from collections of special-purpose ontologies:
 
-- A general-purpose ontology should be applicable in more or less any special-purpose domain (with the addition of domain-specific axioms). This means that no representa- tional issue can be finessed or brushed under the carpet.
+A general-purpose ontology should be applicable in more or less any special-purpose domain (with the addition of domain-specific axioms). This means that no representational issue can be finessed or brushed under the carpet.
 
-- In any sufficiently demanding domain, different areas of knowledge must be _unified,_ because reasoning and problem solving could involve several areas simultaneously. A robot circuit-repair system, for instance, needs to reason about circuits in terms of elec- trical connectivity and physical layout, and about time, both for circuit timing analysis and estimating labor costs. The sentences describing time therefore must be capable of being combined with those describing spatial layout and must work equally well for nanoseconds and minutes and for angstroms and meters.
+In any sufficiently demanding domain, different areas of knowledge must be _unified,_ because reasoning and problem solving could involve several areas simultaneously. A robot circuit-repair system, for instance, needs to reason about circuits in terms of electrical connectivity and physical layout, and about time, both for circuit timing analysis and estimating labor costs. The sentences describing time therefore must be capable of being combined with those describing spatial layout and must work equally well for nanoseconds and minutes and for angstroms and meters.
 
 We should say up front that the enterprise of general ontological engineering has so far had only limited success. None of the top AI applications (as listed in Chapter 1) make use of a shared ontology—they all use special-purpose knowledge engineering. Social/political considerations can make it difficult for competing parties to agree on an ontology. As Tom Gruber (2004) says, “Every ontology is a treaty—a social agreement—among people with some common motive in sharing.” When competing concerns outweigh the motivation for sharing, there can be no common ontology. Those ontologies that do exist have been created along four routes:
 
@@ -5958,51 +5107,40 @@ system was built by volunteers who proposed facts in English (Singh _et al._, 20
 
 
 
-12.2 CATEGORIES AND OBJECTS
+## CATEGORIES AND OBJECTS
 
-The organization of objects into **categories** is a vital part of knowledge representation. Al-CATEGORY
+The organization of objects into **categories** is a vital part of knowledge representation. Although interaction with the world takes place at the level of individual objects, _much reasoning takes place at the level of categories._ For example, a shopper would normally have the goal of buying a basketball, rather than a _particular_ basketball such as BB~9~. Categories also serve to make predictions about objects once they are classified. One infers the presence of certain objects from perceptual input, infers category membership from the perceived properties of the objects, and then uses category information to make predictions about the objects. For example, from its green and yellow mottled skin, one-foot diameter, ovoid shape, red flesh, black seeds, and presence in the fruit aisle, one can infer that an object is a watermelon; from this, one infers that it would be useful for fruit salad.
 
-though interaction with the world takes place at the level of individual objects, _much reason- ing takes place at the level of categories._ For example, a shopper would normally have the goal of buying a basketball, rather than a _particular_ basketball such as BB9. Categories also serve to make predictions about objects once they are classified. One infers the presence of certain objects from perceptual input, infers category membership from the perceived proper- ties of the objects, and then uses category information to make predictions about the objects. For example, from its green and yellow mottled skin, one-foot diameter, ovoid shape, red flesh, black seeds, and presence in the fruit aisle, one can infer that an object is a watermelon; from this, one infers that it would be useful for fruit salad.
+There are two choices for representing categories in first-order logic: predicates and objects. That is, we can use the predicate Basketball (b), or we can **reify**1 the category as an object, Basketballs . We could then say Member(b,Basketballs), which we will abbreviate as b∈Basketballs , to say that b is a member of the category of basketballs. We say Subset(Basketballs ,Balls), abbreviated as Basketballs ⊂ Balls , to say that Basketballs is a **subcategory** of Balls . We will use subcategory, subclass, and subset interchangeably.
 
-There are two choices for representing categories in first-order logic: predicates and objects. That is, we can use the predicate Basketball (b), or we can **reify**1 the category asREIFICATION
+Categories serve to organize and simplify the knowledge base through **inheritance**.we say that all instances of the category Food are edible, and if we assert that Fruit is a subclass of Food and Apples is a subclass of Fruit , then we can infer that every apple is edible. We say that the individual apples **inherit** the property of edibility, in this case from their membership in the Food category.
 
-an object, Basketballs . We could then say Member(b,Basketballs), which we will abbre- viate as b∈Basketballs , to say that b is a member of the category of basketballs. We say Subset(Basketballs ,Balls), abbreviated as Basketballs ⊂ Balls , to say that Basketballs is a **subcategory** of Balls . We will use subcategory, subclass, and subset interchangeably.SUBCATEGORY
+Subclass relations organize categories into a **taxonomy**, or **taxonomic hierarchy**. Taxonomies have been used explicitly for centuries in technical fields. The largest such taxonomy organizes about 10 million living and extinct species, many of them beetles,2 into a single hierarchy; library science has developed a taxonomy of all fields of knowledge, encoded as the Dewey Decimal system; and tax authorities and other government departments have developed extensive taxonomies of occupations and commercial products. Taxonomies are also an important aspect of general commonsense knowledge.
 
-Categories serve to organize and simplify the knowledge base through **inheritance**. IfINHERITANCE
+First-order logic makes it easy to state facts about categories, either by relating objects to categories or by quantifying over their members. Here are some types of facts, with examples of each:
 
-we say that all instances of the category Food are edible, and if we assert that Fruit is a subclass of Food and Apples is a subclass of Fruit , then we can infer that every apple is edible. We say that the individual apples **inherit** the property of edibility, in this case from their membership in the Food category.
+- An object is a member of a category. 
+BB~9~ ∈ Basketballs
 
-Subclass relations organize categories into a **taxonomy**, or **taxonomic hierarchy**. Tax-TAXONOMY
+- A category is a subclass of another category. 
+Basketballs ⊂ Balls
 
-onomies have been used explicitly for centuries in technical fields. The largest such taxonomy organizes about 10 million living and extinct species, many of them beetles,2 into a single hi- erarchy; library science has developed a taxonomy of all fields of knowledge, encoded as the Dewey Decimal system; and tax authorities and other government departments have devel- oped extensive taxonomies of occupations and commercial products. Taxonomies are also an important aspect of general commonsense knowledge.
+- All members of a category have some properties. 
+(x ∈ Basketballs) ⇒ Spherical (x)
+```
+1 Turning a proposition into an object is called reification,from the Latin word _res_, or thing. John McCarthy proposed the term “thingification,” but it never caught on. 
+2 The famous biologist J. B. S. Haldane deduced “An inordinate fondness for beetles” on the part of the Creator.  
+```
 
-First-order logic makes it easy to state facts about categories, either by relating ob- jects to categories or by quantifying over their members. Here are some types of facts, with examples of each:
+- Members of a category can be recognized by some properties. 
+Orange(x) ∧ Round(x) ∧Diameter(x)= 9.5′′ ∧ x ∈ Balls ⇒ x ∈  Basketballs
 
-- An object is a member of a category. BB9 ∈Basketballs
-
-- A category is a subclass of another category. Basketballs ⊂ Balls
-
-- All members of a category have some properties. (x ∈Basketballs) ⇒ Spherical (x)
-
-1 Turning a proposition into an object is called **reification,** from the Latin word _res_, or thing. John McCarthy proposed the term “thingification,” but it never caught on. 2 The famous biologist J. B. S. Haldane deduced “An inordinate fondness for beetles” on the part of the Creator.  
-
-Section 12.2. Categories and Objects 441
-
-- Members of a category can be recognized by some properties. Orange(x) ∧ Round(x) ∧Diameter(x)= 9.5′′ ∧ x ∈Balls ⇒ x ∈Basketballs
-
-- A category as a whole has some properties. Dogs ∈DomesticatedSpecies
+- A category as a whole has some properties. 
+Dogs ∈ DomesticatedSpecies
 
 Notice that because Dogs is a category and is a member of DomesticatedSpecies , the latter must be a category of categories. Of course there are exceptions to many of the above rules (punctured basketballs are not spherical); we deal with these exceptions later.
 
-Although subclass and member relations are the most important ones for categories, we also want to be able to state relations between categories that are not subclasses of each other. For example, if we just say that Males and Females are subclasses of Animals , then we have not said that a male cannot be a female. We say that two or more categories are **disjoint** if they have no members in common. And even if we know that males and femalesDISJOINT
-
-are disjoint, we will not know that an animal that is not a male must be a female, unless we say that males and females constitute an **exhaustive decomposition** of the animals. AEXHAUSTIVE
-
-DECOMPOSITION
-
-disjoint exhaustive decomposition is known as a **partition**. The following examples illustratePARTITION
-
-these three concepts:
+Although subclass and member relations are the most important ones for categories, we also want to be able to state relations between categories that are not subclasses of each other. For example, if we just say that Males and Females are subclasses of Animals , then we have not said that a male cannot be a female. We say that two or more categories are **disjoint** if they have no members in common. And even if we know that males and females are disjoint, we will not know that an animal that is not a male must be a female, unless we say that males and females constitute an **exhaustive decomposition** of the animals. disjoint exhaustive decomposition is known as a **partition**. The following examples illustrate these three concepts:
 
 Disjoint({Animals ,Vegetables})
 
@@ -6016,57 +5154,46 @@ Partition({Males ,Females},Animals) .
 
 Disjoint(s) ⇔ (∀ C~1~, C~2~ C~1~ ∈ s ∧ C~2~ ∈ s ∧ C~1~ ≠ C~2~ ⇒ Intersection(C~1~, C~2~)= { })
 
-ExhaustiveDecomposition(s, c) ⇔ (∀ i i∈ c ⇔ ∃ C~2~ C~2~ ∈ s ∧ i∈ C~2~)
+ExhaustiveDecomposition(s, c) ⇔ (∀ i i ∈ c ⇔ ∃ C~2~ C~2~ ∈ s ∧ i∈ C~2~)
 
 Partition(s, c) ⇔ Disjoint(s) ∧ ExhaustiveDecomposition(s, c) .
 
 Categories can also be _defined_ by providing necessary and sufficient conditions for membership. For example, a bachelor is an unmarried adult male:
 
-x ∈Bachelors ⇔ Unmarried(x) ∧ x ∈Adults ∧ x ∈Males .
+x ∈ Bachelors ⇔ Unmarried(x) ∧ x ∈ Adults ∧ x ∈ Males .
 
-As we discuss in the sidebar on natural kinds on page 443, strict logical definitions for cate- gories are neither always possible nor always necessary.
+As we discuss in the sidebar on natural kinds on page 443, strict logical definitions for categories are neither always possible nor always necessary.
 
-**12.2.1 Physical composition**
+### Physical composition
 
-The idea that one object can be part of another is a familiar one. One’s nose is part of one’s head, Romania is part of Europe, and this chapter is part of this book. We use the general PartOf relation to say that one thing is part of another. Objects can be grouped into PartOf
-
-hierarchies, reminiscent of the Subset hierarchy:
+The idea that one object can be part of another is a familiar one. One’s nose is part of one’s head, Romania is part of Europe, and this chapter is part of this book. We use the general PartOf relation to say that one thing is part of another. Objects can be grouped into Part Of hierarchies, reminiscent of the Subset hierarchy:
 
 PartOf (Bucharest ,Romania)
-
 PartOf (Romania ,EasternEurope)
-
 PartOf (EasternEurope ,Europe)
-
 PartOf (Europe ,Earth) .  
-
 
 
 The PartOf relation is transitive and reflexive; that is,
 
 PartOf (x, y) ∧ PartOf (y, z) ⇒ PartOf (x, z) .
-
 PartOf (x, x) .
 
-Therefore, we can conclude PartOf (Bucharest ,Earth). Categories of **composite objects** are often characterized by structural relations amongCOMPOSITE OBJECT
+Therefore, we can conclude PartOf (Bucharest ,Earth). Categories of **composite objects** are often characterized by structural relations among parts. For example, a biped has two legs attached to a body:
 
-parts. For example, a biped has two legs attached to a body:
+Biped(a) ⇒ ∃ l~1~, l~2~, b Leg(l~1~) ∧ Leg(l~2~) ∧ Body(b) ∧
 
-Biped(a) ⇒ ∃ l~1~, l2, b Leg(l~1~) ∧ Leg(l2) ∧ Body(b) ∧
+PartOf (l~1~, a) ∧ PartOf (l~2~, a) ∧ PartOf (b, a) ∧
 
-PartOf (l~1~, a) ∧ PartOf (l2, a) ∧ PartOf (b, a) ∧
+Attached(l~1~, b) ∧ Attached(l~2~, b) ∧
 
-Attached(l~1~, b) ∧ Attached(l2, b) ∧
-
-l~1~ ≠ l2 ∧ [∀ l3 Leg(l3) ∧ PartOf (l3, a) ⇒ (l3 = l~1~ ∨ l3 = l2)] .
+l~1~ ≠ l~2~ ∧ [∀ l~3~ Leg(l~3~) ∧ PartOf (l~3~, a) ⇒ (l~3~ = l~1~ ∨ l~3~ = ~)] .
 
 The notation for “exactly two” is a little awkward; we are forced to say that there are two legs, that they are not the same, and that if anyone proposes a third leg, it must be the same as one of the other two. In Section 12.5.2, we describe a formalism called description logic makes it easier to represent constraints like “exactly two.”
 
-We can define a PartPartition relation analogous to the Partition relation for cate- gories. (See Exercise 12.8.) An object is composed of the parts in its PartPartition and can be viewed as deriving some properties from those parts. For example, the mass of a compos- ite object is the sum of the masses of the parts. Notice that this is not the case with categories, which have no mass, even though their elements might.
+We can define a PartPartition relation analogous to the Partition relation for categories. (See Exercise 12.8.) An object is composed of the parts in its PartPartition and can be viewed as deriving some properties from those parts. For example, the mass of a composite object is the sum of the masses of the parts. Notice that this is not the case with categories, which have no mass, even though their elements might.
 
-It is also useful to define composite objects with definite parts but no particular struc- ture. For example, we might want to say “The apples in this bag weigh two pounds.” The temptation would be to ascribe this weight to the _set_ of apples in the bag, but this would be a mistake because the set is an abstract mathematical concept that has elements but does not have weight. Instead, we need a new concept, which we will call a **bunch**. For example, ifBUNCH
-
-the apples are Apple1, Apple2, and Apple3, then
+It is also useful to define composite objects with definite parts but no particular structure. For example, we might want to say “The apples in this bag weigh two pounds.” The temptation would be to ascribe this weight to the _set_ of apples in the bag, but this would be a mistake because the set is an abstract mathematical concept that has elements but does not have weight. Instead, we need a new concept, which we will call a **bunch**. For example, if the apples are Apple1, Apple2, and Apple3, then
 
 BunchOf ({Apple1,Apple2,Apple3})
 
@@ -6074,25 +5201,22 @@ denotes the composite object with the three apples as parts (not elements). We c
 
 We can define BunchOf in terms of the PartOf relation. Obviously, each element of s is part of BunchOf (s):
 
-∀x x ∈ s ⇒ PartOf (x,BunchOf (s)) .
+∀ x x ∈ s ⇒ PartOf (x,BunchOf (s)) .
 
 Furthermore, BunchOf (s) _is the smallest object satisfying this condition_. In other words, BunchOf (s) must be part of any object that has all the elements of s as parts:
 
-∀ y [∀x x ∈ s ⇒ PartOf (x, y)] ⇒ PartOf (BunchOf (s), y) .
+∀ y [∀ x x ∈ s ⇒ PartOf (x, y)] ⇒ PartOf (BunchOf (s), y) .
 
-These axioms are an example of a general technique called **logical minimization**, whichLOGICAL MINIMIZATION
+These axioms are an example of a general technique called **logical minimization**, which means defining an object as the smallest one satisfying certain conditions.  
 
-means defining an object as the smallest one satisfying certain conditions.  
-
-Section 12.2. Categories and Objects 443
 
 NATURAL KINDS
 
 Some categories have strict definitions: an object is a triangle if and only if it is a polygon with three sides. On the other hand, most categories in the real world have no clear-cut definition; these are called **natural kind** categories. For example, tomatoes tend to be a dull scarlet; roughly spherical; with an indentation at the top where the stem was; about two to four inches in diameter; with a thin but tough skin; and with flesh, seeds, and juice inside. There is, however, variation: some tomatoes are yellow or orange, unripe tomatoes are green, some are smaller or larger than average, and cherry tomatoes are uniformly small. Rather than having a complete definition of tomatoes, we have a set of features that serves to identify objects that are clearly typical tomatoes, but might not be able to decide for other objects. (Could there be a tomato that is fuzzy like a peach?)
 
-This poses a problem for a logical agent. The agent cannot be sure that an object it has perceived is a tomato, and even if it were sure, it could not be cer- tain which of the properties of typical tomatoes this one has. This problem is an inevitable consequence of operating in partially observable environments.
+This poses a problem for a logical agent. The agent cannot be sure that an object it has perceived is a tomato, and even if it were sure, it could not be certain which of the properties of typical tomatoes this one has. This problem is an inevitable consequence of operating in partially observable environments.
 
-One useful approach is to separate what is true of all instances of a cate- gory from what is true only of typical instances. So in addition to the category Tomatoes , we will also have the category Typical(Tomatoes). Here, the Typical
+One useful approach is to separate what is true of all instances of a category from what is true only of typical instances. So in addition to the category Tomatoes , we will also have the category Typical(Tomatoes). Here, the Typical
 
 function maps a category to the subclass that contains only typical instances:
 
@@ -6100,19 +5224,15 @@ Typical(c) ⊆ c .
 
 Most knowledge about natural kinds will actually be about their typical instances:
 
-x ∈Typical(Tomatoes) ⇒ Red (x) ∧Round(x) .
+x ∈ Typical(Tomatoes) ⇒ Red (x) ∧ Round(x) .
 
-Thus, we can write down useful facts about categories without exact defini- tions. The difficulty of providing exact definitions for most natural categories was explained in depth by Wittgenstein (1953). He used the example of _games_ to show that members of a category shared “family resemblances” rather than necessary and sufficient characteristics: what strict definition encompasses chess, tag, soli- taire, and dodgeball?
+Thus, we can write down useful facts about categories without exact definitions. The difficulty of providing exact definitions for most natural categories was explained in depth by Wittgenstein (1953). He used the example of _games_ to show that members of a category shared “family resemblances” rather than necessary and sufficient characteristics: what strict definition encompasses chess, tag, solitaire, and dodgeball?
 
-The utility of the notion of strict definition was also challenged by Quine (1953). He pointed out that even the definition of “bachelor” as an un- married adult male is suspect; one might, for example, question a statement such as “the Pope is a bachelor.” While not strictly _false_, this usage is certainly _infe- licitous_ because it induces unintended inferences on the part of the listener. The tension could perhaps be resolved by distinguishing between logical definitions suitable for internal knowledge representation and the more nuanced criteria for felicitous linguistic usage. The latter may be achieved by “filtering” the assertions derived from the former. It is also possible that failures of linguistic usage serve as feedback for modifying internal definitions, so that filtering becomes unnecessary.  
+The utility of the notion of strict definition was also challenged by Quine (1953). He pointed out that even the definition of “bachelor” as an unmarried adult male is suspect; one might, for example, question a statement such as “the Pope is a bachelor.” While not strictly _false_, this usage is certainly _infelicitous_ because it induces unintended inferences on the part of the listener. The tension could perhaps be resolved by distinguishing between logical definitions suitable for internal knowledge representation and the more nuanced criteria for felicitous linguistic usage. The latter may be achieved by “filtering” the assertions derived from the former. It is also possible that failures of linguistic usage serve as feedback for modifying internal definitions, so that filtering becomes unnecessary.  
 
+### Measurements
 
-
-**12.2.2 Measurements**
-
-In both scientific and commonsense theories of the world, objects have height, mass, cost, and so on. The values that we assign for these properties are called **measures**. Ordi-MEASURE
-
-nary quantitative measures are quite easy to represent. We imagine that the universe in- cludes abstract “measure objects,” such as the _length_ that is the length of this line seg- ment: . We can call this length 1.5 inches or 3.81 centimeters. Thus, the same length has different names in our language.We represent the length with a **units function** that takes a number as argument. (An alternative scheme is explored in Exer-UNITS FUNCTION
+In both scientific and commonsense theories of the world, objects have height, mass, cost, and so on. The values that we assign for these properties are called **measures**. Ordinary quantitative measures are quite easy to represent. We imagine that the universe includes abstract “measure objects,” such as the _length_ that is the length of this line segment: . We can call this length 1.5 inches or 3.81 centimeters. Thus, the same length has different names in our language.We represent the length with a **units function** that takes a number as argument. (An alternative scheme is explored in Exer-UNITS FUNCTION
 
 cise 12.9.) If the line segment is called l~1~, we can write
 
@@ -6125,10 +5245,8 @@ Centimeters(2.54 × d)= Inches(d) .
 Similar axioms can be written for pounds and kilograms, seconds and days, and dollars and cents. Measures can be used to describe objects as follows:
 
 Diameter(Basketball 12)= Inches(9.5) .
-
 ListPrice(Basketball 12)= $(19) .
-
-d∈Days ⇒ Duration(d)= Hours(24) .
+d ∈ Days ⇒ Duration(d)= Hours(24) .
 
 Note that $(1) is _not_ a dollar bill! One can have two dollar bills, but there is only one object named $(1). Note also that, while Inches(0) and Centimeters(0) refer to the same zero length, they are not identical to other zero measures, such as Seconds(0).
 
@@ -6136,145 +5254,117 @@ Simple, quantitative measures are easy to represent. Other measures present more
 
 Although measures are not numbers, we can still compare them, using an ordering symbol such as >. For example, we might well believe that Norvig’s exercises are tougher than Russell’s, and that one scores less on tougher exercises:
 
-e1 ∈Exercises ∧ e2 ∈Exercises ∧Wrote(Norvig , e1) ∧Wrote(Russell , e2) ⇒
+e~1~ ∈ Exercises ∧ e~2~ ∈ Exercises ∧W rote(Norvig , e~1~) ∧ Wrote(Russell , e~2~) ⇒
 
-Difficulty(e1) > Difficulty(e2) .
+Difficulty(e~1~) > Difficulty(e~2~) .
 
-e1 ∈Exercises ∧ e2 ∈Exercises ∧Difficulty(e1) > Difficulty(e2) ⇒
+e~1~ ∈ Exercises ∧ e~2~ ∈ Exercises ∧ Difficulty(e~1~) > Difficulty(e~2~) ⇒
 
-ExpectedScore(e1) < ExpectedScore(e2) .
+ExpectedScore(e~1~) < ExpectedScore(e~2~) .
 
-This is enough to allow one to decide which exercises to do, even though no numerical values for difficulty were ever used. (One does, however, have to discover who wrote which exer- cises.) These sorts of monotonic relationships among measures form the basis for the field of **qualitative physics**, a subfield of AI that investigates how to reason about physical systems without plunging into detailed equations and numerical simulations. Qualitative physics is discussed in the historical notes section.  
+This is enough to allow one to decide which exercises to do, even though no numerical values for difficulty were ever used. (One does, however, have to discover who wrote which exercises.) These sorts of monotonic relationships among measures form the basis for the field of **qualitative physics**, a subfield of AI that investigates how to reason about physical systems without plunging into detailed equations and numerical simulations. Qualitative physics is discussed in the historical notes section.  
 
-Section 12.2. Categories and Objects 445
 
-**12.2.3 Objects: Things and stuff**
+### Objects: Things and stuff
 
-The real world can be seen as consisting of primitive objects (e.g., atomic particles) and composite objects built from them. By reasoning at the level of large objects such as apples and cars, we can overcome the complexity involved in dealing with vast numbers of primitive objects individually. There is, however, a significant portion of reality that seems to defy any obvious **individuation**—division into distinct objects. We give this portion the generic nameINDIVIDUATION
+The real world can be seen as consisting of primitive objects (e.g., atomic particles) and composite objects built from them. By reasoning at the level of large objects such as apples and cars, we can overcome the complexity involved in dealing with vast numbers of primitive objects individually. There is, however, a significant portion of reality that seems to defy any obvious **individuation**—division into distinct objects. We give this portion the generic name **stuff**. For example, suppose I have some butter and an aardvark in front of me. I can say there is one aardvark, but there is no obvious number of “butter-objects,” because any part of a butter-object is also a butter-object, at least until we get to very small parts indeed. This is the major distinction between _stuff_ and _things_. If we cut an aardvark in half, we do not get two aardvarks (unfortunately).
 
-**stuff**. For example, suppose I have some butter and an aardvark in front of me. I can saySTUFF
-
-there is one aardvark, but there is no obvious number of “butter-objects,” because any part of a butter-object is also a butter-object, at least until we get to very small parts indeed. This is the major distinction between _stuff_ and _things_. If we cut an aardvark in half, we do not get two aardvarks (unfortunately).
-
-The English language distinguishes clearly between _stuff_ and _things_. We say “an aard- vark,” but, except in pretentious California restaurants, one cannot say “a butter.” Linguists distinguish between **count nouns**, such as aardvarks, holes, and theorems, and **mass nouns**,COUNT NOUNS
-
-MASS NOUN such as butter, water, and energy. Several competing ontologies claim to handle this distinc- tion. Here we describe just one; the others are covered in the historical notes section.
+The English language distinguishes clearly between _stuff_ and _things_. We say “an aardvark,” but, except in pretentious California restaurants, one cannot say “a butter.” Linguists distinguish between **count nouns**, such as aardvarks, holes, and theorems, and **mass nouns**, such as butter, water, and energy. Several competing ontologies claim to handle this distinction. Here we describe just one; the others are covered in the historical notes section.
 
 To represent _stuff_ properly, we begin with the obvious. We need to have as objects in our ontology at least the gross “lumps” of _stuff_ we interact with. For example, we might recognize a lump of butter as the one left on the table the night before; we might pick it up, weigh it, sell it, or whatever. In these senses, it is an object just like the aardvark. Let us call it ButteR~3~. We also define the category Butter . Informally, its elements will be all those things of which one might say “It’s butter,” including ButteR~3~. With some caveats about very small parts that we w omit for now, any part of a butter-object is also a butter-object:
 
-b∈Butter ∧ PartOf (p, b) ⇒ p∈Butter .
+b ∈ Butter ∧ PartOf (p, b) ⇒ p ∈ Butter .
 
 We can now say that butter melts at around 30 degrees centigrade:
 
-b∈Butter ⇒ MeltingPoint(b,Centigrade(30)) .
+b ∈ Butter ⇒ MeltingPoint(b,Centigrade(30)) .
 
-We could go on to say that butter is yellow, is less dense than water, is soft at room tempera- ture, has a high fat content, and so on. On the other hand, butter has no particular size, shape, or weight. We can define more specialized categories of butter such as UnsaltedButter , which is also a kind of _stuff_. Note that the category PoundOfButter , which includes as members all butter-objects weighing one pound, is not a kind of _stuff_. If we cut a pound of butter in half, we do not, alas, get two pounds of butter.
+We could go on to say that butter is yellow, is less dense than water, is soft at room temperature, has a high fat content, and so on. On the other hand, butter has no particular size, shape, or weight. We can define more specialized categories of butter such as UnsaltedButter , which is also a kind of _stuff_. Note that the category PoundOfButter , which includes as members all butter-objects weighing one pound, is not a kind of _stuff_. If we cut a pound of butter in half, we do not, alas, get two pounds of butter.
 
-What is actually going on is this: some properties are **intrinsic**: they belong to the veryINTRINSIC
-
-substance of the object, rather than to the object as a whole. When you cut an instance of _stuff_ in half, the two pieces retain the intrinsic properties—things like density, boiling point, flavor, color, ownership, and so on. On the other hand, their **extrinsic** properties—weight,EXTRINSIC
-
-length, shape, and so on—are not retained under subdivision. A category of objects that includes in its definition only _intrinsic_ properties is then a substance, or mass noun; a class that includes _any_ extrinsic properties in its definition is a count noun. The category Stuff is the most general substance category, specifying no intrinsic properties. The category Thing
-
-is the most general discrete object category, specifying no extrinsic properties.  
+What is actually going on is this: some properties are **intrinsic**: they belong to the very substance of the object, rather than to the object as a whole. When you cut an instance of _stuff_ in half, the two pieces retain the intrinsic properties—things like density, boiling point, flavor, color, ownership, and so on. On the other hand, their **extrinsic** properties—weight, length, shape, and so on—are not retained under subdivision. A category of objects that includes in its definition only _intrinsic_ properties is then a substance, or mass noun; a class that includes _any_ extrinsic properties in its definition is a count noun. The category Stuff is the most general substance category, specifying no intrinsic properties. The category Thing is the most general discrete object category, specifying no extrinsic properties.  
 
 
 
-12.3 EVENTS
+## EVENTS
 
-In Section 10.4.2, we showed how situation calculus represents actions and their effects. Situation calculus is limited in its applicability: it was designed to describe a world in which actions are discrete, instantaneous, and happen one at a time. Consider a continuous action, such as filling a bathtub. Situation calculus can say that the tub is empty before the action and full when the action is done, but it can’t talk about what happens _during_ the action. It also can’t describe two actions happening at the same time—such as brushing one’s teeth while waiting for the tub to fill. To handle such cases we introduce an alternative formalism known as **event calculus**, which is based on points of time rather than on situations.3EVENT CALCULUS
+In Section 10.4.2, we showed how situation calculus represents actions and their effects. Situation calculus is limited in its applicability: it was designed to describe a world in which actions are discrete, instantaneous, and happen one at a time. Consider a continuous action, such as filling a bathtub. Situation calculus can say that the tub is empty before the action and full when the action is done, but it can’t talk about what happens _during_ the action. It also can’t describe two actions happening at the same time—such as brushing one’s teeth while waiting for the tub to fill. To handle such cases we introduce an alternative formalism known as **event calculus**, which is based on points of time rather than on situations.^3^
 
-Event calculus reifies fluents and events. The fluent At(Shankar ,Berkeley) is an ob- ject that refers to the fact of Shankar being in Berkeley, but does not by itself say anything about whether it is true. To assert that a fluent is actually true at some point in time we use the predicate T , as in T (At(Shankar ,Berkeley), t).
+Event calculus reifies fluents and events. The fluent At(Shankar ,Berkeley) is an object that refers to the fact of Shankar being in Berkeley, but does not by itself say anything about whether it is true. To assert that a fluent is actually true at some point in time we use the predicate T , as in T (At(Shankar ,Berkeley), t).
 
-Events are described as instances of event categories.4 The event E1 of Shankar flying from San Francisco to Washington, D.C. is described as
+Events are described as instances of event categories.^4^ The event E~1~ of Shankar flying from San Francisco to Washington, D.C. is described as
 
-E1 ∈ Flyings ∧ Flyer(E1,Shankar ) ∧Origin(E1,SF ) ∧Destination(E1,DC ) .
+E~1~ ∈ Flyings ∧ Flyer(E~1~,Shankar ) ∧ Origin(E~1~,SF ) ∧ Destination(E~1~,DC ) .
 
 If this is too verbose, we can define an alternative three-argument version of the category of flying events and say
 
-E1 ∈ Flyings(Shankar ,SF ,DC ) .
+E~1~ ∈ Flyings(Shankar ,SF ,DC ) .
 
-We then use Happens(E1, i) to say that the event E1 took place over the time interval i, and we say the same thing in functional form with Extent(E1)= i. We represent time intervals by a (start, end) pair of times; that is, i = (t~1~, t~2~) is the time interval that starts at t~1~ and ends at t~2~. The complete set of predicates for one version of the event calculus is
+We then use Happens(E~1~, i) to say that the event E~1~ took place over the time interval i, and we say the same thing in functional form with Extent(E~1~)= i. We represent time intervals by a (start, end) pair of times; that is, i = (t~1~, t~2~) is the time interval that starts at t~1~ and ends at t~2~. The complete set of predicates for one version of the event calculus is
+```
+T (f, t)              Fluent f is true at time t
 
-T (f, t) Fluent f is true at time t
+Happens(e, i)         Event e happens over the time interval i
 
-Happens(e, i) Event e happens over the time interval i
+Initiates(e, f, t)    Event e causes fluent f to start to hold at time t
 
-Initiates(e, f, t) Event e causes fluent f to start to hold at time t
+Terminates(e, f, t)   Event e causes fluent f to cease to hold at time t
 
-Terminates(e, f, t) Event e causes fluent f to cease to hold at time t
+Clipped (f, i)        Fluent f ceases to be true at some point during time interval i
 
-Clipped (f, i) Fluent f ceases to be true at some point during time interval i
-
-Restored (f, i) Fluent f becomes true sometime during time interval i
-
+Restored (f, i)       Fluent f becomes true sometime during time interval i
+```
 We assume a distinguished event, Start , that describes the initial state by saying which fluents are initiated or terminated at the start time. We define T by saying that a fluent holds at a point in time if the fluent was initiated by an event at some time in the past and was not made false (clipped) by an intervening event. A fluent does not hold if it was terminated by an event and
-
-3 The terms “event” and “action” may be used interchangeably. Informally, “action” connotes an agent while “event” connotes the possibility of agentless actions. 4 Some versions of event calculus do not distinguish event categories from instances of the categories.  
-
-Section 12.3. Events 447
+```
+3 The terms “event” and “action” may be used interchangeably. Informally, “action” connotes an agent while “event” connotes the possibility of agentless actions. 
+4 Some versions of event calculus do not distinguish event categories from instances of the categories.  
+```
 
 not made true (restored) by another event. Formally, the axioms are:
 
-Happens(e, (t~1~, t~2~)) ∧ Initiates(e, f, t~1~) ∧ ¬Clipped(f, (t~1~, t)) ∧ t~1~ < t ⇒
-
+Happens(e, (t~1~, t~2~)) ∧ Initiates(e, f, t~1~) ∧ ¬Clipped(f, (t~1~, t)) ∧ t~1~ < t ⇒ 
 T (f, t)
 
 Happens(e, (t~1~, t~2~)) ∧ Terminates(e, f, t~1~) ∧ ¬Restored (f, (t~1~, t)) ∧ t~1~ < t ⇒
-
 ¬T (f, t)
 
 where Clipped and Restored are defined by
-
 Clipped (f, (t~1~, t~2~)) ⇔
-
-∃ e, t, t3 Happens(e, (t, t3)) ∧ t~1~ ≤ t < t~2~ ∧ Terminates(e, f, t)
+∃ e, t, t~3~ Happens(e, (t, t~3~)) ∧ t~1~ ≤ t < t~2~ ∧ Terminates(e, f, t)
 
 Restored (f, (t~1~, t~2~)) ⇔
-
-∃ e, t, t3 Happens(e, (t, t3)) ∧ t~1~ ≤ t < t~2~ ∧ Initiates(e, f, t)
+∃ e, t, t~3~ Happens(e, (t, t~3~)) ∧ t~1~ ≤ t < t~2~ ∧ Initiates(e, f, t)
 
 It is convenient to extend T to work over intervals as well as time points; a fluent holds over an interval if it holds on every point within the interval:
 
 T (f, (t~1~, t~2~)) ⇔ [∀ t (t~1~ ≤ t < t~2~) ⇒ T (f, t)]
 
-Fluents and actions are defined with domain-specific axioms that are similar to successor- state axioms. For example, we can say that the only way a wumpus-world agent gets an arrow is at the start, and the only way to use up an arrow is to shoot it:
+Fluents and actions are defined with domain-specific axioms that are similar to successorstate axioms. For example, we can say that the only way a wumpus-world agent gets an arrow is at the start, and the only way to use up an arrow is to shoot it:
 
 Initiates(e,HaveArrow(a), t) ⇔ e = Start
-
 Terminates(e,HaveArrow(a), t) ⇔ e ∈ Shootings(a)
 
-By reifying events we make it possible to add any amount of arbitrary information about them. For example, we can say that Shankar’s flight was bumpy with Bumpy(E1). In an ontology where events are n-ary predicates, there would be no way to add extra information like this; moving to an n + 1-ary predicate isn’t a scalable solution.
+By reifying events we make it possible to add any amount of arbitrary information about them. For example, we can say that Shankar’s flight was bumpy with Bumpy(E~1~). In an ontology where events are n-ary predicates, there would be no way to add extra information like this; moving to an n + 1-ary predicate isn’t a scalable solution.
 
 We can extend event calculus to make it possible to represent simultaneous events (such as two people being necessary to ride a seesaw), exogenous events (such as the wind blowing and changing the location of an object), continuous events (such as the level of water in the bathtub continuously rising) and other complications.
 
-**12.3.1 Processes**
+### Processes
 
-The events we have seen so far are what we call **discrete events**—they have a definite struc-DISCRETE EVENTS
+The events we have seen so far are what we call **discrete events**—they have a definite structure. Shankar’s trip has a beginning, middle, and end. If interrupted halfway, the event would be something different—it would not be a trip from San Francisco to Washington, but instead a trip from San Francisco to somewhere over Kansas. On the other hand, the category of events denoted by Flyings has a different quality. If we take a small interval of Shankar’s flight, say, the third 20-minute segment (while he waits anxiously for a bag of peanuts), that event is still a member of Flyings . In fact, this is true for any subinterval.
 
-ture. Shankar’s trip has a beginning, middle, and end. If interrupted halfway, the event would be something different—it would not be a trip from San Francisco to Washington, but instead a trip from San Francisco to somewhere over Kansas. On the other hand, the category of events denoted by Flyings has a different quality. If we take a small interval of Shankar’s flight, say, the third 20-minute segment (while he waits anxiously for a bag of peanuts), that event is still a member of Flyings . In fact, this is true for any subinterval.
+Categories of events with this property are called **process** categories or **liquid event**categories. Any process e that happens over an interval also happens over any subinterval:
 
-Categories of events with this property are called **process** categories or **liquid event**PROCESS
+(e ∈ Processes) ∧Happens(e, (t~1~, t~4~)) ∧ (t~1~ < t~2~ < t~3~ < t~4~) ⇒ Happens(e, (t~2~, t~3~)) .
 
-LIQUID EVENT categories. Any process e that happens over an interval also happens over any subinterval: (e ∈ Processes) ∧Happens(e, (t~1~, t4)) ∧ (t~1~ < t~2~ < t3 < t4) ⇒ Happens(e, (t~2~, t3)) .
+The distinction between liquid and nonliquid events is exactly analogous to the difference between substances, or _stuff_, and individual objects, or _things_. In fact, some have called liquid events **temporal substances**, whereas substances like butter are **spatial substances**.
 
-The distinction between liquid and nonliquid events is exactly analogous to the difference between substances, or _stuff_, and individual objects, or _things_. In fact, some have called liquid events **temporal substances**, whereas substances like butter are **spatial substances**.TEMPORAL
-
-SUBSTANCE
-
-SPATIAL SUBSTANCE  
-
-
-
-**12.3.2 Time intervals**
+### Time intervals
 
 Event calculus opens us up to the possibility of talking about time, and time intervals. We will consider two kinds of time intervals: moments and extended intervals. The distinction is that only moments have zero duration:
 
 Partition({Moments ,ExtendedIntervals}, Intervals)
+i ∈ Moments ⇔ Duration(i)= Seconds(0) .
 
-i∈Moments ⇔ Duration(i)= Seconds(0) .
-
-Next we invent a time scale and associate points on that scale with moments, giving us ab- solute times. The time scale is arbitrary; we measure it in seconds and say that the moment at midnight (GMT) on January 1, 1900, has time 0. The functions Begin and End pick out the earliest and latest moments in an interval, and the function Time delivers the point on the time scale for a moment. The function Duration gives the difference between the end time and the start time.
+Next we invent a time scale and associate points on that scale with moments, giving us absolute times. The time scale is arbitrary; we measure it in seconds and say that the moment at midnight (GMT) on January 1, 1900, has time 0. The functions Begin and End pick out the earliest and latest moments in an interval, and the function Time delivers the point on the time scale for a moment. The function Duration gives the difference between the end time and the start time.
 
 Interval (i) ⇒ Duration(i)= (Time(End(i)) − Time(Begin(i))) .
 
@@ -6292,27 +5382,25 @@ Time(Begin(AD2001))= Date(0, 0, 0, 1, Jan , 2001)
 
 Date(0, 20, 21, 24, 1, 1995)=Seconds(3000000000) .
 
-Two intervals Meet if the end time of the first equals the start time of the second. The com- plete set of interval relations, as proposed by Allen (1983), is shown graphically in Figure 12.2 and logically below:
+Two intervals Meet if the end time of the first equals the start time of the second. The complete set of interval relations, as proposed by Allen (1983), is shown graphically in Figure 12.2 and logically below:
 
-Meet(i, j) ⇔ End(i)= Begin(j)
+Meet(i, j)     ⇔ End(i)= Begin(j)
 
-Before(i, j) ⇔ End(i) < Begin(j)
+Before(i, j)   ⇔ End(i) < Begin(j)
 
-After(j, i) ⇔ Before(i, j)
+After(j, i)    ⇔ Before(i, j)
 
-During(i, j) ⇔ Begin(j) < Begin(i) < End(i) < End(j)
+During(i, j)   ⇔ Begin(j) < Begin(i) < End(i) < End(j)
 
-Overlap(i, j) ⇔ Begin(i) < Begin(j) < End(i) < End(j)
+Overlap(i, j)  ⇔ Begin(i) < Begin(j) < End(i) < End(j)
 
-Begins(i, j) ⇔ Begin(i) = Begin(j)
+Begins(i, j)   ⇔ Begin(i) = Begin(j)
 
 Finishes(i, j) ⇔ End(i) = End(j)
 
-Equals(i, j) ⇔ Begin(i) = Begin(j) ∧ End(i) = End(j)
+Equals(i, j)   ⇔ Begin(i) = Begin(j) ∧ End(i) = End(j)
 
-These all have their intuitive meaning, with the exception of _Overlap_: we tend to think of overlap as symmetric (if _i_ overlaps _j_ then _j_ overlaps _i_), but in this definition, Overlap(i, j)
-
-only holds if _i_ begins before _j_. To say that the reign of Elizabeth II immediately followed that of George VI, and the reign of Elvis overlapped with the 1950s, we can write the following:
+These all have their intuitive meaning, with the exception of _Overlap_: we tend to think of overlap as symmetric (if _i_ overlaps _j_ then _j_ overlaps _i_), but in this definition, Overlap(i, j) only holds if _i_ begins before _j_. To say that the reign of Elizabeth II immediately followed that of George VI, and the reign of Elvis overlapped with the 1950s, we can write the following:
 
 Meets(ReignOf (GeorgeVI ),ReignOf (ElizabethII )) .
 
@@ -6324,137 +5412,64 @@ End(Fifties)=End(AD1959) .
 
 Section 12.3. Events 449
 
-**Figure 12.2** Predicates on time intervals.
+![Alt text](image/12img/figure-12.2.png)
 
-time
+![Alt text](image/12img/figure-12.3.png)
 
-1801 1797
+### Fluents and objects
 
-1789
-
-Washington
-
-Adams
-
-Jefferson
-
-**Figure 12.3** A schematic view of the object President(USA) for the first 15 years of its existence.
-
-**12.3.3 Fluents and objects**
-
-Physical objects can be viewed as generalized events, in the sense that a physical object is a chunk of space–time. For example, USA can be thought of as an event that began in, say, 1776 as a union of 13 states and is still in progress today as a union of 50. We can describe the changing properties of USA using state fluents, such as Population(USA). A property of the USA that changes every four or eight years, barring mishaps, is its president. One might propose that President(USA) is a logical term that denotes a different object at different times. Unfortunately, this is not possible, because a term denotes exactly one object in a given model structure. (The term President(USA, t) can denote different objects, depending on the value of t, but our ontology keeps time indices separate from fluents.) The  
-
-
-
-only possibility is that President(USA) denotes a single object that consists of different people at different times. It is the object that is George Washington from 1789 to 1797, John Adams from 1797 to 1801, and so on, as in Figure 12.3. To say that George Washington was president throughout 1790, we can write
+Physical objects can be viewed as generalized events, in the sense that a physical object is a chunk of space–time. For example, USA can be thought of as an event that began in, say, 1776 as a union of 13 states and is still in progress today as a union of 50. We can describe the changing properties of USA using state fluents, such as Population(USA). A property of the USA that changes every four or eight years, barring mishaps, is its president. One might propose that President(USA) is a logical term that denotes a different object at different times. Unfortunately, this is not possible, because a term denotes exactly one object in a given model structure. (The term President(USA, t) can denote different objects, depending on the value of t, but our ontology keeps time indices separate from fluents.) The only possibility is that President(USA) denotes a single object that consists of different people at different times. It is the object that is George Washington from 1789 to 1797, John Adams from 1797 to 1801, and so on, as in Figure 12.3. To say that George Washington was president throughout 1790, we can write
 
 T (Equals(President(USA),GeorgeWashington ),AD1790) .
 
 We use the function symbol Equals rather than the standard logical predicate =, because we cannot have a predicate as an argument to T , and because the interpretation is _not_ that GeorgeWashington and President(USA) are logically identical in 1790; logical identity is not something that can change over time. The identity is between the subevents of each object that are defined by the period 1790.
 
-12.4 MENTAL EVENTS AND MENTAL OBJECTS
+## MENTAL EVENTS AND MENTAL OBJECTS
 
 The agents we have constructed so far have beliefs and can deduce new beliefs. Yet none of them has any knowledge _about_ beliefs or _about_ deduction. Knowledge about one’s own knowledge and reasoning processes is useful for controlling inference. For example, suppose Alice asks “what is the square root of 1764” and Bob replies “I don’t know.” If Alice insists “think harder,” Bob should realize that with some more thought, this question can in fact be answered. On the other hand, if the question were “Is your mother sitting down right now?” then Bob should realize that thinking harder is unlikely to help. Knowledge about the knowledge of other agents is also important; Bob should realize that his mother knows whether she is sitting or not, and that asking her would be a way to find out.
 
-What we need is a model of the mental objects that are in someone’s head (or some- thing’s knowledge base) and of the mental processes that manipulate those mental objects. The model does not have to be detailed. We do not have to be able to predict how many milliseconds it will take for a particular agent to make a deduction. We will be happy just to be able to conclude that mother knows whether or not she is sitting.
+What we need is a model of the mental objects that are in someone’s head (or something’s knowledge base) and of the mental processes that manipulate those mental objects. The model does not have to be detailed. We do not have to be able to predict how many milliseconds it will take for a particular agent to make a deduction. We will be happy just to be able to conclude that mother knows whether or not she is sitting.
 
-We begin with the **propositional attitudes** that an agent can have toward mental ob-PROPOSITIONAL ATTITUDE
-
-jects: attitudes such as Believes, Knows , Wants , Intends , and Informs . The difficulty is that these attitudes do not behave like “normal” predicates. For example, suppose we try to assert that Lois knows that Superman can fly:
+We begin with the **propositional attitudes** that an agent can have toward mental objects: attitudes such as Believes, Knows , Wants , Intends , and Informs . The difficulty is that these attitudes do not behave like “normal” predicates. For example, suppose we try to assert that Lois knows that Superman can fly:
 
 Knows(Lois ,CanFly(Superman)) .
 
 One minor issue with this is that we normally think of CanFly(Superman) as a sentence, but here it appears as a term. That issue can be patched up just be reifying CanFly(Superman); making it a fluent. A more serious problem is that, if it is true that Superman is Clark Kent, then we must conclude that Lois knows that Clark can fly:
 
 (Superman = Clark) ∧Knows(Lois ,CanFly(Superman))
-
 |= Knows(Lois ,CanFly(Clark )) .
 
-This is a consequence of the fact that equality reasoning is built into logic. Normally that is a good thing; if our agent knows that 2 + 2 = 4 and 4 < 5, then we want our agent to know  
+This is a consequence of the fact that equality reasoning is built into logic. Normally that is a good thing; if our agent knows that 2 + 2 = 4 and 4 < 5, then we want our agent to know  that 2 + 2 < 5. This property is called **referential transparency**—it doesn’t matter what term a logic uses to refer to an object, what matters is the object that the term names. But for propositional attitudes like _believes_ and _knows_, we would like to have referential opacity—the terms used _do_ matter, because not all agents know which terms are co-referential.
 
-Section 12.4. Mental Events and Mental Objects 451
+**Modal logic** is designed to address this problem. Regular logic is concerned with a single modality, the modality of truth, allowing us to express “_P_ is true.” Modal logic includes special modal operators that take sentences (rather than terms) as arguments. For example, “_A_ knows _P_” is represented with the notation **K**~A~P , where **K** is the modal operator for knowledge. It takes two arguments, an agent (written as the subscript) and a sentence. The syntax of modal logic is the same as first-order logic, except that sentences can also be formed with modal operators.
 
-that 2 + 2 < 5. This property is called **referential transparency**—it doesn’t matter whatREFERENTIAL TRANSPARENCY
+The semantics of modal logic is more complicated. In first-order logic a **model** contains a set of objects and an interpretation that maps each name to the appropriate object, relation, or function. In modal logic we want to be able to consider both the possibility that Superman’s secret identity is Clark and that it isn’t. Therefore, we will need a more complicated model, one that consists of a collection of **possible worlds** rather than just one true world. The worlds are connected in a graph by **accessibility relations**, one relation for each modal operator. We say that world w~1~ is accessible from world w~0~ with respect to the modal operator **K**~A~ if everything in w~1~ is consistent with what A knows in w~0~, and we write this as Acc(**K**~A~, w~0~, w~1~). In diagrams such as Figure 12.4 we show accessibility as an arrow between possible worlds. As an example, in the real world, Bucharest is the capital of Romania, but for an agent that did not know that, other possible worlds are accessible, including ones where the capital of Romania is Sibiu or Sofia. Presumably a world where 2 + 2 = 5 would not be accessible to any agent.
 
-term a logic uses to refer to an object, what matters is the object that the term names. But for propositional attitudes like _believes_ and _knows_, we would like to have referential opacity—the terms used _do_ matter, because not all agents know which terms are co-referential.
-
-**Modal logic** is designed to address this problem. Regular logic is concerned with a sin-MODAL LOGIC
-
-gle modality, the modality of truth, allowing us to express “_P_ is true.” Modal logic includes special modal operators that take sentences (rather than terms) as arguments. For example, “_A_ knows _P_” is represented with the notation **K**AP , where **K** is the modal operator for knowl- edge. It takes two arguments, an agent (written as the subscript) and a sentence. The syntax of modal logic is the same as first-order logic, except that sentences can also be formed with modal operators.
-
-The semantics of modal logic is more complicated. In first-order logic a **model** con- tains a set of objects and an interpretation that maps each name to the appropriate object, relation, or function. In modal logic we want to be able to consider both the possibility that Superman’s secret identity is Clark and that it isn’t. Therefore, we will need a more com- plicated model, one that consists of a collection of **possible worlds** rather than just one truePOSSIBLE WORLD
-
-world. The worlds are connected in a graph by **accessibility relations**, one relation for eachACCESSIBILITY RELATIONS
-
-modal operator. We say that world w1 is accessible from world w0 with respect to the modal operator **K**A if everything in w1 is consistent with what A knows in w0, and we write this as Acc(**K**A, w0, w1). In diagrams such as Figure 12.4 we show accessibility as an arrow be- tween possible worlds. As an example, in the real world, Bucharest is the capital of Romania, but for an agent that did not know that, other possible worlds are accessible, including ones where the capital of Romania is Sibiu or Sofia. Presumably a world where 2 + 2 = 5 would not be accessible to any agent.
-
-In general, a knowledge atom **K**AP is true in world w if and only if P is true in every world accessible from w. The truth of more complex sentences is derived by recursive appli- cation of this rule and the normal rules of first-order logic. That means that modal logic can be used to reason about nested knowledge sentences: what one agent knows about another agent’s knowledge. For example, we can say that, even though Lois doesn’t know whether Superman’s secret identity is Clark Kent, she does know that Clark knows:
+In general, a knowledge atom **K**~A~P is true in world w if and only if P is true in every world accessible from w. The truth of more complex sentences is derived by recursive application of this rule and the normal rules of first-order logic. That means that modal logic can be used to reason about nested knowledge sentences: what one agent knows about another agent’s knowledge. For example, we can say that, even though Lois doesn’t know whether Superman’s secret identity is Clark Kent, she does know that Clark knows:
 
 **K**Lois [**K**Clark Identity(Superman ,Clark ) ∨**K**Clark¬Identity(Superman ,Clark )]
 
 Figure 12.4 shows some possible worlds for this domain, with accessibility relations for Lois and Superman.
 
-In the TOP-LEFT diagram, it is common knowledge that Superman knows his own iden- tity, and neither he nor Lois has seen the weather report. So in w0 the worlds w0 and w2 are accessible to Superman; maybe rain is predicted, maybe not. For Lois all four worlds are ac- cessible from each other; she doesn’t know anything about the report or if Clark is Superman. But she does know that Superman knows whether he is Clark, because in every world that is accessible to Lois, either Superman knows I , or he knows ¬I . Lois does not know which is the case, but either way she knows Superman knows.
+In the TOP-LEFT diagram, it is common knowledge that Superman knows his own identity, and neither he nor Lois has seen the weather report. So in w~0~ the worlds w~0~ and w2 are accessible to Superman; maybe rain is predicted, maybe not. For Lois all four worlds are accessible from each other; she doesn’t know anything about the report or if Clark is Superman. But she does know that Superman knows whether he is Clark, because in every world that is accessible to Lois, either Superman knows I , or he knows ¬I . Lois does not know which is the case, but either way she knows Superman knows.
 
-In the TOP-RIGHT diagram it is common knowledge that Lois has seen the weather report. So in w4 she knows rain is predicted and in w6 she knows rain is not predicted.  
+In the TOP-RIGHT diagram it is common knowledge that Lois has seen the weather report. So in w~4~ she knows rain is predicted and in w~6~ she knows rain is not predicted.  
 
-
-
-(a) (b)
-
-(c)
-
-_w_ 0 : _I,R_
-
-_w_ 2 : _I,_¬_R w_
-
-3 : ¬_I,_¬_R_
-
-_w_ 1 : ¬_I,R w_
-
-4 : _I,R_
-
-_w_ 6 : _I,_¬_R w_
-
-7 : ¬_I,_¬_R_
-
-_w_ 5 : ¬_I,R_
-
-_w_ 0 : _I,R_
-
-_w_ 2 : _I,_¬_R w_
-
-3 : ¬_I,_¬_R_
-
-_w_ 1 : ¬_I,R_
-
-_w_ 4 : _I,R w_
-
-5 : ¬_I,R_
-
-_w_ 6 : _I,_¬_R w_
-
-7 : ¬_I,_¬_R_
-
-**Figure 12.4** Possible worlds with accessibility relations **K**Superman (solid arrows) and **K**Lois (dotted arrows). The proposition R means “the weather report for tomorrow is rain” and I means “Superman’s secret identity is Clark Kent.” All worlds are accessible to them- selves; the arrows from a world to itself are not shown.
+![Alt text](image/12img/figure-12.4.png)
 
 Superman does not know the report, but he knows that Lois knows, because in every world that is accessible to him, either she knows R or she knows ¬R.
 
-In the BOTTOM diagram we represent the scenario where it is common knowledge that Superman knows his identity, and Lois might or might not have seen the weather report. We represent this by combining the two top scenarios, and adding arrows to show that Superman does not know which scenario actually holds. Lois does know, so we don’t need to add any arrows for her. In w0 Superman still knows I but not R, and now he does not know whether Lois knows R. From what Superman knows, he might be in w0 or w2, in which case Lois does not know whether R is true, or he could be in w4, in which case she knows R, or w6, in which case she knows ¬R.
+In the BOTTOM diagram we represent the scenario where it is common knowledge that Superman knows his identity, and Lois might or might not have seen the weather report. We represent this by combining the two top scenarios, and adding arrows to show that Superman does not know which scenario actually holds. Lois does know, so we don’t need to add any arrows for her. In w~0~ Superman still knows I but not R, and now he does not know whether Lois knows R. From what Superman knows, he might be in w~0~ or w2, in which case Lois does not know whether R is true, or he could be in w~4~, in which case she knows R, or w~6~, in which case she knows ¬R.
 
-There are an infinite number of possible worlds, so the trick is to introduce just the ones you need to represent what you are trying to model. A new possible world is needed to talk about different possible facts (e.g., rain is predicted or not), or to talk about different states of knowledge (e.g., does Lois know that rain is predicted). That means two possible worlds, such as w4 and w0 in Figure 12.4, might have the same base facts about the world, but differ in their accessibility relations, and therefore in facts about knowledge.
+There are an infinite number of possible worlds, so the trick is to introduce just the ones you need to represent what you are trying to model. A new possible world is needed to talk about different possible facts (e.g., rain is predicted or not), or to talk about different states of knowledge (e.g., does Lois know that rain is predicted). That means two possible worlds, such as w~4~ and w~0~ in Figure 12.4, might have the same base facts about the world, but differ in their accessibility relations, and therefore in facts about knowledge.
 
-Modal logic solves some tricky issues with the interplay of quantifiers and knowledge. The English sentence “Bond knows that someone is a spy” is ambiguous. The first reading is  
+Modal logic solves some tricky issues with the interplay of quantifiers and knowledge. The English sentence “Bond knows that someone is a spy” is ambiguous. The first reading is that there is a particular someone who Bond knows is a spy; we can write this as
 
-Section 12.5. Reasoning Systems for Categories 453
-
-that there is a particular someone who Bond knows is a spy; we can write this as
-
-∃x **K**BondSpy(x) ,
+∃ x **K**~Bond~Spy(x) ,
 
 which in modal logic means that there is an x that, in all accessible worlds, Bond knows to be a spy. The second reading is that Bond just knows that there is at least one spy:
 
-**K**Bond∃x Spy(x) .
+**K**~Bond~∃x Spy(x) .
 
 The modal logic interpretation is that in each accessible world there is an x that is a spy, but it need not be the same x in each world.
 
@@ -6462,143 +5477,73 @@ Now that we have a modal operator for knowledge, we can write axioms for it. Fir
 
 implies Q, then the agent knows Q:
 
-(**K**aP ∧**K**a(P ⇒ Q)) ⇒ **K**aQ .
+(**K**~a~P ∧**K**~a~(P ⇒ Q)) ⇒ **K**~a~Q .
 
-From this (and a few other rules about logical identities) we can establish that **K**A(P ∨ ¬P )
+From this (and a few other rules about logical identities) we can establish that **K**~A~(P ∨ ¬P )
 
-is a tautology; every agent knows every proposition P is either true or false. On the other hand, (**K**AP ) ∨ (**K**A¬P ) is not a tautology; in general, there will be lots of propositions that an agent does not know to be true and does not know to be false.
+is a tautology; every agent knows every proposition P is either true or false. On the other hand, (**K**~A~P ) ∨ (**K**~A~¬P ) is not a tautology; in general, there will be lots of propositions that an agent does not know to be true and does not know to be false.
 
 It is said (going back to Plato) that knowledge is justified true belief. That is, if it is true, if you believe it, and if you have an unassailably good reason, then you know it. That means that if you know something, it must be true, and we have the axiom:
 
-**K**aP ⇒ P .
+**K**~a~P ⇒ P .
 
 Furthermore, logical agents should be able to introspect on their own knowledge. If they know something, then they know that they know it:
 
-**K**aP ⇒ **K**a(**K**aP ) .
+**K**~a~P ⇒ **K**~a~(**K**~a~P ) .
 
-We can define similar axioms for belief (often denoted by **B**) and other modalities. However, one problem with the modal logic approach is that it assumes **logical omniscience** on theLOGICAL
+We can define similar axioms for belief (often denoted by **B**) and other modalities. However, one problem with the modal logic approach is that it assumes **logical omniscience** on the part of agents. That is, if an agent knows a set of axioms, then it knows all consequences of those axioms. This is on shaky ground even for the somewhat abstract notion of knowledge, but it seems even worse for belief, because belief has more connotation of referring to things that are physically represented in the agent, not just potentially derivable. There have been attempts to define a form of limited rationality for agents; to say that agents believe those assertions that can be derived with the application of no more than k reasoning steps, or no more than s seconds of computation. These attempts have been generally unsatisfactory.
 
-OMNISCIENCE
+## REASONING SYSTEMS FOR CATEGORIES
 
-part of agents. That is, if an agent knows a set of axioms, then it knows all consequences of those axioms. This is on shaky ground even for the somewhat abstract notion of knowledge, but it seems even worse for belief, because belief has more connotation of referring to things that are physically represented in the agent, not just potentially derivable. There have been attempts to define a form of limited rationality for agents; to say that agents believe those assertions that can be derived with the application of no more than k reasoning steps, or no more than s seconds of computation. These attempts have been generally unsatisfactory.
+Categories are the primary building blocks of large-scale knowledge representation schemes. This section describes systems specially designed for organizing and reasoning with categories. There are two closely related families of systems: **semantic networks** provide graphical aids for visualizing a knowledge base and efficient algorithms for inferring properties of an object on the basis of its category membership; and **description logics** provide a formal language for constructing and combining category definitions and efficient algorithms for deciding subset and superset relationships between categories.
 
-12.5 REASONING SYSTEMS FOR CATEGORIES
+### Semantic networks
 
-Categories are the primary building blocks of large-scale knowledge representation schemes. This section describes systems specially designed for organizing and reasoning with cate- gories. There are two closely related families of systems: **semantic networks** provide graph- ical aids for visualizing a knowledge base and efficient algorithms for inferring properties  
+In 1909, Charles S. Peirce proposed a graphical notation of nodes and edges called **existential graphs** that he called “the logic of the future.” Thus began a long-running debate between advocates of “logic” and advocates of “semantic networks.” Unfortunately, the debate obscured the fact that semantics networks—at least those with well-defined semantics—_are_ a form of logic. The notation that semantic networks provide for certain kinds of sentences is often more convenient, but if we strip away the “human interface” issues, the underlying concepts—objects, relations, quantification, and so on—are the same.
 
-
-
-of an object on the basis of its category membership; and **description logics** provide a for- mal language for constructing and combining category definitions and efficient algorithms for deciding subset and superset relationships between categories.
-
-**12.5.1 Semantic networks**
-
-In 1909, Charles S. Peirce proposed a graphical notation of nodes and edges called **existential graphs** that he called “the logic of the future.” Thus began a long-running debate betweenEXISTENTIAL
-
-GRAPHS
-
-advocates of “logic” and advocates of “semantic networks.” Unfortunately, the debate ob- scured the fact that semantics networks—at least those with well-defined semantics—_are_ a form of logic. The notation that semantic networks provide for certain kinds of sentences is often more convenient, but if we strip away the “human interface” issues, the underlying concepts—objects, relations, quantification, and so on—are the same.
-
-There are many variants of semantic networks, but all are capable of representing in- dividual objects, categories of objects, and relations among objects. A typical graphical no- tation displays object or category names in ovals or boxes, and connects them with labeled links. For example, Figure 12.5 has a MemberOf link between Mary and FemalePersons , corresponding to the logical assertion Mary ∈FemalePersons ; similarly, the SisterOf link between Mary and John corresponds to the assertion SisterOf (Mary , John). We can con- nect categories using SubsetOf links, and so on. It is such fun drawing bubbles and arrows that one can get carried away. For example, we know that persons have female persons as mothers, so can we draw a HasMother link from Persons to FemalePersons? The answer is no, because HasMother is a relation between a person and his or her mother, and categories do not have mothers.5
+There are many variants of semantic networks, but all are capable of representing individual objects, categories of objects, and relations among objects. A typical graphical notation displays object or category names in ovals or boxes, and connects them with labeled links. For example, Figure 12.5 has a MemberOf link between Mary and FemalePersons , corresponding to the logical assertion Mary ∈FemalePersons ; similarly, the SisterOf link between Mary and John corresponds to the assertion SisterOf (Mary , John). We can connect categories using SubsetOf links, and so on. It is such fun drawing bubbles and arrows that one can get carried away. For example, we know that persons have female persons as mothers, so can we draw a HasMother link from Persons to FemalePersons? The answer is no, because HasMother is a relation between a person and his or her mother, and categories do not have mothers.5
 
 For this reason, we have used a special notation—the double-boxed link—in Figure 12.5. This link asserts that
 
-∀x x ∈Persons ⇒ [∀ y HasMother(x, y) ⇒ y ∈FemalePersons ] .
+∀ x  x ∈ Persons ⇒ [∀ y HasMother(x, y) ⇒ y ∈FemalePersons ] .
 
 We might also want to assert that persons have two legs—that is,
 
-∀x x ∈Persons ⇒ Legs(x, 2) .
+∀ x  x ∈ Persons ⇒ Legs(x, 2) .
 
 As before, we need to be careful not to assert that a category has legs; the single-boxed link in Figure 12.5 is used to assert properties of every member of a category.
 
 The semantic network notation makes it convenient to perform **inheritance** reasoning of the kind introduced in Section 12.2. For example, by virtue of being a person, Mary inherits the property of having two legs. Thus, to find out how many legs Mary has, the inheritance algorithm follows the MemberOf link from Mary to the category she belongs to, and then follows SubsetOf links up the hierarchy until it finds a category for which there is a boxed Legs link—in this case, the Persons category. The simplicity and efficiency of this inference
-
+```
 5 Several early systems failed to distinguish between properties of members of a category and properties of the category as a whole. This can lead directly to inconsistencies, as pointed out by Drew McDermott (1976) in his article “Artificial Intelligence Meets Natural Stupidity.” Another common problem was the use of IsA links for both subset and membership relations, in correspondence with English usage: “a cat is a mammal” and “Fifi is a cat.” See Exercise 12.22 for more on these issues.  
+```
 
-Section 12.5. Reasoning Systems for Categories 455
+![Alt text](image/12img/figure-12.5.png)
 
-_Mammals_
-
-_JohnMary_
-
-_Persons_
-
-_Male Persons_
-
-_Female Persons_
-
-1
-
-2
-
-_SubsetOf_
-
-_SubsetOfSubsetOf_
-
-_MemberOf MemberOf_
-
-_SisterOf Legs_
-
-_LegsHasMother_
-
-**Figure 12.5** A semantic network with four objects (John, Mary, 1, and 2) and four cate- gories. Relations are denoted by labeled links.
-
-_MemberOf_
-
-_FlyEvents_
-
-_Fly_17
-
-_Shankar NewYork NewDelhi Yesterday_
-
-_Agent_
-
-_Origin Destination_
-
-_During_
-
-**Figure 12.6** A fragment of a semantic network showing the representation of the logical assertion Fly(Shankar ,NewYork ,NewDelhi ,Yesterday).
+![Alt text](image/12img/figure-12.6.png)
 
 mechanism, compared with logical theorem proving, has been one of the main attractions of semantic networks.
 
-Inheritance becomes complicated when an object can belong to more than one category or when a category can be a subset of more than one other category; this is called **multiple in- heritance**. In such cases, the inheritance algorithm might find two or more conflicting valuesMULTIPLE
+Inheritance becomes complicated when an object can belong to more than one category or when a category can be a subset of more than one other category; this is called **multiple inheritance**. In such cases, the inheritance algorithm might find two or more conflicting values answering the query. For this reason, multiple inheritance is banned in some **object-oriented programming** (OOP) languages, such as Java, that use inheritance in a class hierarchy. It is usually allowed in semantic networks, but we defer discussion of that until Section 12.6.
 
-INHERITANCE
+The reader might have noticed an obvious drawback of semantic network notation, compared to first-order logic: the fact that links between bubbles represent only _binary_ relations. For example, the sentence Fly(Shankar ,NewYork ,NewDelhi ,Yesterday) cannot be asserted directly in a semantic network. Nonetheless, we _can_ obtain the effect of n-ary assertions by reifying the proposition itself as an event belonging to an appropriate event category. Figure 12.6 shows the semantic network structure for this particular event. Notice that the restriction to binary relations forces the creation of a rich ontology of reified concepts.
 
-answering the query. For this reason, multiple inheritance is banned in some **object-oriented programming** (OOP) languages, such as Java, that use inheritance in a class hierarchy. It is usually allowed in semantic networks, but we defer discussion of that until Section 12.6.
+Reification of propositions makes it possible to represent every ground, function-free atomic sentence of first-order logic in the semantic network notation. Certain kinds of universally quantified sentences can be asserted using inverse links and the singly boxed and doubly boxed arrows applied to categories, but that still leaves us a long way short of full first-order logic. Negation, disjunction, nested function symbols, and existential quantification are all missing. Now it is _possible_ to extend the notation to make it equivalent to first-order logic—as in Peirce’s existential graphs—but doing so negates one of the main advantages of semantic networks, which is the simplicity and transparency of the inference processes. Designers can build a large network and still have a good idea about what queries will be efficient, because (a) it is easy to visualize the steps that the inference procedure will go through and (b) in some cases the query language is so simple that difficult queries cannot be posed. In cases where the expressive power proves to be too limiting, many semantic network systems provide for **procedural attachment** to fill in the gaps. Procedural attachment is a technique whereby a query about (or sometimes an assertion of) a certain relation results in a call to a special procedure designed for that relation rather than a general inference algorithm.
 
-The reader might have noticed an obvious drawback of semantic network notation, com- pared to first-order logic: the fact that links between bubbles represent only _binary_ relations. For example, the sentence Fly(Shankar ,NewYork ,NewDelhi ,Yesterday) cannot be as- serted directly in a semantic network. Nonetheless, we _can_ obtain the effect of n-ary asser- tions by reifying the proposition itself as an event belonging to an appropriate event category. Figure 12.6 shows the semantic network structure for this particular event. Notice that the restriction to binary relations forces the creation of a rich ontology of reified concepts.
+One of the most important aspects of semantic networks is their ability to represent **default values** for categories. Examining Figure 12.5 carefully, one notices that John has one leg, despite the fact that he is a person and all persons have two legs. In a strictly logical KB, this would be a contradiction, but in a semantic network, the assertion that all persons have two legs has only default status; that is, a person is assumed to have two legs unless this is contradicted by more specific information. The default semantics is enforced naturally by the inheritance algorithm, because it follows links upwards from the object itself (John in this case) and stops as soon as it finds a value. We say that the default is **overridden** by the more specific value. Notice that we could also override the default number of legs by creating a category of OneLeggedPersons , a subset of Persons of which John is a member.
 
-Reification of propositions makes it possible to represent every ground, function-free atomic sentence of first-order logic in the semantic network notation. Certain kinds of univer-  
+We can retain a strictly logical semantics for the network if we say that the Legs assertion for Persons includes an exception for John:
 
-
-
-sally quantified sentences can be asserted using inverse links and the singly boxed and doubly boxed arrows applied to categories, but that still leaves us a long way short of full first-order logic. Negation, disjunction, nested function symbols, and existential quantification are all missing. Now it is _possible_ to extend the notation to make it equivalent to first-order logic—as in Peirce’s existential graphs—but doing so negates one of the main advantages of semantic networks, which is the simplicity and transparency of the inference processes. Designers can build a large network and still have a good idea about what queries will be efficient, because (a) it is easy to visualize the steps that the inference procedure will go through and (b) in some cases the query language is so simple that difficult queries cannot be posed. In cases where the expressive power proves to be too limiting, many semantic network systems provide for **procedural attachment** to fill in the gaps. Procedural attachment is a technique whereby a query about (or sometimes an assertion of) a certain relation results in a call to a special procedure designed for that relation rather than a general inference algorithm.
-
-One of the most important aspects of semantic networks is their ability to represent **default values** for categories. Examining Figure 12.5 carefully, one notices that John has oneDEFAULT VALUE
-
-leg, despite the fact that he is a person and all persons have two legs. In a strictly logical KB, this would be a contradiction, but in a semantic network, the assertion that all persons have two legs has only default status; that is, a person is assumed to have two legs unless this is contradicted by more specific information. The default semantics is enforced naturally by the inheritance algorithm, because it follows links upwards from the object itself (John in this case) and stops as soon as it finds a value. We say that the default is **overridden** by the moreOVERRIDING
-
-specific value. Notice that we could also override the default number of legs by creating a category of OneLeggedPersons , a subset of Persons of which John is a member.
-
-We can retain a strictly logical semantics for the network if we say that the Legs asser- tion for Persons includes an exception for John:
-
-∀x x ∈Persons ∧ x ≠ John ⇒ Legs(x, 2) .
+∀ x  x ∈ Persons ∧ x ≠ John ⇒ Legs(x, 2) .
 
 For a _fixed_ network, this is semantically adequate but will be much less concise than the network notation itself if there are lots of exceptions. For a network that will be updated with more assertions, however, such an approach fails—we really want to say that any persons as yet unknown with one leg are exceptions too. Section 12.6 goes into more depth on this issue and on default reasoning in general.
 
-**12.5.2 Description logics**
+### Description logics
 
-The syntax of first-order logic is designed to make it easy to say things about objects. **De- scription logics** are notations that are designed to make it easier to describe definitions andDESCRIPTION LOGIC
+The syntax of first-order logic is designed to make it easy to say things about objects. **Description logics** are notations that are designed to make it easier to describe definitions and properties of categories. Description logic systems evolved from semantic networks in response to pressure to formalize what the networks mean while retaining the emphasis on taxonomic structure as an organizing principle.
 
-properties of categories. Description logic systems evolved from semantic networks in re- sponse to pressure to formalize what the networks mean while retaining the emphasis on taxonomic structure as an organizing principle.
+The principal inference tasks for description logics are **subsumption** (checking if one category is a subset of another by comparing their definitions) and **classification** (checking whether an object belongs to a category).. Some systems also include **consistency** of a category definition—whether the membership criteria are logically satisfiable.  
 
-The principal inference tasks for description logics are **subsumption** (checking if oneSUBSUMPTION
-
-category is a subset of another by comparing their definitions) and **classification** (checkingCLASSIFICATION
-
-whether an object belongs to a category).. Some systems also include **consistency** of a cate- gory definition—whether the membership criteria are logically satisfiable.  
-
-Section 12.5. Reasoning Systems for Categories 457
 
 Concept → **Thing** | ConceptName
 
@@ -6626,7 +5571,7 @@ Bachelor = And(Unmarried ,Adult ,Male) .
 
 The equivalent in first-order logic would be
 
-Bachelor (x) ⇔ Unmarried(x) ∧ Adult(x) ∧Male(x) .
+Bachelor (x) ⇔ Unmarried(x) ∧ Adult(x) ∧ Male(x) .
 
 Notice that the description logic has an an algebra of operations on predicates, which of course we can’t do in first-order logic. Any description in CLASSIC can be translated into an equivalent first-order sentence, but some descriptions are more straightforward in CLASSIC. For example, to describe the set of men with at least three sons who are all unemployed and married to doctors, and at most two daughters who are all professors in physics or math departments, we would use
 
@@ -6636,175 +5581,142 @@ All(Son ,And(Unemployed ,Married ,All(Spouse ,Doctor ))),
 
 All(Daughter ,And(Professor ,Fills(Department ,Physics ,Math)))) .
 
-We leave it as an exercise to translate this into first-order logic. Perhaps the most important aspect of description logics is their emphasis on tractability
+We leave it as an exercise to translate this into first-order logic. Perhaps the most important aspect of description logics is their emphasis on tractability of inference. A problem instance is solved by describing it and then asking if it is subsumed by one of several possible solution categories. In standard first-order logic systems, predicting the solution time is often impossible. It is frequently left to the user to engineer the representation to detour around sets of sentences that seem to be causing the system to take several weeks to solve a problem. The thrust in description logics, on the other hand, is to ensure that subsumption-testing can be solved in time polynomial in the size of the descriptions.7
+```
+6 Notice that the language does _not_ allow one to simply state that one concept, or category, is a subset of another. This is a deliberate policy: subsumption between categories must be derivable from some aspects of the descriptions of the categories. If not, then something is missing from the descriptions. 
+7 CLASSIC provides efficient subsumption testing in practice, but the worst-case run time is exponential.  
+```
 
-of inference. A problem instance is solved by describing it and then asking if it is subsumed by one of several possible solution categories. In standard first-order logic systems, predicting the solution time is often impossible. It is frequently left to the user to engineer the represen- tation to detour around sets of sentences that seem to be causing the system to take several weeks to solve a problem. The thrust in description logics, on the other hand, is to ensure that subsumption-testing can be solved in time polynomial in the size of the descriptions.7
 
-6 Notice that the language does _not_ allow one to simply state that one concept, or category, is a subset of another. This is a deliberate policy: subsumption between categories must be derivable from some aspects of the descriptions of the categories. If not, then something is missing from the descriptions. 7 CLASSIC provides efficient subsumption testing in practice, but the worst-case run time is exponential.  
+This sounds wonderful in principle, until one realizes that it can only have one of two consequences: either hard problems cannot be stated at all, or they require exponentially large descriptions! However, the tractability results do shed light on what sorts of constructs cause problems and thus help the user to understand how different representations behave. For example, description logics usually lack _negation_ and _disjunction_. Each forces firstorder logical systems to go through a potentially exponential case analysis in order to ensure completeness. CLASSIC allows only a limited form of disjunction in the Fills and One Of constructs, which permit disjunction over explicitly enumerated individuals but not over descriptions. With disjunctive descriptions, nested definitions can lead easily to an exponential number of alternative routes by which one category can subsume another.
 
-
-
-This sounds wonderful in principle, until one realizes that it can only have one of two consequences: either hard problems cannot be stated at all, or they require exponentially large descriptions! However, the tractability results do shed light on what sorts of constructs cause problems and thus help the user to understand how different representations behave. For example, description logics usually lack _negation_ and _disjunction_. Each forces first- order logical systems to go through a potentially exponential case analysis in order to ensure completeness. CLASSIC allows only a limited form of disjunction in the Fills and OneOf
-
-constructs, which permit disjunction over explicitly enumerated individuals but not over de- scriptions. With disjunctive descriptions, nested definitions can lead easily to an exponential number of alternative routes by which one category can subsume another.
-
-12.6 REASONING WITH DEFAULT INFORMATION
+## REASONING WITH DEFAULT INFORMATION
 
 In the preceding section, we saw a simple example of an assertion with default status: people have two legs. This default can be overridden by more specific information, such as that Long John Silver has one leg. We saw that the inheritance mechanism in semantic networks implements the overriding of defaults in a simple and natural way. In this section, we study defaults more generally, with a view toward understanding the _semantics_ of defaults rather than just providing a procedural mechanism.
 
-**12.6.1 Circumscription and default logic**
+### Circumscription and default logic
 
-We have seen two examples of reasoning processes that violate the **monotonicity** property of logic that was proved in Chapter 7.8 In this chapter we saw that a property inherited by all members of a category in a semantic network could be overridden by more specific informa- tion for a subcategory. In Section 9.4.5, we saw that under the closed-world assumption, if a proposition α is not mentioned in KB then KB |= ¬α, but KB ∧ α |= α.
+We have seen two examples of reasoning processes that violate the **monotonicity** property of logic that was proved in Chapter 7.8 In this chapter we saw that a property inherited by all members of a category in a semantic network could be overridden by more specific information for a subcategory. In Section 9.4.5, we saw that under the closed-world assumption, if a proposition α is not mentioned in KB then KB |= ¬α, but KB ∧ α |= α.
 
-Simple introspection suggests that these failures of monotonicity are widespread in commonsense reasoning. It seems that humans often “jump to conclusions.” For example, when one sees a car parked on the street, one is normally willing to believe that it has four wheels even though only three are visible. Now, probability theory can certainly provide a conclusion that the fourth wheel exists with high probability, yet, for most people, the possi- bility of the car’s not having four wheels _does not arise unless some new evidence presents itself_. Thus, it seems that the four-wheel conclusion is reached _by default_, in the absence of any reason to doubt it. If new evidence arrives—for example, if one sees the owner carrying a wheel and notices that the car is jacked up—then the conclusion can be retracted. This kind of reasoning is said to exhibit **nonmonotonicity**, because the set of beliefs does not growNONMONOTONICITY
-
-monotonically over time as new evidence arrives. **Nonmonotonic logics** have been devisedNONMONOTONIC LOGIC
-
-with modified notions of truth and entailment in order to capture such behavior. We will look at two such logics that have been studied extensively: circumscription and default logic.
-
+Simple introspection suggests that these failures of monotonicity are widespread in commonsense reasoning. It seems that humans often “jump to conclusions.” For example, when one sees a car parked on the street, one is normally willing to believe that it has four wheels even though only three are visible. Now, probability theory can certainly provide a conclusion that the fourth wheel exists with high probability, yet, for most people, the possibility of the car’s not having four wheels _does not arise unless some new evidence presents itself_. Thus, it seems that the four-wheel conclusion is reached _by default_, in the absence of any reason to doubt it. If new evidence arrives—for example, if one sees the owner carrying a wheel and notices that the car is jacked up—then the conclusion can be retracted. This kind of reasoning is said to exhibit **nonmonotonicity**, because the set of beliefs does not grow monotonically over time as new evidence arrives. **Nonmonotonic logics** have been devised with modified notions of truth and entailment in order to capture such behavior. We will look at two such logics that have been studied extensively: circumscription and default logic.
+```
 8 Recall that monotonicity requires all entailed sentences to remain entailed after new sentences are added to the KB. That is, if KB |= α then KB ∧ β |= α.  
+```
 
-Section 12.6. Reasoning with Default Information 459
+**Circumscription** can be seen as a more powerful and precise version of the closedworld assumption. The idea is to specify particular predicates that are assumed to be “as false as possible”—that is, false for every object except those for which they are known to be true. For example, suppose we want to assert the default rule that birds fly. We would introduce a predicate, say Abnormal~1~(x), and write
 
-**Circumscription** can be seen as a more powerful and precise version of the closed-CIRCUMSCRIPTION
+Bird(x) ∧ ¬Abnormal~1~(x) ⇒ Flies(x) .
 
-world assumption. The idea is to specify particular predicates that are assumed to be “as false as possible”—that is, false for every object except those for which they are known to be true. For example, suppose we want to assert the default rule that birds fly. We would introduce a predicate, say Abnormal1(x), and write
+If we say that Abnormal 1 is to be **circumscribed**, a circumscriptive reasoner is entitled to assume ¬Abnormal~1~(x) unless Abnormal~1~(x) is known to be true. This allows the conclusion Flies(Tweety) to be drawn from the premise Bird(Tweety), but the conclusion no longer holds if Abnormal~1~(Tweety) is asserted.
 
-Bird(x) ∧ ¬Abnormal1(x) ⇒ Flies(x) .
-
-If we say that Abnormal 1 is to be **circumscribed**, a circumscriptive reasoner is entitled to assume ¬Abnormal1(x) unless Abnormal1(x) is known to be true. This allows the con- clusion Flies(Tweety) to be drawn from the premise Bird(Tweety), but the conclusion no longer holds if Abnormal~1~(Tweety) is asserted.
-
-Circumscription can be viewed as an example of a **model preference** logic. In suchMODEL PREFERENCE
-
-logics, a sentence is entailed (with default status) if it is true in all _preferred_ models of the KB, as opposed to the requirement of truth in _all_ models in classical logic. For circumscription, one model is preferred to another if it has fewer abnormal objects.9 Let us see how this idea works in the context of multiple inheritance in semantic networks. The standard example for which multiple inheritance is problematic is called the “Nixon diamond.” It arises from the observation that Richard Nixon was both a Quaker (and hence by default a pacifist) and a Republican (and hence by default not a pacifist). We can write this as follows:
+Circumscription can be viewed as an example of a **model preference** logic. In such logics, a sentence is entailed (with default status) if it is true in all _preferred_ models of the KB, as opposed to the requirement of truth in _all_ models in classical logic. For circumscription, one model is preferred to another if it has fewer abnormal objects.9 Let us see how this idea works in the context of multiple inheritance in semantic networks. The standard example for which multiple inheritance is problematic is called the “Nixon diamond.” It arises from the observation that Richard Nixon was both a Quaker (and hence by default a pacifist) and a Republican (and hence by default not a pacifist). We can write this as follows:
 
 Republican(Nixon) ∧Quaker(Nixon) .
 
-Republican(x) ∧ ¬Abnormal2(x) ⇒ ¬Pacifist(x) .
+Republican(x) ∧ ¬Abnormal~2~(x) ⇒ ¬Pacifist(x) .
 
-Quaker(x) ∧ ¬Abnormal3(x) ⇒ Pacifist(x) .
+Quaker(x) ∧ ¬Abnormal~3~(x) ⇒ Pacifist(x) .
 
-If we circumscribe Abnormal2 and Abnormal3, there are two preferred models: one in which Abnormal 2(Nixon) and Pacifist(Nixon) hold and one in which Abnormal 3(Nixon)
-
-and ¬Pacifist(Nixon) hold. Thus, the circumscriptive reasoner remains properly agnostic as to whether Nixon was a pacifist. If we wish, in addition, to assert that religious beliefs take precedence over political beliefs, we can use a formalism called **prioritized circumscription**PRIORITIZED
-
-CIRCUMSCRIPTION
-
-to give preference to models where Abnormal3 is minimized. **Default logic** is a formalism in which **default rules** can be written to generate contin-DEFAULT LOGIC
-
-DEFAULT RULES gent, nonmonotonic conclusions. A default rule looks like this:
+If we circumscribe Abnormal~2~ and Abnormal~3~, there are two preferred models: one in which Abnormal 2(Nixon) and Pacifist(Nixon) hold and one in which Abnormal 3(Nixon) and ¬Pacifist(Nixon) hold. Thus, the circumscriptive reasoner remains properly agnostic as to whether Nixon was a pacifist. If we wish, in addition, to assert that religious beliefs take precedence over political beliefs, we can use a formalism called **prioritized circumscription** to give preference to models where Abnormal~3~ is minimized. **Default logic** is a formalism in which **default rules** can be written to generate contingent, nonmonotonic conclusions. A default rule looks like this:
 
 Bird(x) : Flies(x)/Flies(x) .
 
 This rule means that if Bird(x) is true, and if Flies(x) is consistent with the knowledge base, then Flies(x) may be concluded by default. In general, a default rule has the form
 
-P : J1, . . . , Jn/C
+P : J~1~, . . . , J~n~/C
 
 where P is called the prerequisite, C is the conclusion, and Ji are the justifications—if any one of them can be proven false, then the conclusion cannot be drawn. Any variable that
-
-9 For the closed-world assumption, one model is preferred to another if it has fewer true atoms—that is, preferred models are **minimal** models. There is a natural connection between the closed-world assumption and definite- clause KBs, because the fixed point reached by forward chaining on definite-clause KBs is the unique minimal model. See page 258 for more on this point.  
-
-
+```
+9 For the closed-world assumption, one model is preferred to another if it has fewer true atoms—that is, preferred models are **minimal** models. There is a natural connection between the closed-world assumption and definiteclause KBs, because the fixed point reached by forward chaining on definite-clause KBs is the unique minimal model. See page 258 for more on this point.  
+```
 
 appears in Ji or C must also appear in P . The Nixon-diamond example can be represented in default logic with one fact and two default rules:
 
-Republican(Nixon) ∧Quaker(Nixon) .
+Republican(Nixon) ∧ Quaker(Nixon) .
 
 Republican(x) : ¬Pacifist(x)/¬Pacifist(x) .
 
 Quaker(x) : Pacifist(x)/Pacifist(x) .
 
-To interpret what the default rules mean, we define the notion of an **extension** of a defaultEXTENSION
-
-theory to be a maximal set of consequences of the theory. That is, an extension S consists of the original known facts and a set of conclusions from the default rules, such that no additional conclusions can be drawn from S and the justifications of every default conclusion in S are consistent with S. As in the case of the preferred models in circumscription, we have two possible extensions for the Nixon diamond: one wherein he is a pacifist and one wherein he is not. Prioritized schemes exist in which some default rules can be given precedence over others, allowing some ambiguities to be resolved.
+To interpret what the default rules mean, we define the notion of an **extension** of a default theory to be a maximal set of consequences of the theory. That is, an extension S consists of the original known facts and a set of conclusions from the default rules, such that no additional conclusions can be drawn from S and the justifications of every default conclusion in S are consistent with S. As in the case of the preferred models in circumscription, we have two possible extensions for the Nixon diamond: one wherein he is a pacifist and one wherein he is not. Prioritized schemes exist in which some default rules can be given precedence over others, allowing some ambiguities to be resolved.
 
 Since 1980, when nonmonotonic logics were first proposed, a great deal of progress has been made in understanding their mathematical properties. There are still unresolved questions, however. For example, if “Cars have four wheels” is false, what does it mean to have it in one’s knowledge base? What is a good set of default rules to have? If we cannot decide, for each rule separately, whether it belongs in our knowledge base, then we have a serious problem of nonmodularity. Finally, how can beliefs that have default status be used to make decisions? This is probably the hardest issue for default reasoning. Decisions often involve tradeoffs, and one therefore needs to compare the _strengths_ of belief in the outcomes of different actions, and the _costs_ of making a wrong decision. In cases where the same kinds of decisions are being made repeatedly, it is possible to interpret default rules as “threshold probability” statements. For example, the default rule “My brakes are always OK” really means “The probability that my brakes are OK, given no other information, is sufficiently high that the optimal decision is for me to drive without checking them.” When the decision context changes—for example, when one is driving a heavily laden truck down a steep mountain road—the default rule suddenly becomes inappropriate, even though there is no new evidence of faulty brakes. These considerations have led some researchers to consider how to embed default reasoning within probability theory or utility theory.
 
-**12.6.2 Truth maintenance systems**
+### Truth maintenance systems
 
-We have seen that many of the inferences drawn by a knowledge representation system will have only default status, rather than being absolutely certain. Inevitably, some of these in- ferred facts will turn out to be wrong and will have to be retracted in the face of new informa- tion. This process is called **belief revision**.10 Suppose that a knowledge base KB containsBELIEF REVISION
-
-a sentence P—perhaps a default conclusion recorded by a forward-chaining algorithm, or perhaps just an incorrect assertion—and we want to execute TELL(KB , ¬P ). To avoid cre- ating a contradiction, we must first execute RETRACT(KB , P ). This sounds easy enough.
-
+We have seen that many of the inferences drawn by a knowledge representation system will have only default status, rather than being absolutely certain. Inevitably, some of these inferred facts will turn out to be wrong and will have to be retracted in the face of new information. This process is called **belief revision**.10 Suppose that a knowledge base KB contains a sentence P—perhaps a default conclusion recorded by a forward-chaining algorithm, or perhaps just an incorrect assertion—and we want to execute TELL(KB , ¬P ). To avoid creating a contradiction, we must first execute RETRACT(KB , P ). This sounds easy enough.
+```
 10 Belief revision is often contrasted with **belief update**, which occurs when a knowledge base is revised to reflect a change in the world rather than new information about a fixed world. Belief update combines belief revision with reasoning about time and change; it is also related to the process of **filtering** described in Chapter 15.  
+```
 
-Section 12.6. Reasoning with Default Information 461
+Problems arise, however, if any _additional_ sentences were inferred from P and asserted in the KB. For example, the implication P ⇒ Q might have been used to add Q. The obvious “solution”—retracting all sentences inferred from P—fails because such sentences may have other justifications besides P . For example, if R and R ⇒ Q are also in the KB, then Q does not have to be removed after all. **Truth maintenance systems**, or TMSs, are designed to handle exactly these kinds of complications. 
 
-Problems arise, however, if any _additional_ sentences were inferred from P and asserted in the KB. For example, the implication P ⇒ Q might have been used to add Q. The obvious “solution”—retracting all sentences inferred from P—fails because such sentences may have other justifications besides P . For example, if R and R ⇒ Q are also in the KB, then Q
+One simple approach to truth maintenance is to keep track of the order in which sentences are told to the knowledge base by numbering them from P~1~ to p~n~. When the call RETRACT(KB , p~i~) is made, the system reverts to the state just before p~i~ was added, thereby removing both p~i~ and any inferences that were derived from p~i~. The sentences p~i~+1 through p~n~ can then be added again. This is simple, and it guarantees that the knowledge base will be consistent, but retracting p~i~ requires retracting and reasserting n − i sentences as well as undoing and redoing all the inferences drawn from those sentences. For systems to which many facts are being added—such as large commercial databases—this is impractical.
 
-does not have to be removed after all. **Truth maintenance systems**, or TMSs, are designed TRUTH MAINTENANCE SYSTEM
+A more efficient approach is the justification-based truth maintenance system, or **JTMS**.
 
-to handle exactly these kinds of complications. One simple approach to truth maintenance is to keep track of the order in which sen-
-
-tences are told to the knowledge base by numbering them from P~1~ to p~n~. When the call RETRACT(KB , p~i~) is made, the system reverts to the state just before p~i~ was added, thereby removing both p~i~ and any inferences that were derived from p~i~. The sentences p~i~+1 through p~n~ can then be added again. This is simple, and it guarantees that the knowledge base will be consistent, but retracting p~i~ requires retracting and reasserting n − i sentences as well as undoing and redoing all the inferences drawn from those sentences. For systems to which many facts are being added—such as large commercial databases—this is impractical.
-
-A more efficient approach is the justification-based truth maintenance system, or **JTMS**.JTMS
-
-In a JTMS, each sentence in the knowledge base is annotated with a **justification** consistingJUSTIFICATION
-
-of the set of sentences from which it was inferred. For example, if the knowledge base already contains P ⇒ Q, then TELL(P ) will cause Q to be added with the justification {P, P ⇒ Q}. In general, a sentence can have any number of justifications. Justifica- tions make retraction efficient. Given the call RETRACT(P ), the JTMS will delete exactly those sentences for which P is a member of every justification. So, if a sentence Q had the single justification {P, P ⇒ Q}, it would be removed; if it had the additional justi- fication {P, P ∨ R ⇒ Q}, it would still be removed; but if it also had the justification {R, P ∨R ⇒ Q}, then it would be spared. In this way, the time required for retraction of P
-
-depends only on the number of sentences derived from P rather than on the number of other sentences added since P entered the knowledge base.
+In a JTMS, each sentence in the knowledge base is annotated with a **justification** consisting of the set of sentences from which it was inferred. For example, if the knowledge base already contains P ⇒ Q, then TELL(P ) will cause Q to be added with the justification {P, P ⇒ Q}. In general, a sentence can have any number of justifications. Justifications make retraction efficient. Given the call RETRACT(P ), the JTMS will delete exactly those sentences for which P is a member of every justification. So, if a sentence Q had the single justification {P, P ⇒ Q}, it would be removed; if it had the additional justification {P, P ∨ R ⇒ Q}, it would still be removed; but if it also had the justification {R, P ∨R ⇒ Q}, then it would be spared. In this way, the time required for retraction of P depends only on the number of sentences derived from P rather than on the number of other sentences added since P entered the knowledge base.
 
 The JTMS assumes that sentences that are considered once will probably be considered again, so rather than deleting a sentence from the knowledge base entirely when it loses all justifications, we merely mark the sentence as being _out_ of the knowledge base. If a subsequent assertion restores one of the justifications, then we mark the sentence as being back _in_. In this way, the JTMS retains all the inference chains that it uses and need not rederive sentences when a justification becomes valid again.
 
-In addition to handling the retraction of incorrect information, TMSs can be used to speed up the analysis of multiple hypothetical situations. Suppose, for example, that the Romanian Olympic Committee is choosing sites for the swimming, athletics, and eques- trian events at the 2048 Games to be held in Romania. For example, let the first hypothe- sis be Site(Swimming ,Pitesti), Site(Athletics ,Bucharest), and Site(Equestrian,Arad). A great deal of reasoning must then be done to work out the logistical consequences and hence the desirability of this selection. If we want to consider Site(Athletics ,Sibiu) in- stead, the TMS avoids the need to start again from scratch. Instead, we simply retract Site(Athletics ,Bucharest) and assert Site(Athletics,Sibiu) and the TMS takes care of the necessary revisions. Inference chains generated from the choice of Bucharest can be reused with Sibiu, provided that the conclusions are the same.  
+In addition to handling the retraction of incorrect information, TMSs can be used to speed up the analysis of multiple hypothetical situations. Suppose, for example, that the Romanian Olympic Committee is choosing sites for the swimming, athletics, and equestrian events at the 2048 Games to be held in Romania. For example, let the first hypothesis be Site(Swimming ,Pitesti), Site(Athletics ,Bucharest), and Site(Equestrian,Arad). A great deal of reasoning must then be done to work out the logistical consequences and hence the desirability of this selection. If we want to consider Site(Athletics ,Sibiu) instead, the TMS avoids the need to start again from scratch. Instead, we simply retract Site(Athletics ,Bucharest) and assert Site(Athletics,Sibiu) and the TMS takes care of the necessary revisions. Inference chains generated from the choice of Bucharest can be reused with Sibiu, provided that the conclusions are the same.  
 
 
+An assumption-based truth maintenance system, or **ATMS**, makes this type of context switching between hypothetical worlds particularly efficient. In a JTMS, the maintenance of justifications allows you to move quickly from one state to another by making a few retractions and assertions, but at any time only one state is represented. An ATMS represents _all_ the states that have ever been considered at the same time. Whereas a JTMS simply labels each sentence as being _in_ or _out_, an ATMS keeps track, for each sentence, of which assumptions would cause the sentence to be true. In other words, each sentence has a label that consists of a set of assumption sets. The sentence holds just in those cases in which all the assumptions in one of the assumption sets hold.
 
-An assumption-based truth maintenance system, or **ATMS**, makes this type of context-ATMS
+Truth maintenance systems also provide a mechanism for generating **explanations** Technically, an explanation of a sentence P is a set of sentences E such that E entails P . If the sentences in E are already known to be true, then E simply provides a sufficient basis for proving that P must be the case. But explanations can also include **assumptions** sentences that are not known to be true, but would suffice to prove P if they were true. For example, one might not have enough information to prove that one’s car won’t start, but a reasonable explanation might include the assumption that the battery is dead. This, combined with knowledge of how cars operate, explains the observed nonbehavior. In most cases, we will prefer an explanation E that is minimal, meaning that there is no proper subset of E that is also an explanation. An ATMS can generate explanations for the “car won’t start” problem by making assumptions (such as “gas in car” or “battery dead”) in any order we like, even if some assumptions are contradictory. Then we look at the label for the sentence “car won’t start” to read off the sets of assumptions that would justify the sentence.
 
-switching between hypothetical worlds particularly efficient. In a JTMS, the maintenance of justifications allows you to move quickly from one state to another by making a few retrac- tions and assertions, but at any time only one state is represented. An ATMS represents _all_ the states that have ever been considered at the same time. Whereas a JTMS simply labels each sentence as being _in_ or _out_, an ATMS keeps track, for each sentence, of which assumptions would cause the sentence to be true. In other words, each sentence has a label that consists of a set of assumption sets. The sentence holds just in those cases in which all the assumptions in one of the assumption sets hold.
+The exact algorithms used to implement truth maintenance systems are a little complicated, and we do not cover them here. The computational complexity of the truth maintenance problem is at least as great as that of propositional inference—that is, NP-hard. Therefore, you should not expect truth maintenance to be a panacea. When used carefully, however, a TMS can provide a substantial increase in the ability of a logical system to handle complex environments and hypotheses.
 
-Truth maintenance systems also provide a mechanism for generating **explanations**.EXPLANATION
-
-Technically, an explanation of a sentence P is a set of sentences E such that E entails P . If the sentences in E are already known to be true, then E simply provides a sufficient ba- sis for proving that P must be the case. But explanations can also include **assumptions**—ASSUMPTION
-
-sentences that are not known to be true, but would suffice to prove P if they were true. For example, one might not have enough information to prove that one’s car won’t start, but a reasonable explanation might include the assumption that the battery is dead. This, combined with knowledge of how cars operate, explains the observed nonbehavior. In most cases, we will prefer an explanation E that is minimal, meaning that there is no proper subset of E that is also an explanation. An ATMS can generate explanations for the “car won’t start” problem by making assumptions (such as “gas in car” or “battery dead”) in any order we like, even if some assumptions are contradictory. Then we look at the label for the sentence “car won’t start” to read off the sets of assumptions that would justify the sentence.
-
-The exact algorithms used to implement truth maintenance systems are a little compli- cated, and we do not cover them here. The computational complexity of the truth maintenance problem is at least as great as that of propositional inference—that is, NP-hard. Therefore, you should not expect truth maintenance to be a panacea. When used carefully, however, a TMS can provide a substantial increase in the ability of a logical system to handle complex environments and hypotheses.
-
-12.7 THE INTERNET SHOPPING WORLD
+## THE INTERNET SHOPPING WORLD
 
 In this final section we put together all we have learned to encode knowledge for a shopping research agent that helps a buyer find product offers on the Internet. The shopping agent is given a product description by the buyer and has the task of producing a list of Web pages that offer such a product for sale, and ranking which offers are best. In some cases the buyer’s product description will be precise, as in _Canon Rebel XTi digital camera_, and the task is then to find the store(s) with the best offer. In other cases the description will be only partially specified, as in _digital camera for under_ $_300_, and the agent will have to compare different products.
 
 The shopping agent’s environment is the entire World Wide Web in its full complexity— not a toy simulated environment. The agent’s percepts are Web pages, but whereas a human  
 
-Section 12.7. The Internet Shopping World 463
 
-**Example Online Store** _Select_ from our fine line of products: - Computers - Cameras - Books - Videos -Music
+**Example Online Store**
+ _Select_ from our fine line of products: 
+ - Computers 
+ - Cameras 
+ - Books 
+ - Videos 
+ - Music
 
-<h1>Example Online Store</h1> <i>Select</i> from our fine line of products: <ul> <li> <a href="http://example.com/compu">Computers</a> <li> <a href="http://example.com/camer">Cameras</a> <li> <a href="http://example.com/books">Books</a> <li> <a href="http://example.com/video">Videos</a> <li> <a href="http://example.com/music">Music</a> </ul>
+<h~1~>Example Online Store</h~1~> 
+<i>Select</i> from our fine line of products: 
+<ul> 
+<li> <a href="http://example.com/compu">Computers</a> 
+<li> <a href="http://example.com/camer">Cameras</a> 
+<li> <a href="http://example.com/books">Books</a> 
+<li> <a href="http://example.com/video">Videos</a> 
+<li> <a href="http://example.com/music">Music</a> 
+</ul>
 
 **Figure 12.8** A Web page from a generic online store in the form perceived by the human user of a browser (top), and the corresponding HTML string as perceived by the browser or the shopping agent (bottom). In HTML, characters between < and > are markup directives that specify how the page is displayed. For example, the string <i>Select</i> means to switch to italic font, display the word _Select_, and then end the use of italic font. A page identifier such as http://example.com/books is called a **uniform resource locator (URL)**. The markup <a href="_url_">_Books_</a> means to create a hypertext link to _url_ with the **anchor text** _Books_.
 
-Web user would see pages displayed as an array of pixels on a screen, the shopping agent will perceive a page as a character string consisting of ordinary words interspersed with for- matting commands in the HTML markup language. Figure 12.8 shows a Web page and a corresponding HTML character string. The perception problem for the shopping agent in- volves extracting useful information from percepts of this kind.
+Web user would see pages displayed as an array of pixels on a screen, the shopping agent will perceive a page as a character string consisting of ordinary words interspersed with formatting commands in the HTML markup language. Figure 12.8 shows a Web page and a corresponding HTML character string. The perception problem for the shopping agent involves extracting useful information from percepts of this kind.
 
 Clearly, perception on Web pages is easier than, say, perception while driving a taxi in Cairo. Nonetheless, there are complications to the Internet perception task. The Web page in Figure 12.8 is simple compared to real shopping sites, which may include CSS, cookies, Java, Javascript, Flash, robot exclusion protocols, malformed HTML, sound files, movies, and text that appears only as part of a JPEG image. An agent that can deal with _all_ of the Internet is almost as complex as a robot that can move in the real world. We concentrate on a simple agent that ignores most of these complications.
 
-The agent’s first task is to collect product offers that are relevant to a query. If the query is “laptops,” then a Web page with a review of the latest high-end laptop would be relevant, but if it doesn’t provide a way to buy, it isn’t an offer. For now, we can say a page is an offer if it contains the words “buy” or “price” or “add to cart” within an HTML link or form on the  
+The agent’s first task is to collect product offers that are relevant to a query. If the query is “laptops,” then a Web page with a review of the latest high-end laptop would be relevant, but if it doesn’t provide a way to buy, it isn’t an offer. For now, we can say a page is an offer if it contains the words “buy” or “price” or “add to cart” within an HTML link or form on the page. For example, if the page contains a string of the form “<a . . .add to cart . . .</a” then it is an offer. This could be represented in first-order logic, but it is more straightforward to encode it into program code. We show how to do more sophisticated information extraction in Section 22.4.
 
-
-
-page. For example, if the page contains a string of the form “<a . . .add to cart . . .</a” then it is an offer. This could be represented in first-order logic, but it is more straightforward to encode it into program code. We show how to do more sophisticated information extraction in Section 22.4.
-
-**12.7.1 Following links**
+### Following links
 
 The strategy is to start at the home page of an online store and consider all pages that can be reached by following relevant links.11 The agent will have knowledge of a number of stores, for example:
 
-Amazon ∈OnlineStores ∧ Homepage(Amazon , “amazon.com”) .
+Amazon ∈ OnlineStores ∧ Homepage(Amazon , “amazon.com”) .
 
-Ebay ∈OnlineStores ∧Homepage(Ebay , “ebay.com”) .
+Ebay ∈ OnlineStores ∧ Homepage(Ebay , “ebay.com”) .
 
-ExampleStore ∈OnlineStores ∧ Homepage(ExampleStore , “example.com”) .
+ExampleStore ∈ OnlineStores ∧ Homepage(ExampleStore , “example.com”) .
 
-These stores classify their goods into product categories, and provide links to the major cat- egories from their home page. Minor categories can be reached through a chain of relevant links, and eventually we will reach offers. In other words, a page is relevant to the query if it can be reached by a chain of zero or more relevant category links from a store’s home page, and then from one more link to the product offer. We can define relevance:
+These stores classify their goods into product categories, and provide links to the major categories from their home page. Minor categories can be reached through a chain of relevant links, and eventually we will reach offers. In other words, a page is relevant to the query if it can be reached by a chain of zero or more relevant category links from a store’s home page, and then from one more link to the product offer. We can define relevance:
 
 Relevant(page , query) ⇔
 
 ∃ store , home store ∈OnlineStores ∧ Homepage(store , home)
-
-∧ ∃ url , url2 RelevantChain(home , url2, query) ∧ Link(url2, url)
+∧ ∃ url , url~2~ RelevantChain(home , url~2~, query) ∧ Link(url~2~, url)
 
 ∧ page = Contents(url) .
 
@@ -6818,57 +5730,12 @@ RelevantChain(start , end , query) ⇔ (start = end)
 
 Now we must define what it means for _text_ to be a _RelevantCategoryName_ for _query_. First, we need to relate strings to the categories they name. This is done using the predicate Name(s, c), which says that string s is a name for category c—for example, we might assert that Name(“laptops”,LaptopComputers ). Some more examples of the _Name_ predicate appear in Figure 12.9(b). Next, we define relevance. Suppose that _query_ is “laptops.” Then RelevantCategoryName(query , text) is true when one of the following holds:
 
-- The _text_ and _query_ name the same category—e.g., “notebooks” and “laptops.”
-
+- The _text_ and _query_ name the same category—e.g., “notebooks” and “laptop```s.”
+```
 11 An alternative to the link-following strategy is to use an Internet search engine; the technology behind Internet search, information retrieval, will be covered in Section 22.3.  
+```
 
-Section 12.7. The Internet Shopping World 465
-
-Books ⊂ Products
-
-MusicRecordings ⊂ Products
-
-MusicCDs ⊂ MusicRecordings
-
-Electronics ⊂ Products
-
-DigitalCameras ⊂ Electronics
-
-StereoEquipment ⊂ Electronics
-
-Computers ⊂ Electronics
-
-DesktopComputers ⊂ Computers
-
-LaptopComputers ⊂ Computers
-
-. . .
-
-Name(“books”,Books)
-
-Name(“music”,MusicRecordings)
-
-Name(“CDs”,MusicCDs)
-
-Name(“electronics”,Electronics)
-
-Name(“digital cameras”,DigitalCameras)
-
-Name(“stereos”,StereoEquipment)
-
-Name(“computers”,Computers)
-
-Name(“desktops”,DesktopComputers)
-
-Name(“laptops”,LaptopComputers)
-
-Name(“notebooks”,LaptopComputers)
-
-. . .
-
-(a) (b)
-
-**Figure 12.9** (a) Taxonomy of product categories. (b) Names for those categories.
+![Alt text](image/12img/figure-12.9.png)
 
 - The _text_ names a supercategory such as “computers.”
 
@@ -6882,31 +5749,22 @@ RelevantCategoryName(query , text) ⇔
 
 Otherwise, the anchor text is irrelevant because it names a category outside this line, such as “clothes” or “lawn & garden.”
 
-To follow relevant links, then, it is essential to have a rich hierarchy of product cate- gories. The top part of this hierarchy might look like Figure 12.9(a). It will not be feasible to list _all_ possible shopping categories, because a buyer could always come up with some new desire and manufacturers will always come out with new products to satisfy them (electric kneecap warmers?). Nonetheless, an ontology of about a thousand categories will serve as a very useful tool for most buyers.
+To follow relevant links, then, it is essential to have a rich hierarchy of product categories. The top part of this hierarchy might look like Figure 12.9(a). It will not be feasible to list _all_ possible shopping categories, because a buyer could always come up with some new desire and manufacturers will always come out with new products to satisfy them (electric kneecap warmers?). Nonetheless, an ontology of about a thousand categories will serve as a very useful tool for most buyers.
 
-In addition to the product hierarchy itself, we also need to have a rich vocabulary of names for categories. Life would be much easier if there were a one-to-one correspon- dence between categories and the character strings that name them. We have already seen the problem of **synonymy**—two names for the same category, such as “laptop computers” and “laptops.” There is also the problem of **ambiguity**—one name for two or more different categories. For example, if we add the sentence
+In addition to the product hierarchy itself, we also need to have a rich vocabulary of names for categories. Life would be much easier if there were a one-to-one correspondence between categories and the character strings that name them. We have already seen the problem of **synonymy**—two names for the same category, such as “laptop computers” and “laptops.” There is also the problem of **ambiguity**—one name for two or more different categories. For example, if we add the sentence
 
 Name(“CDs”,CertificatesOfDeposit)
 
-to the knowledge base in Figure 12.9(b), then “CDs” will name two different categories. Synonymy and ambiguity can cause a significant increase in the number of paths that
-
-the agent has to follow, and can sometimes make it difficult to determine whether a given page is indeed relevant. A much more serious problem is the very broad range of descriptions that a user can type and category names that a store can use. For example, the link might say “laptop” when the knowledge base has only “laptops” or the user might ask for “a computer  
+to the knowledge base in Figure 12.9(b), then “CDs” will name two different categories. Synonymy and ambiguity can cause a significant increase in the number of paths that the agent has to follow, and can sometimes make it difficult to determine whether a given page is indeed relevant. A much more serious problem is the very broad range of descriptions that a user can type and category names that a store can use. For example, the link might say “laptop” when the knowledge base has only “laptops” or the user might ask for “a computer  
 
 
+I can fit on the tray table of an economy-class airline seat.” It is impossible to enumerate in advance all the ways a category can be named, so the agent will have to be able to do additional reasoning in some cases to determine if the _Name_ relation holds. In the worst case, this requires full natural language understanding, a topic that we will defer to Chapter 22. In practice, a few simple rules—such as allowing “laptop” to match a category named “laptops”—go a long way. Exercise 12.10 asks you to develop a set of such rules after doing some research into online stores.
 
-I can fit on the tray table of an economy-class airline seat.” It is impossible to enumerate in advance all the ways a category can be named, so the agent will have to be able to do addi- tional reasoning in some cases to determine if the _Name_ relation holds. In the worst case, this requires full natural language understanding, a topic that we will defer to Chapter 22. In prac- tice, a few simple rules—such as allowing “laptop” to match a category named “laptops”—go a long way. Exercise 12.10 asks you to develop a set of such rules after doing some research into online stores.
+Given the logical definitions from the preceding paragraphs and suitable knowledge bases of product categories and naming conventions, are we ready to apply an inference algorithm to obtain a set of relevant offers for our query? Not quite! The missing element is the Contents(url) function, which refers to the HTML page at a given URL. The agent doesn’t have the page contents of every URL in its knowledge base; nor does it have explicit rules for deducing what those contents might be. Instead, we can arrange for the right HTTP procedure to be executed whenever a subgoal involves the _Contents_ function. In this way, it appears to the inference engine as if the entire Web is inside the knowledge base. This is an example of a general technique called **procedural attachment**, whereby particular predicates and functions can be handled by special-purpose methods.
 
-Given the logical definitions from the preceding paragraphs and suitable knowledge bases of product categories and naming conventions, are we ready to apply an inference algorithm to obtain a set of relevant offers for our query? Not quite! The missing element is the Contents(url) function, which refers to the HTML page at a given URL. The agent doesn’t have the page contents of every URL in its knowledge base; nor does it have explicit rules for deducing what those contents might be. Instead, we can arrange for the right HTTP procedure to be executed whenever a subgoal involves the _Contents_ function. In this way, it appears to the inference engine as if the entire Web is inside the knowledge base. This is an example of a general technique called **procedural attachment**, whereby particular predicatesPROCEDURAL
+### Comparing offers
 
-ATTACHMENT
-
-and functions can be handled by special-purpose methods.
-
-**12.7.2 Comparing offers**
-
-Let us assume that the reasoning processes of the preceding section have produced a set of offer pages for our “laptops” query. To compare those offers, the agent must extract the rele- vant information—price, speed, disk size, weight, and so on—from the offer pages. This can be a difficult task with real Web pages, for all the reasons mentioned previously. A common way of dealing with this problem is to use programs called **wrappers** to extract informationWRAPPER
-
-from a page. The technology of information extraction is discussed in Section 22.4. For now we assume that wrappers exist, and when given a page and a knowledge base, they add assertions to the knowledge base. Typically, a hierarchy of wrappers would be applied to a page: a very general one to extract dates and prices, a more specific one to extract attributes for computer-related products, and if necessary a site-specific one that knows the format of a particular store. Given a page on the example.com site with the text
+Let us assume that the reasoning processes of the preceding section have produced a set of offer pages for our “laptops” query. To compare those offers, the agent must extract the relevant information—price, speed, disk size, weight, and so on—from the offer pages. This can be a difficult task with real Web pages, for all the reasons mentioned previously. A common way of dealing with this problem is to use programs called **wrappers** to extract information from a page. The technology of information extraction is discussed in Section 22.4. For now we assume that wrappers exist, and when given a page and a knowledge base, they add assertions to the knowledge base. Typically, a hierarchy of wrappers would be applied to a page: a very general one to extract dates and prices, a more specific one to extract attributes for computer-related products, and if necessary a site-specific one that knows the format of a particular store. Given a page on the example.com site with the text
 
 IBM ThinkBook 970. Our price: $399.00
 
@@ -6924,11 +5782,7 @@ OfferedProduct(offer , c) ∧ Store(offer ,GenStore) ∧
 
 URL(offer , “example.com/computers/34356.html”) ∧ Price(offer , $(399)) ∧Date(offer ,Today) .
 
-This example illustrates several issues that arise when we take seriously the task of knowledge engineering for commercial transactions. For example, notice that the price is an attribute of  
-
-Section 12.8. Summary 467
-
-the _offer_, not the product itself. This is important because the offer at a given store may change from day to day even for the same individual laptop; for some categories—such as houses and paintings—the same individual object may even be offered simultaneously by different intermediaries at different prices. There are still more complications that we have not handled, such as the possibility that the price depends on the method of payment and on the buyer’s qualifications for certain discounts. The final task is to compare the offers that have been extracted. For example, consider these three offers:
+This example illustrates several issues that arise when we take seriously the task of knowledge engineering for commercial transactions. For example, notice that the price is an attribute of the _offer_, not the product itself. This is important because the offer at a given store may change from day to day even for the same individual laptop; for some categories—such as houses and paintings—the same individual object may even be offered simultaneously by different intermediaries at different prices. There are still more complications that we have not handled, such as the possibility that the price depends on the method of payment and on the buyer’s qualifications for certain discounts. The final task is to compare the offers that have been extracted. For example, consider these three offers:
 
 A : 1.4 GHz CPU, 2GB RAM, 250 GB disk, $299 .
 
@@ -6940,7 +5794,7 @@ C is **dominated** by A; that is, A is cheaper and faster, and they are otherwis
 
 The shopping agent we have described here is a simple one; many refinements are possible. Still, it has enough capability that with the right domain-specific knowledge it can actually be of use to a shopper. Because of its declarative construction, it extends easily to more complex applications. The main point of this section is to show that some knowledge representation—in particular, the product hierarchy—is necessary for such an agent, and that once we have some knowledge in this form, the rest follows naturally.
 
-12.8 SUMMARY
+## SUMMARY
 
 By delving into the details of how one represents a variety of knowledge, we hope we have given the reader a sense of how real knowledge bases are constructed and a feeling for the interesting philosophical issues that arise. The major points are as follows:
 
@@ -6952,8 +5806,6 @@ By delving into the details of how one represents a variety of knowledge, we hop
 
 - We presented an **upper ontology** based on categories and the event calculus. We covered categories, subcategories, parts, structured objects, measurements, substances, events, time and space, change, and beliefs.  
 
-
-
 - Natural kinds cannot be defined completely in logic, but properties of natural kinds can be represented.
 
 - Actions, events, and time can be represented either in situation calculus or in more expressive representations such as event calculus. Such representations enable an agent to construct plans by logical inference.
@@ -6964,25 +5816,19 @@ By delving into the details of how one represents a variety of knowledge, we hop
 
 - The **closed-world assumption**, as implemented in logic programs, provides a simple way to avoid having to specify lots of negative information. It is best interpreted as a **default** that can be overridden by additional information.
 
-- **Nonmonotonic logics**, such as **circumscription** and **default logic**, are intended to cap- ture default reasoning in general.
+- **Nonmonotonic logics**, such as **circumscription** and **default logic**, are intended to capture default reasoning in general.
 
 - **Truth maintenance systems** handle knowledge updates and revisions efficiently.
 
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+**BIBLIOGRAPHICAL AND HISTORICAL NOTES**
 
-Briggs (1985) claims that formal knowledge representation research began with classical In- dian theorizing about the grammar of Shastric Sanskrit, which dates back to the first millen- nium B.C. In the West, the use of definitions of terms in ancient Greek mathematics can be regarded as the earliest instance: Aristotle’s _Metaphysics_ (literally, what comes after the book on physics) is a near-synonym for _Ontology_. Indeed, the development of technical terminol- ogy in any field can be regarded as a form of knowledge representation.
+Briggs (1985) claims that formal knowledge representation research began with classical Indian theorizing about the grammar of Shastric Sanskrit, which dates back to the first millennium B.C. In the West, the use of definitions of terms in ancient Greek mathematics can be regarded as the earliest instance: Aristotle’s _Metaphysics_ (literally, what comes after the book on physics) is a near-synonym for _Ontology_. Indeed, the development of technical terminology in any field can be regarded as a form of knowledge representation.
 
-Early discussions of representation in AI tended to focus on “_problem_ representation” rather than “_knowledge_ representation.” (See, for example, Amarel’s (1968) discussion of the Missionaries and Cannibals problem.) In the 1970s, AI emphasized the development of “ex- pert systems” (also called “knowledge-based systems”) that could, if given the appropriate domain knowledge, match or exceed the performance of human experts on narrowly defined tasks. For example, the first expert system, DENDRAL (Feigenbaum _et al._, 1971; Lindsay _et al._, 1980), interpreted the output of a mass spectrometer (a type of instrument used to ana- lyze the structure of organic chemical compounds) as accurately as expert chemists. Although the success of DENDRAL was instrumental in convincing the AI research community of the importance of knowledge representation, the representational formalisms used in DENDRAL
-
-are highly specific to the domain of chemistry. Over time, researchers became interested in standardized knowledge representation formalisms and ontologies that could streamline the process of creating new expert systems. In so doing, they ventured into territory previously explored by philosophers of science and of language. The discipline imposed in AI by the need for one’s theories to “work” has led to more rapid and deeper progress than was the case  
-
-Bibliographical and Historical Notes 469
-
-when these problems were the exclusive domain of philosophy (although it has at times also led to the repeated reinvention of the wheel).
+Early discussions of representation in AI tended to focus on “_problem_ representation” rather than “_knowledge_ representation.” (See, for example, Amarel’s (1968) discussion of the Missionaries and Cannibals problem.) In the 1970s, AI emphasized the development of “expert systems” (also called “knowledge-based systems”) that could, if given the appropriate domain knowledge, match or exceed the performance of human experts on narrowly defined tasks. For example, the first expert system, DENDRAL (Feigenbaum _et al._, 1971; Lindsay _et al._, 1980), interpreted the output of a mass spectrometer (a type of instrument used to analyze the structure of organic chemical compounds) as accurately as expert chemists. Although the success of DENDRAL was instrumental in convincing the AI research community of the importance of knowledge representation, the representational formalisms used in are highly specific to the domain of chemistry. Over time, researchers became interested in standardized knowledge representation formalisms and ontologies that could streamline the process of creating new expert systems. In so doing, they ventured into territory previously explored by philosophers of science and of language. The discipline imposed in AI by the need for one’s theories to “work” has led to more rapid and deeper progress than was the case when these problems were the exclusive domain of philosophy (although it has at times also led to the repeated reinvention of the wheel).
 
 The creation of comprehensive taxonomies or classifications dates back to ancient times. Aristotle (384–322 B.C.) strongly emphasized classification and categorization schemes. His _Organon_, a collection of works on logic assembled by his students after his death, included a treatise called _Categories_ in which he attempted to construct what we would now call an upper ontology. He also introduced the notions of **genus** and **species** for lower-level classification. Our present system of biological classification, including the use of “binomial nomenclature” (classification via genus and species in the technical sense), was invented by the Swedish biologist Carolus Linnaeus, or Carl von Linne (1707–1778). The problems associated with natural kinds and inexact category boundaries have been addressed by Wittgenstein (1953), Quine (1953), Lakoff (1987), and Schwartz (1977), among others.
 
-Interest in larger-scale ontologies is increasing, as documented by the _Handbook on Ontologies_ (Staab, 2004). The OPENCYC project (Lenat and Guha, 1990; Matuszek _et al._, 2006) has released a 150,000-concept ontology, with an upper ontology similar to the one in Figure 12.1 as well as specific concepts like “OLED Display” and “iPhone,” which is a type of “cellular phone,” which in turn is a type of “consumer electronics,” “phone,” “wireless communication device,” and other concepts. The DBPEDIA project extracts structured data from Wikipedia; specifically from Infoboxes: the boxes of attribute/value pairs that accom- pany many Wikipedia articles (Wu and Weld, 2008; Bizer _et al._, 2007). As of mid-2009, DBPEDIA contains 2.6 million concepts, with about 100 facts per concept. The IEEE work- ing group P~1~600.1 created the Suggested Upper Merged Ontology (SUMO) (Niles and Pease, 2001; Pease and Niles, 2002), which contains about 1000 terms in the upper ontology and links to over 20,000 domain-specific terms. Stoffel _et al._ (1997) describe algorithms for ef- ficiently managing a very large ontology. A survey of techniques for extracting knowledge from Web pages is given by Etzioni _et al._ (2008).
+Interest in larger-scale ontologies is increasing, as documented by the _Handbook on Ontologies_ (Staab, 2004). The OPENCYC project (Lenat and Guha, 1990; Matuszek _et al._, 2006) has released a 150,000-concept ontology, with an upper ontology similar to the one in Figure 12.1 as well as specific concepts like “OLED Display” and “iPhone,” which is a type of “cellular phone,” which in turn is a type of “consumer electronics,” “phone,” “wireless communication device,” and other concepts. The DBPEDIA project extracts structured data from Wikipedia; specifically from Infoboxes: the boxes of attribute/value pairs that accompany many Wikipedia articles (Wu and Weld, 2008; Bizer _et al._, 2007). As of mid-2009, DBPEDIA contains 2.6 million concepts, with about 100 facts per concept. The IEEE working group P~1~600.1 created the Suggested Upper Merged Ontology (SUMO) (Niles and Pease, 2001; Pease and Niles, 2002), which contains about 1000 terms in the upper ontology and links to over 20,000 domain-specific terms. Stoffel _et al._ (1997) describe algorithms for efficiently managing a very large ontology. A survey of techniques for extracting knowledge from Web pages is given by Etzioni _et al._ (2008).
 
 On the Web, representation languages are emerging. RDF (Brickley and Guha, 2004) allows for assertions to be made in the form of relational triples, and provides some means for evolving the meaning of names over time. OWL (Smith _et al._, 2004) is a description logic that supports inferences over these triples. So far, usage seems to be inversely proportional to representational complexity: the traditional HTML and CSS formats account for over 99% of Web content, followed by the simplest representation schemes, such as microformats (Khare, 2006) and RDFa (Adida and Birbeck, 2008), which use HTML and XHTML markup to add attributes to literal text. Usage of sophisticated RDF and OWL ontologies is not yet widespread, and the full vision of the Semantic Web (Berners-Lee _et al._, 2001) has not yet been realized. The conferences on _Formal Ontology in Information Systems_ (FOIS) contain many interesting papers on both general and domain-specific ontologies.
 
@@ -6990,63 +5836,37 @@ The taxonomy used in this chapter was developed by the authors and is based in p
 
 Successful deep ontologies within a specific field include the Gene Ontology project (Consortium, 2008) and CML, the Chemical Markup Language (Murray-Rust _et al._, 2003).  
 
-
-
 Doubts about the feasibility of a single ontology for _all_ knowledge are expressed by Doctorow (2001), Gruber (2004), Halevy _et al._ (2009), and Smith (2004), who states, “the initial project of building one single ontology . . . has . . . largely been abandoned.”
 
-The event calculus was introduced by Kowalski and Sergot (1986) to handle continuous time, and there have been several variations (Sadri and Kowalski, 1995; Shanahan, 1997) and overviews (Shanahan, 1999; Mueller, 2006). van Lambalgen and Hamm (2005) show how the logic of events maps onto the language we use to talk about events. An alternative to the event and situation calculi is the fluent calculus (Thielscher, 1999). James Allen introduced time intervals for the same reason (Allen, 1984), arguing that intervals were much more natu- ral than situations for reasoning about extended and concurrent events. Peter Ladkin (1986a, 1986b) introduced “concave” time intervals (intervals with gaps; essentially, unions of ordi- nary “convex” time intervals) and applied the techniques of mathematical abstract algebra to time representation. Allen (1991) systematically investigates the wide variety of techniques available for time representation; van Beek and Manchak (1996) analyze algorithms for tem- poral reasoning. There are significant commonalities between the event-based ontology given in this chapter and an analysis of events due to the philosopher Donald Davidson (1980). The **histories** in Pat Hayes’s (1985a) ontology of liquids and the **chronicles** in McDermott’s (1985) theory of plans were also important influences on the field and this chapter.
+The event calculus was introduced by Kowalski and Sergot (1986) to handle continuous time, and there have been several variations (Sadri and Kowalski, 1995; Shanahan, 1997) and overviews (Shanahan, 1999; Mueller, 2006). van Lambalgen and Hamm (2005) show how the logic of events maps onto the language we use to talk about events. An alternative to the event and situation calculi is the fluent calculus (Thielscher, 1999). James Allen introduced time intervals for the same reason (Allen, 1984), arguing that intervals were much more natural than situations for reasoning about extended and concurrent events. Peter Ladkin (1986a, 1986b) introduced “concave” time intervals (intervals with gaps; essentially, unions of ordinary “convex” time intervals) and applied the techniques of mathematical abstract algebra to time representation. Allen (1991) systematically investigates the wide variety of techniques available for time representation; van Beek and Manchak (1996) analyze algorithms for temporal reasoning. There are significant commonalities between the event-based ontology given in this chapter and an analysis of events due to the philosopher Donald Davidson (1980). The **histories** in Pat Hayes’s (1985a) ontology of liquids and the **chronicles** in McDermott’s (1985) theory of plans were also important influences on the field and this chapter.
 
-The question of the ontological status of substances has a long history. Plato proposed that substances were abstract entities entirely distinct from physical objects; he would say MadeOf (Butter 3,Butter) rather than ButteR~3~ ∈Butter . This leads to a substance hierar- chy in which, for example, UnsaltedButter is a more specific substance than Butter . The po- sition adopted in this chapter, in which substances are categories of objects, was championed by Richard Montague (1973). It has also been adopted in the CYC project. Copeland (1993) mounts a serious, but not invincible, attack. The alternative approach mentioned in the chap- ter, in which butter is one object consisting of all buttery objects in the universe, was proposed originally by the Polish logician Leśniewski (1916). His **mereology** (the name is derived fromMEREOLOGY
+The question of the ontological status of substances has a long history. Plato proposed that substances were abstract entities entirely distinct from physical objects; he would say MadeOf (Butter 3,Butter) rather than ButteR~3~ ∈Butter . This leads to a substance hierarchy in which, for example, UnsaltedButter is a more specific substance than Butter . The position adopted in this chapter, in which substances are categories of objects, was championed by Richard Montague (1973). It has also been adopted in the CYC project. Copeland (1993) mounts a serious, but not invincible, attack. The alternative approach mentioned in the chapter, in which butter is one object consisting of all buttery objects in the universe, was proposed originally by the Polish logician Leśniewski (1916). His **mereology** (the name is derived from the Greek word for “part”) used the part–whole relation as a substitute for mathematical set theory, with the aim of eliminating abstract entities such as sets. A more readable exposition of these ideas is given by Leonard and Goodman (1940), and Goodman’s _The Structure of Appearance_ (1977) applies the ideas to various problems in knowledge representation. While some aspects of the mereological approach are awkward—for example, the need for a separate inheritance mechanism based on part–whole relations—the approach gained the support of Quine (1960). Harry Bunt (1985) has provided an extensive analysis of its use in knowledge representation. Casati and Varzi (1999) cover parts, wholes, and the spatial locations.
 
-the Greek word for “part”) used the part–whole relation as a substitute for mathematical set theory, with the aim of eliminating abstract entities such as sets. A more readable exposition of these ideas is given by Leonard and Goodman (1940), and Goodman’s _The Structure of Appearance_ (1977) applies the ideas to various problems in knowledge representation. While some aspects of the mereological approach are awkward—for example, the need for a sepa- rate inheritance mechanism based on part–whole relations—the approach gained the support of Quine (1960). Harry Bunt (1985) has provided an extensive analysis of its use in knowl- edge representation. Casati and Varzi (1999) cover parts, wholes, and the spatial locations.
+Mental objects have been the subject of intensive study in philosophy and AI. There are three main approaches. The one taken in this chapter, based on modal logic and possible worlds, is the classical approach from philosophy (Hintikka, 1962; KriP~k~e, 1963; Hughes and Cresswell, 1996). The book _Reasoning about Knowledge_ (Fagin _et al._, 1995) provides a thorough introduction. The second approach is a first-order theory in which mental objects are fluents. Davis (2005) and Davis and Morgenstern (2005) describe this approach. It relies on the possible-worlds formalism, and builds on work by Robert Moore (1980, 1985). The third approach is a **syntactic theory**, in which mental objects are represented by character strings. A string is just a complex term denoting a list of symbols, so CanFly(Clark ) can be represented by the list of symbols [C, a, n, F, l, y, (, C, l, a, r, k, )]. The syntactic theory of mental objects was first studied in depth by Kaplan and Montague (1960), who showed that it led to paradoxes if not handled carefully. Ernie Davis (1990) provides an excellent comparison of the syntactic and modal theories of knowledge.
 
-Mental objects have been the subject of intensive study in philosophy and AI. There are three main approaches. The one taken in this chapter, based on modal logic and possible worlds, is the classical approach from philosophy (Hintikka, 1962; KriP~k~e, 1963; Hughes and Cresswell, 1996). The book _Reasoning about Knowledge_ (Fagin _et al._, 1995) provides a thorough introduction. The second approach is a first-order theory in which mental objects are fluents. Davis (2005) and Davis and Morgenstern (2005) describe this approach. It relies on the possible-worlds formalism, and builds on work by Robert Moore (1980, 1985). The third approach is a **syntactic theory**, in which mental objects are represented by characterSYNTACTIC THEORY  
+The Greek philosopher Porphyry (c. 234–305 A.D.), commenting on Aristotle’s _Categories_, drew what might qualify as the first semantic network. Charles S. Peirce (1909) developed existential graphs as the first semantic network formalism using modern logic. Ross Quillian (1961), driven by an interest in human memory and language processing, initiated work on semantic networks within AI. An influential paper by Marvin Minsky (1975) presented a version of semantic networks called **frames**; a frame was a representation of an object or category, with attributes and relations to other objects or categories. The question of semantics arose quite acutely with respect to Quillian’s semantic networks (and those of others who followed his approach), with their ubiquitous and very vague “IS-A links” Woods’s (1975) famous article “What’s In a Link?” drew the attention of AI researchers to the need for precise semantics in knowledge representation formalisms. Brachman (1979) elaborated on this point and proposed solutions. Patrick Hayes’s (1979) “The Logic of Frames” cut even deeper, claiming that “Most of ‘frames’ is just a new syntax for parts of first-order logic.” Drew McDermott’s (1978b) “Tarskian Semantics, or, No Notation without Denotation!” argued that the model-theoretic approach to semantics used in first-order logic should be applied to all knowledge representation formalisms. This remains a controversial idea; notably, McDermott himself has reversed his position in “A Critique of Pure Reason” (McDermott, 1987). Selman and Levesque (1993) discuss the complexity of inheritance with exceptions, showing that in most formulations it is NP-complete.
 
-Bibliographical and Historical Notes 471
+The development of description logics is the most recent stage in a long line of research aimed at finding useful subsets of first-order logic for which inference is computationally tractable. Hector Levesque and Ron Brachman (1987) showed that certain logical constructs—notably, certain uses of disjunction and negation—were primarily responsible for the intractability of logical inference. Building on the KL-ONE system (Schmolze and Lipkis, 1983), several researchers developed systems that incorporate theoretical complexity analysis, most notably KRYPTON (Brachman _et al._, 1983) and Classic (Borgida _et al._, 1989). The result has been a marked increase in the speed of inference and a much better understanding of the interaction between complexity and expressiveness in reasoning systems. Calvanese _et al._ (1999) summarize the state of the art, and Baader _et al._ (2007) present a comprehensive handbook of description logic. Against this trend, Doyle and Patil (1991) have argued that restricting the expressiveness of a language either makes it impossible to solve certain problems or encourages the user to circumvent the language restrictions through nonlogical means.
 
-strings. A string is just a complex term denoting a list of symbols, so CanFly(Clark ) can be represented by the list of symbols [C, a, n, F, l, y, (, C, l, a, r, k, )]. The syntactic theory of mental objects was first studied in depth by Kaplan and Montague (1960), who showed that it led to paradoxes if not handled carefully. Ernie Davis (1990) provides an excellent comparison of the syntactic and modal theories of knowledge.
-
-The Greek philosopher Porphyry (c. 234–305 A.D.), commenting on Aristotle’s _Cat- egories_, drew what might qualify as the first semantic network. Charles S. Peirce (1909) developed existential graphs as the first semantic network formalism using modern logic. Ross Quillian (1961), driven by an interest in human memory and language processing, ini- tiated work on semantic networks within AI. An influential paper by Marvin Minsky (1975) presented a version of semantic networks called **frames**; a frame was a representation of an object or category, with attributes and relations to other objects or categories. The ques- tion of semantics arose quite acutely with respect to Quillian’s semantic networks (and those of others who followed his approach), with their ubiquitous and very vague “IS-A links” Woods’s (1975) famous article “What’s In a Link?” drew the attention of AI researchers to the need for precise semantics in knowledge representation formalisms. Brachman (1979) elab- orated on this point and proposed solutions. Patrick Hayes’s (1979) “The Logic of Frames” cut even deeper, claiming that “Most of ‘frames’ is just a new syntax for parts of first-order logic.” Drew McDermott’s (1978b) “Tarskian Semantics, or, No Notation without Denota- tion!” argued that the model-theoretic approach to semantics used in first-order logic should be applied to all knowledge representation formalisms. This remains a controversial idea; notably, McDermott himself has reversed his position in “A Critique of Pure Reason” (Mc- Dermott, 1987). Selman and Levesque (1993) discuss the complexity of inheritance with exceptions, showing that in most formulations it is NP-complete.
-
-The development of description logics is the most recent stage in a long line of re- search aimed at finding useful subsets of first-order logic for which inference is computa- tionally tractable. Hector Levesque and Ron Brachman (1987) showed that certain logical constructs—notably, certain uses of disjunction and negation—were primarily responsible for the intractability of logical inference. Building on the KL-ONE system (Schmolze and Lipkis, 1983), several researchers developed systems that incorporate theoretical complex- ity analysis, most notably KRYPTON (Brachman _et al._, 1983) and Classic (Borgida _et al._, 1989). The result has been a marked increase in the speed of inference and a much better understanding of the interaction between complexity and expressiveness in reasoning sys- tems. Calvanese _et al._ (1999) summarize the state of the art, and Baader _et al._ (2007) present a comprehensive handbook of description logic. Against this trend, Doyle and Patil (1991) have argued that restricting the expressiveness of a language either makes it impossible to solve certain problems or encourages the user to circumvent the language restrictions through nonlogical means.
-
-The three main formalisms for dealing with nonmonotonic inference—circumscription (McCarthy, 1980), default logic (Reiter, 1980), and modal nonmonotonic logic (McDermott and Doyle, 1980)—were all introduced in one special issue of the AI Journal. Delgrande and Schaub (2003) discuss the merits of the variants, given 25 years of hindsight. Answer set programming can be seen as an extension of negation as failure or as a refinement of circum-  
-
-
-
-scription; the underlying theory of stable model semantics was introduced by Gelfond and Lifschitz (1988), and the leading answer set programming systems are DLV (Eiter _et al._, 1998) and SMODELS (Niemelä _et al._, 2000). The disk drive example comes from the SMODELS user manual (Syrjänen, 2000). Lifschitz (2001) discusses the use of answer set programming for planning. Brewka _et al._ (1997) give a good overview of the various approaches to nonmono- tonic logic. Clark (1978) covers the negation-as-failure approach to logic programming and Clark completion. Van Emden and Kowalski (1976) show that every Prolog program without negation has a unique minimal model. Recent years have seen renewed interest in applica- tions of nonmonotonic logics to large-scale knowledge representation systems. The BENINQ
-
-systems for handling insurance-benefit inquiries was perhaps the first commercially success- ful application of a nonmonotonic inheritance system (Morgenstern, 1998). Lifschitz (2001) discusses the application of answer set programming to planning. A variety of nonmonotonic reasoning systems based on logic programming are documented in the proceedings of the conferences on _Logic Programming and Nonmonotonic Reasoning_ (Lp~n~MR).
+The three main formalisms for dealing with nonmonotonic inference—circumscription (McCarthy, 1980), default logic (Reiter, 1980), and modal nonmonotonic logic (McDermott and Doyle, 1980)—were all introduced in one special issue of the AI Journal. Delgrande and Schaub (2003) discuss the merits of the variants, given 25 years of hindsight. Answer set programming can be seen as an extension of negation as failure or as a refinement of circumscription; the underlying theory of stable model semantics was introduced by Gelfond and Lifschitz (1988), and the leading answer set programming systems are DLV (Eiter _et al._, 1998) and SMODELS (Niemelä _et al._, 2000). The disk drive example comes from the SMODELS user manual (Syrjänen, 2000). Lifschitz (2001) discusses the use of answer set programming for planning. Brewka _et al._ (1997) give a good overview of the various approaches to nonmonotonic logic. Clark (1978) covers the negation-as-failure approach to logic programming and Clark completion. Van Emden and Kowalski (1976) show that every Prolog program without negation has a unique minimal model. Recent years have seen renewed interest in applications of nonmonotonic logics to large-scale knowledge representation systems. The systems for handling insurance-benefit inquiries was perhaps the first commercially successful application of a nonmonotonic inheritance system (Morgenstern, 1998). Lifschitz (2001) discusses the application of answer set programming to planning. A variety of nonmonotonic reasoning systems based on logic programming are documented in the proceedings of the conferences on _Logic Programming and Nonmonotonic Reasoning_ (Lp~n~MR).
 
 The study of truth maintenance systems began with the TMS (Doyle, 1979) and RUP (McAllester, 1980) systems, both of which were essentially JTMSs. Forbus and de Kleer (1993) explain in depth how TMSs can be used in AI applications. Nayak and Williams (1997) show how an efficient incremental TMS called an ITMS makes it feasible to plan the operations of a NASA spacecraft in real time.
 
 This chapter could not cover _every_ area of knowledge representation in depth. The three principal topics omitted are the following:
 
-**Qualitative physics**: Qualitative physics is a subfield of knowledge representation concernedQUALITATIVE PHYSICS
+**Qualitative physics**: Qualitative physics is a subfield of knowledge representation concerned specifically with constructing a logical, nonnumeric theory of physical objects and processes. The term was coined by Johan de Kleer (1975), although the enterprise could be said to have started in Fahlman’s (1974) BUILD, a sophisticated planner for constructing complex towers of blocks. Fahlman discovered in the process of designing it that most of the effort (80%, by his estimate) went into modeling the physics of the blocks world to calculate the stability of various subassemblies of blocks, rather than into planning per se. He sketches a hypothetical naive-physics-like process to explain why young children can solve BUILD-like problems without access to the high-speed floating-point arithmetic used in BUILD’s physical modeling. Hayes (1985a) uses “histories”—four-dimensional slices of space-time similar to Davidson’s events—to construct a fairly complex naive physics of liquids. Hayes was the first to prove that a bath with the plug in will eventually overflow if the tap keeps running and that a person who falls into a lake will get wet all over. Davis (2008) gives an update to the ontology of liquids that describes the pouring of liquids into containers.
 
-specifically with constructing a logical, nonnumeric theory of physical objects and processes. The term was coined by Johan de Kleer (1975), although the enterprise could be said to have started in Fahlman’s (1974) BUILD, a sophisticated planner for constructing complex towers of blocks. Fahlman discovered in the process of designing it that most of the effort (80%, by his estimate) went into modeling the physics of the blocks world to calculate the stability of various subassemblies of blocks, rather than into planning per se. He sketches a hypothetical naive-physics-like process to explain why young children can solve BUILD-like problems without access to the high-speed floating-point arithmetic used in BUILD’s physical modeling. Hayes (1985a) uses “histories”—four-dimensional slices of space-time similar to Davidson’s events—to construct a fairly complex naive physics of liquids. Hayes was the first to prove that a bath with the plug in will eventually overflow if the tap keeps running and that a person who falls into a lake will get wet all over. Davis (2008) gives an update to the ontology of liquids that describes the pouring of liquids into containers.
+De Kleer and Brown (1985), Ken Forbus (1985), and Benjamin Kuipers (1985) independently and almost simultaneously developed systems that can reason about a physical system based on qualitative abstractions of the underlying equations. Qualitative physics soon developed to the point where it became possible to analyze an impressive variety of complex physical systems (Yip, 1991). Qualitative techniques have been used to construct novel designs for clocks, windshield wipers, and six-legged walkers (Subramanian and Wang, 1994). The collection _Readings in Qualitative Reasoning about Physical Systems_ (Weld and  de Kleer, 1990) an encyclopedia article by Kuipers (2001), and a handbook article by Davis (2007) introduce to the field.
 
-De Kleer and Brown (1985), Ken Forbus (1985), and Benjamin Kuipers (1985) inde- pendently and almost simultaneously developed systems that can reason about a physical system based on qualitative abstractions of the underlying equations. Qualitative physics soon developed to the point where it became possible to analyze an impressive variety of complex physical systems (Yip, 1991). Qualitative techniques have been used to construct novel designs for clocks, windshield wipers, and six-legged walkers (Subramanian and Wang, 1994). The collection _Readings in Qualitative Reasoning about Physical Systems_ (Weld and  
+**Spatial reasoning**: The reasoning necessary to navigate in the wumpus world and shopping world is trivial in comparison to the rich spatial structure of the real world. The earliest serious attempt to capture commonsense reasoning about space appears in the work of Ernest Davis (1986, 1990). The region connection calculus of Cohn _et al._ (1997) supports a form of qualitative spatial reasoning and has led to new kinds of geographical information systems; see also (Davis, 2006). As with qualitative physics, an agent can go a long way, so to speak, without resorting to a full metric representation. When such a representation is necessary, techniques developed in robotics (Chapter 25) can be used.
 
-Exercises 473
+**Psychological reasoning**: Psychological reasoning involves the development of a working _psychology_ for artificial agents to use in reasoning about themselves and other agents. This is often based on so-called folk psychology, the theory that humans in general are believed to use in reasoning about themselves and other humans. When AI researchers provide their artificial agents with psychological theories for reasoning about other agents, the theories are frequently based on the researchers’ description of the logical agents’ own design. Psychological reasoning is currently most useful within the context of natural language understanding, where divining the speaker’s intentions is of paramount importance.
 
-de Kleer, 1990) an encyclopedia article by Kuipers (2001), and a handbook article by Davis (2007) introduce to the field.
+Minker (2001) collects papers by leading researchers in knowledge representation, summarizing 40 years of work in the field. The proceedings of the international conferences on _Principles of Knowledge Representation and Reasoning_ provide the most up-to-date sources for work in this area. _Readings in Knowledge Representation_ (Brachman and Levesque, 1985) and _Formal Theories of the Commonsense World_ (Hobbs and Moore, 1985) are excellent anthologies on knowledge representation; the former focuses more on historically important papers in representation languages and formalisms, the latter on the accumulation of the knowledge itself. Davis (1990), Stefik (1995), and Sowa (1999) provide textbook introductions to knowledge representation, van Harmelen _et al._ (2007) contributes a handbook, and a special issue of AI Journal covers recent progress (Davis and Morgenstern, 2004). The biennial conference on _Theoretical Aspects of Reasoning About Knowledge_ (TARK) covers applications of the theory of knowledge in AI, economics, and distributed systems.
 
-**Spatial reasoning**: The reasoning necessary to navigate in the wumpus world and shoppingSPATIAL REASONING
+**EXERCISES**
 
-world is trivial in comparison to the rich spatial structure of the real world. The earliest serious attempt to capture commonsense reasoning about space appears in the work of Ernest Davis (1986, 1990). The region connection calculus of Cohn _et al._ (1997) supports a form of qualitative spatial reasoning and has led to new kinds of geographical information systems; see also (Davis, 2006). As with qualitative physics, an agent can go a long way, so to speak, without resorting to a full metric representation. When such a representation is necessary, techniques developed in robotics (Chapter 25) can be used.
-
-**Psychological reasoning**: Psychological reasoning involves the development of a workingPSYCHOLOGICAL REASONING
-
-_psychology_ for artificial agents to use in reasoning about themselves and other agents. This is often based on so-called folk psychology, the theory that humans in general are believed to use in reasoning about themselves and other humans. When AI researchers provide their artificial agents with psychological theories for reasoning about other agents, the theories are frequently based on the researchers’ description of the logical agents’ own design. Psycholog- ical reasoning is currently most useful within the context of natural language understanding, where divining the speaker’s intentions is of paramount importance.
-
-Minker (2001) collects papers by leading researchers in knowledge representation, sum- marizing 40 years of work in the field. The proceedings of the international conferences on _Principles of Knowledge Representation and Reasoning_ provide the most up-to-date sources for work in this area. _Readings in Knowledge Representation_ (Brachman and Levesque, 1985) and _Formal Theories of the Commonsense World_ (Hobbs and Moore, 1985) are ex- cellent anthologies on knowledge representation; the former focuses more on historically important papers in representation languages and formalisms, the latter on the accumulation of the knowledge itself. Davis (1990), Stefik (1995), and Sowa (1999) provide textbook in- troductions to knowledge representation, van Harmelen _et al._ (2007) contributes a handbook, and a special issue of AI Journal covers recent progress (Davis and Morgenstern, 2004). The biennial conference on _Theoretical Aspects of Reasoning About Knowledge_ (TARK) covers applications of the theory of knowledge in AI, economics, and distributed systems.
-
-EXERCISES
-
-**12.1** Define an ontology in first-order logic for tic-tac-toe. The ontology should contain situations, actions, squares, players, marks (X, O, or blank), and the notion of winning, losing, or drawing a game. Also define the notion of a forced win (or draw): a position from which a player can force a win (or draw) with the right sequence of actions. Write axioms for the domain. (Note: The axioms that enumerate the different squares and that characterize the winning positions are rather long. You need not write these out in full, but indicate clearly what they look like.)  
-
-
+**12.1** Define an ontology in firstorder logic for tic-tac-toe. The ontology should contain situations, actions, squares, players, marks (X, O, or blank), and the notion of winning, losing, or drawing a game. Also define the notion of a forced win (or draw): a position from which a player can force a win (or draw) with the right sequence of actions. Write axioms for the domain. (Note: The axioms that enumerate the different squares and that characterize the winning positions are rather long. You need not write these out in full, but indicate clearly what they look like.)  
 
 **12.2** Figure 12.1 shows the top levels of a hierarchy for everything. Extend it to include as many real categories as possible. A good way to do this is to cover all the things in your everyday life. This includes objects and events. Start with waking up, and proceed in an orderly fashion noting everything that you see, touch, do, and think about. For example, a random sampling produces music, news, milk, walking, driving, gas, Soda Hall, carpet, talking, Professor Fateman, chicken curry, tongue, $7, sun, the daily newspaper, and so on.
 
@@ -7068,7 +5888,7 @@ Assume an ontology containing _situations, actions, integers_ (for x and y coord
 
 **12.4** State the following in the language you developed for the previous exercise:
 
-**a**. In situation S0, window W1 is behind W2 but sticks out on the left and right. Do _not_ state exact coordinates for these; describe the _general_ situation.
+**a**. In situation S~0~, window w~1~ is behind W2 but sticks out on the left and right. Do _not_ state exact coordinates for these; describe the _general_ situation.
 
 **b**. If a window is displayed, then its top edge is higher than its bottom edge.
 
@@ -7080,9 +5900,7 @@ Assume an ontology containing _situations, actions, integers_ (for x and y coord
 
 Yesterday John went to the North Berkeley Safeway supermarket and bought two pounds of tomatoes and a pound of ground beef.
 
-Start by trying to represent the content of the sentence as a series of assertions. You should write sentences that have straightforward logical structure (e.g., statements that objects have certain properties, that objects are related in certain ways, that all objects satisfying one prop- erty satisfy another). The following might help you get started:  
-
-Exercises 475
+Start by trying to represent the content of the sentence as a series of assertions. You should write sentences that have straightforward logical structure (e.g., statements that objects have certain properties, that objects are related in certain ways, that all objects satisfying one property satisfy another). The following might help you get started:  
 
 - Which classes, objects, and relations would you need? What are their parents, siblings and so on? (You will need events and temporal ordering, among other things.)
 
@@ -7128,9 +5946,7 @@ Sketch the chains of reasoning that would answer the questions. If possible, use
 
 **f**. Do the tomatoes fit in John’s car trunk? [Yes]  
 
-
-
-**12.7** Represent the following seven sentences using and extending the representations de- veloped in the chapter:
+**12.7** Represent the following seven sentences using and extending the representations developed in the chapter:
 
 **a**. Water is a liquid between 0 and 100 degrees.
 
@@ -7156,19 +5972,15 @@ Sketch the chains of reasoning that would answer the questions. If possible, use
 
 These should be analogous to the definitions for ExhaustiveDecomposition , Partition , and Disjoint . Is it the case that PartPartition(s,BunchOf (s))? If so, prove it; if not, give a counterexample and define sufficient conditions under which it does hold.
 
-**12.9** An alternative scheme for representing measures involves applying the units function to an abstract length object. In such a scheme, one would write Inches(Length(l~1~)) =
-
-1.5. How does this scheme compare with the one in the chapter? Issues include conversion axioms, names for abstract quantities (such as “50 dollars”), and comparisons of abstract measures in different units (50 inches is more than 50 centimeters).
+**12.9** An alternative scheme for representing measures involves applying the units function to an abstract length object. In such a scheme, one would write Inches(Length(l~1~)) = 1.5. How does this scheme compare with the one in the chapter? Issues include conversion axioms, names for abstract quantities (such as “50 dollars”), and comparisons of abstract measures in different units (50 inches is more than 50 centimeters).
 
 **12.10** Add sentences to extend the definition of the predicate Name(s, c) so that a string such as “laptop computer” matches the appropriate category names from a variety of stores. Try to make your definition general. Test it by looking at ten online stores, and at the category names they give for three different categories. For example, for the category of laptops, we found the names “Notebooks,” “Laptops,” “Notebook Computers,” “Notebook,” “Laptops and Notebooks,” and “Notebook PCs.” Some of these can be covered by explicit Name facts, while others could be covered by sentences for handling plurals, conjunctions, etc.
 
 **12.11** Write event calculus axioms to describe the actions in the wumpus world.
 
-**12.12** State the interval-algebra relation that holds between every pair of the following real- world events:
+**12.12** State the interval-algebra relation that holds between every pair of the following realworld events:
 
-LK: The life of President Kennedy. IK: The infancy of President Kennedy. PK: The presidency of President Kennedy. LJ : The life of President Johnson. PJ : The presidency of President Johnson. LO: The life of President Obama.  
-
-Exercises 477
+LK: The life of President Kennedy. IK: The infancy of President Kennedy. PK: The presidency of President Kennedy. LJ : The life of President Johnson. P~j~ : The presidency of President Johnson. LO: The life of President Obama.  
 
 **12.13** Investigate ways to extend the event calculus to handle _simultaneous_ events. Is it possible to avoid a combinatorial explosion of axioms?
 
@@ -7178,7 +5990,7 @@ Exercises 477
 
 **12.16** Describe the event of trading something for something else. Describe buying as a kind of trading in which one of the objects traded is a sum of money.
 
-**12.17** The two preceding exercises assume a fairly primitive notion of ownership. For ex- ample, the buyer starts by _owning_ the dollar bills. This picture begins to break down when, for example, one’s money is in the bank, because there is no longer any specific collection of dollar bills that one owns. The picture is complicated still further by borrowing, leasing, renting, and bailment. Investigate the various commonsense and legal concepts of ownership, and propose a scheme by which they can be represented formally.
+**12.17** The two preceding exercises assume a fairly primitive notion of ownership. For example, the buyer starts by _owning_ the dollar bills. This picture begins to break down when, for example, one’s money is in the bank, because there is no longer any specific collection of dollar bills that one owns. The picture is complicated still further by borrowing, leasing, renting, and bailment. Investigate the various commonsense and legal concepts of ownership, and propose a scheme by which they can be represented formally.
 
 **12.18** (Adapted from Fagin _et al._ (1995).) Consider a game played with a deck of just 8 cards, 4 aces and 4 kings. The three players, Alice, Bob, and Carlos, are dealt two cards each. Without looking at them, they place the cards on their foreheads so that the other players can see them. Then the players take turns either announcing that they know what cards are on their own forehead, thereby winning the game, or saying “I don’t know.” Everyone knows the players are truthful and are perfect at reasoning about beliefs.
 
@@ -7194,7 +6006,7 @@ on her second turn. Alice and Bob both hold A-K. What should Carlos say? **e**. 
 
 **a**. Partial knowledge adversary games, such as card games. Here one player wants to reason about what his opponent knows about the state of the game.
 
-**b**. Chess with a clock. Here the player may wish to reason about the limits of his oppo- nent’s or his own ability to find the best move in the time available. For instance, if player A has much more time left than player B, then A will sometimes make a move that greatly complicates the situation, in the hopes of gaining an advantage because he has more time to work out the proper strategy.  
+**b**. Chess with a clock. Here the player may wish to reason about the limits of his opponent’s or his own ability to find the best move in the time available. For instance, if player A has much more time left than player B, then A will sometimes make a move that greatly complicates the situation, in the hopes of gaining an advantage because he has more time to work out the proper strategy.  
 
 
 
@@ -7212,7 +6024,7 @@ All(Daughter ,And(Professor ,Fills(Department ,Physics ,Math)))) .
 
 **12.21** Recall that inheritance information in semantic networks can be captured logically by suitable implication sentences. This exercise investigates the efficiency of using such sentences for inheritance.
 
-**a**. Consider the information in a used-car catalog such as Kelly’s Blue Book—for exam- ple, that 1973 Dodge vans are (or perhaps were once) worth $575. Suppose all this information (for 11,000 models) is encoded as logical sentences, as suggested in the chapter. Write down three such sentences, including that for 1973 Dodge vans. How would you use the sentences to find the value of a _particular_ car, given a backward- chaining theorem prover such as Prolog?
+**a**. Consider the information in a used-car catalog such as Kelly’s Blue Book—for example, that 1973 Dodge vans are (or perhaps were once) worth $575. Suppose all this information (for 11,000 models) is encoded as logical sentences, as suggested in the chapter. Write down three such sentences, including that for 1973 Dodge vans. How would you use the sentences to find the value of a _particular_ car, given a backwardchaining theorem prover such as Prolog?
 
 **b**. Compare the time efficiency of the backward-chaining method for solving this problem with the inheritance method used in semantic nets.
 
@@ -7222,15 +6034,11 @@ All(Daughter ,And(Professor ,Fills(Department ,Physics ,Math)))) .
 
 **e**. Can you suggest a solution enabling this type of query to be solved efficiently in all cases in logic systems? (_Hint:_ Remember that two cars of the same year and model have the same price.)
 
-**12.22** One might suppose that the syntactic distinction between unboxed links and singly boxed links in semantic networks is unnecessary, because singly boxed links are always at- tached to categories; an inheritance algorithm could simply assume that an unboxed link attached to a category is intended to apply to all members of that category. Show that this argument is fallacious, giving examples of errors that would arise.
+**12.22** One might suppose that the syntactic distinction between unboxed links and singly boxed links in semantic networks is unnecessary, because singly boxed links are always attached to categories; an inheritance algorithm could simply assume that an unboxed link attached to a category is intended to apply to all members of that category. Show that this argument is fallacious, giving examples of errors that would arise.
 
 **12.23** One part of the shopping process that was not covered in this chapter is checking for compatibility between items. For example, if a digital camera is ordered, what accessory batteries, memory cards, and cases are compatible with the camera? Write a knowledge base that can determine the compatibility of a set of items and suggest replacements or additional items if the shopper makes a choice that is not compatible. The knowledge base should works with at least one line of products and extend easily to other lines.
 
-**12.24** A complete solution to the problem of inexact matches to the buyer’s description in shopping is very difficult and requires a full array of natural language processing and  
-
-Exercises 479
-
-information retrieval techniques. (See Chapters 22 and 23.) One small step is to allow the user to specify minimum and maximum values for various attributes. The buyer must use the following grammar for product descriptions:
+**12.24** A complete solution to the problem of inexact matches to the buyer’s description in shopping is very difficult and requires a full array of natural language processing and information retrieval techniques. (See Chapters 22 and 23.) One small step is to allow the user to specify minimum and maximum values for various attributes. The buyer must use the following grammar for product descriptions:
 
 Description → Category [Connector Modifier ]∗
 
