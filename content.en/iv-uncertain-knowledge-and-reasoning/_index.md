@@ -5,11 +5,11 @@ weight: 7
 
 
 
-13 QUANTIFYING UNCERTAINTY
+# QUANTIFYING UNCERTAINTY
 
 _In which we see how an agent can tame uncertainty with degrees of belief._
 
-13.1 ACTING UNDER UNCERTAINTY
+## ACTING UNDER UNCERTAINTY
 
 Agents may need to handle **uncertainty**, whether due to partial observability, nondetermin-UNCERTAINTY
 
@@ -23,17 +23,11 @@ We have seen problem-solving agents (Chapter 4) and logical agents (Chapters 7 a
 
 - Sometimes there is no plan that is guaranteed to achieve the goal—yet the agent must act. It must have some way to compare the merits of plans that are not guaranteed.
 
-Suppose, for example, that an automated taxi!automated has the goal of delivering a passenger to the airport on time. The agent forms a plan, A90, that involves leaving home 90 minutes before the flight departs and driving at a reasonable speed. Even though the airport is only about 5 miles away, a logical taxi agent will not be able to conclude with certainty that “Plan A90 will get us to the airport in time.” Instead, it reaches the weaker conclusion “Plan A90 will get us to the airport in time, as long as the car doesn’t break down or run out of gas, and I don’t get into an accident, and there are no accidents on the bridge, and the plane doesn’t leave early, and no meteorite hits the car, and . . . .” None of these conditions can be
-
-480  
-
-Section 13.1. Acting under Uncertainty 481
-
-deduced for sure, so the plan’s success cannot be inferred. This is the **qualification problem** (page 268), for which we so far have seen no real solution.
+Suppose, for example, that an automated taxi!automated has the goal of delivering a passenger to the airport on time. The agent forms a plan, A90, that involves leaving home 90 minutes before the flight departs and driving at a reasonable speed. Even though the airport is only about 5 miles away, a logical taxi agent will not be able to conclude with certainty that “Plan A90 will get us to the airport in time.” Instead, it reaches the weaker conclusion “Plan A90 will get us to the airport in time, as long as the car doesn’t break down or run out of gas, and I don’t get into an accident, and there are no accidents on the bridge, and the plane doesn’t leave early, and no meteorite hits the car, and . . . .” None of these conditions can be deduced for sure, so the plan’s success cannot be inferred. This is the **qualification problem** (page 268), for which we so far have seen no real solution.
 
 Nonetheless, in some sense A90 _is_ in fact the right thing to do. What do we mean by this? As we discussed in Chapter 2, we mean that out of all the plans that could be executed, A90 is expected to maximize the agent’s performance measure (where the expectation is relative to the agent’s knowledge about the environment). The performance measure includes getting to the airport in time for the flight, avoiding a long, unproductive wait at the airport, and avoiding speeding tickets along the way. The agent’s knowledge cannot guarantee any of these outcomes for A90, but it can provide some degree of belief that they will be achieved. Other plans, such as A180, might increase the agent’s belief that it will get to the airport on time, but also increase the likelihood of a long wait. _The right thing to do—the **rational decision**—therefore depends on both the relative importance of various goals and the likelihood that, and degree to which, they will be achieved._ The remainder of this section hones these ideas, in preparation for the development of the general theories of uncertain reasoning and rational decisions that we present in this and subsequent chapters.
 
-**13.1.1 Summarizing uncertainty**
+### Summarizing uncertainty
 
 Let’s consider an example of uncertain reasoning: diagnosing a dental patient’s toothache. Diagnosis—whether for medicine, automobile repair, or whatever—almost always involves uncertainty. Let us try to write rules for dental diagnosis using propositional logic, so that we can see how the logical approach breaks down. Consider the following simple rule:
 
@@ -49,151 +43,86 @@ Cavity ⇒ Toothache .
 
 But this rule is not right either; not all cavities cause pain. The only way to fix the rule is to make it logically exhaustive: to augment the left-hand side with all the qualifications required for a cavity to cause a toothache. Trying to use logic to cope with a domain like medical diagnosis thus fails for three main reasons:
 
-- **Laziness**: It is too much work to list the complete set of antecedents or consequentsLAZINESS
+- **Laziness**: It is too much work to list the complete set of antecedents or consequents needed to ensure an exceptionless rule and too hard to use such rules.
 
-needed to ensure an exceptionless rule and too hard to use such rules.
+- **Theoretical ignorance**: Medical science has no complete theory for the domain. 
 
-- **Theoretical ignorance**: Medical science has no complete theory for the domain.THEORETICAL IGNORANCE
+- **Practical ignorance**: Even if we know all the rules, we might be uncertain about  a particular patient because not all the necessary tests have been or can be run.
 
-- **Practical ignorance**: Even if we know all the rules, we might be uncertain about aPRACTICAL IGNORANCE
-
-particular patient because not all the necessary tests have been or can be run.
-
-The connection between toothaches and cavities is just not a logical consequence in either direction. This is typical of the medical domain, as well as most other judgmental domains: law, business, design, automobile repair, gardening, dating, and so on. The agent’s knowledge  
-
-
-
-can at best provide only a **degree of belief** in the relevant sentences. Our main tool forDEGREE OF BELIEF
-
-dealing with degrees of belief is **probability theory**. In the terminology of Section 8.1, thePROBABILITY THEORY
-
-**ontological commitments** of logic and probability theory are the same—that the world is composed of facts that do or do not hold in any particular case—but the **epistemological commitments** are different: a logical agent believes each sentence to be true or false or has no opinion, whereas a probabilistic agent may have a numerical degree of belief between 0 (for sentences that are certainly false) and 1 (certainly true).
+The connection between toothaches and cavities is just not a logical consequence in either direction. This is typical of the medical domain, as well as most other judgmental domains: law, business, design, automobile repair, gardening, dating, and so on. The agent’s knowledge can at best provide only a **degree of belief** in the relevant sentences. Our main tool for dealing with degrees of belief is **probability theory**. In the terminology of Section 8.1, the **ontological commitments** of logic and probability theory are the same—that the world is composed of facts that do or do not hold in any particular case—but the **epistemological commitments** are different: a logical agent believes each sentence to be true or false or has no opinion, whereas a probabilistic agent may have a numerical degree of belief between 0 (for sentences that are certainly false) and 1 (certainly true).
 
 _Probability provides a way of_ **summarizing** _the uncertainty that comes from our laziness and ignorance,_ thereby solving the qualification problem. We might not know for sure what afflicts a particular patient, but we believe that there is, say, an 80% chance—that is, a probability of 0.8—that the patient who has a toothache has a cavity. That is, we expect that out of all the situations that are indistinguishable from the current situation as far as our knowledge goes, the patient will have a cavity in 80% of them. This belief could be derived from statistical data—80% of the toothache patients seen so far have had cavities—or from some general dental knowledge, or from a combination of evidence sources.
 
 One confusing point is that at the time of our diagnosis, there is no uncertainty in the actual world: the patient either has a cavity or doesn’t. So what does it mean to say the probability of a cavity is 0.8? Shouldn’t it be either 0 or 1? The answer is that probability statements are made with respect to a knowledge state, not with respect to the real world. We say “The probability that the patient has a cavity, _given that she has a toothache_, is 0.8.” If we later learn that the patient has a history of gum disease, we can make a different statement: “The probability that the patient has a cavity, given that she has a toothache and a history of gum disease, is 0.4.” If we gather further conclusive evidence against a cavity, we can say “The probability that the patient has a cavity, given all we now know, is almost 0.” Note that these statements do not contradict each other; each is a separate assertion about a different knowledge state.
 
-**13.1.2 Uncertainty and rational decisions**
+### Uncertainty and rational decisions
 
 Consider again the A90 plan for getting to the airport. Suppose it gives us a 97% chance of catching our flight. Does this mean it is a rational choice? Not necessarily: there might be other plans, such as A180, with higher probabilities. If it is vital not to miss the flight, then it is worth risking the longer wait at the airport. What about A1440, a plan that involves leaving home 24 hours in advance? In most circumstances, this is not a good choice, because although it almost guarantees getting there on time, it involves an intolerable wait—not to mention a possibly unpleasant diet of airport food.
 
-To make such choices, an agent must first have **preferences** between the different pos-PREFERENCE
-
-sible **outcomes** of the various plans. An outcome is a completely specified state, includingOUTCOME
-
-such factors as whether the agent arrives on time and the length of the wait at the airport. We use **utility theory** to represent and reason with preferences. (The term **utility** is used here inUTILITY THEORY
-
-the sense of “the quality of being useful,” not in the sense of the electric company or water works.) Utility theory says that every state has a degree of usefulness, or utility, to an agent and that the agent will prefer states with higher utility.  
-
-Section 13.2. Basic Probability Notation 483
+To make such choices, an agent must first have **preferences** between the different possible **outcomes** of the various plans. An outcome is a completely specified state, including such factors as whether the agent arrives on time and the length of the wait at the airport. We use **utility theory** to represent and reason with preferences. (The term **utility** is used here in the sense of “the quality of being useful,” not in the sense of the electric company or water works.) Utility theory says that every state has a degree of usefulness, or utility, to an agent and that the agent will prefer states with higher utility.  
 
 The utility of a state is relative to an agent. For example, the utility of a state in which White has checkmated Black in a game of chess is obviously high for the agent playing White, but low for the agent playing Black. But we can’t go strictly by the scores of 1, 1/2, and 0 that are dictated by the rules of tournament chess—some players (including the authors) might be thrilled with a draw against the world champion, whereas other players (including the former world champion) might not. There is no accounting for taste or preferences: you might think that an agent who prefers jalapeño bubble-gum ice cream to chocolate chocolate chip is odd or even misguided, but you could not say the agent is irrational. A utility function can account for any set of preferences—quirky or typical, noble or perverse. Note that utilities can account for altruism, simply by including the welfare of others as one of the factors.
 
-Preferences, as expressed by utilities, are combined with probabilities in the general theory of rational decisions called **decision theory**:DECISION THEORY
+Preferences, as expressed by utilities, are combined with probabilities in the general theory of rational decisions called **decision theory**:
 
-_Decision theory_ \= _probability theory_ \+ _utility theory_ .
+_Decision theory_ = _probability theory_ + _utility theory_ .
 
-The fundamental idea of decision theory is that _an agent is rational if and only if it chooses the action that yields the highest expected utility, averaged over all the possible outcomes of the action._ This is called the principle of **maximum expected utility** (MEU). Note thatMAXIMUM EXPECTED
+The fundamental idea of decision theory is that _an agent is rational if and only if it chooses the action that yields the highest expected utility, averaged over all the possible outcomes of the action._ This is called the principle of **maximum expected utility** (MEU). Note that “expected” might seem like a vague, hypothetical term, but as it is used here it has a precise meaning: it means the “average,” or “statistical mean” of the outcomes, weighted by the probability of the outcome. We saw this principle in action in Chapter 5 when we touched briefly on optimal decisions in backgammon; it is in fact a completely general principle.
 
-UTILITY
-
-“expected” might seem like a vague, hypothetical term, but as it is used here it has a precise meaning: it means the “average,” or “statistical mean” of the outcomes, weighted by the probability of the outcome. We saw this principle in action in Chapter 5 when we touched briefly on optimal decisions in backgammon; it is in fact a completely general principle.
-
-Figure 13.1 sketches the structure of an agent that uses decision theory to select actions. The agent is identical, at an abstract level, to the agents described in Chapters 4 and 7 that maintain a belief state reflecting the history of percepts to date. The primary difference is that the decision-theoretic agent’s belief state represents not just the _possibilities_ for world states but also their _probabilities_. Given the belief state, the agent can make probabilistic predictions of action outcomes and hence select the action with highest expected utility. This chapter and the next concentrate on the task of representing and computing with probabilistic information in general. Chapter 15 deals with methods for the specific tasks of representing and updating the belief state over time and predicting the environment. Chapter 16 covers utility theory in more depth, and Chapter 17 develops algorithms for planning sequences of actions in uncertain environments.
-
-13.2 BASIC PROBABILITY NOTATION
+## BASIC PROBABILITY NOTATION
 
 For our agent to represent and use probabilistic information, we need a formal language. The language of probability theory has traditionally been informal, written by human mathematicians to other human mathematicians. Appendix A includes a standard introduction to elementary probability theory; here, we take an approach more suited to the needs of AI and more consistent with the concepts of formal logic.  
 
 
-
 **function** DT-AGENT(percept ) **returns** an action
 
-**persistent**: belief state, probabilistic beliefs about the current state of the world action , the agent’s action
+**persistent**: belief state, probabilistic beliefs about the current state of the world 
+action , the agent’s action
 
 update belief state based on action and percept
 
-calculate outcome probabilities for actions, given action descriptions and current belief state
+calculate outcome probabilities for actions, 
 
-select action with highest expected utility given probabilities of outcomes and utility information
+given action descriptions and current belief state
+
+select action with highest expected utility 
+
+given probabilities of outcomes and utility information
 
 **return** action
 
 **Figure 13.1** A decision-theoretic agent that selects rational actions.
 
-**13.2.1 What probabilities are about**
+### What probabilities are about
 
-Like logical assertions, probabilistic assertions are about possible worlds. Whereas logical assertions say which possible worlds are strictly ruled out (all those in which the assertion is false), probabilistic assertions talk about how probable the various worlds are. In probability theory, the set of all possible worlds is called the **sample space**. The possible worlds areSAMPLE SPACE
+Like logical assertions, probabilistic assertions are about possible worlds. Whereas logical assertions say which possible worlds are strictly ruled out (all those in which the assertion is false), probabilistic assertions talk about how probable the various worlds are. In probability theory, the set of all possible worlds is called the **sample space**. The possible worlds are _mutually exclusive_ and _exhaustive_—two possible worlds cannot both be the case, and one possible world must be the case. For example, if we are about to roll two (distinguishable) dice, there are 36 possible worlds to consider: (1,1), (1,2), . . ., (6,6). The Greek letter Ω (uppercase omega) is used to refer to the sample space, and ω (lowercase omega) refers to elements of the space, that is, particular possible worlds.
 
-_mutually exclusive_ and _exhaustive_—two possible worlds cannot both be the case, and one possible world must be the case. For example, if we are about to roll two (distinguishable) dice, there are 36 possible worlds to consider: (1,1), (1,2), . . ., (6,6). The Greek letter Ω
+A fully specified **probability model** associates a numerical probability P (ω) with each possible world.1 The basic axioms of probability theory say that every possible world has a probability between 0 and 1 and that the total probability of the set of possible worlds is 1:
 
-(uppercase omega) is used to refer to the sample space, and ω (lowercase omega) refers to elements of the space, that is, particular possible worlds.
-
-A fully specified **probability model** associates a numerical probability P (ω) with eachPROBABILITY MODEL
-
-possible world.1 The basic axioms of probability theory say that every possible world has a probability between 0 and 1 and that the total probability of the set of possible worlds is 1:
-
-0 ≤ P (ω) ≤ 1 for every ω and ∑
-
-ω∈Ω
-
-P (ω) = 1 . (13.1)
+![Alt text](image/13img/13.1.png)
 
 For example, if we assume that each die is fair and the rolls don’t interfere with each other, then each of the possible worlds (1,1), (1,2), . . ., (6,6) has probability 1/36. On the other hand, if the dice conspire to produce the same number, then the worlds (1,1), (2,2), (3,3), etc., might have higher probabilities, leaving the others with lower probabilities.
 
-Probabilistic assertions and queries are not usually about particular possible worlds, but about sets of them. For example, we might be interested in the cases where the two dice add up to 11, the cases where doubles are rolled, and so on. In probability theory, these sets are called **events**—a term already used extensively in Chapter 12 for a different concept. In AI,EVENT
-
-the sets are always described by **propositions** in a formal language. (One such language is described in Section 13.2.2.) For each proposition, the corresponding set contains just those possible worlds in which the proposition holds. The probability associated with a proposition
-
+Probabilistic assertions and queries are not usually about particular possible worlds, but about sets of them. For example, we might be interested in the cases where the two dice add up to 11, the cases where doubles are rolled, and so on. In probability theory, these sets are called **events**—a term already used extensively in Chapter 12 for a different concept. In AI, the sets are always described by **propositions** in a formal language. (One such language is described in Section 13.2.2.) For each proposition, the corresponding set contains just those possible worlds in which the proposition holds. The probability associated with a proposition
+```
 1 For now, we assume a discrete, countable set of worlds. The proper treatment of the continuous case brings in certain complications that are less relevant for most purposes in AI.  
-
-Section 13.2. Basic Probability Notation 485
+```
 
 is defined to be the sum of the probabilities of the worlds in which it holds:
 
-For any proposition φ, P (φ) =
+![Alt text](image/13img/13.2.png)
 
-∑
+For example, when rolling fair dice, we have P (Total =11) = P ((5, 6)) + P ((6, 5)) = 1/36 + 1/36 = 1/18. Note that probability theory does not require complete knowledge of the probabilities of each possible world. For example, if we believe the dice conspire to produce the same number, we might _assert_ that P (doubles) = 1/4 without knowing whether the dice prefer double 6 to double 2. Just as with logical assertions, this assertion _constrains_ the underlying probability model without fully determining it.
 
-ω∈φ
+Probabilities such as P (Total = 11) and P (doubles) are called **unconditional** or **priorprobabilities** (and sometimes just “priors” for short); they refer to degrees of belief in propositions _in the absence of any other information_. Most of the time, however, we have _some_ information, usually called **evidence**, that has already been revealed. For example, the first die may already be showing a 5 and we are waiting with bated breath for the other one to stop spinning. In that case, we are interested not in the unconditional probability of rolling doubles, but the **conditional** or **posterior** probability (or just “posterior” for short) of rolling doubles _given that the first die is a 5_. This probability is written P (doubles |Die1 = 5), where the “ | ” is pronounced “given.” Similarly, if I am going to the dentist for a regular checkup, the probability P (cavity)= 0.2 might be of interest; but if I go to the dentist because I have a toothache, it’s P (cavity | toothache)= 0.6 that matters. Note that the precedence of “ | ” is such that any expression of the form P (. . . | . . .) always means P ((. . .)|(. . .)).
 
-P (ω) . (13.2)
-
-For example, when rolling fair dice, we have P (Total =11) = P ((5, 6)) + P ((6, 5)) =
-
-1/36 + 1/36 = 1/18. Note that probability theory does not require complete knowledge of the probabilities of each possible world. For example, if we believe the dice conspire to produce the same number, we might _assert_ that P (doubles) = 1/4 without knowing whether the dice prefer double 6 to double 2. Just as with logical assertions, this assertion _constrains_ the underlying probability model without fully determining it.
-
-Probabilities such as P (Total = 11) and P (doubles) are called **unconditional** or **prior**UNCONDITIONAL PROBABILITY
-
-**probabilities** (and sometimes just “priors” for short); they refer to degrees of belief in propo-PRIOR PROBABILITY
-
-sitions _in the absence of any other information_. Most of the time, however, we have _some_ information, usually called **evidence**, that has already been revealed. For example, the firstEVIDENCE
-
-die may already be showing a 5 and we are waiting with bated breath for the other one to stop spinning. In that case, we are interested not in the unconditional probability of rolling doubles, but the **conditional** or **posterior** probability (or just “posterior” for short) of rollingCONDITIONAL
-
-PROBABILITY POSTERIOR PROBABILITY doubles _given that the first die is a 5_. This probability is written P (doubles |Die1 = 5), where
-
-the “ | ” is pronounced “given.” Similarly, if I am going to the dentist for a regular checkup, the probability P (cavity)= 0.2 might be of interest; but if I go to the dentist because I have a toothache, it’s P (cavity | toothache)= 0.6 that matters. Note that the precedence of “ | ” is such that any expression of the form P (. . . | . . .) always means P ((. . .)|(. . .)).
-
-It is important to understand that P (cavity)= 0.2 is still _valid_ after toothache is observed; it just isn’t especially useful. When making decisions, an agent needs to condition on _all_ the evidence it has observed. It is also important to understand the difference between conditioning and logical implication. The assertion that P (cavity | toothache)= 0.6
-
-does not mean “Whenever toothache is true, conclude that cavity is true with probability 0.6” rather it means “Whenever toothache is true _and we have no further information_, conclude that cavity is true with probability 0.6.” The extra condition is important; for example, if we had the further information that the dentist found no cavities, we definitely would not want to conclude that cavity is true with probability 0.6; instead we need to use P (cavity |toothache ∧ ¬cavity)= 0.
+It is important to understand that P (cavity)= 0.2 is still _valid_ after toothache is observed; it just isn’t especially useful. When making decisions, an agent needs to condition on _all_ the evidence it has observed. It is also important to understand the difference between conditioning and logical implication. The assertion that P (cavity | toothache)= 0.6 does not mean “Whenever toothache is true, conclude that cavity is true with probability 0.6” rather it means “Whenever toothache is true _and we have no further information_, conclude that cavity is true with probability 0.6.” The extra condition is important; for example, if we had the further information that the dentist found no cavities, we definitely would not want to conclude that cavity is true with probability 0.6; instead we need to use P (cavity |toothache ∧ ¬cavity)= 0.
 
 Mathematically speaking, conditional probabilities are defined in terms of unconditional probabilities as follows: for any propositions a and b, we have
 
-P (a | b) = P (a ∧ b)
-
-P (b) , (13.3)
-
-which holds whenever P (b) > 0. For example,
-
-P (doubles |Die1 = 5) = P (doubles ∧Die1 = 5)
-
-P (Die1 = 5) .
+![Alt text](image/13img/13.3.png)
 
 The definition makes sense if you remember that observing b rules out all those possible worlds where b is false, leaving a set whose total probability is just P (b). Within that set, the a-worlds satisfy a ∧ b and constitute a fraction P (a ∧ b)/P (b).  
-
-
 
 The definition of conditional probability, Equation (13.3), can be written in a different form called the **product rule**:PRODUCT RULE
 
@@ -201,105 +130,64 @@ P (a ∧ b) = P (a | b)P (b) ,
 
 The product rule is perhaps easier to remember: it comes from the fact that, for a and b to be true, we need b to be true, and we also need a to be true given b.
 
-**13.2.2 The language of propositions in probability assertions**
+### The language of propositions in probability assertions
 
 In this chapter and the next, propositions describing sets of possible worlds are written in a notation that combines elements of propositional logic and constraint satisfaction notation. In the terminology of Section 2.4.7, it is a **factored representation**, in which a possible world is represented by a set of variable/value pairs.
 
-Variables in probability theory are called **random variables** and their names begin withRANDOM VARIABLE
-
-an uppercase letter. Thus, in the dice example, Total and Die1 are random variables. Every random variable has a **domain**—the set of possible values it can take on. The domain ofDOMAIN
-
-Total for two dice is the set {2, . . . , 12} and the domain of Die1 is {1, . . . , 6}. A Boolean random variable has the domain {true , false} (notice that values are always lowercase); for example, the proposition that doubles are rolled can be written as Doubles = true . By convention, propositions of the form A= true are abbreviated simply as a, while A= false is abbreviated as ¬a. (The uses of doubles , cavity , and toothache in the preceding section are abbreviations of this kind.) As in CSPs, domains can be sets of arbitrary tokens; we might choose the domain of Age to be {juvenile, teen , adult} and the domain of Weather might be {sunny , rain , cloudy , snow}. When no ambiguity is possible, it is common to use a value by itself to stand for the proposition that a particular variable has that value; thus, sunny can stand for Weather = sunny .
+Variables in probability theory are called **random variables** and their names begin with an uppercase letter. Thus, in the dice example, Total and Die1 are random variables. Every random variable has a **domain**—the set of possible values it can take on. The domain of Total for two dice is the set {2, . . . , 12} and the domain of Die1 is {1, . . . , 6}. A Boolean random variable has the domain {true , false} (notice that values are always lowercase); for example, the proposition that doubles are rolled can be written as Doubles = true . By convention, propositions of the form A= true are abbreviated simply as a, while A= false is abbreviated as ¬a. (The uses of doubles , cavity , and toothache in the preceding section are abbreviations of this kind.) As in CSPs, domains can be sets of arbitrary tokens; we might choose the domain of Age to be {juvenile, teen , adult} and the domain of Weather might be {sunny , rain , cloudy , snow}. When no ambiguity is possible, it is common to use a value by itself to stand for the proposition that a particular variable has that value; thus, sunny can stand for Weather = sunny .
 
 The preceding examples all have finite domains. Variables can have infinite domains, too—either discrete (like the integers) or continuous (like the reals). For any variable with an ordered domain, inequalities are also allowed, such as NumberOfAtomsInUniverse ≥ 1070.
 
 Finally, we can combine these sorts of elementary propositions (including the abbreviated forms for Boolean variables) by using the connectives of propositional logic. For example, we can express “The probability that the patient has a cavity, given that she is a teenager with no toothache, is 0.1” as follows:
 
-P (cavity | ¬toothache ∧ teen) = 0.1 .
+P(cavity | ¬toothache ∧ teen) = 0.1 .
 
 Sometimes we will want to talk about the probabilities of _all_ the possible values of a random variable. We could write:
 
-P (Weather = sunny) = 0.6
+P(Weather = sunny) = 0.6
 
-P (Weather = rain) = 0.1
+P(Weather = rain) = 0.1
 
-P (Weather = cloudy) = 0.29
+P(Weather = cloudy) = 0.29
 
-P (Weather = snow ) = 0.01 ,
+P(Weather = snow ) = 0.01 ,
 
 but as an abbreviation we will allow
 
 **P**(Weather )= 〈0.6, 0.1, 0.29, 0.01〉 ,  
 
-Section 13.2. Basic Probability Notation 487
 
-where the bold **P** indicates that the result is a vector of numbers, and where we assume a predefined ordering 〈sunny , rain , cloudy , snow 〉 on the domain of Weather . We say that the **P** statement defines a **probability distribution** for the random variable Weather . The **P** nota-PROBABILITY
+where the bold **P** indicates that the result is a vector of numbers, and where we assume a predefined ordering 〈sunny , rain , cloudy , snow 〉 on the domain of Weather . We say that the **P** statement defines a **probability distribution** for the random variable Weather . The **P** notation is also used for conditional distributions: **P**(X |Y ) gives the values of P (X = x~i~ |Y = y~j~) for each possible i, j pair. For continuous variables, it is not possible to write out the entire distribution as a vector, because there are infinitely many values. Instead, we can define the probability that a random variable takes on some value x as a parameterized function of x. For example, the sentence
 
-DISTRIBUTION
+P (NoonTemp = x) = Uniform~[18C,26C]~(x)
 
-tion is also used for conditional distributions: **P**(X |Y ) gives the values of P (X = xi |Y = yj)
-
-for each possible i, j pair. For continuous variables, it is not possible to write out the entire distribution as a vector,
-
-because there are infinitely many values. Instead, we can define the probability that a random variable takes on some value x as a parameterized function of x. For example, the sentence
-
-P (NoonTemp = x) = Uniform \[18C,26C\](x)
-
-expresses the belief that the temperature at noon is distributed uniformly between 18 and 26 degrees Celsius. We call this a **probability density function**.PROBABILITY
-
-DENSITY FUNCTION
+expresses the belief that the temperature at noon is distributed uniformly between 18 and 26 degrees Celsius. We call this a **probability density function**. 
 
 Probability density functions (sometimes called **pdfs**) differ in meaning from discrete distributions. Saying that the probability density is uniform from 18C to 26C means that there is a 100% chance that the temperature will fall somewhere in that 8C-wide region and a 50% chance that it will fall in any 4C-wide region, and so on. We write the probability density for a continuous random variable X at value x as P (X = x) or just P (x); the intuitive definition of P (x) is the probability that X falls within an arbitrarily small region beginning at x, divided by the width of the region:
 
-P (x) = lim dx→0
+![Alt text](image/13img/13.3.1.png)
 
-P (x ≤ X ≤ x + dx)/dx .
+where C stands for centigrade (not for a constant). In P (NoonTemp =20.18C)= 1/8C , note that 1/8C is not a probability, it is a probability density. The probability that NoonTemp is _exactly_ 20.18C is zero, because 20.18C is a region of width 0. Some authors use different symbols for discrete distributions and density functions; we use P in both cases, since confusion seldom arises and the equations are usually identical. Note that probabilities are unitless numbers, whereas density functions are measured with a unit, in this case reciprocal degrees.
 
-For NoonTemp we have
+In addition to distributions on single variables, we need notation for distributions on multiple variables. Commas are used for this. For example, **P**(Weather ,Cavity) denotes the probabilities of all combinations of the values of Weather and Cavity . This is a 4 × 2 table of probabilities called the **joint probability distribution** of Weather and Cavity . We can also mix variables with and without values; **P**(sunny ,Cavity) would be a two-element vector giving the probabilities of a sunny day with a cavity and a sunny day with no cavity. The **P** notation makes certain expressions much more concise than they might otherwise be. For example, the product rules for all possible values of Weather and Cavity can be written as a single equation:
 
-P (NoonTemp = x) = Uniform \[18C,26C\](x) =
-
-{ 1
-
-8C if 18C ≤ x ≤ 26C
-
-0 otherwise ,
-
-where C stands for centigrade (not for a constant). In P (NoonTemp =20.18C)= 1
-
-8C , note
-
-that 1
-
-8C is not a probability, it is a probability density. The probability that NoonTemp is
-
-_exactly_ 20.18C is zero, because 20.18C is a region of width 0. Some authors use different symbols for discrete distributions and density functions; we use P in both cases, since confusion seldom arises and the equations are usually identical. Note that probabilities are unitless numbers, whereas density functions are measured with a unit, in this case reciprocal degrees.
-
-In addition to distributions on single variables, we need notation for distributions on multiple variables. Commas are used for this. For example, **P**(Weather ,Cavity) denotes the probabilities of all combinations of the values of Weather and Cavity . This is a 4× 2
-
-table of probabilities called the **joint probability distribution** of Weather and Cavity . WeJOINT PROBABILITY DISTRIBUTION
-
-can also mix variables with and without values; **P**(sunny ,Cavity) would be a two-element vector giving the probabilities of a sunny day with a cavity and a sunny day with no cavity. The **P** notation makes certain expressions much more concise than they might otherwise be. For example, the product rules for all possible values of Weather and Cavity can be written as a single equation:
-
-**P**(Weather ,Cavity) = **P**(Weather |Cavity)**P**(Cavity) ,  
-
-
+**P**(Weather ,Cavity) = **P**(Weather | Cavity)**P**(Cavity) ,  
 
 instead of as these 4× 2= 8 equations (using abbreviations W and C):
 
-P (W = sunny ∧C = true) = P (W = sunny|C = true)P (C = true)
+P (W = sunny ∧ C = true) = P (W = sunny|C = true)P (C = true)
 
 P (W = rain ∧ C = true) = P (W = rain |C = true)P (C = true)
 
-P (W = cloudy ∧C = true) = P (W = cloudy |C = true)P (C = true)
+P (W = cloudy ∧ C = true) = P (W = cloudy |C = true)P (C = true)
 
 P (W = snow ∧ C = true) = P (W = snow |C = true)P (C = true)
 
-P (W = sunny ∧C = false) = P (W = sunny|C = false)P (C = false)
+P (W = sunny ∧ C = false) = P (W = sunny|C = false)P (C = false)
 
 P (W = rain ∧ C = false) = P (W = rain |C = false)P (C = false)
 
-P (W = cloudy ∧C = false) = P (W = cloudy |C = false)P (C = false)
+P (W = cloudy ∧ C = false) = P (W = cloudy |C = false)P (C = false)
 
 P (W = snow ∧ C = false) = P (W = snow |C = false)P (C = false) .
 
@@ -307,39 +195,15 @@ As a degenerate case, **P**(sunny , cavity) has no variables and thus is a one-e
 
 Now we have defined a syntax for propositions and probability assertions and we have given part of the semantics: Equation (13.2) defines the probability of a proposition as the sum of the probabilities of worlds in which it holds. To complete the semantics, we need to say what the worlds are and how to determine whether a proposition holds in a world. We borrow this part directly from the semantics of propositional logic, as follows. _A possible world is defined to be an assignment of values to all of the random variables under consideration._ It is easy to see that this definition satisfies the basic requirement that possible worlds be mutually exclusive and exhaustive (Exercise 13.5). For example, if the random variables are Cavity , Toothache , and Weather , then there are 2× 2× 4= 16 possible worlds. Furthermore, the truth of any given proposition, no matter how complex, can be determined easily in such worlds using the same recursive definition of truth as for formulas in propositional logic.
 
-From the preceding definition of possible worlds, it follows that a probability model is completely determined by the joint distribution for all of the random variables—the so-called **full joint probability distribution**. For example, if the variables are Cavity , Toothache ,
+From the preceding definition of possible worlds, it follows that a probability model is completely determined by the joint distribution for all of the random variables—the so-called **full joint probability distribution**. For example, if the variables are Cavity , Toothache , and Weather , then the full joint distribution is given by **P**(Cavity ,Toothache ,Weather ). This joint distribution can be represented as a 2× 2× 4 table with 16 entries. Because every proposition’s probability is a sum over possible worlds, a full joint distribution suffices, in principle, for calculating the probability of any proposition.
 
-FULL JOINT PROBABILITY DISTRIBUTION
-
-and Weather , then the full joint distribution is given by **P**(Cavity ,Toothache ,Weather ). This joint distribution can be represented as a 2× 2× 4 table with 16 entries. Because every proposition’s probability is a sum over possible worlds, a full joint distribution suffices, in principle, for calculating the probability of any proposition.
-
-**13.2.3 Probability axioms and their reasonableness**
+### Probability axioms and their reasonableness
 
 The basic axioms of probability (Equations (13.1) and (13.2)) imply certain relationships among the degrees of belief that can be accorded to logically related propositions. For example, we can derive the familiar relationship between the probability of a proposition and the probability of its negation:
 
-P (¬a) = ∑
-
-ω∈¬a P (ω) by Equation (13.2) = ∑
-
-ω∈¬a P (ω) + ∑
-
-ω∈a P (ω)− ∑
-
-ω∈a P (ω)
-
-\= ∑
-
-ω∈Ω P (ω)−
-
-∑ ω∈a P (ω) grouping the first two terms
-
-\= 1− P (a) by (13.1) and (13.2).  
-
-Section 13.2. Basic Probability Notation 489
+![Alt text](<image/13img/13.1a13.2 .png>)
 
 We can also derive the well-known formula for the probability of a disjunction, sometimes called the **inclusion–exclusion principle**:
-
-INCLUSION– EXCLUSION PRINCIPLE
 
 P (a ∨ b) = P (a) + P (b)− P (a ∧ b) . (13.4)
 
@@ -349,11 +213,9 @@ Equations (13.1) and (13.4) are often called **Kolmogorov’s axioms** in honor 
 
 sian mathematician Andrei Kolmogorov, who showed how to build up the rest of probability theory from this simple foundation and how to handle the difficulties caused by continuous variables.2 While Equation (13.2) has a definitional flavor, Equation (13.4) reveals that the axioms really do constrain the degrees of belief an agent can have concerning logically related propositions. This is analogous to the fact that a logical agent cannot simultaneously believe A, B, and ¬(A ∧ B), because there is no possible world in which all three are true. With probabilities, however, statements refer not to the world directly, but to the agent’s own state of knowledge. Why, then, can an agent not hold the following set of beliefs (even though they violate Kolmogorov’s axioms)?
 
-P (a) = 0.4 P (a ∧ b) = 0.0
+P (a) = 0.4  P(a ∧ b) = 0.0
 
-P (b) = 0.3 P (a ∨ b) = 0.8 .
-
-(13.5)
+P (b) = 0.3  P(a ∨ b) = 0.8 .     (13.5)
 
 This kind of question has been the subject of decades of intense debate between those who advocate the use of probabilities as the only legitimate form for degrees of belief and those who advocate alternative approaches.
 
@@ -361,21 +223,11 @@ One argument for the axioms of probability, first stated in 1931 by Bruno de Fin
 
 But de Finetti proved something much stronger: _If Agent 1 expresses a set of degrees of belief that violate the axioms of probability theory then there is a combination of bets by Agent 2 that guarantees that Agent 1 will lose money every time._ For example, suppose that Agent 1 has the set of degrees of belief from Equation (13.5). Figure 13.2 shows that if Agent
 
-2 The difficulties include the **Vitali set**, a well-defined subset of the interval \[0, 1\] with no well-defined size. 3 One might argue that the agent’s preferences for different bank balances are such that the possibility of losing $1 is not counterbalanced by an equal possibility of winning $1. One possible response is to make the bet amounts small enough to avoid this problem. Savage’s analysis (1954) circumvents the issue altogether.  
-
-
+2 The difficulties include the **Vitali set**, a well-defined subset of the interval [0, 1] with no well-defined size. 3 One might argue that the agent’s preferences for different bank balances are such that the possibility of losing $1 is not counterbalanced by an equal possibility of winning $1. One possible response is to make the bet amounts small enough to avoid this problem. Savage’s analysis (1954) circumvents the issue altogether.  
 
 2 chooses to bet $4 on a, $3 on b, and $2 on ¬(a ∨ b), then Agent 1 always loses money, regardless of the outcomes for a and b. De Finetti’s theorem implies that no rational agent can have beliefs that violate the axioms of probability.
 
-Agent 1 Agent 2 Outcomes and payoffs to Agent 1 Proposition Belief Bet Stakes a, b a,¬b ¬a, b ¬a,¬b
-
-a 0.4 a 4 to 6 –6 –6 4 4 b 0.3 b 3 to 7 –7 3 –7 3
-
-a ∨ b 0.8 ¬(a ∨ b) 2 to 8 2 2 2 –8
-
-–11 –1 –1 –1
-
-**Figure 13.2** Because Agent 1 has inconsistent beliefs, Agent 2 is able to devise a set of bets that guarantees a loss for Agent 1, no matter what the outcome of a and b.
+![Alt text](image/13img/figure-13.2.png)
 
 One common objection to de Finetti’s theorem is that this betting game is rather contrived. For example, what if one refuses to bet? Does that end the argument? The answer is that the betting game is an abstract model for the decision-making situation in which every agent is _unavoidably_ involved at every moment. Every action (including inaction) is a kind of bet, and every outcome can be seen as a payoff of the bet. Refusing to bet is like refusing to allow time to pass.
 
@@ -383,13 +235,9 @@ Other strong philosophical arguments have been put forward for the use of probab
 
 The world being the way it is, however, practical demonstrations sometimes speak louder than proofs. The success of reasoning systems based on probability theory has been much more effective in making converts. We now look at how the axioms can be deployed to make inferences.
 
-13.3 INFERENCE USING FULL JOINT DISTRIBUTIONS
+## INFERENCE USING FULL JOINT DISTRIBUTIONS
 
-In this section we describe a simple method for **probabilistic inference**—that is, the compu-PROBABILISTIC INFERENCE
-
-tation of posterior probabilities for query propositions given observed evidence. We use the full joint distribution as the “knowledge base” from which answers to all questions may be derived. Along the way we also introduce several useful techniques for manipulating equations involving probabilities.  
-
-Section 13.3. Inference Using Full Joint Distributions 491
+In this section we describe a simple method for **probabilistic inference**—that is, the computation of posterior probabilities for query propositions given observed evidence. We use the full joint distribution as the “knowledge base” from which answers to all questions may be derived. Along the way we also introduce several useful techniques for manipulating equations involving probabilities.  
 
 WHERE DO PROBABILITIES COME FROM?
 
@@ -403,15 +251,7 @@ In the end, even a strict frequentist position involves subjective analysis beca
 
 The **principle of indifference** attributed to Laplace (1816) states that propositions that are syntactically “symmetric” with respect to the evidence should be accorded equal probability. Various refinements have been proposed, culminating in the attempt by Carnap and others to develop a rigorous **inductive logic**, capable of computing the correct probability for any proposition from any collection of observations. Currently, it is believed that no unique inductive logic exists; rather, any such logic rests on a subjective prior probability distribution whose effect is diminished as more observations are collected.  
 
-
-
-toothache ¬toothache
-
-catch ¬catch catch ¬catch
-
-cavity 0.108 0.012 0.072 0.008 ¬cavity 0.016 0.064 0.144 0.576
-
-**Figure 13.3** A full joint distribution for the Toothache , Cavity , Catch world.
+![Alt text](image/13img/figure-13.3.png)
 
 We begin with a simple example: a domain consisting of just the three Boolean variables Toothache , Cavity , and Catch (the dentist’s nasty steel probe catches in my tooth). The full joint distribution is a 2× 2× 2 table as shown in Figure 13.3.
 
@@ -419,117 +259,48 @@ Notice that the probabilities in the joint distribution sum to 1, as required by
 
 P (cavity ∨ toothache) = 0.108 + 0.012 + 0.072 + 0.008 + 0.016 + 0.064 = 0.28 .
 
-One particularly common task is to extract the distribution over some subset of variables or a single variable. For example, adding the entries in the first row gives the unconditional or **marginal probability**4 of cavity :MARGINAL
-
-PROBABILITY
+One particularly common task is to extract the distribution over some subset of variables or a single variable. For example, adding the entries in the first row gives the unconditional or **marginal probability**4 of cavity :
 
 P (cavity) = 0.108 + 0.012 + 0.072 + 0.008 = 0.2 .
 
-This process is called **marginalization**, or **summing out**—because we sum up the probabil-MARGINALIZATION
+This process is called **marginalization**, or **summing out**—because we sum up the probabilities for each possible value of the other variables, thereby taking them out of the equation. We can write the following general marginalization rule for any sets of variables **Y** and **Z**:
 
-ities for each possible value of the other variables, thereby taking them out of the equation. We can write the following general marginalization rule for any sets of variables **Y** and **Z**:
+![Alt text](image/13img/13.6.png)
 
-**P**(**Y**) =
-
-∑
-
-**z**∈**Z P**(**Y**, **z**) , (13.6)
-
-where ∑
-
-**z**∈**Z** means to sum over all the possible combinations of values of the set of variables **Z**. We sometimes abbreviate this as
-
-∑ **z**, leaving **Z** implicit. We just used the rule as
-
-**P**(Cavity) =
-
-∑
-
-**z**∈{Catch,Toothache}
-
-**P**(Cavity , **z**) . (13.7)
-
-A variant of this rule involves conditional probabilities instead of joint probabilities, using the product rule:
-
-**P**(**Y**) =
-
-∑
-
-**z**
-
-**P**(**Y** | **z**)P (**z**) . (13.8)
-
-This rule is called **conditioning**. Marginalization and conditioning turn out to be useful rulesCONDITIONING
-
-for all kinds of derivations involving probability expressions. In most cases, we are interested in computing _conditional_ probabilities of some vari-
-
-ables, given evidence about others. Conditional probabilities can be found by first using
-
+This rule is called **conditioning**. Marginalization and conditioning turn out to be useful rules for all kinds of derivations involving probability expressions. In most cases, we are interested in computing _conditional_ probabilities of some variables, given evidence about others. Conditional probabilities can be found by first using
+```
 4 So called because of a common practice among actuaries of writing the sums of observed frequencies in the margins of insurance tables.  
-
-Section 13.3. Inference Using Full Joint Distributions 493
+```
 
 Equation (13.3) to obtain an expression in terms of unconditional probabilities and then evaluating the expression from the full joint distribution. For example, we can compute the probability of a cavity, given evidence of a toothache, as follows:
 
-P (cavity | toothache) = P (cavity ∧ toothache)
+![Alt text](image/13img/13.7.png)
 
-P (toothache)
-
-\= 0.108 + 0.012
-
-0.108 + 0.012 + 0.016 + 0.064 = 0.6 .
-
-Just to check, we can also compute the probability that there is no cavity, given a toothache:
-
-P (¬cavity | toothache) = P (¬cavity ∧ toothache)
-
-P (toothache)
-
-\= 0.016 + 0.064
-
-0.108 + 0.012 + 0.016 + 0.064 = 0.4 .
-
-The two values sum to 1.0, as they should. Notice that in these two calculations the term 1/P (toothache ) remains constant, no matter which value of Cavity we calculate. In fact, it can be viewed as a **normalization** constant for the distribution **P**(Cavity | toothache),NORMALIZATION
-
-ensuring that it adds up to 1. Throughout the chapters dealing with probability, we use α to denote such constants. With this notation, we can write the two preceding equations in one:
+The two values sum to 1.0, as they should. Notice that in these two calculations the term 1/P (toothache ) remains constant, no matter which value of Cavity we calculate. In fact, it can be viewed as a **normalization** constant for the distribution **P**(Cavity | toothache), ensuring that it adds up to 1. Throughout the chapters dealing with probability, we use α to denote such constants. With this notation, we can write the two preceding equations in one:
 
 **P**(Cavity | toothache) = α **P**(Cavity , toothache)
-
-\= α \[**P**(Cavity , toothache , catch) + **P**(Cavity , toothache ,¬catch)\]
-
-\= α \[〈0.108, 0.016〉+ 〈0.012, 0.064〉\] = α 〈0.12, 0.08〉 = 〈0.6, 0.4〉 .
+= α [**P**(Cavity , toothache , catch) + **P**(Cavity , toothache ,¬catch)]
+= α [〈0.108, 0.016〉+ 〈0.012, 0.064〉] = α 〈0.12, 0.08〉 = 〈0.6, 0.4〉 .
 
 In other words, we can calculate **P**(Cavity | toothache) even if we don’t know the value of P (toothache)! We temporarily forget about the factor 1/P (toothache ) and add up the values for cavity and ¬cavity , getting 0.12 and 0.08. Those are the correct relative proportions, but they don’t sum to 1, so we normalize them by dividing each one by 0.12 + 0.08, getting the true probabilities of 0.6 and 0.4. Normalization turns out to be a useful shortcut in many probability calculations, both to make the computation easier and to allow us to proceed when some probability assessment (such as P (toothache)) is not available.
 
 From the example, we can extract a general inference procedure. We begin with the case in which the query involves a single variable, X (Cavity in the example). Let **E** be the list of evidence variables (just Toothache in the example), let **e** be the list of observed values for them, and let **Y** be the remaining unobserved variables (just Catch in the example). The query is **P**(X | **e**) and can be evaluated as
 
-**P**(X | **e**) = α **P**(X, **e**) = α
-
-∑
-
-**y**
-
-**P**(X, **e**, **y**) , (13.9)
+![Alt text](image/13img/13.9.png)
 
 where the summation is over all possible **y**s (i.e., all possible combinations of values of the unobserved variables **Y**). Notice that together the variables X, **E**, and **Y** constitute the complete set of variables for the domain, so **P**(X, **e**, **y**) is simply a subset of probabilities from the full joint distribution.
 
-Given the full joint distribution to work with, Equation (13.9) can answer probabilistic queries for discrete variables. It does not scale well, however: for a domain described by n
+Given the full joint distribution to work with, Equation (13.9) can answer probabilistic queries for discrete variables. It does not scale well, however: for a domain described by n Boolean variables, it requires an input table of size O(2^n^) and takes O(2^n^) time to process the table. In a realistic problem we could easily have n > 100, making O(2^n^) impractical. The full joint distribution in tabular form is just not a practical tool for building reasoning systems. Instead, it should be viewed as the theoretical foundation on which more effective approaches may be built, just as truth tables formed a theoretical foundation for more practical algorithms like DPLL. The remainder of this chapter introduces some of the basic ideas required in preparation for the development of realistic systems in Chapter 14.
 
-Boolean variables, it requires an input table of size O(2n) and takes O(2n) time to process the  
-
-
-
-table. In a realistic problem we could easily have n > 100, making O(2n) impractical. The full joint distribution in tabular form is just not a practical tool for building reasoning systems. Instead, it should be viewed as the theoretical foundation on which more effective approaches may be built, just as truth tables formed a theoretical foundation for more practical algorithms like DPLL. The remainder of this chapter introduces some of the basic ideas required in preparation for the development of realistic systems in Chapter 14.
-
-13.4 INDEPENDENCE
+## INDEPENDENCE
 
 Let us expand the full joint distribution in Figure 13.3 by adding a fourth variable, Weather . The full joint distribution then becomes **P**(Toothache ,Catch,Cavity ,Weather ), which has 2 × 2 × 2 × 4 = 32 entries. It contains four “editions” of the table shown in Figure 13.3, one for each kind of weather. What relationship do these editions have to each other and to the original three-variable table? For example, how are P (toothache , catch , cavity , cloudy)
 
-and P (toothache , catch , cavity) related? We can use the product rule:
+and P(toothache , catch , cavity) related? We can use the product rule:
 
 P (toothache , catch , cavity , cloudy)
 
-\= P (cloudy | toothache , catch , cavity)P (toothache , catch , cavity) .
+= P (cloudy | toothache , catch , cavity) P(toothache , catch , cavity) .
 
 Now, unless one is in the deity business, one should not imagine that one’s dental problems influence the weather. And for indoor dentistry, at least, it seems safe to say that the weather does not influence the dental variables. Therefore, the following assertion seems reasonable:
 
@@ -549,7 +320,7 @@ The property we used in Equation (13.10) is called **independence** (also **marg
 
 **dependence** and **absolute independence**). In particular, the weather is independent of one’s dental problems. Independence between propositions a and b can be written as
 
-P (a | b)= P (a) or P (b | a)= P (b) or P (a ∧ b)= P (a)P (b) . (13.11)
+P (a | b)= P (a) or P (b | a)= P (b) or P (a ∧ b)= P (a) P(b) . (13.11)
 
 All these forms are equivalent (Exercise 13.12). Independence between variables X and Y
 
@@ -559,109 +330,47 @@ can be written as follows (again, these are all equivalent):
 
 Independence assertions are usually based on knowledge of the domain. As the toothache– weather example illustrates, they can dramatically reduce the amount of information necessary to specify the full joint distribution. If the complete set of variables can be divided  
 
-Section 13.5. Bayes’ Rule and Its Use 495
+![Alt text](image/13img/figure-13.4.png)
 
-_Weather Toothache Catch_
-
-_Cavity_
-
-decomposes into
-
-_WeatherToothache Catch Cavity_
-
-decomposes into
-
-_Coin_1 _Coinn_
-
-_Coin_1 _Coinn_
-
-(a) (b)
-
-**Figure 13.4** Two examples of factoring a large joint distribution into smaller distributions, using absolute independence. (a) Weather and dental problems are independent. (b) Coin flips are independent.
-
-into independent subsets, then the full joint distribution can be _factored_ into separate joint distributions on those subsets. For example, the full joint distribution on the outcome of n
-
-independent coin flips, **P**(C1, . . . , Cn), has 2n entries, but it can be represented as the product of n single-variable distributions **P**(Ci). In a more practical vein, the independence of dentistry and meteorology is a good thing, because otherwise the practice of dentistry might require intimate knowledge of meteorology, and vice versa.
+into independent subsets, then the full joint distribution can be _factored_ into separate joint distributions on those subsets. For example, the full joint distribution on the outcome of n independent coin flips, **P**(C~1~, . . . , C~n~), has 2^n^ entries, but it can be represented as the product of n single-variable distributions **P**(Ci). In a more practical vein, the independence of dentistry and meteorology is a good thing, because otherwise the practice of dentistry might require intimate knowledge of meteorology, and vice versa.
 
 When they are available, then, independence assertions can help in reducing the size of the domain representation and the complexity of the inference problem. Unfortunately, clean separation of entire sets of variables by independence is quite rare. Whenever a connection, however indirect, exists between two variables, independence will fail to hold. Moreover, even independent subsets can be quite large—for example, dentistry might involve dozens of diseases and hundreds of symptoms, all of which are interrelated. To handle such problems, we need more subtle methods than the straightforward concept of independence.
 
-13.5 BAYES’ RULE AND ITS USE
+## BAYES’ RULE AND ITS USE
 
 On page 486, we defined the **product rule**. It can actually be written in two forms:
 
-P (a ∧ b) = P (a | b)P (b) and P (a ∧ b) = P (b | a)P (a) .
+![Alt text](image/13img/13.12.png)
 
-Equating the two right-hand sides and dividing by P (a), we get
-
-P (b | a) = P (a | b)P (b)
-
-P (a) . (13.12)
-
-This equation is known as **Bayes’ rule** (also Bayes’ law or Bayes’ theorem). This simpleBAYES’ RULE
-
-equation underlies most modern AI systems for probabilistic inference.  
-
-
+This equation is known as **Bayes’ rule** (also Bayes’ law or Bayes’ theorem). This simple equation underlies most modern AI systems for probabilistic inference.  
 
 The more general case of Bayes’ rule for multivalued variables can be written in the **P** notation as follows:
 
-**P**(Y |X) = **P**(X |Y )**P**(Y )
+![Alt text](image/13img/13.13.png)
 
-**P**(X) ,
-
-As before, this is to be taken as representing a set of equations, each dealing with specific values of the variables. We will also have occasion to use a more general version conditionalized on some background evidence **e**:
-
-**P**(Y |X, **e**) = **P**(X |Y, **e**)**P**(Y | **e**)
-
-**P**(X | **e**) . (13.13)
-
-**13.5.1 Applying Bayes’ rule: The simple case**
+### Applying Bayes’ rule: The simple case
 
 On the surface, Bayes’ rule does not seem very useful. It allows us to compute the single term P (b | a) in terms of three terms: P (a | b), P (b), and P (a). That seems like two steps backwards, but Bayes’ rule is useful in practice because there are many cases where we do have good probability estimates for these three numbers and need to compute the fourth. Often, we perceive as evidence the _effect_ of some unknown _cause_ and we would like to determine that cause. In that case, Bayes’ rule becomes
 
-P (cause | _effect_) = P (_effect_ | cause)P (cause)
+![Alt text](image/13img/13.13a.png)
 
-P (_effect_) .
+The conditional probability P (_effect_ | cause) quantifies the relationship in the **causal** direction, whereas P (cause | _effect_) describes the **diagnostic** direction. In a task such as medical diagnosis, we often have conditional probabilities on causal relationships (that is, the doctor knows P (symptoms | disease)) and want to derive a diagnosis, P (disease | symptoms). For example, a doctor knows that the disease meningitis causes the patient to have a stiff neck, say, 70% of the time. The doctor also knows some unconditional facts: the prior probability that a patient has meningitis is 1/50,000, and the prior probability that any patient has a stiff neck is 1%. Letting s be the proposition that the patient has a stiff neck and m be the proposition that the patient has meningitis, we have
 
-The conditional probability P (_effect_ | cause) quantifies the relationship in the **causal** direc-CAUSAL
-
-tion, whereas P (cause | _effect_) describes the **diagnostic** direction. In a task such as medicalDIAGNOSTIC
-
-diagnosis, we often have conditional probabilities on causal relationships (that is, the doctor knows P (symptoms | disease)) and want to derive a diagnosis, P (disease | symptoms). For example, a doctor knows that the disease meningitis causes the patient to have a stiff neck, say, 70% of the time. The doctor also knows some unconditional facts: the prior probability that a patient has meningitis is 1/50,000, and the prior probability that any patient has a stiff neck is 1%. Letting s be the proposition that the patient has a stiff neck and m be the proposition that the patient has meningitis, we have
-
-P (s |m) = 0.7
-
-P (m) = 1/50000
-
-P (s) = 0.01
-
-P (m | s) = P (s |m)P (m)
-
-P (s) =
-
-0.7× 1/50000
-
-0.01 = 0.0014 . (13.14)
+![Alt text](image/13img/13.14.png)
 
 That is, we expect less than 1 in 700 patients with a stiff neck to have meningitis. Notice that even though a stiff neck is quite strongly indicated by meningitis (with probability 0.7), the probability of meningitis in the patient remains small. This is because the prior probability of stiff necks is much higher than that of meningitis.
 
-Section 13.3 illustrated a process by which one can avoid assessing the prior probability of the evidence (here, P (s)) by instead computing a posterior probability for each value of  
+Section 13.3 illustrated a process by which one can avoid assessing the prior probability of the evidence (here, P (s)) by instead computing a posterior probability for each value of the query variable (here, m and ¬m) and then normalizing the results. The same process can be applied when using Bayes’ rule. We have
 
-Section 13.5. Bayes’ Rule and Its Use 497
-
-the query variable (here, m and ¬m) and then normalizing the results. The same process can be applied when using Bayes’ rule. We have
-
-**P**(M | s) = α 〈P (s |m)P (m), P (s | ¬m)P (¬m)〉 .
+**P**(M | s) = α 〈P (s | m) P (m), P (s | ¬m) P (¬m)〉 .
 
 Thus, to use this approach we need to estimate P (s | ¬m) instead of P (s). There is no free lunch—sometimes this is easier, sometimes it is harder. The general form of Bayes’ rule with normalization is
 
-**P**(Y |X) = α **P**(X |Y )**P**(Y ) , (13.15)
+**P**(Y | X) = α **P**(X |Y )**P**(Y ) , (13.15)
 
-where α is the normalization constant needed to make the entries in **P**(Y |X) sum to 1. One obvious question to ask about Bayes’ rule is why one might have available the
+where α is the normalization constant needed to make the entries in **P**(Y |X) sum to 1. One obvious question to ask about Bayes’ rule is why one might have available the conditional probability in one direction, but not the other. In the meningitis domain, perhaps the doctor knows that a stiff neck implies meningitis in 1 out of 5000 cases; that is, the doctor has quantitative information in the **diagnostic** direction from symptoms to causes. Such a doctor has no need to use Bayes’ rule. Unfortunately, _diagnostic knowledge is often more fragile than causal knowledge._ If there is a sudden epidemic of meningitis, the unconditional probability of meningitis, P (m), will go up. The doctor who derived the diagnostic probability P (m | s) directly from statistical observation of patients before the epidemic will have no idea how to update the value, but the doctor who computes P (m | s) from the other three values will see that P (m | s) should go up proportionately with P (m). Most important, the causal information P (s |m) is _unaffected_ by the epidemic, because it simply reflects the way meningitis works. The use of this kind of direct causal or model-based knowledge provides the crucial robustness needed to make probabilistic systems feasible in the real world.
 
-conditional probability in one direction, but not the other. In the meningitis domain, perhaps the doctor knows that a stiff neck implies meningitis in 1 out of 5000 cases; that is, the doctor has quantitative information in the **diagnostic** direction from symptoms to causes. Such a doctor has no need to use Bayes’ rule. Unfortunately, _diagnostic knowledge is often more fragile than causal knowledge._ If there is a sudden epidemic of meningitis, the unconditional probability of meningitis, P (m), will go up. The doctor who derived the diagnostic probability P (m | s) directly from statistical observation of patients before the epidemic will have no idea how to update the value, but the doctor who computes P (m | s) from the other three values will see that P (m | s) should go up proportionately with P (m). Most important, the causal information P (s |m) is _unaffected_ by the epidemic, because it simply reflects the way meningitis works. The use of this kind of direct causal or model-based knowledge provides the crucial robustness needed to make probabilistic systems feasible in the real world.
-
-**13.5.2 Using Bayes’ rule: Combining evidence**
+### Using Bayes’ rule: Combining evidence
 
 We have seen that Bayes’ rule can be useful for answering probabilistic queries conditioned on one piece of evidence—for example, the stiff neck. In particular, we have argued that probabilistic information is often available in the form P (_effect_ | cause). What happens when we have two or more pieces of evidence? For example, what can a dentist conclude if her nasty steel probe catches in the aching tooth of a patient? If we know the full joint distribution (Figure 13.3), we can read off the answer:
 
@@ -671,355 +380,104 @@ We know, however, that such an approach does not scale up to larger numbers of v
 
 **P**(Cavity | toothache ∧ catch)
 
-\= α **P**(toothache ∧ catch |Cavity) **P**(Cavity) . (13.16)
+= α **P**(toothache ∧ catch |Cavity) **P**(Cavity) .        (13.16)
 
-For this reformulation to work, we need to know the conditional probabilities of the conjunction toothache ∧catch for each value of Cavity . That might be feasible for just two evidence variables, but again it does not scale up. If there are n possible evidence variables (X rays, diet, oral hygiene, etc.), then there are 2n possible combinations of observed values for which we would need to know conditional probabilities. We might as well go back to using the full joint distribution. This is what first led researchers away from probability theory toward  
-
-
-
-approximate methods for evidence combination that, while giving incorrect answers, require fewer numbers to give any answer at all.
+For this reformulation to work, we need to know the conditional probabilities of the conjunction toothache ∧catch for each value of Cavity . That might be feasible for just two evidence variables, but again it does not scale up. If there are n possible evidence variables (X rays, diet, oral hygiene, etc.), then there are 2^n^ possible combinations of observed values for which we would need to know conditional probabilities. We might as well go back to using the full joint distribution. This is what first led researchers away from probability theory toward approximate methods for evidence combination that, while giving incorrect answers, require fewer numbers to give any answer at all.
 
 Rather than taking this route, we need to find some additional assertions about the domain that will enable us to simplify the expressions. The notion of **independence** in Section 13.4 provides a clue, but needs refining. It would be nice if Toothache and Catch were independent, but they are not: if the probe catches in the tooth, then it is likely that the tooth has a cavity and that the cavity causes a toothache. These variables _are_ independent, however, _given the presence or the absence of a cavity_. Each is directly caused by the cavity, but neither has a direct effect on the other: toothache depends on the state of the nerves in the tooth, whereas the probe’s accuracy depends on the dentist’s skill, to which the toothache is irrelevant.5 Mathematically, this property is written as
 
-**P**(toothache ∧ catch |Cavity) = **P**(toothache |Cavity)**P**(catch |Cavity) . (13.17)
+**P**(toothache ∧ catch | Cavity) = **P**(toothache | Cavity)**P**(catch | Cavity) . (13.17)
 
-This equation expresses the **conditional independence** of toothache and catch given Cavity .CONDITIONAL INDEPENDENCE
+This equation expresses the **conditional independence** of toothache and catch given Cavity .
 
 We can plug it into Equation (13.16) to obtain the probability of a cavity:
 
 **P**(Cavity | toothache ∧ catch)
-
-\= α **P**(toothache |Cavity) **P**(catch |Cavity) **P**(Cavity) . (13.18)
+= α **P**(toothache | Cavity) **P**(catch | Cavity) **P**(Cavity) . (13.18)
 
 Now the information requirements are the same as for inference, using each piece of evidence separately: the prior probability **P**(Cavity) for the query variable and the conditional probability of each effect, given its cause.
 
 The general definition of **conditional independence** of two variables X and Y , given a third variable Z , is
 
-**P**(X,Y |Z) = **P**(X |Z)**P**(Y |Z) .
+**P**(X,Y | Z) = **P**(X | Z)**P**(Y | Z) .
 
 In the dentist domain, for example, it seems reasonable to assert conditional independence of the variables Toothache and Catch , given Cavity :
 
-**P**(Toothache ,Catch |Cavity) = **P**(Toothache |Cavity)**P**(Catch |Cavity) . (13.19)
+**P**(Toothache ,Catch | Cavity) = **P**(Toothache | Cavity)**P**(Catch | Cavity) . (13.19)
 
 Notice that this assertion is somewhat stronger than Equation (13.17), which asserts independence only for specific values of Toothache and Catch . As with absolute independence in Equation (13.11), the equivalent forms
 
-**P**(X |Y,Z)= **P**(X |Z) and **P**(Y |X,Z)= **P**(Y |Z)
+**P**(X | Y,Z)= **P**(X | Z) and **P**(Y | X,Z)= **P**(Y | Z)
 
 can also be used (see Exercise 13.17). Section 13.4 showed that absolute independence assertions allow a decomposition of the full joint distribution into much smaller pieces. It turns out that the same is true for conditional independence assertions. For example, given the assertion in Equation (13.19), we can derive a decomposition as follows:
 
 **P**(Toothache ,Catch,Cavity)
 
-\= **P**(Toothache ,Catch |Cavity)**P**(Cavity) (product rule)
+= **P**(Toothache ,Catch | Cavity)**P**(Cavity) (product rule)
 
-\= **P**(Toothache |Cavity)**P**(Catch |Cavity)**P**(Cavity) (using 13.19).
+= **P**(Toothache | Cavity)**P**(Catch | Cavity)**P**(Cavity) (using 13.19).
 
 (The reader can easily check that this equation does in fact hold in Figure 13.3.) In this way, the original large table is decomposed into three smaller tables. The original table has seven
-
+```
 5 We assume that the patient and dentist are distinct individuals.  
+```
 
-Section 13.6. The Wumpus World Revisited 499
-
-independent numbers (23 = 8 entries in the table, but they must sum to 1, so 7 are independent). The smaller tables contain five independent numbers (for a conditional probability distributions such as **P**(T |C there are two rows of two numbers, and each row sums to 1, so that’s two independent numbers; for a prior distribution like **P**(C) there is only one independent number). Going from seven to five might not seem like a major triumph, but the point is that, for n symptoms that are all conditionally independent given Cavity , the size of the representation grows as O(n) instead of O(2n). That means that _conditional independence assertions can allow probabilistic systems to scale up; moreover, they are much more commonly available than absolute independence assertions._ Conceptually, Cavity **separates**SEPARATION
-
-Toothache and Catch because it is a direct cause of both of them. The decomposition of large probabilistic domains into weakly connected subsets through conditional independence is one of the most important developments in the recent history of AI.
+independent numbers (23 = 8 entries in the table, but they must sum to 1, so 7 are independent). The smaller tables contain five independent numbers (for a conditional probability distributions such as **P**(T |C there are two rows of two numbers, and each row sums to 1, so that’s two independent numbers; for a prior distribution like **P**(C) there is only one independent number). Going from seven to five might not seem like a major triumph, but the point is that, for n symptoms that are all conditionally independent given Cavity , the size of the representation grows as O(n) instead of O(2^n^). That means that _conditional independence assertions can allow probabilistic systems to scale up; moreover, they are much more commonly available than absolute independence assertions._ Conceptually, Cavity **separates** Toothache and Catch because it is a direct cause of both of them. The decomposition of large probabilistic domains into weakly connected subsets through conditional independence is one of the most important developments in the recent history of AI.
 
 The dentistry example illustrates a commonly occurring pattern in which a single cause directly influences a number of effects, all of which are conditionally independent, given the cause. The full joint distribution can be written as
 
-**P**(Cause, _Effect_1, . . . , _Effect_n) = **P**(Cause)
+![Alt text](image/13img/13.14a.png)
 
-∏
+Such a probability distribution is called a **naive Bayes** model—“naive” because it is often used (as a simplifying assumption) in cases where the “effect” variables are _not_ actually conditionally independent given the cause variable. (The naive Bayes model is sometimes called a **Bayesian classifier,** a somewhat careless usage that has prompted true Bayesians to call it the **idiot Bayes** model.) In practice, naive Bayes systems can work surprisingly well, even when the conditional independence assumption is not true. Chapter 20 describes methods for learning naive Bayes distributions from observations.
 
-i
+## THE WUMPUS WORLD REVISITED
 
-**P**(_Effect_i |Cause) .
+We can combine of the ideas in this chapter to solve probabilistic reasoning problems in the wumpus world. (See Chapter 7 for a complete description of the wumpus world.) Uncertainty arises in the wumpus world because the agent’s sensors give only partial information about the world. For example, Figure 13.5 shows a situation in which each of the three reachable squares—[1,3], [2,2], and [3,1]—might contain a pit. Pure logical inference can conclude nothing about which square is most likely to be safe, so a logical agent might have to choose randomly. We will see that a probabilistic agent can do much better than the logical agent.
 
-Such a probability distribution is called a **naive Bayes** model—“naive” because it is oftenNAIVE BAYES
+Our aim is to calculate the probability that each of the three squares contains a pit. (For this example we ignore the wumpus and the gold.) The relevant properties of the wumpus world are that (1) a pit causes breezes in all neighboring squares, and (2) each square other than [1,1] contains a pit with probability 0.2. The first step is to identify the set of random variables we need:
 
-used (as a simplifying assumption) in cases where the “effect” variables are _not_ actually conditionally independent given the cause variable. (The naive Bayes model is sometimes called a **Bayesian classifier,** a somewhat careless usage that has prompted true Bayesians to call it the **idiot Bayes** model.) In practice, naive Bayes systems can work surprisingly well, even when the conditional independence assumption is not true. Chapter 20 describes methods for learning naive Bayes distributions from observations.
+- As in the propositional logic case, we want one Boolean variable Pij for each square, which is true iff square [i, j] actually contains a pit.  
 
-13.6 THE WUMPUS WORLD REVISITED
+![Alt text](image/13img/figure-13.5.png)
 
-We can combine of the ideas in this chapter to solve probabilistic reasoning problems in the wumpus world. (See Chapter 7 for a complete description of the wumpus world.) Uncertainty arises in the wumpus world because the agent’s sensors give only partial information about the world. For example, Figure 13.5 shows a situation in which each of the three reachable squares—\[1,3\], \[2,2\], and \[3,1\]—might contain a pit. Pure logical inference can conclude nothing about which square is most likely to be safe, so a logical agent might have to choose randomly. We will see that a probabilistic agent can do much better than the logical agent.
+- We also have Boolean variables Bij that are true iff square [i, j] is breezy; we include these variables only for the observed squares—in this case, [1,1], [1,2], and [2,1].
 
-Our aim is to calculate the probability that each of the three squares contains a pit. (For this example we ignore the wumpus and the gold.) The relevant properties of the wumpus world are that (1) a pit causes breezes in all neighboring squares, and (2) each square other than \[1,1\] contains a pit with probability 0.2. The first step is to identify the set of random variables we need:
+The next step is to specify the full joint distribution, **P**(P~1,1~, . . . , P~4,4~, B~1,1~, B~1,2~, B~2,1~). Applying the product rule, we have
 
-- As in the propositional logic case, we want one Boolean variable Pij for each square, which is true iff square \[i, j\] actually contains a pit.  
-
-
-
-OK
-
-1,1 2,1 3,1 4,1
-
-1,2 2,2 3,2 4,2
-
-1,3 2,3 3,3 4,3
-
-1,4 2,4
-
-OKOK
-
-3,4 4,4
-
-B
-
-B 1,1 2,1 3,1 4,1
-
-1,2 2,2 3,2 4,2
-
-1,3 2,3 3,3 4,3
-
-1,4 2,4 3,4 4,4
-
-KNOWN
-
-FRONTIER
-
-QUERY OTHER
-
-(a) (b)
-
-**Figure 13.5** (a) After finding a breeze in both \[1,2\] and \[2,1\], the agent is stuck—there is no safe place to explore. (b) Division of the squares into Known , Frontier , and Other , for a query about \[1,3\].
-
-- We also have Boolean variables Bij that are true iff square \[i, j\] is breezy; we include these variables only for the observed squares—in this case, \[1,1\], \[1,2\], and \[2,1\].
-
-The next step is to specify the full joint distribution, **P**(P1,1, . . . , P4,4, B1,1, B1,2, B2,1). Applying the product rule, we have
-
-**P**(P1,1, . . . , P4,4, B1,1, B1,2, B2,1) =
-
-**P**(B1,1, B1,2, B2,1 | P1,1, . . . , P4,4)**P**(P1,1, . . . , P4,4) .
+**P**(P~1,1~, . . . , P~4,4~, B~1,1~, B~1,2~, B~2,1~) =
+**P**(B~1,1~, B~1,2~, B~2,1~ | P~1,1~, . . . , P~4,4~)**P**(P~1,1~, . . . , P~4,4~) .
 
 This decomposition makes it easy to see what the joint probability values should be. The first term is the conditional probability distribution of a breeze configuration, given a pit configuration; its values are 1 if the breezes are adjacent to the pits and 0 otherwise. The second term is the prior probability of a pit configuration. Each square contains a pit with probability 0.2, independently of the other squares; hence,
 
-**P**(P1,1, . . . , P4,4) =
+![Alt text](image/13img/13.20.png)
 
-4,4∏
+For a particular configuration with exactly n pits, P (P~1,1~, . . . , P~4,4~)= 0.2^n^× 0.816−n. In the situation in Figure 13.5(a), the evidence consists of the observed breeze (or its
 
-i,j = 1,1
+absence) in each square that is visited, combined with the fact that each such square contains no pit. We abbreviate these facts as b=¬b~1,1~∧b~1,2~∧b~2,1~ and known =¬P~1,1~∧¬p1,2∧¬p2,1. We are interested in answering queries such as **P**(P~1,3~ | known , b): how likely is it that [1,3] contains a pit, given the observations so far?
 
-**P**(Pi,j) . (13.20)
+To answer this query, we can follow the standard approach of Equation (13.9), namely, summing over entries from the full joint distribution. Let Unknown be the set of P~i,j~ variables for squares other than the Known squares and the query square [1,3]. Then, by Equation (13.9), we have
 
-For a particular configuration with exactly n pits, P (P1,1, . . . , P4,4)= 0.2n× 0.816−n. In the situation in Figure 13.5(a), the evidence consists of the observed breeze (or its
-
-absence) in each square that is visited, combined with the fact that each such square contains no pit. We abbreviate these facts as b=¬b1,1∧b1,2∧b2,1 and known =¬p1,1∧¬p1,2∧¬p2,1. We are interested in answering queries such as **P**(P1,3 | known , b): how likely is it that \[1,3\] contains a pit, given the observations so far?
-
-To answer this query, we can follow the standard approach of Equation (13.9), namely, summing over entries from the full joint distribution. Let Unknown be the set of Pi,j vari 
-
-Section 13.6. The Wumpus World Revisited 501
-
-ables for squares other than the Known squares and the query square \[1,3\]. Then, by Equation (13.9), we have
-
-**P**(P1,3 | known , b) = α
-
-∑
-
-unknown
-
-**P**(P1,3, unknown , known , b) .
+![Alt text](image/13img/13.20a.png)
 
 The full joint probabilities have already been specified, so we are done—that is, unless we care about computation. There are 12 unknown squares; hence the summation contains 212 = 4096 terms. In general, the summation grows exponentially with the number of squares.
 
-Surely, one might ask, aren’t the other squares irrelevant? How could \[4,4\] affect whether \[1,3\] has a pit? Indeed, this intuition is correct. Let Frontier be the pit variables (other than the query variable) that are adjacent to visited squares, in this case just \[2,2\] and \[3,1\]. Also, let Other be the pit variables for the other unknown squares; in this case, there are 10 other squares, as shown in Figure 13.5(b). The key insight is that the observed breezes are _conditionally independent_ of the other variables, given the known, frontier, and query variables. To use the insight, we manipulate the query formula into a form in which the breezes are conditioned on all the other variables, and then we apply conditional independence:
+Surely, one might ask, aren’t the other squares irrelevant? How could [4,4] affect whether [1,3] has a pit? Indeed, this intuition is correct. Let Frontier be the pit variables (other than the query variable) that are adjacent to visited squares, in this case just [2,2] and [3,1]. Also, let Other be the pit variables for the other unknown squares; in this case, there are 10 other squares, as shown in Figure 13.5(b). The key insight is that the observed breezes are _conditionally independent_ of the other variables, given the known, frontier, and query variables. To use the insight, we manipulate the query formula into a form in which the breezes are conditioned on all the other variables, and then we apply conditional independence:
 
-**P**(P1,3 | known , b)
+![Alt text](image/13img/13.20b.png)
 
-\= α
+![Alt text](image/13img/figure-13.6.png)
 
-∑
+where the last step folds P (known) into the normalizing constant and uses the fact that ∑ other P (other ) equals 1. Now, there are just four terms in the summation over the frontier variables P~2,2~ and P~3,1~. The use of independence and conditional independence has completely eliminated the other squares from consideration.
 
-unknown
+Notice that the expression **P**(b | known , P~1,3~, frontier) is 1 when the frontier is consistent with the breeze observations, and 0 otherwise. Thus, for each value of P~1,3~, we sum over the _logical models_ for the frontier variables that are consistent with the known facts. (Compare with the enumeration over models in Figure 7.5 on page 241.) The models and their associated prior probabilities—P (frontier )—are shown in Figure 13.6. We have
 
-**P**(P1,3, known , b, unknown) (by Equation (13.9))
+**P**(P~1,3~ | known , b) = α′ 〈0.2(0.04 + 0.16 + 0.16), 0.8(0.04 + 0.16)〉 ≈ 〈0.31, 0.69〉 .
 
-\= α
-
-∑
-
-unknown
-
-**P**(b |P1,3, known , unknown)**P**(P1,3, known , unknown)
-
-(by the product rule)
-
-\= α
-
-∑
-
-frontier
-
-∑
-
-other
-
-**P**(b | known , P1,3, frontier , other )**P**(P1,3, known , frontier , other )
-
-\= α
-
-∑
-
-frontier
-
-∑
-
-other
-
-**P**(b | known , P1,3, frontier)**P**(P1,3, known , frontier , other ) ,
-
-where the final step uses conditional independence: b is independent of other given known , P1,3, and frontier . Now, the first term in this expression does not depend on the Other
-
-variables, so we can move the summation inward:
-
-**P**(P1,3 | known , b)
-
-\= α
-
-∑
-
-frontier
-
-**P**(b | known , P1,3, frontier)
-
-∑
-
-other
-
-**P**(P1,3, known , frontier , other ) .
-
-By independence, as in Equation (13.20), the prior term can be factored, and then the terms can be reordered:
-
-**P**(P1,3 | known , b)
-
-\= α
-
-∑
-
-frontier
-
-**P**(b | known , P1,3, frontier )
-
-∑
-
-other
-
-**P**(P1,3)P (known)P (frontier )P (other )
-
-\= αP (known)**P**(P1,3)
-
-∑
-
-frontier
-
-**P**(b | known , P1,3, frontier)P (frontier )
-
-∑
-
-other
-
-P (other )
-
-\= α ′ **P**(P1,3)
-
-∑
-
-frontier
-
-**P**(b | known, P1,3, frontier)P (frontier ) ,  
-
-
-
-OK 1,1 2,1 3,1
-
-1,2
-
-OKOK
-
-B
-
-B
-
-OK 1,1 2,1
-
-1,2 2,2
-
-OKOK
-
-B
-
-B
-
-OK 1,1 2,1 3,1
-
-1,2
-
-OKOK
-
-B
-
-B
-
-0.2 x 0.2 = 0.04 0.2 x 0.8 = 0.16 0.8 x 0.2 = 0.16
-
-OK 1,1 2,1
-
-1,2
-
-1,3
-
-OKOK
-
-B
-
-B
-
-OK 1,1 2,1 3,1
-
-1,2
-
-1,3
-
-OKOK
-
-B
-
-B
-
-0.2 x 0.2 = 0.04 0.2 x 0.8 = 0.16 (a) (b)
-
-2,2
-
-1,3
-
-3,1
-
-1,3
-
-2,2
-
-1,3
-
-3,1
-
-2,2 2,2
-
-**Figure 13.6** Consistent models for the frontier variables P2,2 and P3,1, showing P (frontier) for each model: (a) three models with P1,3 = true showing two or three pits, and (b) two models with P1,3 = false showing one or two pits.
-
-where the last step folds P (known) into the normalizing constant and uses the fact that∑ other
-
-P (other ) equals 1. Now, there are just four terms in the summation over the frontier variables P2,2 and
-
-P3,1. The use of independence and conditional independence has completely eliminated the other squares from consideration.
-
-Notice that the expression **P**(b | known , P1,3, frontier) is 1 when the frontier is consistent with the breeze observations, and 0 otherwise. Thus, for each value of P1,3, we sum over the _logical models_ for the frontier variables that are consistent with the known facts. (Compare with the enumeration over models in Figure 7.5 on page 241.) The models and their associated prior probabilities—P (frontier )—are shown in Figure 13.6. We have
-
-**P**(P1,3 | known , b) = α ′ 〈0.2(0.04 + 0.16 + 0.16), 0.8(0.04 + 0.16)〉 ≈ 〈0.31, 0.69〉 .
-
-That is, \[1,3\] (and \[3,1\] by symmetry) contains a pit with roughly 31% probability. A similar calculation, which the reader might wish to perform, shows that \[2,2\] contains a pit with roughly 86% probability. The wumpus agent should definitely avoid \[2,2\]! Note that our logical agent from Chapter 7 did not know that \[2,2\] was worse than the other squares. Logic can tell us that it is unknown whether there is a pit in \[2, 2\], but we need probability to tell us how likely it is.
+That is, [1,3] (and [3,1] by symmetry) contains a pit with roughly 31% probability. A similar calculation, which the reader might wish to perform, shows that [2,2] contains a pit with roughly 86% probability. The wumpus agent should definitely avoid [2,2]! Note that our logical agent from Chapter 7 did not know that [2,2] was worse than the other squares. Logic can tell us that it is unknown whether there is a pit in [2, 2], but we need probability to tell us how likely it is.
 
 What this section has shown is that even seemingly complicated problems can be formulated precisely in probability theory and solved with simple algorithms. To get _efficient_ solutions, independence and conditional independence relationships can be used to simplify the summations required. These relationships often correspond to our natural understanding of how the problem should be decomposed. In the next chapter, we develop formal representations for such relationships as well as algorithms that operate on those representations to perform probabilistic inference efficiently.  
 
-Section 13.7. Summary 503
-
-13.7 SUMMARY
+## SUMMARY
 
 This chapter has suggested probability theory as a suitable foundation for uncertain reasoning and provided a gentle introduction to its use.
 
@@ -1043,35 +501,20 @@ This chapter has suggested probability theory as a suitable foundation for uncer
 
 - A wumpus-world agent can calculate probabilities for unobserved aspects of the world, thereby improving on the decisions of a purely logical agent. Conditional independence makes these calculations tractable.
 
-BIBLIOGRAPHICAL AND HISTORICAL NOTES
+**BIBLIOGRAPHICAL AND HISTORICAL NOTES**
 
-Probability theory was invented as a way of analyzing games of chance. In about 850 A.D. the Indian mathematician Mahaviracarya described how to arrange a set of bets that can’t lose (what we now call a Dutch book). In Europe, the first significant systematic analyses were produced by Girolamo Cardano around 1565, although publication was posthumous (1663). By that time, probability had been established as a mathematical discipline due to a series of  
-
-
-
-results established in a famous correspondence between Blaise Pascal and Pierre de Fermat in 1654. As with probability itself, the results were initially motivated by gambling problems (see Exercise 13.9). The first published textbook on probability was _De Ratiociniis in Ludo Aleae_ (Huygens, 1657). The “laziness and ignorance” view of uncertainty was described by John Arbuthnot in the preface of his translation of Huygens (Arbuthnot, 1692): “It is impossible for a Die, with such determin’d force and direction, not to fall on such determin’d side, only I don’t know the force and direction which makes it fall on such determin’d side, and therefore I call it Chance, which is nothing but the want of art...”
+Probability theory was invented as a way of analyzing games of chance. In about 850 A.D. the Indian mathematician Mahaviracarya described how to arrange a set of bets that can’t lose (what we now call a Dutch book). In Europe, the first significant systematic analyses were produced by Girolamo Cardano around 1565, although publication was posthumous (1663). By that time, probability had been established as a mathematical discipline due to a series of results established in a famous correspondence between Blaise Pascal and Pierre de Fermat in 1654. As with probability itself, the results were initially motivated by gambling problems (see Exercise 13.9). The first published textbook on probability was _De Ratiociniis in Ludo Aleae_ (Huygens, 1657). The “laziness and ignorance” view of uncertainty was described by John Arbuthnot in the preface of his translation of Huygens (Arbuthnot, 1692): “It is impossible for a Die, with such determin’d force and direction, not to fall on such determin’d side, only I don’t know the force and direction which makes it fall on such determin’d side, and therefore I call it Chance, which is nothing but the want of art...”
 
 Laplace (1816) gave an exceptionally accurate and modern overview of probability; he was the first to use the example “take two urns, A and B, the first containing four white and two black balls, . . . ” The Rev. Thomas Bayes (1702–1761) introduced the rule for reasoning about conditional probabilities that was named after him (Bayes, 1763). Bayes only considered the case of uniform priors; it was Laplace who independently developed the general case. Kolmogorov (1950, first published in German in 1933) presented probability theory in a rigorously axiomatic framework for the first time. Rényi (1970) later gave an axiomatic presentation that took conditional probability, rather than absolute probability, as primitive.
 
 Pascal used probability in ways that required both the objective interpretation, as a property of the world based on symmetry or relative frequency, and the subjective interpretation, based on degree of belief—the former in his analyses of probabilities in games of chance, the latter in the famous “Pascal’s wager” argument about the possible existence of God. However, Pascal did not clearly realize the distinction between these two interpretations. The distinction was first drawn clearly by James Bernoulli (1654–1705).
 
-Leibniz introduced the “classical” notion of probability as a proportion of enumerated, equally probable cases, which was also used by Bernoulli, although it was brought to prominence by Laplace (1749–1827). This notion is ambiguous between the frequency interpretation and the subjective interpretation. The cases can be thought to be equally probable either because of a natural, physical symmetry between them, or simply because we do not have any knowledge that would lead us to consider one more probable than another. The use of this latter, subjective consideration to justify assigning equal probabilities is known as the **principle of indifference**. The principle is often attributed to Laplace, but he never isolatedPRINCIPLE OF
+Leibniz introduced the “classical” notion of probability as a proportion of enumerated, equally probable cases, which was also used by Bernoulli, although it was brought to prominence by Laplace (1749–1827). This notion is ambiguous between the frequency interpretation and the subjective interpretation. The cases can be thought to be equally probable either because of a natural, physical symmetry between them, or simply because we do not have any knowledge that would lead us to consider one more probable than another. The use of this latter, subjective consideration to justify assigning equal probabilities is known as the **principle of indifference**. The principle is often attributed to Laplace, but he never isolated the principle explicitly. George Boole and John Venn both referred to it as the **principle of insufficient reason**; the modern name is due to Keynes (1921).
 
-INDIFFERENCE
-
-the principle explicitly. George Boole and John Venn both referred to it as the **principle of insufficient reason**; the modern name is due to Keynes (1921).
-
-PRINCIPLE OF INSUFFICIENT REASON
 
 The debate between objectivists and subjectivists became sharper in the 20th century. Kolmogorov (1963), R. A. Fisher (1922), and Richard von Mises (1928) were advocates of the relative frequency interpretation. Karl Popper’s (1959, first published in German in 1934) “propensity” interpretation traces relative frequencies to an underlying physical symmetry. Frank Ramsey (1931), Bruno de Finetti (1937), R. T. Cox (1946), Leonard Savage (1954), Richard Jeffrey (1983), and E. T. Jaynes (2003) interpreted probabilities as the degrees of belief of specific individuals. Their analyses of degree of belief were closely tied to utilities and to behavior—specifically, to the willingness to place bets. Rudolf Carnap, following Leibniz and Laplace, offered a different kind of subjective interpretation of probability— not as any actual individual’s degree of belief, but as the degree of belief that an idealized individual _should_ have in a particular proposition a, given a particular body of evidence **e**.  
 
-Bibliographical and Historical Notes 505
-
-Carnap attempted to go further than Leibniz or Laplace by making this notion of degree of **confirmation** mathematically precise, as a logical relation between a and **e**. The study of thisCONFIRMATION
-
-relation was intended to constitute a mathematical discipline called **inductive logic**, analo-INDUCTIVE LOGIC
-
-gous to ordinary deductive logic (Carnap, 1948, 1950). Carnap was not able to extend his inductive logic much beyond the propositional case, and Putnam (1963) showed by adversarial arguments that some fundamental difficulties would prevent a strict extension to languages capable of expressing arithmetic.
+Carnap attempted to go further than Leibniz or Laplace by making this notion of degree of **confirmation** mathematically precise, as a logical relation between a and **e**. The study of this relation was intended to constitute a mathematical discipline called **inductive logic**, analogous to ordinary deductive logic (Carnap, 1948, 1950). Carnap was not able to extend his inductive logic much beyond the propositional case, and Putnam (1963) showed by adversarial arguments that some fundamental difficulties would prevent a strict extension to languages capable of expressing arithmetic.
 
 Cox’s theorem (1946) shows that any system for uncertain reasoning that meets his set of assumptions is equivalent to probability theory. This gave renewed confidence to those who already favored probability, but others were not convinced, pointing to the assumptions (primarily that belief must be represented by a single number, and thus the belief in ¬p must be a function of the belief in p). Halpern (1999) describes the assumptions and shows some gaps in Cox’s original formulation. Horn (2003) shows how to patch up the difficulties. Jaynes (2003) has a similar argument that is easier to read.
 
@@ -1079,11 +522,7 @@ The question of reference classes is closely tied to the attempt to find an indu
 
 Bayesian probabilistic reasoning has been used in AI since the 1960s, especially in medical diagnosis. It was used not only to make a diagnosis from available evidence, but also to select further questions and tests by using the theory of information value (Section 16.6) when available evidence was inconclusive (Gorry, 1968; Gorry _et al._, 1973). One system outperformed human experts in the diagnosis of acute abdominal illnesses (de Dombal _et al._, 1974). Lucas _et al._ (2004) gives an overview. These early Bayesian systems suffered from a number of problems, however. Because they lacked any theoretical model of the conditions they were diagnosing, they were vulnerable to unrepresentative data occurring in situations for which only a small sample was available (de Dombal _et al._, 1981). Even more fundamentally, because they lacked a concise formalism (such as the one to be described in Chapter 14) for representing and using conditional independence information, they depended on the acquisition, storage, and processing of enormous tables of probabilistic data. Because of these difficulties, probabilistic methods for coping with uncertainty fell out of favor in AI from the 1970s to the mid-1980s. Developments since the late 1980s are described in the next chapter.
 
-The naive Bayes model for joint distributions has been studied extensively in the pattern recognition literature since the 1950s (Duda and Hart, 1973). It has also been used, often unwittingly, in information retrieval, beginning with the work of Maron (1961). The probabilistic foundations of this technique, described further in Exercise 13.22, were elucidated by Robertson and Sparck Jones (1976). Domingos and Pazzani (1997) provide an explanation  
-
-
-
-for the surprising success of naive Bayesian reasoning even in domains where the independence assumptions are clearly violated.
+The naive Bayes model for joint distributions has been studied extensively in the pattern recognition literature since the 1950s (Duda and Hart, 1973). It has also been used, often unwittingly, in information retrieval, beginning with the work of Maron (1961). The probabilistic foundations of this technique, described further in Exercise 13.22, were elucidated by Robertson and Sparck Jones (1976). Domingos and Pazzani (1997) provide an explanation for the surprising success of naive Bayesian reasoning even in domains where the independence assumptions are clearly violated.
 
 There are many good introductory textbooks on probability theory, including those by Bertsekas and Tsitsiklis (2008) and Grinstead and Snell (1997). DeGroot and Schervish (2001) offer a combined introduction to probability and statistics from a Bayesian standpoint. Richard Hamming’s (1991) textbook gives a mathematically sophisticated introduction to probability theory from the standpoint of a propensity interpretation based on physical symmetry. Hacking (1975) and Hald (1990) cover the early history of the concept of probability. Bernstein (1996) gives an entertaining popular account of the story of risk.
 
@@ -1105,15 +544,13 @@ EXERCISES
 
 **13.5** This question deals with the properties of possible worlds, defined on page 488 as assignments to all random variables. We will work with propositions that correspond to exactly one possible world because they pin down the assignments of all the variables. In probability theory, such propositions are called **atomic events**. For example, with BooleanATOMIC EVENT
 
-variables X1, X2, X3, the proposition x1 ∧ ¬x2 ∧ ¬x3 fixes the assignment of the variables; in the language of propositional logic, we would say it has exactly one model.
+variables X~1~, X~2~, X~3~, the proposition x~1~ ∧ ¬x~2~ ∧ ¬x~3~ fixes the assignment of the variables; in the language of propositional logic, we would say it has exactly one model.
 
 **a**. Prove, for the case of n Boolean variables, that any two distinct atomic events are mutually exclusive; that is, their conjunction is equivalent to false .
 
 **b**. Prove that the disjunction of all possible atomic events is logically equivalent to true .
 
 **c**. Prove that any proposition is logically equivalent to the disjunction of the atomic events that entail its truth.  
-
-Exercises 507
 
 **13.6** Prove Equation (13.4) from Equations (13.1) and (13.2).
 
@@ -1139,7 +576,12 @@ Exercises 507
 
 **13.10** Deciding to put probability theory to good use, we encounter a slot machine with three independent wheels, each producing one of the four symbols BAR, BELL, LEMON, or CHERRY with equal probability. The slot machine has the following payout scheme for a bet of 1 coin (where “?” denotes that we don’t care what comes up for that wheel):
 
-BAR/BAR/BAR pays 20 coins BELL/BELL/BELL pays 15 coins LEMON/LEMON/LEMON pays 5 coins CHERRY/CHERRY/CHERRY pays 3 coins CHERRY/CHERRY/? pays 2 coins CHERRY/?/? pays 1 coin
+BAR/BAR/BAR pays 20 coins 
+BELL/BELL/BELL pays 15 coins 
+LEMON/LEMON/LEMON pays 5 coins 
+CHERRY/CHERRY/CHERRY pays 3 coins 
+CHERRY/CHERRY/? pays 2 coins 
+CHERRY/?/? pays 1 coin
 
 **a**. Compute the expected “payback” percentage of the machine. In other words, for each coin played, what is the expected coin return?
 
@@ -1147,11 +589,7 @@ BAR/BAR/BAR pays 20 coins BELL/BELL/BELL pays 15 coins LEMON/LEMON/LEMON pays 5 
 
 **c**. Estimate the mean and median number of plays you can expect to make until you go broke, if you start with 10 coins. You can run a simulation to estimate this, rather than trying to compute an exact answer.
 
-**13.11** We wish to transmit an n-bit message to a receiving agent. The bits in the message are independently corrupted (flipped) during transmission with ε probability each. With an extra parity bit sent along with the original information, a message can be corrected by the receiver  
-
-
-
-if at most one bit in the entire message (including the parity bit) has been corrupted. Suppose we want to ensure that the correct message is received with probability at least 1− δ. What is the maximum feasible value of n? Calculate this value for the case ε= 0.001, δ = 0.01.
+**13.11** We wish to transmit an n-bit message to a receiving agent. The bits in the message are independently corrupted (flipped) during transmission with ε probability each. With an extra parity bit sent along with the original information, a message can be corrected by the receiver if at most one bit in the entire message (including the parity bit) has been corrupted. Suppose we want to ensure that the correct message is received with probability at least 1− δ. What is the maximum feasible value of n? Calculate this value for the case ε= 0.001, δ = 0.01.
 
 **13.12** Show that the three forms of independence in Equation (13.11) are equivalent.
 
@@ -1165,27 +603,23 @@ if at most one bit in the entire message (including the parity bit) has been cor
 
 **a**. Prove the conditionalized version of the general product rule:
 
-**P**(X,Y | **e**) = **P**(X |Y, **e**)**P**(Y | **e**) .
+**P**(X,Y | **e**) = **P**(X | Y, **e**)**P**(Y | **e**) .
 
 **b**. Prove the conditionalized version of Bayes’ rule in Equation (13.13).
 
 **13.17** Show that the statement of conditional independence
 
-**P**(X,Y |Z) = **P**(X |Z)**P**(Y |Z)
+**P**(X,Y | Z) = **P**(X | Z)**P**(Y | Z)
 
 is equivalent to each of the statements
 
-**P**(X |Y,Z) = **P**(X |Z) and **P**(B |X,Z) = **P**(Y |Z) .
+**P**(X | Y,Z) = **P**(X | Z) and **P**(B | X,Z) = **P**(Y | Z) .
 
 **13.18** Suppose you are given a bag containing n unbiased coins. You are told that n− 1 of these coins are normal, with heads on one side and tails on the other, whereas one coin is a fake, with heads on both sides.
 
 **a**. Suppose you reach into the bag, pick out a coin at random, flip it, and get a head. What is the (conditional) probability that the coin you chose is the fake coin?  
 
-Exercises 509
-
-**b**. Suppose you continue flipping the coin for a total of k times after picking it and see k
-
-heads. Now what is the conditional probability that you picked the fake coin? **c**. Suppose you wanted to decide whether the chosen coin was fake by flipping it k times.
+**b**. Suppose you continue flipping the coin for a total of k times after picking it and see k heads. Now what is the conditional probability that you picked the fake coin? **c**. Suppose you wanted to decide whether the chosen coin was fake by flipping it k times.
 
 The decision procedure returns fake if all k flips come up heads; otherwise it returns normal . What is the (unconditional) probability that this procedure makes an error?
 
@@ -1205,41 +639,36 @@ The decision procedure returns fake if all k flips come up heads; otherwise it r
 
 **b**. Explain precisely how to categorize a new document. **c**. Is the conditional independence assumption reasonable? Discuss.
 
-**13.23** In our analysis of the wumpus world, we used the fact that each square contains a pit with probability 0.2, independently of the contents of the other squares. Suppose instead that exactly N/5 pits are scattered at random among the N squares other than \[1,1\]. Are the variables Pi,j and Pk,l still independent? What is the joint distribution **P**(P1,1, . . . , P4,4)
+**13.23** In our analysis of the wumpus world, we used the fact that each square contains a pit with probability 0.2, independently of the contents of the other squares. Suppose instead that exactly N/5 pits are scattered at random among the N squares other than [1,1]. Are the variables P~i,j~ and Pk,l still independent? What is the joint distribution **P**(P~1,1~, . . . , P~4,4~)
 
-now? Redo the calculation for the probabilities of pits in \[1,3\] and \[2,2\].
+now? Redo the calculation for the probabilities of pits in [1,3] and [2,2].
 
-**13.24** Redo the probability calculation for pits in \[1,3\] and \[2,2\], assuming that each square contains a pit with probability 0.01, independent of the other squares. What can you say about the relative performance of a logical versus a probabilistic agent in this case?
+**13.24** Redo the probability calculation for pits in [1,3] and [2,2], assuming that each square contains a pit with probability 0.01, independent of the other squares. What can you say about the relative performance of a logical versus a probabilistic agent in this case?
 
 **13.25** Implement a hybrid probabilistic agent for the wumpus world, based on the hybrid agent in Figure 7.20 and the probabilistic inference procedure outlined in this chapter.  
 
-14 PROBABILISTIC REASONING
+# PROBABILISTIC REASONING
 
 _In which we explain how to build network models to reason under uncertainty according to the laws of probability theory._
 
 Chapter 13 introduced the basic elements of probability theory and noted the importance of independence and conditional independence relationships in simplifying probabilistic representations of the world. This chapter introduces a systematic way to represent such relationships explicitly in the form of **Bayesian networks**. We define the syntax and semantics of these networks and show how they can be used to capture uncertain knowledge in a natural and efficient way. We then show how probabilistic inference, although computationally intractable in the worst case, can be done efficiently in many practical situations. We also describe a variety of approximate inference algorithms that are often applicable when exact inference is infeasible. We explore ways in which probability theory can be applied to worlds with objects and relations—that is, to _first-order,_ as opposed to _propositional_, representations. Finally, we survey alternative approaches to uncertain reasoning.
 
-14.1 REPRESENTING KNOWLEDGE IN AN UNCERTAIN DOMAIN
+## REPRESENTING KNOWLEDGE IN AN UNCERTAIN DOMAIN
 
 In Chapter 13, we saw that the full joint probability distribution can answer any question about the domain, but can become intractably large as the number of variables grows. Furthermore, specifying probabilities for possible worlds one by one is unnatural and tedious.
 
-We also saw that independence and conditional independence relationships among variables can greatly reduce the number of probabilities that need to be specified in order to define the full joint distribution. This section introduces a data structure called a **Bayesian network**1BAYESIAN NETWORK
-
-to represent the dependencies among variables. Bayesian networks can represent essentially _any_ full joint probability distribution and in many cases can do so very concisely.
-
+We also saw that independence and conditional independence relationships among variables can greatly reduce the number of probabilities that need to be specified in order to define the full joint distribution. This section introduces a data structure called a **Bayesian network**^1^ to represent the dependencies among variables. Bayesian networks can represent essentially _any_ full joint probability distribution and in many cases can do so very concisely.
+```
 1 This is the most common name, but there are many synonyms, including **belief network**, **probabilistic network**, **causal network**, and **knowledge map**. In statistics, the term **graphical model** refers to a somewhat broader class that includes Bayesian networks. An extension of Bayesian networks called a **decision network** or **influence diagram** is covered in Chapter 16.
-
-510  
-
-Section 14.1. Representing Knowledge in an Uncertain Domain 511
+```
 
 A Bayesian network is a directed graph in which each node is annotated with quantitative probability information. The full specification is as follows:
 
-1\. Each node corresponds to a random variable, which may be discrete or continuous.
+1. Each node corresponds to a random variable, which may be discrete or continuous.
 
-2\. A set of directed links or arrows connects pairs of nodes. If there is an arrow from node X to node Y , X is said to be a _parent_ of Y. The graph has no directed cycles (and hence is a directed acyclic graph, or DAG.
+2. A set of directed links or arrows connects pairs of nodes. If there is an arrow from node X to node Y , X is said to be a _parent_ of Y. The graph has no directed cycles (and hence is a directed acyclic graph, or DAG.
 
-3\. Each node Xi has a conditional probability distribution **P**(Xi |Parents(Xi)) that quantifies the effect of the parents on the node.
+3. Each node X~i~ has a conditional probability distribution **P**(X~i~ |Parents(X~i~)) that quantifies the effect of the parents on the node.
 
 The topology of the network—the set of nodes and links—specifies the conditional independence relationships that hold in the domain, in a way that will be made precise shortly. The _intuitive_ meaning of an arrow is typically that X has a _direct influence_ on Y, which suggests that causes should be parents of effects. It is usually easy for a domain expert to decide what direct influences exist in the domain—much easier, in fact, than actually specifying the probabilities themselves. Once the topology of the Bayesian network is laid out, we need only specify a conditional probability distribution for each variable, given its parents. We will see that the combination of the topology and the conditional distributions suffices to specify (implicitly) the full joint distribution for all the variables.
 
@@ -1247,123 +676,44 @@ Recall the simple world described in Chapter 13, consisting of the variables Too
 
 Now consider the following example, which is just a little more complex. You have a new burglar alarm installed at home. It is fairly reliable at detecting a burglary, but also responds on occasion to minor earthquakes. (This example is due to Judea Pearl, a resident of Los Angeles—hence the acute interest in earthquakes.) You also have two neighbors, John and Mary, who have promised to call you at work when they hear the alarm. John nearly always calls when he hears the alarm, but sometimes confuses the telephone ringing with
 
-_Weather Cavity_
+![Alt text](image/14img/figure-14.1.png)
 
-_Toothache Catch_
-
-**Figure 14.1** A simple Bayesian network in which Weather is independent of the other three variables and Toothache and Catch are conditionally independent, given Cavity .  
-
-
-
-.001
-
-_P_(_B_)
-
-_Alarm_
-
-_Earthquake_
-
-_MaryCallsJohnCalls_
-
-_Burglary_
-
-_A P_(_J_)
-
-_t f_
-
-_.9_0
-
-.0_5_
-
-_B_
-
-_t t f f_
-
-_E_
-
-_t f t f_
-
-_P_(_A_)
-
-.95
-
-.29 .001
-
-.94
-
-.002
-
-_P_(_E_)
-
-_A P_(_M_)
-
-_t f_
-
-_.7_0
-
-.0_1_
-
-**Figure 14.2** A typical Bayesian network, showing both the topology and the conditional probability tables (CPTs). In the CPTs, the letters B, E, A, J , and M stand for Burglary , Earthquake , Alarm, JohnCalls , and MaryCalls , respectively.
+![Alt text](image/14img/figure-14.2.png)
 
 the alarm and calls then, too. Mary, on the other hand, likes rather loud music and often misses the alarm altogether. Given the evidence of who has or has not called, we would like to estimate the probability of a burglary.
 
 A Bayesian network for this domain appears in Figure 14.2. The network structure shows that burglary and earthquakes directly affect the probability of the alarm’s going off, but whether John and Mary call depends only on the alarm. The network thus represents our assumptions that they do not perceive burglaries directly, they do not notice minor earthquakes, and they do not confer before calling.
 
-The conditional distributions in Figure 14.2 are shown as a **conditional probability table**, or CPT. (This form of table can be used for discrete variables; other representations,CONDITIONAL
+The conditional distributions in Figure 14.2 are shown as a **conditional probability table**, or CPT. (This form of table can be used for discrete variables; other representations, including those suitable for continuous variables, are described in Section 14.2.) Each row in a CPT contains the conditional probability of each node value for a **conditioning case**.
 
-PROBABILITY TABLE
+A conditioning case is just a possible combination of values for the parent nodes—a miniature possible world, if you like. Each row must sum to 1, because the entries represent an exhaustive set of cases for the variable. For Boolean variables, once you know that the probability of a true value is p, the probability of false must be 1 – p, so we often omit the second number, as in Figure 14.2. In general, a table for a Boolean variable with k Boolean parents contains 2^k^ independently specifiable probabilities. A node with no parents has only one row, representing the prior probabilities of each possible value of the variable.
 
-including those suitable for continuous variables, are described in Section 14.2.) Each row in a CPT contains the conditional probability of each node value for a **conditioning case**.CONDITIONING CASE
+Notice that the network does not have nodes corresponding to Mary’s currently listening to loud music or to the telephone ringing and confusing John. These factors are summarized in the uncertainty associated with the links from Alarm to JohnCalls and MaryCalls . This shows both laziness and ignorance in operation: it would be a lot of work to find out why those factors would be more or less likely in any particular case, and we have no reasonable way to obtain the relevant information anyway. The probabilities actually summarize a _potentiallyinfinite_ set of circumstances in which the alarm might fail to go off (high humidity, power failure, dead battery, cut wires, a dead mouse stuck inside the bell, etc.) or John or Mary might fail to call and report it (out to lunch, on vacation, temporarily deaf, passing helicopter, etc.). In this way, a small agent can cope with a very large world, at least approximately. The degree of approximation can be improved if we introduce additional relevant information.
 
-A conditioning case is just a possible combination of values for the parent nodes—a miniature possible world, if you like. Each row must sum to 1, because the entries represent an exhaustive set of cases for the variable. For Boolean variables, once you know that the probability of a true value is p, the probability of false must be 1 – p, so we often omit the second number, as in Figure 14.2. In general, a table for a Boolean variable with k Boolean parents contains 2k independently specifiable probabilities. A node with no parents has only one row, representing the prior probabilities of each possible value of the variable.
-
-Notice that the network does not have nodes corresponding to Mary’s currently listening to loud music or to the telephone ringing and confusing John. These factors are summarized in the uncertainty associated with the links from Alarm to JohnCalls and MaryCalls . This shows both laziness and ignorance in operation: it would be a lot of work to find out why those factors would be more or less likely in any particular case, and we have no reasonable way to obtain the relevant information anyway. The probabilities actually summarize a _potentially_  
-
-Section 14.2. The Semantics of Bayesian Networks 513
-
-_infinite_ set of circumstances in which the alarm might fail to go off (high humidity, power failure, dead battery, cut wires, a dead mouse stuck inside the bell, etc.) or John or Mary might fail to call and report it (out to lunch, on vacation, temporarily deaf, passing helicopter, etc.). In this way, a small agent can cope with a very large world, at least approximately. The degree of approximation can be improved if we introduce additional relevant information.
-
-14.2 THE SEMANTICS OF BAYESIAN NETWORKS
+## THE SEMANTICS OF BAYESIAN NETWORKS
 
 The previous section described what a network is, but not what it means. There are two ways in which one can understand the semantics of Bayesian networks. The first is to see the network as a representation of the joint probability distribution. The second is to view it as an encoding of a collection of conditional independence statements. The two views are equivalent, but the first turns out to be helpful in understanding how to _construct_ networks, whereas the second is helpful in designing inference procedures.
 
-**14.2.1 Representing the full joint distribution**
+### Representing the full joint distribution
 
-Viewed as a piece of “syntax,” a Bayesian network is a directed acyclic graph with some numeric parameters attached to each node. One way to define what the network means—its semantics—is to define the way in which it represents a specific joint distribution over all the variables. To do this, we first need to retract (temporarily) what we said earlier about the parameters associated with each node. We said that those parameters correspond to conditional probabilities **P**(Xi |Parents(Xi)); this is a true statement, but until we assign semantics to the network as a whole, we should think of them just as numbers θ(Xi |Parents(Xi)).
+Viewed as a piece of “syntax,” a Bayesian network is a directed acyclic graph with some numeric parameters attached to each node. One way to define what the network means—its semantics—is to define the way in which it represents a specific joint distribution over all the variables. To do this, we first need to retract (temporarily) what we said earlier about the parameters associated with each node. We said that those parameters correspond to conditional probabilities **P**(X~i~ |Parents(X~i~)); this is a true statement, but until we assign semantics to the network as a whole, we should think of them just as numbers θ(X~i~ |Parents(X~i~)).
 
-A generic entry in the joint distribution is the probability of a conjunction of particular assignments to each variable, such as P (X1 = x1 ∧ . . . ∧ Xn = xn). We use the notation P (x1, . . . , xn) as an abbreviation for this. The value of this entry is given by the formula
+A generic entry in the joint distribution is the probability of a conjunction of particular assignments to each variable, such as P (X~1~ = x~1~ ∧ . . . ∧ X~n~ = x~n~). We use the notation P (x~1~, . . . , x~n~) as an abbreviation for this. The value of this entry is given by the formula
 
-P (x1, . . . , xn) =
+![Alt text](image/14img/14.1.png)
 
-n∏
-
-i= 1
-
-θ(xi | parents(Xi)) , (14.1)
-
-where parents(Xi) denotes the values of Parents(Xi) that appear in x1, . . . , xn. Thus, each entry in the joint distribution is represented by the product of the appropriate elements of the conditional probability tables (CPTs) in the Bayesian network.
+where parents(Xi) denotes the values of Parents(Xi) that appear in x~1~, . . . , x~n~. Thus, each entry in the joint distribution is represented by the product of the appropriate elements of the conditional probability tables (CPTs) in the Bayesian network.
 
 From this definition, it is easy to prove that the parameters θ(Xi |Parents(Xi)) are exactly the conditional probabilities **P**(Xi |Parents(Xi)) implied by the joint distribution (see Exercise 14.2). Hence, we can rewrite Equation (14.1) as
 
-P (x1, . . . , xn) =
-
-n∏
-
-i= 1
-
-P (xi | parents(Xi)) . (14.2)
+![Alt text](image/14img/14.2.png)
 
 In other words, the tables we have been calling conditional probability tables really _are_ conditional probability tables according to the semantics defined in Equation (14.1).
 
-To illustrate this, we can calculate the probability that the alarm has sounded, but neither a burglary nor an earthquake has occurred, and both John and Mary call. We multiply entries  
+To illustrate this, we can calculate the probability that the alarm has sounded, but neither a burglary nor an earthquake has occurred, and both John and Mary call. We multiply entries from the joint distribution (using single-letter names for the variables):
 
-
-
-from the joint distribution (using single-letter names for the variables):
-
-P (j,m, a,¬b,¬e) = P (j | a)P (m | a)P (a | ¬b ∧ ¬e)P (¬b)P (¬e)
-
-\= 0.90 × 0.70× 0.001 × 0.999 × 0.998 = 0.000628 .
+P (j,m, a,¬b,¬e) = P (j | a) P (m | a) P (a | ¬b ∧ ¬e) P (¬b) P (¬e)
+= 0.90 × 0.70× 0.001 × 0.999 × 0.998 = 0.000628 .
 
 Section 13.3 explained that the full joint distribution can be used to answer any query about the domain. If a Bayesian network is a representation of the joint distribution, then it too can be used to answer any query, by summing all the relevant joint entries. Section 14.4 explains how to do this, but also describes methods that are much more efficient.
 
@@ -1371,41 +721,31 @@ Section 13.3 explained that the full joint distribution can be used to answer an
 
 Equation (14.2) defines what a given Bayesian network means. The next step is to explain how to _construct_ a Bayesian network in such a way that the resulting joint distribution is a good representation of a given domain. We will now show that Equation (14.2) implies certain conditional independence relationships that can be used to guide the knowledge engineer in constructing the topology of the network. First, we rewrite the entries in the joint distribution in terms of conditional probability, using the product rule (see page 486):
 
-P (x1, . . . , xn) = P (xn |xn−1, . . . , x1)P (xn−1, . . . , x1) .
+P (x~1~, . . . , x~n~) = P (x~n~ |x~n−1~, . . . , x~1~)P (x~n−1~, . . . , x~1~) .
 
 Then we repeat the process, reducing each conjunctive probability to a conditional probability and a smaller conjunction. We end up with one big product:
 
-P (x1, . . . , xn) = P (xn |xn−1, . . . , x1)P (xn−1 |xn−2, . . . , x1) · · · P (x2 |x1)P (x1)
-
-\=
-
-n∏
-
-i= 1
-
-P (xi | xi−1, . . . , x1) .
+![Alt text](image/14img/14.2a.png)
 
 This identity is called the **chain rule**. It holds for any set of random variables. Comparing itCHAIN RULE
 
-with Equation (14.2), we see that the specification of the joint distribution is equivalent to the general assertion that, for every variable Xi in the network,
+with Equation (14.2), we see that the specification of the joint distribution is equivalent to the general assertion that, for every variable X~i~ in the network,
 
-**P**(Xi |Xi−1, . . . ,X1) = **P**(Xi |Parents(Xi)) , (14.3)
+**P**(X~i~ |X~i−1~, . . . ,x~1~) = **P**(X~i~ |Parents(X~i~)) , (14.3)
 
-provided that Parents(Xi) ⊆ {Xi−1, . . . ,X1}. This last condition is satisfied by numbering the nodes in a way that is consistent with the partial order implicit in the graph structure.
+provided that Parents(X~i~) ⊆ {X~i−1~, . . . ,X~1~}. This last condition is satisfied by numbering the nodes in a way that is consistent with the partial order implicit in the graph structure.
 
 What Equation (14.3) says is that the Bayesian network is a correct representation of the domain only if each node is conditionally independent of its other predecessors in the node ordering, given its parents. We can satisfy this condition with this methodology:
 
-1\. _Nodes:_ First determine the set of variables that are required to model the domain. Now order them, {X1, . . . ,Xn}. Any order will work, but the resulting network will be more compact if the variables are ordered such that causes precede effects.
+1. _Nodes:_ First determine the set of variables that are required to model the domain. Now order them, {X~1~, . . . ,X~n~}. Any order will work, but the resulting network will be more compact if the variables are ordered such that causes precede effects.
 
-2\. _Links:_ For i = 1 to n do:
+2. _Links:_ For i = 1 to n do:
 
-- Choose, from X1, . . . ,Xi−1, a minimal set of parents for Xi, such that Equation (14.3) is satisfied.
+- Choose, from X~1~, . . . ,X~i−1~, a minimal set of parents for X~i~, such that Equation (14.3) is satisfied.
 
-- For each parent insert a link from the parent to Xi. - CPTs: Write down the conditional probability table, **P**(Xi|Parents(Xi)).  
+- For each parent insert a link from the parent to X~i~. - CPTs: Write down the conditional probability table, **P**(X~i~|Parents(X~i~)).  
 
-Section 14.2. The Semantics of Bayesian Networks 515
-
-Intuitively, the parents of node Xi should contain all those nodes in X1, . . . , Xi−1 that _directly influence_ Xi. For example, suppose we have completed the network in Figure 14.2 except for the choice of parents for MaryCalls . MaryCalls is certainly influenced by whether there is a Burglary or an Earthquake , but not _directly_ influenced. Intuitively, our knowledge of the domain tells us that these events influence Mary’s calling behavior only through their effect on the alarm. Also, given the state of the alarm, whether John calls has no influence on Mary’s calling. Formally speaking, we believe that the following conditional independence statement holds:
+Intuitively, the parents of node X~i~ should contain all those nodes in X~1~, . . . , X~i−1~ that _directly influence_ X~i~. For example, suppose we have completed the network in Figure 14.2 except for the choice of parents for MaryCalls . MaryCalls is certainly influenced by whether there is a Burglary or an Earthquake , but not _directly_ influenced. Intuitively, our knowledge of the domain tells us that these events influence Mary’s calling behavior only through their effect on the alarm. Also, given the state of the alarm, whether John calls has no influence on Mary’s calling. Formally speaking, we believe that the following conditional independence statement holds:
 
 **P**(MaryCalls |JohnCalls ,Alarm,Earthquake ,Burglary) = **P**(MaryCalls |Alarm) .
 
@@ -1415,39 +755,11 @@ tees that the network is acyclic. Another important property of Bayesian network
 
 **Compactness and node ordering**
 
-As well as being a complete and nonredundant representation of the domain, a Bayesian network can often be far more _compact_ than the full joint distribution. This property is what makes it feasible to handle domains with many variables. The compactness of Bayesian networks is an example of a general property of **locally structured** (also called **sparse**) systems.LOCALLY
-
-STRUCTURED
-
-SPARSE In a locally structured system, each subcomponent interacts directly with only a bounded number of other components, regardless of the total number of components. Local structure is usually associated with linear rather than exponential growth in complexity. In the case of Bayesian networks, it is reasonable to suppose that in most domains each random variable is directly influenced by at most k others, for some constant k. If we assume n Boolean variables for simplicity, then the amount of information needed to specify each conditional probability table will be at most 2k numbers, and the complete network can be specified by n2k numbers. In contrast, the joint distribution contains 2n numbers. To make this concrete, suppose we have n = 30 nodes, each with five parents (k = 5). Then the Bayesian network requires 960 numbers, but the full joint distribution requires over a billion.
+As well as being a complete and nonredundant representation of the domain, a Bayesian network can often be far more _compact_ than the full joint distribution. This property is what makes it feasible to handle domains with many variables. The compactness of Bayesian networks is an example of a general property of **locally structured** (also called **sparse**) systems. SPARSE In a locally structured system, each subcomponent interacts directly with only a bounded number of other components, regardless of the total number of components. Local structure is usually associated with linear rather than exponential growth in complexity. In the case of Bayesian networks, it is reasonable to suppose that in most domains each random variable is directly influenced by at most k others, for some constant k. If we assume n Boolean variables for simplicity, then the amount of information needed to specify each conditional probability table will be at most 2^k^ numbers, and the complete network can be specified by n2^k^ numbers. In contrast, the joint distribution contains 2^n^ numbers. To make this concrete, suppose we have n = 30 nodes, each with five parents (k = 5). Then the Bayesian network requires 960 numbers, but the full joint distribution requires over a billion.
 
 There are domains in which each variable can be influenced directly by all the others, so that the network is fully connected. Then specifying the conditional probability tables requires the same amount of information as specifying the joint distribution. In some domains, there will be slight dependencies that should strictly be included by adding a new link. But if these dependencies are tenuous, then it may not be worth the additional complexity in the network for the small gain in accuracy. For example, one might object to our burglary network on the grounds that if there is an earthquake, then John and Mary would not call even if they heard the alarm, because they assume that the earthquake is the cause. Whether to add the link from Earthquake to JohnCalls and MaryCalls (and thus enlarge the tables) depends on comparing the importance of getting more accurate probabilities with the cost of specifying the extra information.  
 
-
-
-_JohnCalls_
-
-_MaryCalls_
-
-_Alarm_
-
-_Burglary_
-
-_Earthquake_
-
-_MaryCalls_
-
-_Alarm_
-
-_Earthquake_
-
-_Burglary_
-
-_JohnCalls_
-
-(a) (b)
-
-**Figure 14.3** Network structure depends on order of introduction. In each network, we have introduced nodes in top-to-bottom order.
+![Alt text](image/14img/figure-14.3.png)
 
 Even in a locally structured domain, we will get a compact Bayesian network only if we choose the node ordering well. What happens if we happen to choose the wrong order? Consider the burglary example again. Suppose we decide to add the nodes in the order MaryCalls , JohnCalls , Alarm, Burglary , Earthquake . We then get the somewhat more complicated network shown in Figure 14.3(a). The process goes as follows:
 
@@ -1459,349 +771,111 @@ Even in a locally structured domain, we will get a compact Bayesian network only
 
 - Adding Burglary : If we know the alarm state, then the call from John or Mary might give us information about our phone ringing or Mary’s music, but not about burglary:
 
-**P**(Burglary |Alarm, JohnCalls ,MaryCalls) = **P**(Burglary |Alarm) .
+**P**(Burglary | Alarm, JohnCalls ,MaryCalls) = **P**(Burglary | Alarm) .
 
 Hence we need just Alarm as parent.
 
 - Adding Earthquake : If the alarm is on, it is more likely that there has been an earthquake. (The alarm is an earthquake detector of sorts.) But if we know that there has been a burglary, then that explains the alarm, and the probability of an earthquake would be only slightly above normal. Hence, we need both Alarm and Burglary as parents.
 
-The resulting network has two more links than the original network in Figure 14.2 and requires three more probabilities to be specified. What’s worse, some of the links represent tenuous relationships that require difficult and unnatural probability judgments, such as as 
-
-Section 14.2. The Semantics of Bayesian Networks 517
-
-sessing the probability of Earthquake , given Burglary and Alarm. This phenomenon is quite general and is related to the distinction between **causal** and **diagnostic** models introduced in Section 13.5.1 (see also Exercise 8.13). If we try to build a diagnostic model with links from symptoms to causes (as from MaryCalls to Alarm or Alarm to Burglary), we end up having to specify additional dependencies between otherwise independent causes (and often between separately occurring symptoms as well). _If we stick to a causal model, we end up having to specify fewer numbers, and the numbers will often be easier to come up with._ In the domain of medicine, for example, it has been shown by Tversky and Kahneman (1982) that expert physicians prefer to give probability judgments for causal rules rather than for diagnostic ones.
+The resulting network has two more links than the original network in Figure 14.2 and requires three more probabilities to be specified. What’s worse, some of the links represent tenuous relationships that require difficult and unnatural probability judgments, such as as sessing the probability of Earthquake , given Burglary and Alarm. This phenomenon is quite general and is related to the distinction between **causal** and **diagnostic** models introduced in Section 13.5.1 (see also Exercise 8.13). If we try to build a diagnostic model with links from symptoms to causes (as from MaryCalls to Alarm or Alarm to Burglary), we end up having to specify additional dependencies between otherwise independent causes (and often between separately occurring symptoms as well). _If we stick to a causal model, we end up having to specify fewer numbers, and the numbers will often be easier to come up with._ In the domain of medicine, for example, it has been shown by Tversky and Kahneman (1982) that expert physicians prefer to give probability judgments for causal rules rather than for diagnostic ones.
 
 Figure 14.3(b) shows a very bad node ordering: MaryCalls , JohnCalls , Earthquake , Burglary , Alarm . This network requires 31 distinct probabilities to be specified—exactly the same number as the full joint distribution. It is important to realize, however, that any of the three networks can represent _exactly the same joint distribution_. The last two versions simply fail to represent all the conditional independence relationships and hence end up specifying a lot of unnecessary numbers instead.
 
-**14.2.2 Conditional independence relations in Bayesian networks**
+### Conditional independence relations in Bayesian networks
 
-We have provided a “numerical” semantics for Bayesian networks in terms of the representation of the full joint distribution, as in Equation (14.2). Using this semantics to derive a method for constructing Bayesian networks, we were led to the consequence that a node is conditionally independent of its other predecessors, given its parents. It turns out that we can also go in the other direction. We can start from a “topological” semantics that specifies the conditional independence relationships encoded by the graph structure, and from this we can derive the “numerical” semantics. The topological semantics2 specifies that each variable is conditionally independent of its non-**descendants**, given its parents. For example, inDESCENDANT
+We have provided a “numerical” semantics for Bayesian networks in terms of the representation of the full joint distribution, as in Equation (14.2). Using this semantics to derive a method for constructing Bayesian networks, we were led to the consequence that a node is conditionally independent of its other predecessors, given its parents. It turns out that we can also go in the other direction. We can start from a “topological” semantics that specifies the conditional independence relationships encoded by the graph structure, and from this we can derive the “numerical” semantics. The topological semantics2 specifies that each variable is conditionally independent of its non-**descendants**, given its parents. For example, in Figure 14.2, JohnCalls is independent of Burglary , Earthquake , and MaryCalls given the value of Alarm . The definition is illustrated in Figure 14.4(a). From these conditional independence assertions and the interpretation of the network parameters θ(X~i~ |Parents(X~i~))
 
-Figure 14.2, JohnCalls is independent of Burglary , Earthquake , and MaryCalls given the value of Alarm . The definition is illustrated in Figure 14.4(a). From these conditional independence assertions and the interpretation of the network parameters θ(Xi |Parents(Xi))
+as specifications of conditional probabilities **P**(X~i~ |Parents(X~i~)), the full joint distribution given in Equation (14.2) can be reconstructed. In this sense, the “numerical” semantics and the “topological” semantics are equivalent.
 
-as specifications of conditional probabilities **P**(Xi |Parents(Xi)), the full joint distribution given in Equation (14.2) can be reconstructed. In this sense, the “numerical” semantics and the “topological” semantics are equivalent.
-
-Another important independence property is implied by the topological semantics: a node is conditionally independent of all other nodes in the network, given its parents, children, and children’s parents—that is, given its **Markov blanket**. (Exercise 14.7 asks you to proveMARKOV BLANKET
-
-this.) For example, Burglary is independent of JohnCalls and MaryCalls , given Alarm and Earthquake . This property is illustrated in Figure 14.4(b).
+Another important independence property is implied by the topological semantics: a node is conditionally independent of all other nodes in the network, given its parents, children, and children’s parents—that is, given its **Markov blanket**. (Exercise 14.7 asks you to prove this.) For example, Burglary is independent of JohnCalls and MaryCalls , given Alarm and Earthquake . This property is illustrated in Figure 14.4(b).
 
 2 There is also a general topological criterion called **d-separation** for deciding whether a set of nodes **X** is conditionally independent of another set **Y**, given a third set **Z**. The criterion is rather complicated and is not needed for deriving the algorithms in this chapter, so we omit it. Details may be found in Pearl (1988) or Darwiche (2009). Shachter (1998) gives a more intuitive method of ascertaining d-separation.  
 
+![Alt text](image/14img/figure-14.4.png)
 
+## EFFICIENT REPRESENTATION OF CONDITIONAL DISTRIBUTIONS
 
-_. . ._
+Even if the maximum number of parents k is smallish, filling in the CPT for a node requires up to O(2^k^) numbers and perhaps a great deal of experience with all the possible conditioning cases. In fact, this is a worst-case scenario in which the relationship between the parents and the child is completely arbitrary. Usually, such relationships are describable by a **canonical distribution** that fits some standard pattern. In such cases, the complete table can be specified by naming the pattern and perhaps supplying a few parameters—much easier than supplying an exponential number of parameters.
 
-_. . .U_1
+The simplest example is provided by **deterministic nodes**. A deterministic node has its value specified exactly by the values of its parents, with no uncertainty. The relationship can be a logical one: for example, the relationship between the parent nodes Canadian , US , Mexican and the child node NorthAmerican is simply that the child is the disjunction of the parents. The relationship can also be numerical: for example, if the parent nodes are the prices of a particular model of car at several dealers and the child node is the price that a bargain hunter ends up paying, then the child node is the minimum of the parent values; or if the parent nodes are a lake’s inflows (rivers, runoff, precipitation) and outflows (rivers, evaporation, seepage) and the child is the change in the water level of the lake, then the value of the child is the sum of the inflow parents minus the sum of the outflow parents.
 
-_X_
-
-_Um_
-
-_Yn_
-
-_Znj_
-
-_Y_1
-
-_Z_1_j_
-
-_. . ._
-
-_. . .U_1 _Um_
-
-_Yn_
-
-_Znj_
-
-_Y_1
-
-_Z_1_j X_
-
-(a) (b)
-
-**Figure 14.4** (a) A node X is conditionally independent of its non-descendants (e.g., the Zijs) given its parents (the Uis shown in the gray area). (b) A node X is conditionally independent of all other nodes in the network given its Markov blanket (the gray area).
-
-14.3 EFFICIENT REPRESENTATION OF CONDITIONAL DISTRIBUTIONS
-
-Even if the maximum number of parents k is smallish, filling in the CPT for a node requires up to O(2k) numbers and perhaps a great deal of experience with all the possible conditioning cases. In fact, this is a worst-case scenario in which the relationship between the parents and the child is completely arbitrary. Usually, such relationships are describable by a **canonical distribution** that fits some standard pattern. In such cases, the complete table can be specifiedCANONICAL
-
-DISTRIBUTION
-
-by naming the pattern and perhaps supplying a few parameters—much easier than supplying an exponential number of parameters.
-
-The simplest example is provided by **deterministic nodes**. A deterministic node hasDETERMINISTIC NODES
-
-its value specified exactly by the values of its parents, with no uncertainty. The relationship can be a logical one: for example, the relationship between the parent nodes Canadian , US , Mexican and the child node NorthAmerican is simply that the child is the disjunction of the parents. The relationship can also be numerical: for example, if the parent nodes are the prices of a particular model of car at several dealers and the child node is the price that a bargain hunter ends up paying, then the child node is the minimum of the parent values; or if the parent nodes are a lake’s inflows (rivers, runoff, precipitation) and outflows (rivers, evaporation, seepage) and the child is the change in the water level of the lake, then the value of the child is the sum of the inflow parents minus the sum of the outflow parents.
-
-Uncertain relationships can often be characterized by so-called **noisy** logical relationships. The standard example is the **noisy-OR** relation, which is a generalization of the log-NOISY-OR
-
-ical OR. In propositional logic, we might say that Fever is true if and only if Cold , Flu , or Malaria is true. The noisy-OR model allows for uncertainty about the ability of each parent to cause the child to be true—the causal relationship between parent and child may be  
-
-Section 14.3. Efficient Representation of Conditional Distributions 519
-
-_inhibited_, and so a patient could have a cold, but not exhibit a fever. The model makes two assumptions. First, it assumes that all the possible causes are listed. (If some are missing, we can always add a so-called **leak node** that covers “miscellaneous causes.”) Second, itLEAK NODE
-
-assumes that inhibition of each parent is independent of inhibition of any other parents: for example, whatever inhibits Malaria from causing a fever is independent of whatever inhibits Flu from causing a fever. Given these assumptions, Fever is _false_ if and only if all its _true_ parents are inhibited, and the probability of this is the product of the inhibition probabilities q for each parent. Let us suppose these individual inhibition probabilities are as follows:
+Uncertain relationships can often be characterized by so-called **noisy** logical relationships. The standard example is the **noisy-OR** relation, which is a generalization of the logical OR. In propositional logic, we might say that Fever is true if and only if Cold , Flu , or Malaria is true. The noisy-OR model allows for uncertainty about the ability of each parent to cause the child to be true—the causal relationship between parent and child may be _inhibited_, and so a patient could have a cold, but not exhibit a fever. The model makes two assumptions. First, it assumes that all the possible causes are listed. (If some are missing, we can always add a so-called **leak node** that covers “miscellaneous causes.”) Second, itLEAK assumes that inhibition of each parent is independent of inhibition of any other parents: for example, whatever inhibits Malaria from causing a fever is independent of whatever inhibits Flu from causing a fever. Given these assumptions, Fever is _false_ if and only if all its _true_ parents are inhibited, and the probability of this is the product of the inhibition probabilities q for each parent. Let us suppose these individual inhibition probabilities are as follows:
 
 qcold = P (¬fever | cold ,¬flu ,¬malaria) = 0.6 ,
-
 qflu = P (¬fever | ¬cold ,flu ,¬malaria) = 0.2 ,
-
 qmalaria = P (¬fever | ¬cold ,¬flu,malaria) = 0.1 .
 
 Then, from this information and the noisy-OR assumptions, the entire CPT can be built. The general rule is that
 
-P (xi | parents(Xi)) = 1− ∏
-
-{j:Xj = true}
-
-qj ,
+![Alt text](image/14img/14.3.png)
 
 where the product is taken over the parents that are set to true for that row of the CPT. The following table illustrates this calculation:
 
-Cold Flu Malaria P (Fever) P (¬Fever)
+|Cold |Flu| Malaria |P (Fever) |P (¬Fever)|
+| --- | --- | --- | --- | --- | 
+|F |F| F| 0.0 |1.0|
+|F |F |T |0.9| **0.1**| 
+|F| T| F| 0.8| **0.2**|
+| F |T |T |0.98| 0.02 = 0.2 × 0.1|
+|T| F| F| 0.4 |**0.6** |
+|T| F |T |0.94 |0.06 = 0.6 × 0.1|
+|T| T| F| 0.88| 0.12 = 0.6 × 0.2|
+|T |T |T |0.988 |0.012 = 0.6× 0.2× 0.1|
 
-F F F 0.0 1.0
-
-F F T 0.9 **0.1** F T F 0.8 **0.2** F T T 0.98 0.02 = 0.2 × 0.1
-
-T F F 0.4 **0.6** T F T 0.94 0.06 = 0.6 × 0.1
-
-T T F 0.88 0.12 = 0.6 × 0.2
-
-T T T 0.988 0.012 = 0.6× 0.2× 0.1
-
-In general, noisy logical relationships in which a variable depends on k parents can be described using O(k) parameters instead of O(2k) for the full conditional probability table. This makes assessment and learning much easier. For example, the CPCS network (Pradhan _et al._, 1994) uses noisy-OR and noisy-MAX distributions to model relationships among diseases and symptoms in internal medicine. With 448 nodes and 906 links, it requires only 8,254 values instead of 133,931,430 for a network with full CPTs.
+In general, noisy logical relationships in which a variable depends on k parents can be described using O(k) parameters instead of O(2^k^) for the full conditional probability table. This makes assessment and learning much easier. For example, the CPCS network (Pradhan _et al._, 1994) uses noisy-OR and noisy-MAX distributions to model relationships among diseases and symptoms in internal medicine. With 448 nodes and 906 links, it requires only 8,254 values instead of 133,931,430 for a network with full CPTs.
 
 **Bayesian nets with continuous variables**
 
-Many real-world problems involve continuous quantities, such as height, mass, temperature, and money; in fact, much of statistics deals with random variables whose domains are continuous. By definition, continuous variables have an infinite number of possible values, so it is impossible to specify conditional probabilities explicitly for each value. One possible way to handle continuous variables is to avoid them by using **discretization**—that is, dividing up theDISCRETIZATION  
+Many real-world problems involve continuous quantities, such as height, mass, temperature, and money; in fact, much of statistics deals with random variables whose domains are continuous. By definition, continuous variables have an infinite number of possible values, so it is impossible to specify conditional probabilities explicitly for each value. One possible way to handle continuous variables is to avoid them by using **discretization**—that is, dividing up the
 
+![Alt text](image/14img/figure-14.5.png)
 
+possible values into a fixed set of intervals. For example, temperatures could be divided into (<0^o^C), (0^o^C−100^o^C), and (>100^o^C). Discretization is sometimes an adequate solution, but often results in a considerable loss of accuracy and very large CPTs. The most common solution is to define standard families of probability density functions (see Appendix A) that are specified by a finite number of **parameters**. For example, a Gaussian (or normal)PARAMETER distribution N(μ, σ^2^)(x) has the mean μ and the variance σ^2^ as parameters. Yet another solution—sometimes called a **nonparametric** representation—is to define the conditional distribution implicitly with a collection of instances, each containing specific values of the parent and child variables. We explore this approach further in Chapter 18.
 
-_HarvestSubsidy_
-
-_Buys_
-
-_Cost_
-
-**Figure 14.5** A simple network with discrete variables (Subsidy and Buys) and continuous variables (Harvest and Cost ).
-
-possible values into a fixed set of intervals. For example, temperatures could be divided into (<0oC), (0oC−100oC), and (>100oC). Discretization is sometimes an adequate solution, but often results in a considerable loss of accuracy and very large CPTs. The most common solution is to define standard families of probability density functions (see Appendix A) that are specified by a finite number of **parameters**. For example, a Gaussian (or normal)PARAMETER
-
-distribution N(μ, σ 2)(x) has the mean μ and the variance σ
-
-2 as parameters. Yet another solution—sometimes called a **nonparametric** representation—is to define the conditionalNONPARAMETRIC
-
-distribution implicitly with a collection of instances, each containing specific values of the parent and child variables. We explore this approach further in Chapter 18.
-
-A network with both discrete and continuous variables is called a **hybrid Bayesian network**. To specify a hybrid network, we have to specify two new kinds of distributions:HYBRID BAYESIAN
-
-NETWORK
-
-the conditional distribution for a continuous variable given discrete or continuous parents; and the conditional distribution for a discrete variable given continuous parents. Consider the simple example in Figure 14.5, in which a customer buys some fruit depending on its cost, which depends in turn on the size of the harvest and whether the government’s subsidy scheme is operating. The variable Cost is continuous and has continuous and discrete parents; the variable Buys is discrete and has a continuous parent.
+A network with both discrete and continuous variables is called a **hybrid Bayesian network**. To specify a hybrid network, we have to specify two new kinds of distributions: the conditional distribution for a continuous variable given discrete or continuous parents; and the conditional distribution for a discrete variable given continuous parents. Consider the simple example in Figure 14.5, in which a customer buys some fruit depending on its cost, which depends in turn on the size of the harvest and whether the government’s subsidy scheme is operating. The variable Cost is continuous and has continuous and discrete parents; the variable Buys is discrete and has a continuous parent.
 
 For the Cost variable, we need to specify **P**(Cost |Harvest ,Subsidy). The discrete parent is handled by enumeration—that is, by specifying both P (Cost |Harvest , subsidy)
 
-and P (Cost |Harvest ,¬subsidy). To handle Harvest , we specify how the distribution over the cost c depends on the continuous value h of Harvest . In other words, we specify the _parameters_ of the cost distribution as a function of h. The most common choice is the **linear Gaussian** distribution, in which the child has a Gaussian distribution whose mean μ variesLINEAR GAUSSIAN
+and P (Cost |Harvest ,¬subsidy). To handle Harvest , we specify how the distribution over the cost c depends on the continuous value h of Harvest . In other words, we specify the _parameters_ of the cost distribution as a function of h. The most common choice is the **linear Gaussian** distribution, in which the child has a Gaussian distribution whose mean μ varies linearly with the value of the parent and whose standard deviation σ is fixed. We need two distributions, one for subsidy and one for ¬subsidy , with different parameters:
 
-linearly with the value of the parent and whose standard deviation σ is fixed. We need two distributions, one for subsidy and one for ¬subsidy , with different parameters:
+![Alt text](image/14img/14.4.png)
 
-P (c | h, subsidy) = N(ath + bt, σ 2
+For this example, then, the conditional distribution for Cost is specified by naming the linear Gaussian distribution and providing the parameters a~t~, b~t~, σ~t~, a~f~ , b~f~ , and σf . Figures 14.6(a)  
 
-t )(c) = 1
-
-σt
-
-√ 2π
-
-e
-
-−
-
-1
-
-2
-
-“ c−(ath+bt)
-
-σt
-
-” 2
-
-P (c | h,¬subsidy) = N(afh + bf , σ 2
-
-f )(c) = 1
-
-σf
-
-√ 2π
-
-e
-
-−
-
-1
-
-2
-
-„ c−(a
-
-f h+b
-
-f )
-
-σ f
-
-« 2
-
-.
-
-For this example, then, the conditional distribution for Cost is specified by naming the linear Gaussian distribution and providing the parameters at, bt, σt, af , bf , and σf . Figures 14.6(a)  
-
-Section 14.3. Efficient Representation of Conditional Distributions 521
-
-0 2 4 6 8 10 Cost _c_
-
-02 46 81012
-
-Harvest _h_
-
-0 0.1 0.2 0.3 0.4
-
-_P_(_c_ | _h_, _subsidy_)
-
-0 2 4 6 8 10 Cost _c_
-
-02 46 81012
-
-Harvest _h_
-
-0 0.1 0.2 0.3 0.4
-
-_P_(_c_ | _h_, ¬_subsidy_)
-
-0 2 4 6 8 10 Cost _c_
-
-02 4 6 81012
-
-Harvest _h_
-
-0 0.1 0.2 0.3 0.4
-
-_P_(_c_ | _h_)
-
-(a) (b) (c)
-
-**Figure 14.6** The graphs in (a) and (b) show the probability distribution over Cost as a function of Harvest size, with Subsidy true and false, respectively. Graph (c) shows the distribution P (Cost |Harvest), obtained by summing over the two subsidy cases.
+![Alt text](image/14img/figure-14.6.png)
 
 and (b) show these two relationships. Notice that in each case the slope is negative, because cost decreases as supply increases. (Of course, the assumption of linearity implies that the cost becomes negative at some point; the linear model is reasonable only if the harvest size is limited to a narrow range.) Figure 14.6(c) shows the distribution P (c | h), averaging over the two possible values of Subsidy and assuming that each has prior probability 0.5. This shows that even with very simple models, quite interesting distributions can be represented.
 
-The linear Gaussian conditional distribution has some special properties. A network containing only continuous variables with linear Gaussian distributions has a joint distribution that is a multivariate Gaussian distribution (see Appendix A) over all the variables (Exercise 14.9). Furthermore, the posterior distribution given any evidence also has this property.3
+The linear Gaussian conditional distribution has some special properties. A network containing only continuous variables with linear Gaussian distributions has a joint distribution that is a multivariate Gaussian distribution (see Appendix A) over all the variables (Exercise 14.9). Furthermore, the posterior distribution given any evidence also has this property.^3^
 
-When discrete variables are added as parents (not as children) of continuous variables, the network defines a **conditional Gaussian**, or CG, distribution: given any assignment to theCONDITIONAL
+When discrete variables are added as parents (not as children) of continuous variables, the network defines a **conditional Gaussian**, or CG, distribution: given any assignment to the discrete variables, the distribution over the continuous variables is a multivariate Gaussian. Now we turn to the distributions for discrete variables with continuous parents. Consider, for example, the Buys node in Figure 14.5. It seems reasonable to assume that the customer will buy if the cost is low and will not buy if it is high and that the probability of buying varies smoothly in some intermediate region. In other words, the conditional distribution is like a “soft” threshold function. One way to make soft thresholds is to use the _integral_ of the standard normal distribution:
 
-GAUSSIAN
-
-discrete variables, the distribution over the continuous variables is a multivariate Gaussian. Now we turn to the distributions for discrete variables with continuous parents. Con-
-
-sider, for example, the Buys node in Figure 14.5. It seems reasonable to assume that the customer will buy if the cost is low and will not buy if it is high and that the probability of buying varies smoothly in some intermediate region. In other words, the conditional distribution is like a “soft” threshold function. One way to make soft thresholds is to use the _integral_ of the standard normal distribution:
-
-Φ(x) =
-
-∫ x
-
-−∞
-
-N(0, 1)(x)dx .
+Φ(x) =∫^x^~−∞~ N(0, 1)(x)dx .
 
 Then the probability of Buys given Cost might be
 
 P (buys |Cost = c) = Φ((−c + μ)/σ) ,
 
 which means that the cost threshold occurs around μ, the width of the threshold region is proportional to σ, and the probability of buying decreases as cost increases. This **probit distri-**
+```
+3 It follows that inference in linear Gaussian networks takes only O(n 3 ) time in the worst case, regardless of the network topology. In Section 14.4, we see that inference for networks of discrete variables is NP-hard.  
+```
 
-3 It follows that inference in linear Gaussian networks takes only O(n 3 ) time in the worst case, regardless of the
-
-network topology. In Section 14.4, we see that inference for networks of discrete variables is NP-hard.  
-
-
-
-0
-
-0.2
-
-0.4
-
-0.6
-
-0.8
-
-1
-
-0 2 4 6 8 10 12
-
-_P_ (_c_
-
-)
-
-Cost _c_
-
-0
-
-0.2
-
-0.4
-
-0.6
-
-0.8
-
-1
-
-0 2 4 6 8 10 12
-
-_P_ (_b_
-
-_uy s_
-
-| _c_ )
-
-Cost _c_
-
-Logit Probit
-
-(a) (b)
-
-**Figure 14.7** (a) A normal (Gaussian) distribution for the cost threshold, centered on μ =6.0 with standard deviation σ =1.0. (b) Logit and probit distributions for the probability of buys given cost , for the parameters μ =6.0 and σ = 1.0.
+![Alt text](image/14img/figure-14.7.png)
 
 **bution** (pronounced “pro-bit” and short for “probability unit”) is illustrated in Figure 14.7(a).PROBIT DISTRIBUTION
 
 The form can be justified by proposing that the underlying decision process has a hard threshold, but that the precise location of the threshold is subject to random Gaussian noise.
 
-An alternative to the probit model is the **logit distribution** (pronounced “low-jit”). ItLOGIT DISTRIBUTION
+An alternative to the probit model is the **logit distribution** (pronounced “low-jit”). It uses the **logistic function** 1/(1 + e^−x^) to produce a soft threshold:
 
-uses the **logistic function** 1/(1 + e −x) to produce a soft threshold:LOGISTIC FUNCTION
-
-P (buys |Cost = c) = 1
-
-1 + exp(−2 −c+μ
-
-σ )
-
-.
+![Alt text](image/14img/14.7.png)
 
 This is illustrated in Figure 14.7(b). The two distributions look similar, but the logit actually has much longer “tails.” The probit is often a better fit to real situations, but the logit is sometimes easier to deal with mathematically. It is used widely in neural networks (Chapter 20). Both probit and logit can be generalized to handle multiple continuous parents by taking a linear combination of the parent values.
 
-14.4 EXACT INFERENCE IN BAYESIAN NETWORKS
+## EXACT INFERENCE IN BAYESIAN NETWORKS
 
-The basic task for any probabilistic inference system is to compute the posterior probability distribution for a set of **query variables**, given some observed **event**—that is, some assign-EVENT
-
-ment of values to a set of **evidence variables**. To simplify the presentation, we will consider only one query variable at a time; the algorithms can easily be extended to queries with multiple variables. We will use the notation from Chapter 13: X denotes the query variable; **E** denotes the set of evidence variables E1, . . . , Em, and **e** is a particular observed event; **Y** will denotes the nonevidence, nonquery variables Y1, . . . , Yl (called the **hidden variables**). Thus,HIDDEN VARIABLE
-
-the complete set of variables is **X** \= {X}∪**E**∪**Y**. A typical query asks for the posterior probability distribution **P**(X | **e**).  
-
-Section 14.4. Exact Inference in Bayesian Networks 523
+The basic task for any probabilistic inference system is to compute the posterior probability distribution for a set of **query variables**, given some observed **event**—that is, some assignment of values to a set of **evidence variables**. To simplify the presentation, we will consider only one query variable at a time; the algorithms can easily be extended to queries with multiple variables. We will use the notation from Chapter 13: X denotes the query variable; **E** denotes the set of evidence variables E~1~, . . . , E~m~, and **e** is a particular observed event; **Y** will denotes the nonevidence, nonquery variables Y~1~, . . . , Y~l~ (called the **hidden variables**). Thus, the complete set of variables is **X** = {X}∪**E**∪**Y**. A typical query asks for the posterior probability distribution **P**(X | **e**).  
 
 In the burglary network, we might observe the event in which JohnCalls = true and MaryCalls = true . We could then ask for, say, the probability that a burglary has occurred:
 
@@ -1809,76 +883,32 @@ In the burglary network, we might observe the event in which JohnCalls = true an
 
 In this section we discuss exact algorithms for computing posterior probabilities and will consider the complexity of this task. It turns out that the general case is intractable, so Section 14.5 covers methods for approximate inference.
 
-**14.4.1 Inference by enumeration**
+### Inference by enumeration
 
 Chapter 13 explained that any conditional probability can be computed by summing terms from the full joint distribution. More specifically, a query **P**(X | **e**) can be answered using Equation (13.9), which we repeat here for convenience:
 
-**P**(X | **e**) = α **P**(X, **e**) = α
-
-∑
-
-**y**
-
-**P**(X, **e**, **y**) .
+![Alt text](image/14img/14.8a.png)
 
 Now, a Bayesian network gives a complete representation of the full joint distribution. More specifically, Equation (14.2) on page 513 shows that the terms P (x, **e**, **y**) in the joint distribution can be written as products of conditional probabilities from the network. Therefore, _a query can be answered using a Bayesian network by computing sums of products of conditional probabilities from the network._
 
 Consider the query **P**(Burglary | JohnCalls = true,MaryCalls = true). The hidden variables for this query are Earthquake and Alarm . From Equation (13.9), using initial letters for the variables to shorten the expressions, we have4
 
-**P**(B | j,m) = α **P**(B, j,m) = α
-
-∑
-
-e
-
-∑
-
-a
-
-**P**(B, j,m, e, a, ) .
+![Alt text](image/14img/14.8b.png)
 
 The semantics of Bayesian networks (Equation (14.2)) then gives us an expression in terms of CPT entries. For simplicity, we do this just for Burglary = true:
 
-P (b | j,m) = α
+![Alt text](image/14img/14.8c.png)
 
-∑
+To compute this expression, we have to add four terms, each computed by multiplying five numbers. In the worst case, where we have to sum out almost all the variables, the complexity of the algorithm for a network with n Boolean variables is O(n2^n^).
 
-e
+An improvement can be obtained from the following simple observations: the P (b) term is a constant and can be moved outside the summations over a and e, and the P (e) term can be moved outside the summation over a. Hence, we have
 
-∑
-
-a
-
-P (b)P (e)P (a | b, e)P (j | a)P (m | a) .
-
-To compute this expression, we have to add four terms, each computed by multiplying five numbers. In the worst case, where we have to sum out almost all the variables, the complexity of the algorithm for a network with n Boolean variables is O(n2n).
-
-An improvement can be obtained from the following simple observations: the P (b)
-
-term is a constant and can be moved outside the summations over a and e, and the P (e) term can be moved outside the summation over a. Hence, we have
-
-P (b | j,m) = αP (b)
-
-∑
-
-e
-
-P (e)
-
-∑
-
-a
-
-P (a | b, e)P (j | a)P (m | a) . (14.4)
+![Alt text](image/14img/14.8d.png)
 
 This expression can be evaluated by looping through the variables in order, multiplying CPT entries as we go. For each summation, we also need to loop over the variable’s possible
-
-4 An expression such as P
-
-e P (a, e) means to sum P (A = a, E = e) for all possible values of e. When E is
-
-Boolean, there is an ambiguity in that P (e) is used to mean both P (E = true) and P (E = e), but it should be clear from context which is intended; in particular, in the context of a sum the latter is intended.  
-
+```
+4 An expression such as Pe P (a, e) means to sum P (A = a, E = e) for all possible values of e. When E is Boolean, there is an ambiguity in that P (e) is used to mean both P (E = true) and P (E = e), but it should be clear from context which is intended; in particular, in the context of a sum the latter is intended. 
+```
 
 
 values. The structure of this computation is shown in Figure 14.8. Using the numbers from Figure 14.2, we obtain P (b | j,m) = α× 0.00059224. The corresponding computation for ¬b yields α× 0.0014919; hence,
@@ -1889,193 +919,66 @@ That is, the chance of a burglary, given calls from both neighbors, is about 28%
 
 tree in Figure 14.8. The ENUMERATION-ASK algorithm in Figure 14.9 evaluates such trees using depth-first recursion. The algorithm is very similar in structure to the backtracking algorithm for solving CSPs (Figure 6.5) and the DPLL algorithm for satisfiability (Figure 7.17).
 
-The space complexity of ENUMERATION-ASK is only linear in the number of variables: the algorithm sums over the full joint distribution without ever constructing it explicitly. Unfortunately, its time complexity for a network with n Boolean variables is always O(2n)— better than the O(n 2n) for the simple approach described earlier, but still rather grim.
+The space complexity of ENUMERATION-ASK is only linear in the number of variables: the algorithm sums over the full joint distribution without ever constructing it explicitly. Unfortunately, its time complexity for a network with n Boolean variables is always O(2^n^)— better than the O(n 2^n^) for the simple approach described earlier, but still rather grim.
 
 Note that the tree in Figure 14.8 makes explicit the _repeated subexpressions_ evaluated by the algorithm. The products P (j | a)P (m | a) and P (j | ¬a)P (m | ¬a) are computed twice, once for each value of e. The next section describes a general method that avoids such wasted computations.
 
-**14.4.2 The variable elimination algorithm**
+### The variable elimination algorithm
 
-The enumeration algorithm can be improved substantially by eliminating repeated calculations of the kind illustrated in Figure 14.8. The idea is simple: do the calculation once and save the results for later use. This is a form of dynamic programming. There are several versions of this approach; we present the **variable elimination** algorithm, which is the simplest.VARIABLE
-
-ELIMINATION
+The enumeration algorithm can be improved substantially by eliminating repeated calculations of the kind illustrated in Figure 14.8. The idea is simple: do the calculation once and save the results for later use. This is a form of dynamic programming. There are several versions of this approach; we present the **variable elimination** algorithm, which is the simplest.
 
 Variable elimination works by evaluating expressions such as Equation (14.4) in _right-to-left_ order (that is, _bottom up_ in Figure 14.8). Intermediate results are stored, and summations over each variable are done only for those portions of the expression that depend on the variable.
 
 Let us illustrate this process for the burglary network. We evaluate the expression
 
-**P**(B | j,m) = α **P**(B) ︸ ︷︷ ︸ **f**1(B)
-
-∑
-
-e
-
-P (e) ︸︷︷︸ **f**2(E)
-
-∑
-
-a
-
-**P**(a |B, e) ︸ ︷︷ ︸
-
-**f**3(A,B,E)
-
-P (j | a) ︸ ︷︷ ︸
-
-**f**4(A)
-
-P (m | a) ︸ ︷︷ ︸
-
-**f**5(A)
-
-.
+![Alt text](image/14img/14.9a.png)
 
 Notice that we have annotated each part of the expression with the name of the corresponding **factor**; each factor is a matrix indexed by the values of its argument variables. For example,FACTOR
 
-the factors **f**4(A) and **f**5(A) corresponding to P (j | a) and P (m | a) depend just on A because J and M are fixed by the query. They are therefore two-element vectors:
+the factors **f**~4~(A) and **f**~5~(A) corresponding to P (j | a) and P (m | a) depend just on A because J and M are fixed by the query. They are therefore two-element vectors:
 
-**f**4(A) =
+![Alt text](image/14img/14.9b.png)
 
-( P (j | a)
+**f**~3~(A,B,E) will be a 2× 2× 2 matrix, which is hard to show on the printed page. (The “first” element is given by P (a | b, e)= 0.95 and the “last” by P (¬a | ¬b,¬e)= 0.999.) In terms of factors, the query expression is written as
 
-P (j | ¬a)
+![Alt text](image/14img/14.9c.png)
 
-)
+![Alt text](image/14img/figure-14.8.png)
 
-\=
-
-( 0.90
-
-0.05
-
-)
-
-**f**5(A) =
-
-( P (m | a)
-
-P (m | ¬a)
-
-)
-
-\=
-
-( 0.70
-
-0.01
-
-)
-
-.
-
-**f**3(A,B,E) will be a 2× 2× 2 matrix, which is hard to show on the printed page. (The “first” element is given by P (a | b, e)= 0.95 and the “last” by P (¬a | ¬b,¬e)= 0.999.) In terms of factors, the query expression is written as
-
-**P**(B | j,m) = α **f**1(B)× ∑
-
-e
-
-**f**2(E)× ∑
-
-a
-
-**f**3(A,B,E)× **f**4(A)× **f**5(A)  
-
-Section 14.4. Exact Inference in Bayesian Networks 525
-
-_P_(_j_|_a_) .90
-
-_P_(_m_|_a_) .70 .01
-
-_P_(_m_|_¬a_)
-
-.05 _P_( _j_|_¬a_) _P_( _j_|_a_)
-
-.90
-
-_P(m_|_a_) .70 .01
-
-_P_(_m_|_¬a_)
-
-.05 _P_( _j_|_¬a_)
-
-_P_(_b_) .001
-
-_P_(_e_) .002
-
-_P_(_¬e_) .998
-
-_P_(_a_|_b,e_) .95 .06
-
-_P_(_¬a_|_b,¬e_) .05 _P_(_¬a_|_b,e_)
-
-.94 _P_(_a_|_b,¬e_)
-
-**Figure 14.8** The structure of the expression shown in Equation (14.4). The evaluation proceeds top down, multiplying values along each path and summing at the “+” nodes. Notice the repetition of the paths for j and m.
 
 **function** ENUMERATION-ASK(X , **e**, bn) **returns** a distribution over X
 
-**inputs**: X , the query variable **e**, observed values for variables **E** bn , a Bayes net with variables {X} ∪ **E** ∪ **Y** /\* **Y** _\= hidden variables_ \*/
+**inputs**: X , the query variable 
+**e**, observed values for variables 
+**E** bn , a Bayes net with variables {X} ∪ **E** ∪ **Y** /* **Y** _= hidden variables_ */
 
-**Q**(X )← a distribution over X , initially empty **for each** value xi of X **do**
+**Q**(X )← a distribution over X , initially empty 
+**for each** value x~i~ of X **do**
 
-**Q**(xi)← ENUMERATE-ALL(bn .VARS, **e**xi )
-
-where **e**xi is **e** extended with X = xi
-
+**Q**(x~i~)← ENUMERATE-ALL(bn .VARS, **e**x~i~ )
+where **e**x~i~ is **e** extended with X = x~i~
 **return** NORMALIZE(**Q**(X))
 
-**function** ENUMERATE-ALL(vars , **e**) **returns** a real number **if** EMPTY?(vars) **then return** 1.0 Y ← FIRST(vars) **if** Y has value y in **e**
 
-**then return** P (y | parents(Y )) × ENUMERATE-ALL(REST(vars), **e**) **else return**
+**function** ENUMERATE-ALL(vars , **e**) **returns** a real number 
+**if** EMPTY?(vars) **then return** 1.0 
+Y ← FIRST(vars) 
+**if** Y has value y in **e**
 
-∑ y P (y | parents(Y )) × ENUMERATE-ALL(REST(vars), **e**y)
-
+**then return** P (y | parents(Y )) × ENUMERATE-ALL(REST(vars), **e**) 
+**else return**∑~y~ P (y | parents(Y )) × ENUMERATE-ALL(REST(vars), **e**~y~)
 where **e**y is **e** extended with Y = y
 
 **Figure 14.9** The enumeration algorithm for answering queries on Bayesian networks.  
 
 
-
-where the “×” operator is not ordinary matrix multiplication but instead the **pointwise product** operation, to be described shortly.POINTWISE
-
-PRODUCT
+where the “×” operator is not ordinary matrix multiplication but instead the **pointwise product** operation, to be described shortly.
 
 The process of evaluation is a process of summing out variables (right to left) from pointwise products of factors to produce new factors, eventually yielding a factor that is the solution, i.e., the posterior distribution over the query variable. The steps are as follows:
 
-- First, we sum out A from the product of **f**3, **f**4, and **f**5\. This gives us a new 2× 2 factor **f**6(B,E) whose indices range over just B and E:
+- First, we sum out A from the product of **f**~3~, **f**~4~, and **f**~5~. This gives us a new 2× 2 factor **f**~6~(B,E) whose indices range over just B and E:
 
-**f**6(B,E) =
-
-∑
-
-a
-
-**f**3(A,B,E)× **f**4(A)× **f**5(A)
-
-\= (**f**3(a,B,E)× **f**4(a)× **f**5(a)) + (**f**3(¬a,B,E)× **f**4(¬a)× **f**5(¬a)) .
-
-Now we are left with the expression
-
-**P**(B | j,m) = α **f**1(B)× ∑
-
-e
-
-**f**2(E)× **f**6(B,E) .
-
-- Next, we sum out E from the product of **f**2 and **f**6:
-
-**f**7(B) =
-
-∑
-
-e
-
-**f**2(E)× **f**6(B,E)
-
-\= **f**2(e)× **f**6(B, e) + **f**2(¬e)× **f**6(B,¬e) .
-
-This leaves the expression
-
-**P**(B | j,m) = α **f**1(B)× **f**7(B)
+![Alt text](image/14img/14.9d.png)
 
 which can be evaluated by taking the pointwise product and normalizing the result.
 
@@ -2083,83 +986,34 @@ Examining this sequence, we see that two basic computational operations are requ
 
 **Operations on factors**
 
-The pointwise product of two factors **f**1 and **f**2 yields a new factor **f** whose variables are the _union_ of the variables in **f**1 and **f**2 and whose elements are given by the product of the corresponding elements in the two factors. Suppose the two factors have variables Y1, . . . , Yk
+The pointwise product of two factors **f**1 and **f**2 yields a new factor **f** whose variables are the _union_ of the variables in **f**1 and **f**2 and whose elements are given by the product of the corresponding elements in the two factors. Suppose the two factors have variables Y~1~, . . . , Y~k~ in common. Then we have
 
-in common. Then we have
 
-**f**(X1 . . . Xj , Y1 . . . Yk, Z1 . . . Zl) = **f**1(X1 . . . Xj , Y1 . . . Yk) **f**2(Y1 . . . Yk, Z, . . . Zl).
+**f**(X~1~ . . . X~j~ , Y~1~ . . . Y~k~, Z~1~ . . . Z~l~) = **f**1(X~1~ . . . XX~j~j , Y~1~ . . . Y~k~) **f**2(Y~1~ . . . Y~k~, Z, . . . Z~l~).
 
-If all the variables are binary, then **f**1 and **f**2 have 2j+k and 2k+l entries, respectively, and the pointwise product has 2j+k+l entries. For example, given two factors **f**1(A,B) and **f**2(B,C), the pointwise product **f**1× **f**2 = **f**3(A,B,C) has 21+1+1 = 8 entries, as illustrated in Figure 14.10. Notice that the factor resulting from a pointwise product can contain more variables than any of the factors being multiplied and that the size of a factor is exponential in the number of variables. This is where both space and time complexity arise in the variable elimination algorithm.  
+If all the variables are binary, then **f**1 and **f**2 have 2j+k and 2^k^+l entries, respectively, and the pointwise product has 2j+k+l entries. For example, given two factors **f**~1~(A,B) and **f**~2~(B,C), the pointwise product **f**~1~× **f**~2~ = **f**~3~(A,B,C) has 2^1+1+1^ = 8 entries, as illustrated in Figure 14.10. Notice that the factor resulting from a pointwise product can contain more variables than any of the factors being multiplied and that the size of a factor is exponential in the number of variables. This is where both space and time complexity arise in the variable elimination algorithm.  
 
-Section 14.4. Exact Inference in Bayesian Networks 527
 
-A B **f**1(A,B) B C **f**2(B,C) A B C **f**3(A,B,C)
+|A| B| **f**~1~(A,B) |B| C| **f**~2~(B,C)| A| B|C| **f**~3~(A,B,C)|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|T| T| .3| T| T| .2 |T |T| T | .3× .2= .06|
+|T| F| .7| T| F| .8| T| T| F| .3× .8= .24|
+|F| T| .9| F| T| .6| T| F| T| .7× .6= .42|
+|F| F| .1| F| F| .4| T| F| F| .7× .4= .28|
+| | | | | | |F| T| T| .9× .2= .18|
+| | | | | | |F| T| F| .9× .8= .72|
+| | | | | | |F| F| T| .1× .6= .06|
+| | | | | | |F| F| F| .1× .4= .04|
 
-T T .3 T T .2 T T T .3× .2= .06
+**Figure 14.10** Illustrating pointwise multiplication: **f**~1~(A, B)× **f**~2~(B, C) = **f**~3~(A, B, C).
 
-T F .7 T F .8 T T F .3× .8= .24
+Summing out a variable from a product of factors is done by adding up the submatrices formed by fixing the variable to each of its values in turn. For example, to sum out A from **f**~3~(A,B,C), we write
 
-F T .9 F T .6 T F T .7× .6= .42
-
-F F .1 F F .4 T F F .7× .4= .28
-
-F T T .9× .2= .18
-
-F T F .9× .8= .72
-
-F F T .1× .6= .06
-
-F F F .1× .4= .04
-
-**Figure 14.10** Illustrating pointwise multiplication: **f**1(A, B)× **f**2(B, C) = **f**3(A, B, C).
-
-Summing out a variable from a product of factors is done by adding up the submatrices formed by fixing the variable to each of its values in turn. For example, to sum out A from **f**3(A,B,C), we write
-
-**f**(B,C) =
-
-∑
-
-a
-
-**f**3(A,B,C) = **f**3(a,B,C) + **f**3(¬a,B,C)
-
-\=
-
-( .06 .24
-
-.42 .28
-
-)
-
-+
-
-( .18 .72
-
-.06 .04
-
-)
-
-\=
-
-( .24 .96
-
-.48 .32
-
-)
-
-.
+![Alt text](image/14img/14.10a.png)
 
 The only trick is to notice that any factor that does _not_ depend on the variable to be summed out can be moved outside the summation. For example, if we were to sum out E first in the burglary network, the relevant part of the expression would be
 
-∑
-
-e
-
-**f**2(E)× **f**3(A,B,E)× **f**4(A)× **f**5(A) = **f**4(A)× **f**5(A)× ∑
-
-e
-
-**f**2(E)× **f**3(A,B,E) .
+![Alt text](image/14img/14.10b.png)
 
 Now the pointwise product inside the summation is computed, and the variable is summed out of the resulting matrix.
 
@@ -2169,31 +1023,23 @@ Notice that matrices are _not_ multiplied until we need to sum out a variable fr
 
 The algorithm in Figure 14.11 includes an unspecified ORDER function to choose an ordering for the variables. Every choice of ordering yields a valid algorithm, but different orderings cause different intermediate factors to be generated during the calculation. For example, in the calculation shown previously, we eliminated A before E; if we do it the other way, the calculation becomes
 
-**P**(B | j,m) = α **f**1(B)× ∑
+![Alt text](image/14img/14.10c.png)
 
-a
-
-**f**4(A)× **f**5(A)× ∑
-
-e
-
-**f**2(E)× **f**3(A,B,E) ,
-
-during which a new factor **f**6(A,B) will be generated. In general, the time and space requirements of variable elimination are dominated by
-
-the size of the largest factor constructed during the operation of the algorithm. This in turn  
+during which a new factor **f**~6~(A,B) will be generated. In general, the time and space requirements of variable elimination are dominated by the size of the largest factor constructed during the operation of the algorithm. This in turn  
 
 
 
 **function** ELIMINATION-ASK(X , **e**, bn) **returns** a distribution over X
 
-**inputs**: X , the query variable **e**, observed values for variables **E** bn , a Bayesian network specifying joint distribution **P**(X1, . . . , Xn)
+**inputs**: X , the query variable 
+**e**, observed values for variables **E** 
+bn , a Bayesian network specifying joint distribution **P**(X~1~, . . . , X~n~)
 
-factors← \[ \]
-
-**for each** var **in** ORDER(bn .VARS) **do** factors← \[MAKE-FACTOR(var , **e**)|factors \]
-
-**if** var is a hidden variable **then** factors← SUM-OUT(var , factors ) **return** NORMALIZE(POINTWISE-PRODUCT(factors))
+factors← [ ]
+**for each** var **in** ORDER(bn .VARS) **do** 
+factors← [MAKE-FACTOR(var , **e**)|factors ]
+**if** var is a hidden variable **then** factors← SUM-OUT(var , factors ) 
+**return** NORMALIZE(POINTWISE-PRODUCT(factors))
 
 **Figure 14.11** The variable elimination algorithm for inference in Bayesian networks.
 
@@ -2201,207 +1047,79 @@ is determined by the order of elimination of variables and by the structure of t
 
 Let us consider one more query: **P**(JohnCalls |Burglary = true). As usual, the first step is to write out the nested summation:
 
-**P**(J | b) = α P (b)
-
-∑
-
-e
-
-P (e)
-
-∑
-
-a
-
-P (a | b, e)**P**(J | a)
-
-∑
-
-m
-
-P (m | a) .
-
-Evaluating this expression from right to left, we notice something interesting: ∑
-
-m P (m | a)
+![Alt text](image/14img/14.10d.png)
 
 is equal to 1 by definition! Hence, there was no need to include it in the first place; the variable M is _irrelevant_ to this query. Another way of saying this is that the result of the query P (JohnCalls |Burglary = true) is unchanged if we remove MaryCalls from the network altogether. In general, we can remove any leaf node that is not a query variable or an evidence variable. After its removal, there may be some more leaf nodes, and these too may be irrelevant. Continuing this process, we eventually find that _every variable that is not an ancestor of a query variable or evidence variable is irrelevant to the query._ A variable elimination algorithm can therefore remove all these variables before evaluating the query.
 
-**14.4.3 The complexity of exact inference**
+### The complexity of exact inference
 
-The complexity of exact inference in Bayesian networks depends strongly on the structure of the network. The burglary network of Figure 14.2 belongs to the family of networks in which there is at most one undirected path between any two nodes in the network. These are called **singly connected** networks or **polytrees**, and they have a particularly nice property: _The time_SINGLY CONNECTED
+The complexity of exact inference in Bayesian networks depends strongly on the structure of the network. The burglary network of Figure 14.2 belongs to the family of networks in which there is at most one undirected path between any two nodes in the network. These are called **singly connected** networks or **polytrees**, and they have a particularly nice property: _The time and space complexity of exact inference in polytrees is linear in the size of the network._ Here, the size is defined as the number of CPT entries; if the number of parents of each node is bounded by a constant, then the complexity will also be linear in the number of nodes.
 
-POLYTREE _and space complexity of exact inference in polytrees is linear in the size of the network._ Here, the size is defined as the number of CPT entries; if the number of parents of each node is bounded by a constant, then the complexity will also be linear in the number of nodes.
+For **multiply connected** networks, such as that of Figure 14.12(a), variable elimination can have exponential time and space complexity in the worst case, even when the number of parents per node is bounded. This is not surprising when one considers that _because it_  
 
-For **multiply connected** networks, such as that of Figure 14.12(a), variable eliminationMULTIPLY CONNECTED
-
-can have exponential time and space complexity in the worst case, even when the number of parents per node is bounded. This is not surprising when one considers that _because it_  
-
-Section 14.4. Exact Inference in Bayesian Networks 529
-
-_P_(_C_)_\=_.5
-
-_C P_(_R_) _t f_
-
-.80
-
-.20
-
-_C P_(_S_) _t f_
-
-.10
-
-.50
-
-_S R t t t f f t f f_
-
-.90
-
-.90
-
-.00
-
-.99
-
-_Cloudy_
-
-_RainSprinkler_
-
-_Wet Grass_
-
-_P_(_W_)
-
-_P_(_C_)_\=_.5
-
-_t f_
-
-.08 .02 .72 .18
-
-_P_(_S+R=x_)
-
-_S+R P_(_W_)
-
-_t t t f f t f f_
-
-.90
-
-.90
-
-.00
-
-.99
-
-_Cloudy_
-
-_Spr+Rain_
-
-_Wet Grass_
-
-.10 .40 .10 .40
-
-_C t t t f f t f f_
-
-(a) (b)
-
-**Figure 14.12** (a) A multiply connected network with conditional probability tables. (b) A clustered equivalent of the multiply connected network.
+![Alt text](image/14img/figure-14.12.png)
 
 _includes inference in propositional logic as a special case, inference in Bayesian networks is NP-hard._ In fact, it can be shown (Exercise 14.16) that the problem is as hard as that of computing the _number_ of satisfying assignments for a propositional logic formula. This means that it is #P-hard (“number-P hard”)—that is, strictly harder than NP-complete problems.
 
 There is a close connection between the complexity of Bayesian network inference and the complexity of constraint satisfaction problems (CSPs). As we discussed in Chapter 6, the difficulty of solving a discrete CSP is related to how “treelike” its constraint graph is. Measures such as **tree width**, which bound the complexity of solving a CSP, can also be applied directly to Bayesian networks. Moreover, the variable elimination algorithm can be generalized to solve CSPs as well as Bayesian networks.
 
-**14.4.4 Clustering algorithms**
+### Clustering algorithms
 
-The variable elimination algorithm is simple and efficient for answering individual queries. If we want to compute posterior probabilities for all the variables in a network, however, it can be less efficient. For example, in a polytree network, one would need to issue O(n) queries costing O(n) each, for a total of O(n2) time. Using **clustering** algorithms (also known asCLUSTERING
-
-**join tree** algorithms), the time can be reduced to O(n). For this reason, these algorithms areJOIN TREE
-
-widely used in commercial Bayesian network tools. The basic idea of clustering is to join individual nodes of the network to form clus-
-
-ter nodes in such a way that the resulting network is a polytree. For example, the multiply connected network shown in Figure 14.12(a) can be converted into a polytree by combining the Sprinkler and Rain node into a cluster node called Sprinkler+Rain , as shown in Figure 14.12(b). The two Boolean nodes are replaced by a “meganode” that takes on four possible values: tt, tf , ft, and ff . The meganode has only one parent, the Boolean variable Cloudy , so there are two conditioning cases. Although this example doesn’t show it, the process of clustering often produces meganodes that share some variables.  
+The variable elimination algorithm is simple and efficient for answering individual queries. If we want to compute posterior probabilities for all the variables in a network, however, it can be less efficient. For example, in a polytree network, one would need to issue O(n) queries costing O(n) each, for a total of O(n2) time. Using **clustering** algorithms (also known as **join tree** algorithms), the time can be reduced to O(n). For this reason, these algorithms are widely used in commercial Bayesian network tools. The basic idea of clustering is to join individual nodes of the network to form cluster nodes in such a way that the resulting network is a polytree. For example, the multiply connected network shown in Figure 14.12(a) can be converted into a polytree by combining the Sprinkler and Rain node into a cluster node called Sprinkler+Rain , as shown in Figure 14.12(b). The two Boolean nodes are replaced by a “meganode” that takes on four possible values: tt, tf , ft, and ff . The meganode has only one parent, the Boolean variable Cloudy , so there are two conditioning cases. Although this example doesn’t show it, the process of clustering often produces meganodes that share some variables.  
 
 
 
 Once the network is in polytree form, a special-purpose inference algorithm is required, because ordinary inference methods cannot handle meganodes that share variables with each other. Essentially, the algorithm is a form of constraint propagation (see Chapter 6) where the constraints ensure that neighboring meganodes agree on the posterior probability of any variables that they have in common. With careful bookkeeping, this algorithm is able to compute posterior probabilities for all the nonevidence nodes in the network in time _linear_ in the size of the clustered network. However, the NP-hardness of the problem has not disappeared: if a network requires exponential time and space with variable elimination, then the CPTs in the clustered network will necessarily be exponentially large.
 
-14.5 APPROXIMATE INFERENCE IN BAYESIAN NETWORKS
+## APPROXIMATE INFERENCE IN BAYESIAN NETWORKS
 
-Given the intractability of exact inference in large, multiply connected networks, it is essential to consider approximate inference methods. This section describes randomized sampling algorithms, also called **Monte Carlo** algorithms, that provide approximate answers whoseMONTE CARLO
+Given the intractability of exact inference in large, multiply connected networks, it is essential to consider approximate inference methods. This section describes randomized sampling algorithms, also called **Monte Carlo** algorithms, that provide approximate answers whose accuracy depends on the number of samples generated. Monte Carlo algorithms, of which simulated annealing (page 126) is an example, are used in many branches of science to estimate quantities that are difficult to calculate exactly. In this section, we are interested in sampling applied to the computation of posterior probabilities. We describe two families of algorithms: direct sampling and Markov chain sampling. Two other approaches—variational methods and loopy propagation—are mentioned in the notes at the end of the chapter.
 
-accuracy depends on the number of samples generated. Monte Carlo algorithms, of which simulated annealing (page 126) is an example, are used in many branches of science to estimate quantities that are difficult to calculate exactly. In this section, we are interested in sampling applied to the computation of posterior probabilities. We describe two families of algorithms: direct sampling and Markov chain sampling. Two other approaches—variational methods and loopy propagation—are mentioned in the notes at the end of the chapter.
+### Direct sampling methods
 
-**14.5.1 Direct sampling methods**
+The primitive element in any sampling algorithm is the generation of samples from a known probability distribution. For example, an unbiased coin can be thought of as a random variable Coin with values 〈heads , tails〉 and a prior distribution **P**(Coin) = 〈0.5, 0.5〉. Sampling from this distribution is exactly like flipping the coin: with probability 0.5 it will return heads , and with probability 0.5 it will return tails . Given a source of random numbers uniformly distributed in the range [0, 1], it is a simple matter to sample any distribution on a single variable, whether discrete or continuous. (See Exercise 14.17.)
 
-The primitive element in any sampling algorithm is the generation of samples from a known probability distribution. For example, an unbiased coin can be thought of as a random variable Coin with values 〈heads , tails〉 and a prior distribution **P**(Coin) = 〈0.5, 0.5〉. Sampling from this distribution is exactly like flipping the coin: with probability 0.5 it will return heads , and with probability 0.5 it will return tails . Given a source of random numbers uniformly distributed in the range \[0, 1\], it is a simple matter to sample any distribution on a single variable, whether discrete or continuous. (See Exercise 14.17.)
+The simplest kind of random sampling process for Bayesian networks generates events from a network that has no evidence associated with it. The idea is to sample each variable in turn, in topological order. The probability distribution from which the value is sampled is conditioned on the values already assigned to the variable’s parents. This algorithm is shown in Figure 14.13. We can illustrate its operation on the network in Figure 14.12(a), assuming an ordering [Cloudy ,Sprinkler ,Rain ,WetGrass ]:
 
-The simplest kind of random sampling process for Bayesian networks generates events from a network that has no evidence associated with it. The idea is to sample each variable in turn, in topological order. The probability distribution from which the value is sampled is conditioned on the values already assigned to the variable’s parents. This algorithm is shown in Figure 14.13. We can illustrate its operation on the network in Figure 14.12(a), assuming an ordering \[Cloudy ,Sprinkler ,Rain ,WetGrass \]:
+1. Sample from **P**(Cloudy) = 〈0.5, 0.5〉, value is true .
+2. Sample from **P**(Sprinkler |Cloudy = true) = 〈0.1, 0.9〉, value is false .
+3. Sample from **P**(Rain |Cloudy = true) = 〈0.8, 0.2〉, value is true .
+4. Sample from **P**(WetGrass |Sprinkler = false,Rain = true) = 〈0.9, 0.1〉, value is true .
+In this case, PRIOR-SAMPLE returns the event [true, false , true, true ].  
 
-1\. Sample from **P**(Cloudy) = 〈0.5, 0.5〉, value is true .
 
-2\. Sample from **P**(Sprinkler |Cloudy = true) = 〈0.1, 0.9〉, value is false .
-
-3\. Sample from **P**(Rain |Cloudy = true) = 〈0.8, 0.2〉, value is true .
-
-4\. Sample from **P**(WetGrass |Sprinkler = false,Rain = true) = 〈0.9, 0.1〉, value is true .
-
-In this case, PRIOR-SAMPLE returns the event \[true, false , true, true \].  
-
-Section 14.5. Approximate Inference in Bayesian Networks 531
 
 **function** PRIOR-SAMPLE(bn) **returns** an event sampled from the prior specified by bn
+**inputs**: bn , a Bayesian network specifying joint distribution **P**(X~1~, . . . , X~n~)
 
-**inputs**: bn , a Bayesian network specifying joint distribution **P**(X1, . . . , Xn)
-
-**x**← an event with n elements **foreach** variable Xi **in** X1, . . . , Xn **do**
-
-**x**\[i\]← a random sample from **P**(Xi | parents(Xi))
-
+**x**← an event with n elements 
+**foreach** variable X~i~ **in** X~1~, . . . , X~n~ **do**
+**x**[i]← a random sample from **P**(X~i~ | parents(X~i~))
 **return x**
 
 **Figure 14.13** A sampling algorithm that generates events from a Bayesian network. Each variable is sampled according to the conditional distribution given the values already sampled for the variable’s parents.
 
-It is easy to see that PRIOR-SAMPLE generates samples from the prior joint distribution specified by the network. First, let SPS (x1, . . . , xn) be the probability that a specific event is generated by the PRIOR-SAMPLE algorithm. _Just looking at the sampling process_, we have
+It is easy to see that PRIOR-SAMPLE generates samples from the prior joint distribution specified by the network. First, let SPS (x~1~, . . . , x~n~) be the probability that a specific event is generated by the PRIOR-SAMPLE algorithm. _Just looking at the sampling process_, we have
 
-SPS (x1 . . . xn) =
-
-n∏
-
-i =1
-
-P (xi | parents(Xi))
+![Alt text](image/14img/14.11a.png)
 
 because each sampling step depends only on the parent values. This expression should look familiar, because it is also the probability of the event according to the Bayesian net’s representation of the joint distribution, as stated in Equation (14.2). That is, we have
 
-SPS (x1 . . . xn) = P (x1 . . . xn) .
+SPS (x~1~ . . . x~n~) = P (x~1~ . . . x~n~) .
 
-This simple fact makes it easy to answer questions by using samples. In any sampling algorithm, the answers are computed by counting the actual samples
+This simple fact makes it easy to answer questions by using samples. In any sampling algorithm, the answers are computed by counting the actual samples generated. Suppose there are N total samples, and let NPS (x~1~, . . . , x~n~) be the number of times the specific event x~1~, . . . , x~n~ occurs in the set of samples. We expect this number, as a fraction of the total, to converge in the limit to its expected value according to the sampling probability:
 
-generated. Suppose there are N total samples, and let NPS (x1, . . . , xn) be the number of times the specific event x1, . . . , xn occurs in the set of samples. We expect this number, as a fraction of the total, to converge in the limit to its expected value according to the sampling probability:
+![Alt text](image/14img/14.11b.png)
 
-lim N→∞
-
-NPS (x1, . . . , xn)
-
-N
-
-\= SPS (x1, . . . , xn) = P (x1, . . . , xn) . (14.5)
-
-For example, consider the event produced earlier: \[true, false , true, true\]. The sampling probability for this event is
+For example, consider the event produced earlier: [true, false , true, true]. The sampling probability for this event is
 
 SPS (true , false, true , true) = 0.5× 0.9× 0.8× 0.9 = 0.324 .
 
-Hence, in the limit of large N , we expect 32.4% of the samples to be of this event. Whenever we use an approximate equality (“≈”) in what follows, we mean it in exactly
+Hence, in the limit of large N , we expect 32.4% of the samples to be of this event. Whenever we use an approximate equality (“≈”) in what follows, we mean it in exactly this sense—that the estimated probability becomes exact in the large-sample limit. Such an estimate is called **consistent**. For example, one can produce a consistent estimate of the probability of any partially specified event x~1~, . . . , xm, where m ≤ n, as follows:
 
-this sense—that the estimated probability becomes exact in the large-sample limit. Such an estimate is called **consistent**. For example, one can produce a consistent estimate of theCONSISTENT
+P (x~1~, . . . , xm) ≈ NPS (x~1~, . . . , xm)/N . (14.6)
 
-probability of any partially specified event x1, . . . , xm, where m ≤ n, as follows:
-
-P (x1, . . . , xm) ≈ NPS (x1, . . . , xm)/N . (14.6)
-
-That is, the probability of the event can be estimated as the fraction of all complete events generated by the sampling process that match the partially specified event. For example, if  
-
-
-
-we generate 1000 samples from the sprinkler network, and 511 of them have Rain = true , then the estimated probability of rain, written as P̂ (Rain = true), is 0.511.
+That is, the probability of the event can be estimated as the fraction of all complete events generated by the sampling process that match the partially specified event. For example, if we generate 1000 samples from the sprinkler network, and 511 of them have Rain = true , then the estimated probability of rain, written as P̂ (Rain = true), is 0.511.
 
 **Rejection sampling in Bayesian networks**
 
@@ -2411,25 +1129,13 @@ bution given an easy-to-sample distribution. In its simplest form, it can be use
 
 Let **P̂(X** | **e**) be the estimated distribution that the algorithm returns. From the definition of the algorithm, we have
 
-**P̂(X** | **e**) = α **N**PS (X, **e**) = **N**PS (X, **e**) NPS (**e**)
+![Alt text](image/14img/14.11c.png)
 
-.
-
-From Equation (14.6), this becomes
-
-**P̂(X** | **e**) ≈ **P**(X, **e**) P (**e**)
-
-\= **P**(X | **e**) .
-
-That is, rejection sampling produces a consistent estimate of the true probability. Continuing with our example from Figure 14.12(a), let us assume that we wish to esti-
-
-mate **P**(Rain |Sprinkler = true), using 100 samples. Of the 100 that we generate, suppose that 73 have Sprinkler = false and are rejected, while 27 have Sprinkler = true; of the 27, 8 have Rain = true and 19 have Rain = false . Hence,
+That is, rejection sampling produces a consistent estimate of the true probability. Continuing with our example from Figure 14.12(a), let us assume that we wish to estimate **P**(Rain |Sprinkler = true), using 100 samples. Of the 100 that we generate, suppose that 73 have Sprinkler = false and are rejected, while 27 have Sprinkler = true; of the 27, 8 have Rain = true and 19 have Rain = false . Hence,
 
 **P**(Rain | Sprinkler = true) ≈ NORMALIZE(〈8, 19〉) = 〈0.296, 0.704〉 .
 
-The true answer is 〈0.3, 0.7〉. As more samples are collected, the estimate will converge to the true answer. The standard deviation of the error in each probability will be proportional to 1/
-
-√ n, where n is the number of samples used in the estimate.
+The true answer is 〈0.3, 0.7〉. As more samples are collected, the estimate will converge to the true answer. The standard deviation of the error in each probability will be proportional to 1/√ n, where n is the number of samples used in the estimate.
 
 The biggest problem with rejection sampling is that it rejects so many samples! The fraction of samples consistent with the evidence **e** drops exponentially as the number of evidence variables grows, so the procedure is simply unusable for complex problems.
 
@@ -2437,23 +1143,22 @@ Notice that rejection sampling is very similar to the estimation of conditional 
 
 **Likelihood weighting**
 
-**Likelihood weighting** avoids the inefficiency of rejection sampling by generating only eventsLIKELIHOOD WEIGHTING
+**Likelihood weighting** avoids the inefficiency of rejection sampling by generating only events that are consistent with the evidence **e**. It is a particular instance of the general statistical technique of **importance sampling**, tailored for inference in Bayesian networks. We begin by
 
-that are consistent with the evidence **e**. It is a particular instance of the general statistical technique of **importance sampling**, tailored for inference in Bayesian networks. We begin byIMPORTANCE
 
-SAMPLING  
-
-Section 14.5. Approximate Inference in Bayesian Networks 533
-
-**function** REJECTION-SAMPLING(X , **e**, bn ,N ) **returns** an estimate of **P**(X |**e**) **inputs**: X , the query variable
-
-**e**, observed values for variables **E** bn , a Bayesian network N , the total number of samples to be generated
-
+**function** REJECTION-SAMPLING(X , **e**, bn ,N ) **returns** an estimate of **P**(X |**e**) 
+**inputs**: X , the query variable
+**e**, observed values for variables **E** 
+bn , a Bayesian network 
+N , the total number of samples to be generated
 **local variables**: **N**, a vector of counts for each value of X , initially zero
 
-**for** j = 1 to N **do x**← PRIOR-SAMPLE(bn) **if x** is consistent with **e then**
+**for** j = 1 to N **do 
+x**← PRIOR-SAMPLE(bn) 
+**if x** is consistent with **e then**
+**N**[x ]←**N**[x ]+1 where x is the value of X in **x**
 
-**N**\[x \]←**N**\[x \]+1 where x is the value of X in **x return** NORMALIZE(**N**)
+**return** NORMALIZE(**N**)
 
 **Figure 14.14** The rejection-sampling algorithm for answering queries given evidence in a Bayesian network.
 
@@ -2465,43 +1170,46 @@ Let us apply the algorithm to the network shown in Figure 14.12(a), with the que
 
 is set to 1.0. Then an event is generated:
 
-1\. Cloudy is an evidence variable with value true . Therefore, we set
-
+1. Cloudy is an evidence variable with value true . Therefore, we set
 w ← w×P (Cloudy = true) = 0.5 .
 
-2\. Sprinkler is not an evidence variable, so sample from **P**(Sprinkler |Cloudy = true) =
-
+2. Sprinkler is not an evidence variable, so sample from **P**(Sprinkler |Cloudy = true) =
 〈0.1, 0.9〉; suppose this returns false .
 
-3\. Similarly, sample from **P**(Rain |Cloudy = true) = 〈0.8, 0.2〉; suppose this returns true .
+3. Similarly, sample from **P**(Rain |Cloudy = true) = 〈0.8, 0.2〉; suppose this returns true .
 
-4\. WetGrass is an evidence variable with value true . Therefore, we set
-
+4. WetGrass is an evidence variable with value true . Therefore, we set
 w ← w×P (WetGrass = true |Sprinkler = false ,Rain = true) = 0.45 .
 
-Here WEIGHTED-SAMPLE returns the event \[true, false , true, true\] with weight 0.45, and this is tallied under Rain = true .
+Here WEIGHTED-SAMPLE returns the event [true, false , true, true] with weight 0.45, and this is tallied under Rain = true .
 
 To understand why likelihood weighting works, we start by examining the sampling probability SWS for WEIGHTED-SAMPLE. Remember that the evidence variables **E** are fixed  
 
 
+**function** LIKELIHOOD-WEIGHTING(X , **e**, bn ,N ) **returns** an estimate of **P**(X |**e**) 
+**inputs**: X , the query variable
 
-**function** LIKELIHOOD-WEIGHTING(X , **e**, bn ,N ) **returns** an estimate of **P**(X |**e**) **inputs**: X , the query variable
+**e**, observed values for variables **E** 
+bn , a Bayesian network specifying joint distribution **P**(X~1~, . . . , X~n~)
+N , the total number of samples to be generated 
 
-**e**, observed values for variables **E** bn , a Bayesian network specifying joint distribution **P**(X1, . . . , Xn)
+**local variables**: **W**, a vector of weighted counts for each value of X , initially zero
 
-N , the total number of samples to be generated **local variables**: **W**, a vector of weighted counts for each value of X , initially zero
-
-**for** j = 1 to N **do x**,w←WEIGHTED-SAMPLE(bn , **e**) **W**\[x \]←**W**\[x \] + w where x is the value of X in **x**
+**for** j = 1 to N **do**
+**x**,w←WEIGHTED-SAMPLE(bn , **e**) 
+**W**[x ]←**W**[x ] + w where x is the value of X in **x**
 
 **return** NORMALIZE(**W**)
 
+
 **function** WEIGHTED-SAMPLE(bn, **e**) **returns** an event and a weight
 
-w← 1; **x**← an event with n elements initialized from **e foreach** variable Xi **in** X1, . . . , Xn **do**
+w← 1; **x**← an event with n elements initialized from **e**
+**foreach** variable X~i~ **in** X~1~, . . . , X~n~ **do**
 
-**if** Xi is an evidence variable with value xi in **e then** w←w × P (Xi = xi | parents(Xi))
-
-**else x**\[i\]← a random sample from **P**(Xi | parents(Xi))
+**if** X~i~ is an evidence variable with value X~i~ in **e**
+**then** w←w × P (X~i~ = X~i~ | parents(X~i~))
+**else x**[i]← a random sample from **P**(X~i~ | parents(X~i~))
 
 **return x**, w
 
@@ -2547,7 +1255,7 @@ i =1
 
 P (ei | parents(Ei))
 
-\= P (**z**, **e**) (14.9)
+= P (**z**, **e**) (14.9)
 
 because the two products cover all the variables in the network, allowing us to use Equation (14.2) for the joint probability.
 
@@ -2569,7 +1277,7 @@ NWS (x, **y**, **e**)w(x, **y**, **e**) from LIKELIHOOD-WEIGHTING
 
 SWS (x, **y**, **e**)w(x, **y**, **e**) for large N
 
-\= α ′
+= α ′
 
 ∑
 
@@ -2577,7 +1285,7 @@ SWS (x, **y**, **e**)w(x, **y**, **e**) for large N
 
 P (x, **y**, **e**) by Equation (14.9)
 
-\= α ′
+= α ′
 
 P (x, **e**) = P (x | **e**) .
 
@@ -2601,11 +1309,11 @@ networks. (Other forms, some of them significantly more powerful, are discussed 
 
 The Gibbs sampling algorithm for Bayesian networks starts with an arbitrary state (with the evidence variables fixed at their observed values) and generates a next state by randomly sampling a value for one of the nonevidence variables Xi. The sampling for Xi is done _conditioned on the current values of the variables in the Markov blanket of_ Xi. (Recall from page 517 that the Markov blanket of a variable consists of its parents, children, and children’s parents.) The algorithm therefore wanders randomly around the state space—the space of possible complete assignments—flipping one variable at a time, but keeping the evidence variables fixed.
 
-Consider the query **P**(Rain | Sprinkler = true,WetGrass = true) applied to the network in Figure 14.12(a). The evidence variables Sprinkler and WetGrass are fixed to their observed values and the nonevidence variables Cloudy and Rain are initialized randomly— let us say to true and false respectively. Thus, the initial state is \[true, true , false , true\]. Now the nonevidence variables are sampled repeatedly in an arbitrary order. For example:
+Consider the query **P**(Rain | Sprinkler = true,WetGrass = true) applied to the network in Figure 14.12(a). The evidence variables Sprinkler and WetGrass are fixed to their observed values and the nonevidence variables Cloudy and Rain are initialized randomly— let us say to true and false respectively. Thus, the initial state is [true, true , false , true]. Now the nonevidence variables are sampled repeatedly in an arbitrary order. For example:
 
-1\. Cloudy is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Cloudy | Sprinkler = true,Rain = false). (Shortly, we will show how to calculate this distribution.) Suppose the result is Cloudy = false . Then the new current state is \[false , true, false , true\].
+1. Cloudy is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Cloudy | Sprinkler = true,Rain = false). (Shortly, we will show how to calculate this distribution.) Suppose the result is Cloudy = false . Then the new current state is [false , true, false , true].
 
-2\. Rain is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Rain |Cloudy = false ,Sprinkler = true,WetGrass = true). Suppose this yields Rain = true . The new current state is \[false, true , true, true \].
+2. Rain is sampled, given the current values of its Markov blanket variables: in this case, we sample from **P**(Rain |Cloudy = false ,Sprinkler = true,WetGrass = true). Suppose this yields Rain = true . The new current state is [false, true , true, true ].
 
 Each state visited during this process is a sample that contributes to the estimate for the query variable Rain . If the process visits 20 states where Rain is true and 60 states where Rain is false, then the answer to the query is NORMALIZE(〈20, 60〉) = 〈0.25, 0.75〉. The complete algorithm is shown in Figure 14.16.
 
@@ -2629,7 +1337,7 @@ initialize **x** with random values for the variables in **Z for** j = 1 to N **
 
 **for each** Zi in **Z do** set the value of Zi in **x** by sampling from **P**(Zi|mb(Zi))
 
-**N**\[x \]←**N**\[x \] + 1 where x is the value of X in **x return** NORMALIZE(**N**)
+**N**[x ]←**N**[x ] + 1 where x is the value of X in **x return** NORMALIZE(**N**)
 
 **Figure 14.16** The Gibbs sampling algorithm for approximate inference in Bayesian networks; this version cycles through the variables, but choosing variables at random also works.
 
@@ -2713,15 +1421,15 @@ i | **x**i, **e**) = P (xi, **x**i | **e**)P (x ′
 
 i | **x**i, **e**)
 
-\= P (xi | **x**i, **e**)P (**x**i | **e**)P (x ′
+= P (xi | **x**i, **e**)P (**x**i | **e**)P (x ′
 
 i | **x**i, **e**) (using the chain rule on the first term)
 
-\= P (xi | **x**i, **e**)P (x ′
+= P (xi | **x**i, **e**)P (x ′
 
 i, **x**i | **e**) (using the chain rule backward)
 
-\= π(**x**′)qi(**x**′ → **x**) .
+= π(**x**′)qi(**x**′ → **x**) .
 
 We can think of the loop “**for each** Zi in **Z do**” in Figure 14.16 as defining one large transition probability q that is the sequential composition q1 ◦ q2 ◦ · · · ◦ qn of the transition probabilities for the individual variables. It is easy to show (Exercise 14.19) that if each of qi and qj has π as its stationary distribution, then the sequential composition qi ◦ qj does too; hence the transition probability q for the whole loop has P (**x** | **e**) as its stationary distribution. Finally, unless the CPTs contain probabilities of 0 or 1—which can cause the state space to become disconnected—it is easy to see that q is ergodic. Hence, the samples generated by Gibbs sampling will eventually be drawn from the true posterior distribution.
 
@@ -2741,9 +1449,9 @@ i |mb(Xi)) = α P (x ′
 
 i | parents(Xi))× ∏
 
-Yj∈Children(Xi)
+y~j~∈Children(Xi)
 
-P (yj | parents(Yj)) . (14.12)
+P (y~j~ | parents(y~j~)) . (14.12)
 
 Hence, to flip each variable Xi conditioned on its Markov blanket, the number of multiplications required is equal to the number of Xi’s children.  
 
@@ -2771,7 +1479,7 @@ _Recommendation_(_C_1_, B_2) _Recommendation_(_C_2_, B_2)
 
 (a) (b)
 
-**Figure 14.17** (a) Bayes net for a single customer C1 recommending a single book B1. Honest(C1) is Boolean, while the other variables have integer values from 1 to 5. (b) Bayes net with two customers and two books.
+**Figure 14.17** (a) Bayes net for a single customer C~1~ recommending a single book B1. Honest(C~1~) is Boolean, while the other variables have integer values from 1 to 5. (b) Bayes net with two customers and two books.
 
 14.6 RELATIONAL AND FIRST-ORDER PROBABILITY MODELS
 
@@ -2779,7 +1487,7 @@ In Chapter 8, we explained the representational advantages possessed by first-or
 
 For example, suppose that an online book retailer would like to provide overall evaluations of products based on recommendations received from its customers. The evaluation will take the form of a posterior distribution over the quality of the book, given the available evidence. The simplest solution to base the evaluation on the average recommendation, perhaps with a variance determined by the number of recommendations, but this fails to take into account the fact that some customers are kinder than others and some are less honest than others. Kind customers tend to give high recommendations even to fairly mediocre books, while dishonest customers give very high or very low recommendations for reasons other than quality—for example, they might work for a publisher.6
 
-For a single customer C1, recommending a single book B1, the Bayes net might look like the one shown in Figure 14.17(a). (Just as in Section 9.1, expressions with parentheses such as Honest(C1) are just fancy symbols—in this case, fancy names for random variables.)
+For a single customer C~1~, recommending a single book B1, the Bayes net might look like the one shown in Figure 14.17(a). (Just as in Section 9.1, expressions with parentheses such as Honest(C~1~) are just fancy symbols—in this case, fancy names for random variables.)
 
 6 A game theorist would advise a dishonest customer to avoid detection by occasionally recommending a good book from a competitor. See Chapter 17.  
 
@@ -2889,9 +1597,9 @@ Quality : Book → {1, 2, 3, 4, 5}
 
 Recommendation : Customer ×Book → {1, 2, 3, 4, 5}
 
-The constant symbols will be whatever customer and book names appear in the retailer’s data set. In the example given earlier (Figure 14.17(b)), these were C1, C2 and B1, B2.
+The constant symbols will be whatever customer and book names appear in the retailer’s data set. In the example given earlier (Figure 14.17(b)), these were C~1~, C2 and B1, B2.
 
-Given the constants and their types, together with the functions and their type signatures, the random variables of the RPM are obtained by instantiating each function with each possible combination of objects: Honest(C1), Quality(B2), Recommendation(C1, B2), and so on. These are exactly the variables appearing in Figure 14.17(b). Because each type has only finitely many instances, the number of basic random variables is also finite.
+Given the constants and their types, together with the functions and their type signatures, the random variables of the RPM are obtained by instantiating each function with each possible combination of objects: Honest(C~1~), Quality(B2), Recommendation(C~1~, B2), and so on. These are exactly the variables appearing in Figure 14.17(b). Because each type has only finitely many instances, the number of basic random variables is also finite.
 
 To complete the RPM, we have to write the dependencies that govern these random variables. There is one dependency statement for each function, where each argument of the function is a logical variable (i.e., a variable that ranges over objects, as in first-order logic):
 
@@ -2947,11 +1655,11 @@ Recommendation (c, b) ∼ **if** Honest(c) **then**
 
 Again, the conditional test Fan(c,Author (b)) is unknown, but if a customer gives only 5s to a particular author’s books and is not otherwise especially kind, then the posterior probability that the customer is a fan of that author will be high. Furthermore, the posterior distribution will tend to discount the customer’s 5s in evaluating the quality of that author’s books.
 
-In the preceding example, we implicitly assumed that the value of Author(b) is known for every b, but this may not be the case. How can the system reason about whether, say, C1
+In the preceding example, we implicitly assumed that the value of Author(b) is known for every b, but this may not be the case. How can the system reason about whether, say, C~1~
 
-is a fan of Author (B2) when Author(B2) is unknown? The answer is that the system may have to reason about _all possible authors_. Suppose (to keep things simple) that there are just two authors, A1 and A2. Then Author(B2) is a random variable with two possible values, A1 and A2, and it is a parent of Recommendation(C1, B2). The variables Fan(C1, A1) and Fan(C1, A2) are parents too. The conditional distribution for Recommendation(C1, B2) is then essentially a **multiplexer** in which the Author(B2) parent acts as a selector to chooseMULTIPLEXER
+is a fan of Author (B2) when Author(B2) is unknown? The answer is that the system may have to reason about _all possible authors_. Suppose (to keep things simple) that there are just two authors, A1 and A2. Then Author(B2) is a random variable with two possible values, A1 and A2, and it is a parent of Recommendation(C~1~, B2). The variables Fan(C~1~, A1) and Fan(C~1~, A2) are parents too. The conditional distribution for Recommendation(C~1~, B2) is then essentially a **multiplexer** in which the Author(B2) parent acts as a selector to chooseMULTIPLEXER
 
-which of Fan(C1, A1) and Fan(C1, A2) actually gets to influence the recommendation. A fragment of the equivalent Bayes net is shown in Figure 14.19. Uncertainty in the value of Author(B2), which affects the dependency structure of the network, is an instance of **relational uncertainty**.RELATIONAL
+which of Fan(C~1~, A1) and Fan(C~1~, A2) actually gets to influence the recommendation. A fragment of the equivalent Bayes net is shown in Figure 14.19. Uncertainty in the value of Author(B2), which affects the dependency structure of the network, is an instance of **relational uncertainty**.RELATIONAL
 
 UNCERTAINTY
 
@@ -2991,21 +1699,21 @@ The basic idea is to understand how ordinary Bayesian networks and RPMs manage t
 
 One way to do this in OUPMs is to add statements that define conditional distributions over the numbers of objects of various kinds. For example, in the book-recommendation domain, we might want to distinguish between _customers_ (real people) and their _login IDs_. Suppose we expect somewhere between 100 and 10,000 distinct customers (whom we cannot observe directly). We can express this as a prior log-normal distribution9 as follows:
 
-#Customer ∼ LogNormal \[6.9, 2.32 \]() .
+#Customer ∼ LogNormal [6.9, 2.32 ]() .
 
 We expect honest customers to have just one ID, whereas dishonest customers might have anywhere between 10 and 1000 IDs:
 
 #LoginID(Owner = c) ∼ **if** Honest(c) **then** Exactly(1)
 
-**else** LogNormal \[6.9, 2.32 \]() .
+**else** LogNormal [6.9, 2.32 ]() .
 
 This statement defines the number of login IDs for a given owner, who is a customer. The Owner function is called an **origin function** because it says where each generated objectORIGIN FUNCTION
 
 came from. In the formal semantics of BLOG (as distinct from first-order logic), the domain elements in each possible world are actually generation histories (e.g., “the fourth login ID of the seventh customer”) rather than simple tokens.
 
-9 A distribution LogNormal \[μ, σ 2 \](x) is equivalent to a distribution N \[μ, σ
+9 A distribution LogNormal [μ, σ ^2^ ](x) is equivalent to a distribution N [μ, σ
 
-2 \](x) over log
+2 ](x) over log
 
 e (x).  
 
@@ -3239,7 +1947,7 @@ used to simplify complex calculations of all kinds. The basic idea is to propose
 
 PARAMETER
 
-the reduced problem, often by solving the system of equations ∂D/∂**λ** \= 0. In many cases, strict upper and lower bounds can be obtained. Variational methods have long been used in statistics (Rustagi, 1976). In statistical physics, the **mean-field** method is a particular vari-MEAN FIELD
+the reduced problem, often by solving the system of equations ∂D/∂**λ** = 0. In many cases, strict upper and lower bounds can be obtained. Variational methods have long been used in statistics (Rustagi, 1976). In statistical physics, the **mean-field** method is a particular vari-MEAN FIELD
 
 ational approximation in which the individual variables making up the model are assumed  
 
@@ -3263,7 +1971,7 @@ VARIABLE
 
 
 
-statistics. (In BUGS, an indexed random variable looks like X\[i\], where i has a defined integer range.) These languages inherited the key property of Bayesian networks: every well-formed knowledge base defines a unique, consistent probability model. Languages with well-defined semantics based on unique names and domain closure drew on the representational capabilities of logic programming (Poole, 1993; Sato and Kameya, 1997; Kersting _et al._, 2000) and semantic networks (Koller and Pfeffer, 1998; Pfeffer, 2000). Pfeffer (2007) went on to develop IBAL, which represents first-order probability models as probabilistic programs in a programming language extended with a randomization primitive. Another important thread was the combination of relational and first-order notations with (undirected) Markov networks (Taskar _et al._, 2002; Domingos and Richardson, 2004), where the emphasis has been less on knowledge representation and more on learning from large data sets.
+statistics. (In BUGS, an indexed random variable looks like X[i], where i has a defined integer range.) These languages inherited the key property of Bayesian networks: every well-formed knowledge base defines a unique, consistent probability model. Languages with well-defined semantics based on unique names and domain closure drew on the representational capabilities of logic programming (Poole, 1993; Sato and Kameya, 1997; Kersting _et al._, 2000) and semantic networks (Koller and Pfeffer, 1998; Pfeffer, 2000). Pfeffer (2007) went on to develop IBAL, which represents first-order probability models as probabilistic programs in a programming language extended with a randomization primitive. Another important thread was the combination of relational and first-order notations with (undirected) Markov networks (Taskar _et al._, 2002; Domingos and Richardson, 2004), where the emphasis has been less on knowledge representation and more on learning from large data sets.
 
 Initially, inference in these models was performed by generating an equivalent Bayesian network. Pfeffer _et al._ (1999) introduced a variable elimination algorithm that cached each computed factor for reuse by later computations involving the same relations but different objects, thereby realizing some of the computational gains of lifting. The first truly lifted inference algorithm was a lifted form of variable elimination described by Poole (2003) and subsequently improved by de Salvo Braz _et al._ (2007). Further advances, including cases where certain aggregate probabilities can be computed in closed form, are described by Milch _et al._ (2008) and Kisynski and Poole (2009). Pasula and Russell (2001) studied the application of MCMC to avoid building the complete equivalent Bayes net in cases of relational and identity uncertainty. Getoor and Taskar (2007) collect many important papers on first-order probability models and their use in machine learning.
 
@@ -3293,7 +2001,7 @@ The most important single publication in the growth of Bayesian networks was und
 
 EXERCISES
 
-**14.1** We have a bag of three biased coins a, b, and c with probabilities of coming up heads of 20%, 60%, and 80%, respectively. One coin is drawn randomly from the bag (with equal likelihood of drawing each of the three coins), and then the coin is flipped three times to generate the outcomes X1, X2, and X3.
+**14.1** We have a bag of three biased coins a, b, and c with probabilities of coming up heads of 20%, 60%, and 80%, respectively. One coin is drawn randomly from the bag (with equal likelihood of drawing each of the three coins), and then the coin is flipped three times to generate the outcomes X~1~, X2, and X3.
 
 **a**. Draw the Bayesian network corresponding to this setup and define the necessary CPTs.
 
@@ -3431,9 +2139,9 @@ Exercises 561
 
 **14.9** Consider the family of linear Gaussian networks, as defined on page 520.
 
-**a**. In a two-variable network, let X1 be the parent of X2, let X1 have a Gaussian prior, and let **P**(X2 |X1) be a linear Gaussian distribution. Show that the joint distribution P (X1,X2) is a multivariate Gaussian, and calculate its covariance matrix.
+**a**. In a two-variable network, let X~1~ be the parent of X2, let X~1~ have a Gaussian prior, and let **P**(X2 |X~1~) be a linear Gaussian distribution. Show that the joint distribution P (X~1~,X2) is a multivariate Gaussian, and calculate its covariance matrix.
 
-**b**. Prove by induction that the joint distribution for a general linear Gaussian network on X1, . . . ,Xn is also a multivariate Gaussian.
+**b**. Prove by induction that the joint distribution for a general linear Gaussian network on X~1~, . . . ,X~n~ is also a multivariate Gaussian.
 
 **14.10** The probit distribution defined on page 522 describes the probability distribution for a Boolean child, given a single continuous parent.
 
@@ -3577,9 +2285,9 @@ Perform the calculations indicated and check that the answer is correct.
 
 **b**. Count the number of arithmetic operations performed, and compare it with the number performed by the enumeration algorithm.
 
-**c**. Suppose a network has the form of a _chain_: a sequence of Boolean variables X1, . . . ,Xn
+**c**. Suppose a network has the form of a _chain_: a sequence of Boolean variables X~1~, . . . ,X~n~
 
-where Parents(Xi)= {Xi−1} for i= 2, . . . , n. What is the complexity of computing **P**(X1 |Xn = true) using enumeration? Using variable elimination?
+where Parents(Xi)= {X~i−1~} for i= 2, . . . , n. What is the complexity of computing **P**(X~1~ |X~n~ = true) using enumeration? Using variable elimination?
 
 **d**. Prove that the complexity of running variable elimination on a polytree network is linear in the size of the tree for any variable ordering consistent with the network structure.
 
@@ -3595,7 +2303,7 @@ hard. (_Hint_: Consider a network with one variable for each proposition symbol,
 
 **14.17** Consider the problem of generating a random sample from a specified distribution on a single variable. Assume you have a random number generator that returns a random number uniformly distributed between 0 and 1.
 
-**a**. Let X be a discrete variable with P (X = xi)= pi for i∈ {1, . . . , k}. The **cumulative distribution** of X gives the probability that X ∈{x1, . . . , xj} for each possible j. (SeeCUMULATIVE
+**a**. Let X be a discrete variable with P (X = xi)= pi for i∈ {1, . . . , k}. The **cumulative distribution** of X gives the probability that X ∈{X~1~, . . . , xj} for each possible j. (SeeCUMULATIVE
 
 DISTRIBUTION
 
@@ -3619,7 +2327,7 @@ also Appendix A.) Explain how to calculate the cumulative distribution in O(k) t
 
 **14.19** This exercise explores the stationary distribution for Gibbs sampling methods.
 
-**a**. The convex composition \[α, q1; 1 − α, q2\] of q1 and q2 is a transition probability distribution that first chooses one of q1 and q2 with probabilities α and 1 − α, respectively, and then applies whichever is chosen. Prove that if q1 and q2 are in detailed balance with π, then their convex composition is also in detailed balance with π. (_Note_: this result justifies a variant of GIBBS-ASK in which variables are chosen at random rather than sampled in a fixed sequence.)
+**a**. The convex composition [α, q1; 1 − α, q2] of q1 and q2 is a transition probability distribution that first chooses one of q1 and q2 with probabilities α and 1 − α, respectively, and then applies whichever is chosen. Prove that if q1 and q2 are in detailed balance with π, then their convex composition is also in detailed balance with π. (_Note_: this result justifies a variant of GIBBS-ASK in which variables are chosen at random rather than sampled in a fixed sequence.)
 
 **b**. Prove that if each of q1 and q2 has π as its stationary distribution, then the sequential composition q = q1 ◦ q2 also has π as its stationary distribution.
 
@@ -3759,7 +2467,7 @@ _Rain t+_1
 
 _Umbrella t+_1
 
-_Rt_ \-1 _tP_(_R_ )
+_Rt_ -1 _tP_(_R_ )
 
 0.3_f_ 0.7_t_
 
@@ -3783,9 +2491,9 @@ The three terms on the right-hand side are the initial state model **P**(**X**0)
 
 The structure in Figure 15.2 is a first-order Markov process—the probability of rain is assumed to depend only on whether it rained the previous day. Whether such an assumption is reasonable depends on the domain itself. The first-order Markov assumption says that the state variables contain _all_ the information needed to characterize the probability distribution for the next time slice. Sometimes the assumption is exactly true—for example, if a particle is executing a random walk along the x-axis, changing its position by ±1 at each time step, then using the x-coordinate as the state gives a first-order Markov process. Sometimes the assumption is only approximate, as in the case of predicting rain only on the basis of whether it rained the previous day. There are two ways to improve the accuracy of the approximation:
 
-1\. Increasing the order of the Markov process model. For example, we could make a second-order model by adding Rain t−2 as a parent of Rain t, which might give slightly more accurate predictions. For example, in Palo Alto, California, it very rarely rains more than two days in a row.
+1. Increasing the order of the Markov process model. For example, we could make a second-order model by adding Rain t−2 as a parent of Rain t, which might give slightly more accurate predictions. For example, in Palo Alto, California, it very rarely rains more than two days in a row.
 
-2\. Increasing the set of state variables. For example, we could add Season t to allow  
+2. Increasing the set of state variables. For example, we could add Season t to allow  
 
 
 
@@ -3847,9 +2555,9 @@ as being composed of two parts: first, the current state distribution is project
 
 **P**(**X**t+1 | **e**1:t+1) = **P**(**X**t+1 | **e**1:t, **e**t+1) (dividing up the evidence)
 
-\= α **P**(**e**t+1 |**X**t+1, **e**1:t) **P**(**X**t+1 | **e**1:t) (using Bayes’ rule)
+= α **P**(**e**t+1 |**X**t+1, **e**1:t) **P**(**X**t+1 | **e**1:t) (using Bayes’ rule)
 
-\= α **P**(**e**t+1 |**X**t+1) **P**(**X**t+1 | **e**1:t) (by the sensor Markov assumption). (15.4)
+= α **P**(**e**t+1 |**X**t+1) **P**(**X**t+1 | **e**1:t) (by the sensor Markov assumption). (15.4)
 
 Here and throughout this chapter, α is a normalizing constant used to make probabilities sum up to 1. The second term, **P**(**X**t+1 | **e**1:t) represents a one-step prediction of the next state, and the first term updates this with the new evidence; notice that **P**(**e**t+1 |**X**t+1) is obtainable directly from the sensor model. Now we obtain the one-step prediction for the next state by conditioning on the current state **X**t:
 
@@ -3861,7 +2569,7 @@ Here and throughout this chapter, α is a normalizing constant used to make prob
 
 **P**(**X**t+1 | **x**t, **e**1:t)P (**x**t | **e**1:t)
 
-\= α **P**(**e**t+1 |**X**t+1)
+= α **P**(**e**t+1 |**X**t+1)
 
 ∑
 
@@ -3889,13 +2597,13 @@ r0
 
 **P**(R1 | r0)P (r0)
 
-\= 〈0.7, 0.3〉× 0.5 + 〈0.3, 0.7〉× 0.5 = 〈0.5, 0.5〉 .
+= 〈0.7, 0.3〉× 0.5 + 〈0.3, 0.7〉× 0.5 = 〈0.5, 0.5〉 .
 
 Then the update step simply multiplies by the probability of the evidence for t = 1 and normalizes, as shown in Equation (15.4):
 
 **P**(R1 | u1) = α **P**(u1 |R1)**P**(R1) = α 〈0.9, 0.2〉〈0.5, 0.5〉
 
-\= α 〈0.45, 0.1〉 ≈ 〈0.818, 0.182〉 .  
+= α 〈0.45, 0.1〉 ≈ 〈0.818, 0.182〉 .  
 
 Section 15.2. Inference in Temporal Models 573
 
@@ -3909,13 +2617,13 @@ r1
 
 **P**(R2 | r1)P (r1 |u1)
 
-\= 〈0.7, 0.3〉× 0.818 + 〈0.3, 0.7〉× 0.182 ≈ 〈0.627, 0.373〉 ,
+= 〈0.7, 0.3〉× 0.818 + 〈0.3, 0.7〉× 0.182 ≈ 〈0.627, 0.373〉 ,
 
 and updating it with the evidence for t = 2 gives
 
 **P**(R2 | u1, u2) = α **P**(u2 |R2)**P**(R2 |u1) = α 〈0.9, 0.2〉〈0.627, 0.373〉
 
-\= α 〈0.565, 0.075〉 ≈ 〈0.883, 0.117〉 .
+= α 〈0.565, 0.075〉 ≈ 〈0.883, 0.117〉 .
 
 Intuitively, the probability of rain increases from day 1 to day 2 because rain persists. Exercise 15.2(a) asks you to investigate this tendency further.
 
@@ -3973,11 +2681,11 @@ As we said earlier, smoothing is the process of computing the distribution over 
 
 **P**(**X**k | **e**1:t) = **P**(**X**k | **e**1:k, **e**k+1:t)
 
-\= α **P**(**X**k | **e**1:k)**P**(**e**k+1:t |**X**k, **e**1:k) (using Bayes’ rule)
+= α **P**(**X**k | **e**1:k)**P**(**e**k+1:t |**X**k, **e**1:k) (using Bayes’ rule)
 
-\= α **P**(**X**k | **e**1:k)**P**(**e**k+1:t |**X**k) (using conditional independence)
+= α **P**(**X**k | **e**1:k)**P**(**e**k+1:t |**X**k) (using conditional independence)
 
-\= α **f**1:k× **b**k+1:t . (15.8)
+= α **f**1:k× **b**k+1:t . (15.8)
 
 where “×” represents pointwise multiplication of vectors. Here we have defined a “backward” message **b**k+1:t = **P**(**e**k+1:t |**X**k), analogous to the forward message **f**1:k. The forward message **f**1:k can be computed by filtering forward from 1 to k, as given by Equation (15.5). It turns out that the backward message **b**k+1:t can be computed by a recursive process that runs _backward_ from t:
 
@@ -3989,7 +2697,7 @@ where “×” represents pointwise multiplication of vectors. Here we have defi
 
 **P**(**e**k+1:t |**X**k, **x**k+1)**P**(**x**k+1 |**X**k) (conditioning on **X**k+1)
 
-\=
+=
 
 ∑
 
@@ -3997,7 +2705,7 @@ where “×” represents pointwise multiplication of vectors. Here we have defi
 
 P (**e**k+1:t | **x**k+1)**P**(**x**k+1 |**X**k) (by conditional independence)
 
-\=
+=
 
 ∑
 
@@ -4005,7 +2713,7 @@ P (**e**k+1:t | **x**k+1)**P**(**x**k+1 |**X**k) (by conditional independence)
 
 P (**e**k+1, **e**k+2:t | **x**k+1)**P**(**x**k+1 |**X**k)
 
-\=
+=
 
 ∑
 
@@ -4039,7 +2747,7 @@ r2
 
 P (u2 | r2)P ( | r2)**P**(r2 |R1)
 
-\= (0.9× 1×〈0.7, 0.3〉) + (0.2× 1×〈0.3, 0.7〉) = 〈0.69, 0.41〉 .
+= (0.9× 1×〈0.7, 0.3〉) + (0.2× 1×〈0.3, 0.7〉) = 〈0.69, 0.41〉 .
 
 Plugging this into Equation (15.10), we find that the smoothed estimate for rain on day 1 is
 
@@ -4067,7 +2775,7 @@ SMOOTHING
 
 **15.2.3 Finding the most likely sequence**
 
-Suppose that \[true, true, false , true , true\] is the umbrella sequence for the security guard’s first five days on the job. What is the weather sequence most likely to explain this? Does the absence of the umbrella on day 3 mean that it wasn’t raining, or did the director forget to bring it? If it didn’t rain on day 3, perhaps (because weather tends to persist) it didn’t rain on day 4 either, but the director brought the umbrella just in case. In all, there are 25
+Suppose that [true, true, false , true , true] is the umbrella sequence for the security guard’s first five days on the job. What is the weather sequence most likely to explain this? Does the absence of the umbrella on day 3 mean that it wasn’t raining, or did the director forget to bring it? If it didn’t rain on day 3, perhaps (because weather tends to persist) it didn’t rain on day 4 either, but the director brought the umbrella just in case. In all, there are 25
 
 possible weather sequences we could pick. Is there a way to find the most likely one, short of enumerating all of them?
 
@@ -4081,13 +2789,13 @@ prior , the prior distribution on the initial state, **P**(**X**0)
 
 **b**, a representation of the backward message, initially all 1s **sv**, a vector of smoothed estimates for steps 1, . . . , t
 
-**fv**\[0\]← prior
+**fv**[0]← prior
 
-**for** i = 1 **to** t **do fv**\[i\]← FORWARD(**fv**\[i− 1\], **ev**\[i\])
+**for** i = 1 **to** t **do fv**[i]← FORWARD(**fv**[i− 1], **ev**[i])
 
-**for** i = t **downto** 1 **do sv**\[i\]←NORMALIZE(**fv**\[i\]×**b**)
+**for** i = t **downto** 1 **do sv**[i]←NORMALIZE(**fv**[i]×**b**)
 
-**b**←BACKWARD(**b**, **ev**\[i\])
+**b**←BACKWARD(**b**, **ev**[i])
 
 **return sv**
 
@@ -4167,7 +2875,7 @@ _true_
 
 _false_
 
-**Figure 15.5** (a) Possible state sequences for Raint can be viewed as paths through a graph of the possible states at each time step. (States are shown as rectangles to avoid confusion with nodes in a Bayes net.) (b) Operation of the Viterbi algorithm for the umbrella observation sequence \[true, true, false, true, true\]. For each t, we have shown the values of the message **m**1:t, which gives the probability of the best sequence reaching each state at time t. Also, for each state, the bold arrow leading into it indicates its best predecessor as measured by the product of the preceding sequence probability and the transition probability. Following the bold arrows back from the most likely state in **m**1:5 gives the most likely sequence.
+**Figure 15.5** (a) Possible state sequences for Raint can be viewed as paths through a graph of the possible states at each time step. (States are shown as rectangles to avoid confusion with nodes in a Bayes net.) (b) Operation of the Viterbi algorithm for the umbrella observation sequence [true, true, false, true, true]. For each t, we have shown the values of the message **m**1:t, which gives the probability of the best sequence reaching each state at time t. Also, for each state, the bold arrow leading into it indicates its best predecessor as measured by the product of the preceding sequence probability and the transition probability. Following the bold arrows back from the most likely state in **m**1:5 gives the most likely sequence.
 
 butions over _single_ time steps, whereas to find the most likely _sequence_ we must consider _joint_ probabilities over all the time steps. The results can in fact be quite different. (See Exercise 15.4.)
 
@@ -4177,7 +2885,7 @@ max **x**1...**x**t
 
 **P**(**x**1, . . . , **x**t, **X**t+1 | **e**1:t+1)
 
-\= α **P**(**e**t+1 |**X**t+1)max **x**t
+= α **P**(**e**t+1 |**X**t+1)max **x**t
 
 (
 
@@ -4193,7 +2901,7 @@ Equation (15.11) is _identical_ to the filtering equation (15.5) except that
 
 
 
-1\. The forward message **f**1:t = **P**(**X**t | **e**1:t) is replaced by the message
+1. The forward message **f**1:t = **P**(**X**t | **e**1:t) is replaced by the message
 
 **m**1:t = max **x**1...**x**t−1
 
@@ -4201,7 +2909,7 @@ Equation (15.11) is _identical_ to the filtering equation (15.5) except that
 
 that is, the probabilities of the most likely path to each state **x**t; and
 
-2\. the summation over **x**t in Equation (15.5) is replaced by the maximization over **x**t in Equation (15.11).
+2. the summation over **x**t in Equation (15.5) is replaced by the maximization over **x**t in Equation (15.11).
 
 Thus, the algorithm for computing the most likely sequence is similar to filtering: it runs forward along the sequence, computing the **m** message at each time step, using Equation (15.11). The progress of this computation is shown in Figure 15.5(b). At the end, it will have the probability for the most likely sequence reaching _each_ of the final states. One can thus easily select the most likely sequence overall (the states outlined in bold). In order to identify the actual sequence, as opposed to just computing its probability, the algorithm will also need to record, for each state, the best state that leads to it; these are indicated by the bold arrows in Figure 15.5(b). The optimal sequence is identified by following these bold arrows backwards from the best final state.
 
@@ -4229,7 +2937,7 @@ With a single, discrete state variable Xt, we can give concrete form to the repr
 
 That is, **T**ij is the probability of a transition from state i to state j. For example, the transition matrix for the umbrella world is
 
-**T** \= **P**(Xt |Xt−1) =
+**T** = **P**(Xt |Xt−1) =
 
 ( 0.7 0.3
 
@@ -4385,11 +3093,11 @@ The sensor variable Et has 16 possible values, each a four-bit sequence giving t
 
 
 
-(a) Posterior distribution over robot location after E1 = NSW
+(a) Posterior distribution over robot location after E~1~ = NSW
 
-(b) Posterior distribution over robot location after E1 = NSW, E2 = NS
+(b) Posterior distribution over robot location after E~1~ = NSW, E2 = NS
 
-**Figure 15.7** Posterior distribution over robot location: (a) one observation E1 =NSW ; (b) after a second observation E2 =NS. The size of each disk corresponds to the probability that the robot is at that location. The sensor error rate is ε =0.2.
+**Figure 15.7** Posterior distribution over robot location: (a) one observation E~1~ =NSW ; (b) after a second observation E2 =NS. The size of each disk corresponds to the probability that the robot is at that location. The sensor error rate is ε =0.2.
 
 NS, for example, to mean that the north and south sensors report an obstacle and the east and west do not. Suppose that each sensor’s error rate is ε and that errors occur independently for the four sensor directions. In that case, the probability of getting all four bits right is (1− ε)4
 
@@ -4405,7 +3113,7 @@ P (Et = et |Xt = i) = **O**tii = (1− ε) 4−dit
 
 For example, the probability that a square with obstacles to the north and south would produce a sensor reading NSE is (1− ε)3ε1.
 
-Given the matrices **T** and **O**t, the robot can use Equation (15.12) to compute the posterior distribution over locations—that is, to work out where it is. Figure 15.7 shows the distributions **P**(X1 |E1 = NSW ) and **P**(X2 |E1 =NSW,E2 = NS). This is the same maze we saw before in Figure 4.18 (page 146), but there we used logical filtering to find the locations that were _possible_, assuming perfect sensing. Those same locations are still the most _likely_ with noisy sensing, but now _every_ location has some nonzero probability.
+Given the matrices **T** and **O**t, the robot can use Equation (15.12) to compute the posterior distribution over locations—that is, to work out where it is. Figure 15.7 shows the distributions **P**(X~1~ |E~1~ = NSW ) and **P**(X2 |E~1~ =NSW,E2 = NS). This is the same maze we saw before in Figure 4.18 (page 146), but there we used logical filtering to find the locations that were _possible_, assuming perfect sensing. Those same locations are still the most _likely_ with noisy sensing, but now _every_ location has some nonzero probability.
 
 In addition to filtering to estimate its current location, the robot can use smoothing (Equation (15.13)) to work out where it was at any given past time—for example, where it began at time 0—and it can use the Viterbi algorithm to work out the most likely path it has  
 
@@ -4491,7 +3199,7 @@ inventors, Rudolf E. Kalman. The bird’s flight might be specified by six conti
 
 for position (Xt, Yt, Zt) and three for velocity (Ẋt, Ẏt, Żt). We will need suitable conditional densities to represent the transition and sensor models; as in Chapter 14, we will use **linear Gaussian** distributions. This means that the next state **X**t+1 must be a linear function of the current state **X**t, plus some Gaussian noise, a condition that turns out to be quite reasonable in practice. Consider, for example, the X-coordinate of the bird, ignoring the other coordinates for now. Let the time interval between observations be Δ, and assume constant velocity during the interval; then the position update is given by Xt+Δ = Xt+Ẋ Δ. Adding Gaussian noise (to account for wind variation, etc.), we obtain a linear Gaussian transition model:
 
-P (Xt+Δ = xt+Δ |Xt = xt, Ẋt = ẋt) = N(xt + ẋt Δ, σ 2 )(xt+Δ) .
+P (Xt+Δ = xt+Δ |Xt = xt, Ẋt = ẋt) = N(xt + ẋt Δ, σ ^2^ )(xt+Δ) .
 
 The Bayesian network structure for a system with position vector **X**t and velocity **Ẋt** is shown in Figure 15.9. Note that this is a very specific form of linear Gaussian model; the general form will be described later in this section and covers a vast array of applications beyond the simple motion examples of the first paragraph. The reader might wish to consult Appendix A for some of the mathematical properties of Gaussian distributions; for our immediate purposes, the most important is that a **multivariate Gaussian** distribution for d variables isMULTIVARIATE
 
@@ -4503,7 +3211,7 @@ specified by a d-element mean **μ** and a d× d covariance matrix **Σ**.
 
 In Chapter 14 on page 521, we alluded to a key property of the linear Gaussian family of distributions: it remains closed under the standard Bayesian network operations. Here, we make this claim precise in the context of filtering in a temporal probability model. The required properties correspond to the two-step filtering calculation in Equation (15.5):
 
-1\. If the current distribution **P**(**X**t | **e**1:t) is Gaussian and the transition model **P**(**X**t+1 | **x**t)
+1. If the current distribution **P**(**X**t | **e**1:t) is Gaussian and the transition model **P**(**X**t+1 | **x**t)
 
 is linear Gaussian, then the one-step predicted distribution given by
 
@@ -4527,7 +3235,7 @@ _t_**X** _t_+1**X**
 
 **Figure 15.9** Bayesian network structure for a linear dynamical system with position **X**t, velocity **Ẋt,** and position measurement **Z**t.
 
-2\. If the prediction **P**(**X**t+1 | **e**1:t) is Gaussian and the sensor model **P**(**e**t+1 |**X**t+1) is linear Gaussian, then, after conditioning on the new evidence, the updated distribution
+2. If the prediction **P**(**X**t+1 | **e**1:t) is Gaussian and the sensor model **P**(**e**t+1 |**X**t+1) is linear Gaussian, then, after conditioning on the new evidence, the updated distribution
 
 **P**(**X**t+1 | **e**1:t+1) = α **P**(**e**t+1 |**X**t+1)**P**(**X**t+1 | **e**1:t) (15.18)
 
@@ -4545,7 +3253,7 @@ The temporal model we consider describes a **random walk** of a single continuou
 
 
 
-The prior distribution is assumed to be Gaussian with variance σ 2 0 :
+The prior distribution is assumed to be Gaussian with variance σ ^2^ 0 :
 
 P (x0) = αe
 
@@ -4559,7 +3267,7 @@ P (x0) = αe
 
 2
 
-σ 2 0
+σ ^2^ 0
 
 « .
 
@@ -4579,11 +3287,11 @@ P (xt+1 |xt) = α e
 
 2
 
-σ 2 x
+σ^2^ x
 
 « .
 
-The sensor model assumes Gaussian noise with variance σ 2 z :
+The sensor model assumes Gaussian noise with variance σ^2^ z :
 
 P (zt |xt) = α e
 
@@ -4597,19 +3305,19 @@ P (zt |xt) = α e
 
 2
 
-σ 2 z
+σ^2^ z
 
 « .
 
 Now, given the prior **P**(X0), the one-step predicted distribution comes from Equation (15.17):
 
-P (x1) =
+P (x~1~) =
 
 ∫ ∞
 
 −∞
 
-P (x1 |x0)P (x0) dx0 = α
+P (x~1~ |x0)P (x0) dx0 = α
 
 ∫ ∞
 
@@ -4623,11 +3331,11 @@ e
 
 2
 
-„ (x1−x0)
+„ (x~1~−x0)
 
 2
 
-σ 2 x
+σ^2^ x
 
 « e
 
@@ -4641,11 +3349,11 @@ e
 
 2
 
-σ 2 0
+σ^2^ 0
 
 « dx0
 
-\= α
+= α
 
 ∫ ∞
 
@@ -4659,7 +3367,7 @@ e
 
 2
 
-„ σ 2 0 (x1−x0)
+„ σ^2^ 0 (x~1~−x0)
 
 2 +σ
 
@@ -4667,9 +3375,9 @@ e
 
 2
 
-σ 2 0
+σ^2^ 0
 
-σ 2 x
+σ^2^ x
 
 « dx0 .
 
@@ -4677,7 +3385,7 @@ This integral looks rather complicated. The key to progress is to notice that th
 
 2 0
 
-\+ bx0 + c COMPLETING THE SQUARE
++ bx0 + c COMPLETING THE SQUARE
 
 as the sum of a squared term a(x0 − −b 2a
 
@@ -4687,7 +3395,7 @@ as the sum of a squared term a(x0 − −b 2a
 
 x0. The residual term can be taken outside the integral, giving us
 
-P (x1) = αe
+P (x~1~) = αe
 
 −
 
@@ -4717,9 +3425,9 @@ e −
 
 dx0 .
 
-Now the integral is just the integral of a Gaussian over its full range, which is simply 1. Thus, we are left with only the residual term from the quadratic. Then, we notice that the residual term is a quadratic in x1; in fact, after simplification, we obtain
+Now the integral is just the integral of a Gaussian over its full range, which is simply 1. Thus, we are left with only the residual term from the quadratic. Then, we notice that the residual term is a quadratic in x~1~; in fact, after simplification, we obtain
 
-P (x1) = αe
+P (x~1~) = αe
 
 −
 
@@ -4727,11 +3435,11 @@ P (x1) = αe
 
 2
 
-„ (x1−μ0)
+„ (x~1~−μ0)
 
 2
 
-σ 2 0 +σ
+σ^2^ 0 +σ
 
 2 x
 
@@ -4741,13 +3449,13 @@ That is, the one-step predicted distribution is a Gaussian with the same mean μ
 
 2 0
 
-and the transition variance σ 2 x.
+and the transition variance σ^2^ x.
 
-To complete the update step, we need to condition on the observation at the first time step, namely, z1. From Equation (15.18), this is given by
+To complete the update step, we need to condition on the observation at the first time step, namely, z~1~. From Equation (15.18), this is given by
 
-P (x1 | z1) = α P (z1 |x1)P (x1)
+P (x~1~ | z~1~) = α P (z~1~ |x~1~)P (x~1~)
 
-\= α e
+= α e
 
 −
 
@@ -4755,11 +3463,11 @@ P (x1 | z1) = α P (z1 |x1)P (x1)
 
 2
 
-„ (z1−x1)
+„ (z~1~−x~1~)
 
 2
 
-σ 2 z
+σ^2^ z
 
 « e
 
@@ -4769,11 +3477,11 @@ P (x1 | z1) = α P (z1 |x1)P (x1)
 
 2
 
-„ (x1−μ0)
+„ (x~1~−μ0)
 
 2
 
-σ 2 0 +σ
+σ^2^ 0 +σ
 
 2 x
 
@@ -4781,7 +3489,7 @@ P (x1 | z1) = α P (z1 |x1)P (x1)
 
 Once again, we combine the exponents and complete the square (Exercise 15.11), obtaining
 
-P (x1 | z1) = αe
+P (x~1~ | z~1~) = αe
 
 −
 
@@ -4791,17 +3499,17 @@ P (x1 | z1) = αe
 
 0 BB@
 
-(x1− (σ
+(x~1~− (σ
 
 2 0 +σ
 
-2 x )z1+σ
+2 x )z~1~+σ
 
 2 z
 
 μ0
 
-σ 2 0 +σ
+σ^2^ 0 +σ
 
 2 x+σ
 
@@ -4845,7 +3553,7 @@ Section 15.4. Kalman Filters 587
 
 0.45
 
-\-10 -5 0 5 10 _P_
+-10 -5 0 5 10 _P_
 
 (_x_ )
 
@@ -4857,9 +3565,9 @@ _P_(_x_1)
 
 _P_(_x_1 | _z_1 = 2.5)
 
-\*_z_1
+*_z_1
 
-**Figure 15.10** Stages in the Kalman filter update cycle for a random walk with a prior given by μ0 =0.0 and σ0 = 1.0, transition noise given by σx = 2.0, sensor noise given by σz = 1.0, and a first observation z1 = 2.5 (marked on the x-axis). Notice how the prediction P (x1) is flattened out, relative to P (x0), by the transition noise. Notice also that the mean of the posterior distribution P (x1 | z1) is slightly to the left of the observation z1 because the mean is a weighted average of the prediction and the observation.
+**Figure 15.10** Stages in the Kalman filter update cycle for a random walk with a prior given by μ0 =0.0 and σ0 = 1.0, transition noise given by σx = 2.0, sensor noise given by σz = 1.0, and a first observation z~1~ = 2.5 (marked on the x-axis). Notice how the prediction P (x~1~) is flattened out, relative to P (x0), by the transition noise. Notice also that the mean of the posterior distribution P (x~1~ | z~1~) is slightly to the left of the observation z~1~ because the mean is a weighted average of the prediction and the observation.
 
 Thus, after one update cycle, we have a new Gaussian distribution for the state variable. From the Gaussian formula in Equation (15.19), we see that the new mean and standard
 
@@ -4867,25 +3575,25 @@ deviation can be calculated from the old mean and standard deviation as follows:
 
 μt+1 = (σ2
 
-t + σ 2 x)zt+1 + σ
+t + σ^2^ x)zt+1 + σ
 
 2 zμt
 
-σ 2 t + σ
+σ^2^ t + σ
 
 2 x + σ
 
 2 z
 
-and σ 2
+and σ^2^
 
 t+1 = (σ2
 
-t + σ 2 x)σ
+t + σ^2^ x)σ
 
 2 z
 
-σ 2 t + σ
+σ^2^ t + σ
 
 2 x + σ
 
@@ -4903,7 +3611,7 @@ attention to the old mean; if the old mean is unreliable (σ2 t is large) or the
 
 unpredictable (σ2 x is large), then we pay more attention to the observation. Second, notice
 
-that the update for the variance σ 2 t+1
+that the update for the variance σ^2^ t+1
 
 is _independent of the observation_. We can therefore compute in advance what the sequence of variance values will be. Third, the sequence of variance values converges quickly to a fixed value that depends only on σ
 
@@ -4949,25 +3657,25 @@ where **F** and **Σ**x are matrices describing the linear transition model and 
 
 **Σ**t+1 = (**I**−**K**t+1**H**)(**FΣ**t**F**
 
-\+ **Σ**x) ,
++ **Σ**x) ,
 
 (15.22)
 
 where **K**t+1 =(**FΣ**t**F**
 
-\+ **Σ**x)**H**
++ **Σ**x)**H**
 
 (**H**(**FΣ**t**F**
 
-\+ **Σ**x)**H**
++ **Σ**x)**H**
 
-\+ **Σ**z) −1 is called the **Kalman gain**
++ **Σ**z) −1 is called the **Kalman gain**
 
 **matrix**. Believe it or not, these equations make some intuitive sense. For example, considerKALMAN GAIN MATRIX
 
 the update for the mean state estimate **μ**. The term **Fμ**t is the _predicted_ state at t + 1, so **HFμ**t is the _predicted_ observation. Therefore, the term **z**t+1 − **HFμ**t represents the error in the predicted observation. This is multiplied by **K**t+1 to correct the predicted state; hence, **K**t+1 is a measure of _how seriously to take the new observation_ relative to the prediction. As in Equation (15.20), we also have the property that the variance update is independent of the observations. The sequence of values for **Σ**t and **K**t can therefore be computed offline, and the actual calculations required during online tracking are quite modest.
 
-To illustrate these equations at work, we have applied them to the problem of tracking an object moving on the X–Y plane. The state variables are **X** \= (X,Y, Ẋ, Ẏ ) , so **F**, **Σ**x, **H**, and **Σ**z are 4× 4 matrices. Figure 15.11(a) shows the true trajectory, a series of noisy observations, and the trajectory estimated by Kalman filtering, along with the covariances indicated by the one-standard-deviation contours. The filtering process does a good job of tracking the actual motion, and, as expected, the variance quickly reaches a fixed point.
+To illustrate these equations at work, we have applied them to the problem of tracking an object moving on the X–Y plane. The state variables are **X** = (X,Y, Ẋ, Ẏ ) , so **F**, **Σ**x, **H**, and **Σ**z are 4× 4 matrices. Figure 15.11(a) shows the true trajectory, a series of noisy observations, and the trajectory estimated by Kalman filtering, along with the covariances indicated by the one-standard-deviation contours. The filtering process does a good job of tracking the actual motion, and, as expected, the variance quickly reaches a fixed point.
 
 We can also derive equations for _smoothing_ as well as filtering with linear Gaussian models. The smoothing results are shown in Figure 15.11(b). Notice how the variance in the position estimate is sharply reduced, except at the ends of the trajectory (why?), and that the estimated trajectory is much smoother.
 
@@ -5063,7 +3771,7 @@ We have already explained that every Kalman filter model can be represented in a
 
 To construct a DBN, one must specify three kinds of information: the prior distribution over the state variables, **P**(**X**0); the transition model **P**(**X**t+1 |**X**t); and the sensor model **P**(**E**t |**X**t). To specify the transition and sensor models, one must also specify the topology of the connections between successive slices and between the state and evidence variables. Because the transition and sensor models are assumed to be stationary—the same for all t—it is most convenient simply to specify them for the first slice. For example, the complete DBN specification for the umbrella world is given by the three-node network shown in Figure 15.13(a). From this specification, the complete DBN with an unbounded number of time slices can be constructed as needed by copying the first slice.
 
-Let us now consider a more interesting example: monitoring a battery-powered robot moving in the X–Y plane, as introduced at the end of Section 15.1. First, we need state variables, which will include both **X**t = (Xt, Yt) for position and **Ẋt** \=(Ẋt, Ẏt) for velocity. We assume some method of measuring position—perhaps a fixed camera or onboard GPS (Global Positioning System)—yielding measurements **Z**t. The position at the next time step depends on the current position and velocity, as in the standard Kalman filter model. The velocity at the next step depends on the current velocity and the state of the battery. We add Battery t to represent the actual battery charge level, which has as parents the previous  
+Let us now consider a more interesting example: monitoring a battery-powered robot moving in the X–Y plane, as introduced at the end of Section 15.1. First, we need state variables, which will include both **X**t = (Xt, Yt) for position and **Ẋt** =(Ẋt, Ẏt) for velocity. We assume some method of measuring position—perhaps a fixed camera or onboard GPS (Global Positioning System)—yielding measurements **Z**t. The position at the next time step depends on the current position and velocity, as in the standard Kalman filter model. The velocity at the next step depends on the current velocity and the state of the battery. We add Battery t to represent the actual battery charge level, which has as parents the previous  
 
 
 
@@ -5137,7 +3845,7 @@ describes how the sensor behaves under normal conditions and after failure. To d
 
 
 
-\-1
+-1
 
 0
 
@@ -5205,7 +3913,7 @@ _f t_ 0_B_ 1_P_(_B_ )
 
 1.000 0.001
 
-\-1
+-1
 
 0
 
@@ -5335,7 +4043,7 @@ So much for the good news; now for the bad news: It turns out that the “consta
 
 n+k), where d is the domain size of the variables and k is the maximum number of parents of any state variable.
 
-Of course, this is much less than the cost of HMM updating, which is O(d2n), but it is still infeasible for large numbers of variables. This grim fact is somewhat hard to accept. What it means is that _even though we can use DBNs to_ represent _very complex temporal processes with many sparsely connected variables, we cannot_ reason _efficiently and exactly about those processes._ The DBN model itself, which represents the prior joint distribution over all the variables, is factorable into its constituent CPTs, but the posterior joint distribution conditioned on an observation sequence—that is, the forward message—is generally _not_ factorable. So far, no one has found a way around this problem, despite the fact that many important areas of science and engineering would benefit enormously from its solution. Thus, we must fall back on approximate methods.
+Of course, this is much less than the cost of HMM updating, which is O(d2^n^), but it is still infeasible for large numbers of variables. This grim fact is somewhat hard to accept. What it means is that _even though we can use DBNs to_ represent _very complex temporal processes with many sparsely connected variables, we cannot_ reason _efficiently and exactly about those processes._ The DBN model itself, which represents the prior joint distribution over all the variables, is factorable into its constituent CPTs, but the posterior joint distribution conditioned on an observation sequence—that is, the forward message—is generally _not_ factorable. So far, no one has found a way around this problem, despite the fact that many important areas of science and engineering would benefit enormously from its solution. Thus, we must fall back on approximate methods.
 
 **15.5.3 Approximate inference in DBNs**
 
@@ -5355,11 +4063,11 @@ A family of algorithms called **particle filtering** is designed to do just that
 
 filtering works as follows: First, a population of N initial-state samples is created by sampling from the prior distribution **P**(**X**0). Then the update cycle is repeated for each time step:
 
-1\. Each sample is propagated forward by sampling the next state value **x**t+1 given the current value **x**t for the sample, based on the transition model **P**(**X**t+1 | **x**t).
+1. Each sample is propagated forward by sampling the next state value **x**t+1 given the current value **x**t for the sample, based on the transition model **P**(**X**t+1 | **x**t).
 
-2\. Each sample is weighted by the likelihood it assigns to the new evidence, P (**e**t+1 | **x**t+1).
+2. Each sample is weighted by the likelihood it assigns to the new evidence, P (**e**t+1 | **x**t+1).
 
-3\. The population is _resampled_ to generate a new population of N samples. Each new sample is selected from the current population; the probability that a particular sample is selected is proportional to its weight. The new samples are unweighted.
+3. The population is _resampled_ to generate a new population of N samples. Each new sample is selected from the current population; the probability that a particular sample is selected is proportional to its weight. The new samples are unweighted.
 
 The algorithm is shown in detail in Figure 15.17, and its operation for the umbrella DBN is illustrated in Figure 15.18.  
 
@@ -5373,9 +4081,9 @@ N , the number of samples to be maintained dbn , a DBN with prior **P**(**X**0),
 
 **local variables**: W , a vector of weights of size N
 
-**for** i = 1 to N **do** S \[i\]← sample from **P**(**X**1 | **X**0 = S \[i \]) /\* step 1 \*/ W \[i\]←**P**(**e** | **X**1 = S\[i\]) /\* step 2 \*/
+**for** i = 1 to N **do** S [i]← sample from **P**(**X**1 | **X**0 = S [i ]) /* step 1 */ W [i]←**P**(**e** | **X**1 = S[i]) /* step 2 */
 
-S ←WEIGHTED-SAMPLE-WITH-REPLACEMENT(N ,S ,W ) /\* step 3 \*/ **return** S
+S ←WEIGHTED-SAMPLE-WITH-REPLACEMENT(N ,S ,W ) /* step 3 */ **return** S
 
 **Figure 15.17** The particle filtering algorithm implemented as a recursive update operation with state (the set of samples). Each of the sampling operations involves sampling the relevant slice variables in topological order, much as in PRIOR-SAMPLE. The WEIGHTED-SAMPLE-WITH-REPLACEMENT operation can be implemented to run in O(N)
 
@@ -5421,9 +4129,9 @@ Now for the resampling step. Since each sample is replicated with probability pr
 
 N(**x**t+1 | **e**1:t+1)/N = α W (**x**t+1 | **e**1:t+1)
 
-\= α P (**e**t+1 | **x**t+1)N(**x**t+1 | **e**1:t)
+= α P (**e**t+1 | **x**t+1)N(**x**t+1 | **e**1:t)
 
-\= α P (**e**t+1 | **x**t+1)
+= α P (**e**t+1 | **x**t+1)
 
 ∑
 
@@ -5431,7 +4139,7 @@ N(**x**t+1 | **e**1:t+1)/N = α W (**x**t+1 | **e**1:t+1)
 
 P (**x**t+1 | **x**t)N(**x**t | **e**1:t)
 
-\= α NP (**e**t+1 | **x**t+1)
+= α NP (**e**t+1 | **x**t+1)
 
 ∑
 
@@ -5439,7 +4147,7 @@ P (**x**t+1 | **x**t)N(**x**t | **e**1:t)
 
 P (**x**t+1 | **x**t)P (**x**t | **e**1:t) (by 15.23)
 
-\= α ′
+= α ′
 
 P (**e**t+1 | **x**t+1)
 
@@ -5449,7 +4157,7 @@ P (**e**t+1 | **x**t+1)
 
 P (**x**t+1 | **x**t)P (**x**t | **e**1:t)
 
-\= P (**x**t+1 | **e**1:t+1) (by 15.5).
+= P (**x**t+1 | **e**1:t+1) (by 15.5).
 
 Therefore the sample population after one update cycle correctly represents the forward message at time t + 1.
 
@@ -5653,7 +4361,7 @@ A i , x
 
 B i )
 
-\=
+=
 
 ∑
 
@@ -5671,7 +4379,7 @@ A i , x
 
 B i )
 
-\= 1
+= 1
 
 2
 
@@ -5863,13 +4571,13 @@ The results in (a) and (b) show that the representation of the posterior grows w
 
 **15.12** Let us examine the behavior of the variance update in Equation (15.20) (page 587).
 
-**a**. Plot the value of σ 2 t as a function of t, given various values for σ
+**a**. Plot the value of σ^2^ t as a function of t, given various values for σ
 
 2 x and σ
 
 2 z .
 
-**b**. Show that the update has a fixed point σ 2 such that σ
+**b**. Show that the update has a fixed point σ^2^ such that σ
 
 2 t → σ
 
@@ -5877,7 +4585,7 @@ The results in (a) and (b) show that the representation of the posterior grows w
 
 2.
 
-**c**. Give a qualitative explanation for what happens as σ 2 x → 0 and as σ
+**c**. Give a qualitative explanation for what happens as σ^2^ x → 0 and as σ
 
 2 z → 0.  
 
@@ -6011,7 +4719,7 @@ Now the obvious question is, what sorts of things are A and B? They could be sta
 
 that occur with probabilities p1, . . . , pn is written
 
-L = \[p1, S1; p2, S2; . . . pn, Sn\] .
+L = [p1, S1; p2, S2; . . . pn, Sn] .
 
 In general, each outcome Si of a lottery can be either an atomic state or another lottery. The primary issue for utility theory is to understand how preferences between complex lotteries are related to preferences between the underlying states in those lotteries. To address this issue we list six constraints that we require any reasonable preference relation to obey:
 
@@ -6031,7 +4739,7 @@ then the agent must prefer A to C .
 
 probability p for which the rational agent will be indifferent between getting B for sure and the lottery that yields A with probability p and C with probability 1− p.
 
-A ' B ' C ⇒ ∃ p \[p,A; 1− p,C\] ∼ B .
+A ' B ' C ⇒ ∃ p [p,A; 1− p,C] ∼ B .
 
 - **Substitutability**: If an agent is indifferent between two lotteries A and B, then theSUBSTITUTABILITY
 
@@ -6043,7 +4751,7 @@ Section 16.2. The Basis of Utility Theory 613
 
 is substituted for A in one of them. This holds regardless of the probabilities and the other outcome(s) in the lotteries.
 
-A ∼ B ⇒ \[p,A; 1− p,C\] ∼ \[p,B; 1− p,C\] .
+A ∼ B ⇒ [p,A; 1− p,C] ∼ [p,B; 1− p,C] .
 
 This also holds if we substitute ' for ∼ in this axiom.
 
@@ -6051,13 +4759,13 @@ This also holds if we substitute ' for ∼ in this axiom.
 
 If an agent prefers A to B, then the agent must prefer the lottery that has a higher probability for A (and vice versa).
 
-A ' B ⇒ (p > q ⇔ \[p,A; 1− p,B\] ' \[q,A; 1− q,B\]) .
+A ' B ⇒ (p > q ⇔ [p,A; 1− p,B] ' [q,A; 1− q,B]) .
 
 - **Decomposability**: Compound lotteries can be reduced to simpler ones using the lawsDECOMPOSABILITY
 
 of probability. This has been called the “no fun in gambling” rule because it says that two consecutive lotteries can be compressed into a single equivalent lottery, as shown in Figure 16.1(b).3
 
-\[p,A; 1− p, \[q,B; 1− q, C\]\] ∼ \[p,A; (1− p)q,B; (1− p)(1− q), C\] .
+[p,A; 1− p, [q,B; 1− q, C]] ∼ [p,A; (1− p)q,B; (1− p)(1− q), C] .
 
 These constraints are known as the axioms of utility theory. Each axiom can be motivated by showing that an agent that violates it will exhibit patently irrational behavior in some situations. For example, we can motivate transitivity by making an agent with nontransitive preferences give us all its money. Suppose that the agent has the nontransitive preferences A ' B ' C ' A, where A, B, and C are goods that can be freely exchanged. If the agent currently has A, then we could offer to trade C for A plus one cent. The agent prefers C , and so would be willing to make this trade. We could then offer to trade B for C , extracting another cent, and finally trade A for B. This brings us back where we started from, except that the agent has given us three cents (Figure 16.1(a)). We can keep going around the cycle until the agent has no money at all. Clearly, the agent has acted irrationally in this case.
 
@@ -6073,7 +4781,7 @@ U(A) = U(B) ⇔ A ∼ B
 
 - **Expected Utility of a Lottery**: The utility of a lottery is the sum of the probability of each outcome times the utility of that outcome.
 
-U(\[p1, S1; . . . ; pn, Sn\]) =
+U([p1, S1; . . . ; pn, Sn]) =
 
 ∑
 
@@ -6169,19 +4877,19 @@ catastrophe” at U(S) = u ⊥
 
 . **Normalized utilities** use a scale with u ⊥
 
-\= 0 and u
+= 0 and u
 
-\= 1.NORMALIZED UTILITIES
+= 1.NORMALIZED UTILITIES
 
 Given a utility scale between u
 
 and u ⊥
 
-, we can assess the utility of any particular prize S by asking the agent to choose between S and a **standard lottery** \[p, u
+, we can assess the utility of any particular prize S by asking the agent to choose between S and a **standard lottery** [p, u
 
  ; (1−p), u
 
-⊥ \].STANDARD LOTTERY
+⊥ ].STANDARD LOTTERY
 
 The probability p is adjusted until the agent is indifferent between S and the standard lottery. Assuming normalized utilities, the utility of S is given by p. Once this is done for each prize, the utilities for all lotteries involving those prizes are determined.
 
@@ -6219,7 +4927,7 @@ Assuming the coin is fair, the **expected monetary value** (EMV) of the gamble i
 
 MONETARY VALUE
 
-\+ 1
++ 1
 
 2 ($2,500,000) = $1,250,000, which is more than the original $1,000,000. But that does
 
@@ -6301,7 +5009,7 @@ The rational way to choose the best action, a ∗, is to maximize expected utili
 
 a ∗
 
-\= argmax a
+= argmax a
 
 EU (a|**e**) .
 
@@ -6335,15 +5043,15 @@ Section 16.3. Utility Functions 619
 
 0.9
 
-\-5 -4 -3 -2 -1 0 1 2 3 4 5
+-5 -4 -3 -2 -1 0 1 2 3 4 5
 
 Error in utility estimate
 
-_k_\=3
+_k_=3
 
-_k_\=10
+_k_=10
 
-_k_\=30
+_k_=30
 
 **Figure 16.3** Plot of the error in each of k utility estimates and of the distribution of the maximum of k estimates for k =3, 10, and 30.
 
@@ -6413,7 +5121,7 @@ Decision making in the field of public policy involves high stakes, in both mone
 
 UTILITY THEORY
 
-We will call the attributes **X** \= X1, . . . ,Xn; a complete vector of assignments will be **x** \= 〈x1, . . . , xn〉, where each xi is either a numeric value or a discrete value with an assumed ordering on values. We will assume that higher values of an attribute correspond to higher utilities, all other things being equal. For example, if we choose AbsenceOfNoise as an attribute in the airport problem, then the greater its value, the better the solution.8 We begin by examining cases in which decisions can be made _without_ combining the attribute values into a single utility value. Then we look at cases in which the utilities of attribute combinations can be specified very concisely.
+We will call the attributes **X** = X~1~, . . . ,X~n~; a complete vector of assignments will be **x** = 〈x~1~, . . . , x~n~〉, where each xi is either a numeric value or a discrete value with an assumed ordering on values. We will assume that higher values of an attribute correspond to higher utilities, all other things being equal. For example, if we choose AbsenceOfNoise as an attribute in the airport problem, then the greater its value, the better the solution.8 We begin by examining cases in which decisions can be made _without_ combining the attribute values into a single utility value. Then we look at cases in which the utilities of attribute combinations can be specified very concisely.
 
 **16.4.1 Dominance**
 
@@ -6469,7 +5177,7 @@ _X_1 _X_1
 
 0.6
 
-\-6 -5.5 -5 -4.5 -4 -3.5 -3 -2.5 -2
+-6 -5.5 -5 -4.5 -4 -3.5 -3 -2.5 -2
 
 Pr ob
 
@@ -6495,7 +5203,7 @@ _S_1_S_2
 
 1.2
 
-\-6 -5.5 -5 -4.5 -4 -3.5 -3 -2.5 -2
+-6 -5.5 -5 -4.5 -4 -3.5 -3 -2.5 -2
 
 Pr ob
 
@@ -6551,7 +5259,7 @@ system to make rational decisions based on stochastic dominance, without using a
 
 **16.4.2 Preference structure and multiattribute utility**
 
-Suppose we have n attributes, each of which has d distinct possible values. To specify the complete utility function U(x1, . . . , xn), we need d
+Suppose we have n attributes, each of which has d distinct possible values. To specify the complete utility function U(x~1~, . . . , x~n~), we need d
 
 n values in the worst case. Now, the worst case corresponds to a situation in which the agent’s preferences have no regularity at all. Multiattribute utility theory is based on the supposition that the preferences of typical agents have much more structure than that. The basic approach is to identify regularities in the preference behavior we would expect to see and to use what are called **representation theorems** to showREPRESENTATION
 
@@ -6559,17 +5267,17 @@ THEOREM
 
 that an agent with a certain kind of preference structure has a utility function
 
-U(x1, . . . , xn) = F \[f1(x1), . . . , fn(xn)\] ,
+U(x~1~, . . . , x~n~) = F [f1(x~1~), . . . , fn(x~n~)] ,
 
 where F is, we hope, a simple function such as addition. Notice the similarity to the use of Bayesian networks to decompose the joint probability of several random variables.
 
 **Preferences without uncertainty**
 
-Let us begin with the deterministic case. Remember that for deterministic environments the agent has a value function V (x1, . . . , xn); the aim is to represent this function concisely. The basic regularity that arises in deterministic preference structures is called **preference independence**. Two attributes X1 and X2 are preferentially independent of a third attributePREFERENCE
+Let us begin with the deterministic case. Remember that for deterministic environments the agent has a value function V (x~1~, . . . , x~n~); the aim is to represent this function concisely. The basic regularity that arises in deterministic preference structures is called **preference independence**. Two attributes x~1~ and X2 are preferentially independent of a third attributePREFERENCE
 
 INDEPENDENCE
 
-X3 if the preference between outcomes 〈x1, x2, x3〉 and 〈x′
+X3 if the preference between outcomes 〈x~1~, x2, x3〉 and 〈x′
 
 1 , x
 
@@ -6589,9 +5297,9 @@ MUTUAL PREFERENTIAL INDEPENDENCE
 
 MPI says that, whereas each attribute may be important, it does not affect the way in which one trades off the other attributes against each other.
 
-Mutual preferential independence is something of a mouthful, but thanks to a remarkable theorem due to the economist Gérard Debreu (1960), we can derive from it a very simple form for the agent’s value function: _If attributes_ X1, . . . , Xn _are mutually preferentially independent, then the agent’s preference behavior can be described as maximizing the function_
+Mutual preferential independence is something of a mouthful, but thanks to a remarkable theorem due to the economist Gérard Debreu (1960), we can derive from it a very simple form for the agent’s value function: _If attributes_ x~1~, . . . , x~n~ _are mutually preferentially independent, then the agent’s preference behavior can be described as maximizing the function_
 
-V (x1, . . . , xn) =
+V (x~1~, . . . , x~n~) =
 
 ∑
 
@@ -6633,7 +5341,7 @@ looking at the case for three attributes. For conciseness, we use Ui to mean Ui(
 
 U = k1U1 + k2U2 + k3U3 + k1k2U1U2 + k2k3U2U3 + k3k1U3U1
 
-\+ k1k2k3U1U2U3 .
++ k1k2k3U1U2U3 .
 
 Although this does not look very simple, it contains just three single-attribute utility functions and three constants. In general, an n-attribute problem exhibiting MUI can be modeled using n single-attribute utilities and n constants. Each of the single-attribute utility functions can be developed independently of the other attributes, and this combination will be guaranteed to generate the correct overall preferences. Additional assumptions are required to obtain a purely additive utility function.
 
@@ -6711,15 +5419,15 @@ a change in the utility table. In the action-utility diagram, Figure 16.7, on th
 
 Actions are selected by evaluating the decision network for each possible setting of the decision node. Once the decision node is set, it behaves exactly like a chance node that has been set as an evidence variable. The algorithm for evaluating decision networks is the following:
 
-1\. Set the evidence variables for the current state.
+1. Set the evidence variables for the current state.
 
-2\. For each possible value of the decision node:
+2. For each possible value of the decision node:
 
 (a) Set the decision node to that value. (b) Calculate the posterior probabilities for the parent nodes of the utility node, using
 
 a standard probabilistic inference algorithm. (c) Calculate the resulting utility for the action.
 
-3\. Return the action with the highest utility.
+3. Return the action with the highest utility.
 
 This is a straightforward extension of the Bayesian network algorithm and can be incorporated directly into the agent design given in Figure 13.1 on page 484. We will see in Chapter 17 that the possibility of executing several actions in sequence makes the problem much more interesting.
 
@@ -6757,7 +5465,7 @@ n
 
 n
 
-\+ n− 1
++ n− 1
 
 n
 
@@ -7165,7 +5873,7 @@ Exercises 641
 
 **16.2** Chris considers four used cars before buying the one with maximum expected utility. Pat considers ten cars and does the same. All other things being equal, which one is more likely to have the better car? Which is more likely to be disappointed with their car’s quality? By how much (in terms of standard deviations of expected quality)?
 
-**16.3** In 1713, Nicolas Bernoulli stated a puzzle, now called the St. Petersburg paradox, which works as follows. You have the opportunity to play a game in which a fair coin is tossed repeatedly until it comes up heads. If the first heads appears on the nth toss, you win 2n dollars.
+**16.3** In 1713, Nicolas Bernoulli stated a puzzle, now called the St. Petersburg paradox, which works as follows. You have the opportunity to play a game in which a fair coin is tossed repeatedly until it comes up heads. If the first heads appears on the nth toss, you win 2^n^ dollars.
 
 **a**. Show that the expected monetary value of this game is infinite.
 
@@ -7219,11 +5927,11 @@ _Flavor_
 
 **16.8** Tickets to a lottery cost $1. There are two possible prizes: a $10 payoff with probability 1/50, and a $1,000,000 payoff with probability 1/2,000,000. What is the expected monetary value of a lottery ticket? When (if ever) is it rational to buy a ticket? Be precise—show an equation involving utilities. You may assume current wealth of $k and that U(Sk) = 0. You may also assume that U(Sk+10) = 10 × U(Sk+1), but you may not make any assumptions about U(Sk+1,000,000). Sociological studies show that people with lower income buy a disproportionate number of lottery tickets. Do you think this is because they are worse decision makers or because they have a different utility function? Consider the value of contemplating the possibility of winning the lottery versus the value of contemplating becoming an action hero while watching an adventure movie.
 
-**16.9** Assess your own utility for different incremental amounts of money by running a series of preference tests between some definite amount M1 and a lottery \[p,M2; (1−p), 0\]. Choose different values of M1 and M2, and vary p until you are indifferent between the two choices. Plot the resulting utility function.
+**16.9** Assess your own utility for different incremental amounts of money by running a series of preference tests between some definite amount M1 and a lottery [p,M2; (1−p), 0]. Choose different values of M1 and M2, and vary p until you are indifferent between the two choices. Plot the resulting utility function.
 
 **16.10** How much is a micromort worth to you? Devise a protocol to determine this. Ask questions based both on paying to avoid risk and being paid to accept risk.
 
-**16.11** Let continuous variables X1, . . . ,Xk be independently distributed according to the same probability density function f(x). Prove that the density function for max{X1, . . . ,Xk}
+**16.11** Let continuous variables X~1~, . . . ,Xk be independently distributed according to the same probability density function f(x). Prove that the density function for max{X~1~, . . . ,Xk}
 
 is given by kf(x)(F (x))k−1, where F is the cumulative distribution for f .
 
@@ -7275,21 +5983,21 @@ You might think that P would be independent of B given M , But this course has a
 
 
 
-**16.17** (Adapted from Pearl (1988).) A used-car buyer can decide to carry out various tests with various costs (e.g., kick the tires, take the car to a qualified mechanic) and then, depending on the outcome of the tests, decide which car to buy. We will assume that the buyer is deciding whether to buy car c1, that there is time to carry out at most one test, and that t1 is the test of c1 and costs $50.
+**16.17** (Adapted from Pearl (1988).) A used-car buyer can decide to carry out various tests with various costs (e.g., kick the tires, take the car to a qualified mechanic) and then, depending on the outcome of the tests, decide which car to buy. We will assume that the buyer is deciding whether to buy car C~1~, that there is time to carry out at most one test, and that t1 is the test of C~1~ and costs $50.
 
 A car can be in good shape (quality q +) or bad shape (quality q
 
-−), and the tests might help indicate what shape the car is in. Car c1 costs $1,500, and its market value is $2,000 if it is in good shape; if not, $700 in repairs will be needed to make it in good shape. The buyer’s estimate is that c1 has a 70% chance of being in good shape.
+−), and the tests might help indicate what shape the car is in. Car C~1~ costs $1,500, and its market value is $2,000 if it is in good shape; if not, $700 in repairs will be needed to make it in good shape. The buyer’s estimate is that C~1~ has a 70% chance of being in good shape.
 
 **a**. Draw the decision network that represents this problem.
 
-**b**. Calculate the expected net gain from buying c1, given no test.
+**b**. Calculate the expected net gain from buying C~1~, given no test.
 
-**c**. Tests can be described by the probability that the car will pass or fail the test given that the car is in good or bad shape. We have the following information: P (pass(c1, t1)|q
+**c**. Tests can be described by the probability that the car will pass or fail the test given that the car is in good or bad shape. We have the following information: P (pass(C~1~, t1)|q
 
-+(c1)) = 0.8
++(C~1~)) = 0.8
 
-P (pass(c1, t1)|q −(c1)) = 0.35
+P (pass(C~1~, t1)|q −(C~1~)) = 0.35
 
 Use Bayes’ theorem to calculate the probability that the car will pass (or fail) its test and hence the probability that it is in good (or bad) shape given each possible test outcome.
 
@@ -7351,11 +6059,11 @@ START
 
 **–1**
 
-**\+ 1**
+**+ 1**
 
 **Figure 17.1** (a) A simple 4×3 environment that presents the agent with a sequential decision problem. (b) Illustration of the transition model of the environment: the “intended” outcome occurs with probability 0.8, but with probability 0.2 the agent moves at right angles to the intended direction. A collision with a wall results in no movement. The two terminal states have reward +1 and –1, respectively, and all other states have a reward of –0.04.
 
-If the environment were deterministic, a solution would be easy: \[_Up, Up, Right, Right, Right_\]. Unfortunately, the environment won’t always go along with this solution, because the actions are unreliable. The particular model of stochastic motion that we adopt is illustrated in Figure 17.1(b). Each action achieves the intended effect with probability 0.8, but the rest of the time, the action moves the agent at right angles to the intended direction. Furthermore, if the agent bumps into a wall, it stays in the same square. For example, from the start square (1,1), the action _Up_ moves the agent to (1,2) with probability 0.8, but with probability 0.1, it moves right to (2,1), and with probability 0.1, it moves left, bumps into the wall, and stays in (1,1). In such an environment, the sequence \[Up,Up,Right ,Right ,Right \] goes up around the barrier and reaches the goal state at (4,3) with probability 0.85 = 0.32768. There is also a small chance of accidentally reaching the goal by going the other way around with probability 0.14 × 0.8, for a grand total of 0.32776. (See also Exercise 17.1.)
+If the environment were deterministic, a solution would be easy: [_Up, Up, Right, Right, Right_]. Unfortunately, the environment won’t always go along with this solution, because the actions are unreliable. The particular model of stochastic motion that we adopt is illustrated in Figure 17.1(b). Each action achieves the intended effect with probability 0.8, but the rest of the time, the action moves the agent at right angles to the intended direction. Furthermore, if the agent bumps into a wall, it stays in the same square. For example, from the start square (1,1), the action _Up_ moves the agent to (1,2) with probability 0.8, but with probability 0.1, it moves right to (2,1), and with probability 0.1, it moves left, bumps into the wall, and stays in (1,1). In such an environment, the sequence [Up,Up,Right ,Right ,Right ] goes up around the barrier and reaches the goal state at (4,3) with probability 0.85 = 0.32768. There is also a small chance of accidentally reaching the goal by going the other way around with probability 0.14 × 0.8, for a grand total of 0.32776. (See also Exercise 17.1.)
 
 As in Chapter 3, the **transition model** (or just “model,” whenever no confusion can arise) describes the outcome of each action in each state. Here, the outcome is stochastic, so we write P (s′ | s, a) to denote the probability of reaching state s
 
@@ -7437,7 +6145,7 @@ _R(s)_ < –1.6284
 
 **+1**
 
-_R(s)_ \> 0
+_R(s)_ > 0
 
 – 0.4278 < _R(s)_ < – 0.0850
 
@@ -7449,11 +6157,11 @@ The careful balancing of risk and reward is a characteristic of MDPs that does n
 
 **17.1.1 Utilities over time**
 
-In the MDP example in Figure 17.1, the performance of the agent was measured by a sum of rewards for the states visited. This choice of performance measure is not arbitrary, but it is not the only possibility for the utility function on environment histories, which we write as Uh(\[s0, s1, . . . , sn\]). Our analysis draws on **multiattribute utility theory** (Section 16.4) and is somewhat technical; the impatient reader may wish to skip to the next section.
+In the MDP example in Figure 17.1, the performance of the agent was measured by a sum of rewards for the states visited. This choice of performance measure is not arbitrary, but it is not the only possibility for the utility function on environment histories, which we write as Uh([s0, s1, . . . , sn]). Our analysis draws on **multiattribute utility theory** (Section 16.4) and is somewhat technical; the impatient reader may wish to skip to the next section.
 
 The first question to answer is whether there is a **finite horizon** or an **infinite horizon**FINITE HORIZON
 
-INFINITE HORIZON for decision making. A finite horizon means that there is a _fixed_ time N after which nothing matters—the game is over, so to speak. Thus, Uh(\[s0, s1, . . . , sN+k\])= Uh(\[s0, s1, . . . , sN \])
+INFINITE HORIZON for decision making. A finite horizon means that there is a _fixed_ time N after which nothing matters—the game is over, so to speak. Thus, Uh([s0, s1, . . . , sN+k])= Uh([s0, s1, . . . , sN ])
 
 for all k > 0. For example, suppose an agent starts at (3,1) in the 4× 3 world of Figure 17.1, and suppose that N = 3. Then, to have any chance of reaching the +1 state, the agent must head directly for it, and the optimal action is to go _Up_. On the other hand, if N = 100, then there is plenty of time to take the safe route by going _Left_. _So, with a finite horizon,_  
 
@@ -7467,11 +6175,11 @@ no reason to behave differently in the same state at different times. Hence, the
 
 infinite-horizon case are therefore simpler than those for the finite-horizon case, and we deal mainly with the infinite-horizon case in this chapter. (We will see later that for partially observable environments, the infinite-horizon case is not so simple.) Note that “infinite horizon” does not necessarily mean that all state sequences are infinite; it just means that there is no fixed deadline. In particular, there can be finite state sequences in an infinite-horizon MDP containing a terminal state.
 
-The next question we must decide is how to calculate the utility of state sequences. In the terminology of multiattribute utility theory, each state si can be viewed as an **attribute** of the state sequence \[s0, s1, s2 . . .\]. To obtain a simple expression in terms of the attributes, we will need to make some sort of preference-independence assumption. The most natural assumption is that the agent’s preferences between state sequences are **stationary**. StationaritySTATIONARY
+The next question we must decide is how to calculate the utility of state sequences. In the terminology of multiattribute utility theory, each state si can be viewed as an **attribute** of the state sequence [s0, s1, s2 . . .]. To obtain a simple expression in terms of the attributes, we will need to make some sort of preference-independence assumption. The most natural assumption is that the agent’s preferences between state sequences are **stationary**. StationaritySTATIONARY
 
 PREFERENCE
 
-for preferences means the following: if two state sequences \[s0, s1, s2, . . .\] and \[s′ 0 , s
+for preferences means the following: if two state sequences [s0, s1, s2, . . .] and [s′ 0 , s
 
 ′
 
@@ -7479,29 +6187,29 @@ for preferences means the following: if two state sequences \[s0, s1, s2, . . .\
 
 ′
 
-2 , . . .\]
+2 , . . .]
 
 begin with the same state (i.e., s0 = s ′
 
 0 ), then the two sequences should be preference-ordered
 
-the same way as the sequences \[s1, s2, . . .\] and \[s′ 1 , s
+the same way as the sequences [s1, s2, . . .] and [s′ 1 , s
 
 ′
 
-2 , . . .\]. In English, this means that if you
+2 , . . .]. In English, this means that if you
 
 prefer one future to another starting tomorrow, then you should still prefer that future if it were to start today instead. Stationarity is a fairly innocuous-looking assumption with very strong consequences: it turns out that under stationarity there are just two coherent ways to assign utilities to sequences:
 
-1\. **Additive rewards**: The utility of a state sequence isADDITIVE REWARD
+1. **Additive rewards**: The utility of a state sequence isADDITIVE REWARD
 
-Uh(\[s0, s1, s2, . . .\]) = R(s0) + R(s1) + R(s2) + · · · .
+Uh([s0, s1, s2, . . .]) = R(s0) + R(s1) + R(s2) + · · · .
 
 The 4× 3 world in Figure 17.1 uses additive rewards. Notice that additivity was used implicitly in our use of path cost functions in heuristic search algorithms (Chapter 3).
 
-2\. **Discounted rewards**: The utility of a state sequence isDISCOUNTED REWARD
+2. **Discounted rewards**: The utility of a state sequence isDISCOUNTED REWARD
 
-Uh(\[s0, s1, s2, . . .\]) = R(s0) + γR(s1) + γ 2 R(s2) + · · · ,
+Uh([s0, s1, s2, . . .]) = R(s0) + γR(s1) + γ 2 R(s2) + · · · ,
 
 where the **discount factor** γ is a number between 0 and 1. The discount factor describesDISCOUNT FACTOR
 
@@ -7515,11 +6223,11 @@ Lurking beneath our choice of infinite horizons is a problem: if the environment
 
 infinite. While we can agree that+∞ is better than −∞, comparing two state sequences with +∞ utility is more difficult. There are three solutions, two of which we have seen already:
 
-1\. With discounted rewards, the utility of an infinite sequence is _finite._ In fact, if γ < 1
+1. With discounted rewards, the utility of an infinite sequence is _finite._ In fact, if γ < 1
 
 and rewards are bounded by ±Rmax, we have
 
-Uh(\[s0, s1, s2, . . .\]) =
+Uh([s0, s1, s2, . . .]) =
 
 ∞∑
 
@@ -7535,11 +6243,11 @@ t =0
 
 using the standard formula for the sum of an infinite geometric series.
 
-2\. If the environment contains terminal states _and if the agent is guaranteed to get to one eventually_, then we will never need to compare infinite sequences. A policy that is guaranteed to reach a terminal state is called a **proper policy**. With proper policies, wePROPER POLICY
+2. If the environment contains terminal states _and if the agent is guaranteed to get to one eventually_, then we will never need to compare infinite sequences. A policy that is guaranteed to reach a terminal state is called a **proper policy**. With proper policies, wePROPER POLICY
 
 can use γ = 1 (i.e., additive rewards). The first three policies shown in Figure 17.2(b) are proper, but the fourth is improper. It gains infinite total reward by staying away from the terminal states when the reward for the nonterminal states is positive. The existence of improper policies can cause the standard algorithms for solving MDPs to fail with additive rewards, and so provides a good reason for using discounted rewards.
 
-3\. Infinite sequences can be compared in terms of the **average reward** obtained per timeAVERAGE REWARD
+3. Infinite sequences can be compared in terms of the **average reward** obtained per timeAVERAGE REWARD
 
 step. Suppose that square (1,1) in the 4× 3 world has a reward of 0.1 while the other nonterminal states have a reward of 0.01. Then a policy that does its best to stay in (1,1) will have higher average reward than one that stays elsewhere. Average reward is a useful criterion for some problems, but the analysis of average-reward algorithms is beyond the scope of this book.
 
@@ -7555,13 +6263,13 @@ The expected utility obtained by executing π starting in s is given by
 
 U π (s) = E
 
-\[ ∞∑
+[ ∞∑
 
 t =0
 
 γ t R(St)
 
-\]
+]
 
 , (17.2)
 
@@ -7607,7 +6315,7 @@ Given this definition, the true utility of a state is just U π∗
 
 **–1**
 
-**\+ 1**
+**+ 1**
 
 **4**
 
@@ -7681,13 +6389,13 @@ states—defined by Equation (17.2) as the expected utility of subsequent state 
 
 Let us look at one of the Bellman equations for the 4× 3 world. The equation for the state (1,1) is
 
-U(1, 1) = −0.04 + γ max\[ 0.8U(1, 2) + 0.1U(2, 1) + 0.1U(1, 1), (Up)
+U(1, 1) = −0.04 + γ max[ 0.8U(1, 2) + 0.1U(2, 1) + 0.1U(1, 1), (Up)
 
 0.9U(1, 1) + 0.1U(1, 2), (Left)
 
 0.9U(1, 1) + 0.1U(2, 1), (Down)
 
-0.8U(2, 1) + 0.1U(1, 2) + 0.1U(1, 1) \]. (Right)
+0.8U(2, 1) + 0.1U(1, 2) + 0.1U(1, 1) ]. (Right)
 
 When we plug in the numbers from Figure 17.3, we find that _Up_ is the best action.
 
@@ -7719,15 +6427,15 @@ rewards R(s), discount γ
 
 **repeat** U ←U ′; δ← 0 **for each** state s **in** S **do**
 
-U ′\[s \]←R(s) + γ max a∈A(s)
+U ′[s ]←R(s) + γ max a∈A(s)
 
 ∑
 
 s′
 
-P (s′ | s, a) U \[s′\]
+P (s′ | s, a) U [s′]
 
-**if** |U ′\[s \] − U \[s\]| > δ **then** δ←|U ′\[s \] − U \[s\]|
+**if** |U ′[s ] − U [s]| > δ **then** δ←|U ′[s ] − U [s]|
 
 **until** δ < ε(1− γ)/γ
 
@@ -7735,7 +6443,7 @@ P (s′ | s, a) U \[s′\]
 
 **Figure 17.4** The value iteration algorithm for calculating utilities of states. The termination condition is from Equation (17.8).
 
-\-0.2
+-0.2
 
 0
 
@@ -7999,27 +6707,27 @@ or value iteration.
 
 s′
 
-P (s ′ | s, a) U \[s
+P (s ′ | s, a) U [s
 
-′ \] >
-
-∑
-
-s′
-
-P (s ′ | s, π\[s\]) U \[s
-
-′ \] **then do**
-
-π\[s \]← argmax a∈A(s)
+′ ] >
 
 ∑
 
 s′
 
-P (s ′ | s, a) U \[s
+P (s ′ | s, π[s]) U [s
 
-′ \]
+′ ] **then do**
+
+π[s ]← argmax a∈A(s)
+
+∑
+
+s′
+
+P (s ′ | s, a) U [s
+
+′ ]
 
 unchanged?← false **until** unchanged?
 
@@ -8105,7 +6813,7 @@ where α is a normalizing constant that makes the belief state sum to 1. By anal
 
 b ′
 
-\= FORWARD(b, a, e) . (17.11)
+= FORWARD(b, a, e) . (17.11)
 
 In the 4× 3 POMDP, suppose the agent moves _Left_ and its sensor reports 1 adjacent wall; then it’s quite likely (although not guaranteed, because both the motion and the sensor are noisy) that the agent is now in (3,1). Exercise 17.13 asks you to calculate the exact probability values for the new belief state.
 
@@ -8113,11 +6821,11 @@ The fundamental insight required to understand POMDPs is this: _the optimal acti
 
 ∗(b) from belief states to actions. It does _not_ depend on the _actual_ state the agent is in. This is a good thing, because the agent does not know its actual state; all it knows is the belief state. Hence, the decision cycle of a POMDP agent can be broken down into the following three steps:
 
-1\. Given the current belief state b, execute the action a= π ∗(b).
+1. Given the current belief state b, execute the action a= π ∗(b).
 
-2\. Receive percept e.
+2. Receive percept e.
 
-3\. Set the current belief state to FORWARD(b, a, e) and repeat.
+3. Set the current belief state to FORWARD(b, a, e) and repeat.
 
 Now we can think of POMDPs as requiring a search in belief-state space, just like the methods for sensorless and contingency problems in Chapter 4. The main difference is that the POMDP belief-state space is _continuous_, because a POMDP belief state is a probability distribution. For example, a belief state for the 4× 3 world is a point in an 11-dimensional continuous space. An action changes the belief state, not just the physical state. Hence, the action is evaluated at least in part according to the information the agent acquires as a result. POMDPs therefore include the value of information (Section 16.6) as one component of the decision problem.
 
@@ -8145,7 +6853,7 @@ P (e|a, s ′
 
 , b)P (s ′|a, b)
 
-\=
+=
 
 ∑
 
@@ -8153,7 +6861,7 @@ s′
 
 P (e | s′)P (s ′|a, b)
 
-\=
+=
 
 ∑
 
@@ -8179,7 +6887,7 @@ e
 
 P (b ′|e, a, b)P (e|a, b)
 
-\=
+=
 
 ∑
 
@@ -8221,13 +6929,13 @@ Section 17.2 described a value iteration algorithm that computed one utility val
 
 Section 17.4. Partially Observable MDPs 661
 
-1\. Let the utility of executing a _fixed_ conditional plan p starting in physical state s be αp(s). Then the expected utility of executing p in belief state b is just
+1. Let the utility of executing a _fixed_ conditional plan p starting in physical state s be αp(s). Then the expected utility of executing p in belief state b is just
 
 ∑ s b(s)αp(s), or b · αp
 
 if we think of them both as vectors. Hence, the expected utility of a fixed conditional plan varies _linearly_ with b; that is, it corresponds to a hyperplane in belief space.
 
-2\. At any given belief state b, the optimal policy will choose to execute the conditional plan with highest expected utility; and the expected utility of b under the optimal policy is just the utility of that conditional plan:
+2. At any given belief state b, the optimal policy will choose to execute the conditional plan with highest expected utility; and the expected utility of b under the optimal policy is just the utility of that conditional plan:
 
 U(b) = U π∗
 
@@ -8243,23 +6951,23 @@ From these two observations, we see that the utility function U(b) on belief sta
 
 To illustrate this, we use a simple two-state world. The states are labeled 0 and 1, with R(0)= 0 and R(1)= 1. There are two actions: _Stay_ stays put with probability 0.9 and _Go_ switches to the other state with probability 0.9. For now we will assume the discount factor γ = 1. The sensor reports the correct state with probability 0.6. Obviously, the agent should _Stay_ when it thinks it’s in state 1 and _Go_ when it thinks it’s in state 0.
 
-The advantage of a two-state world is that the belief space can be viewed as onedimensional, because the two probabilities must sum to 1. In Figure 17.8(a), the x-axis represents the belief state, defined by b(1), the probability of being in state 1. Now let us consider the one-step plans \[Stay \] and \[Go\], each of which receives the reward for the current state followed by the (discounted) reward for the state reached after the action:
+The advantage of a two-state world is that the belief space can be viewed as onedimensional, because the two probabilities must sum to 1. In Figure 17.8(a), the x-axis represents the belief state, defined by b(1), the probability of being in state 1. Now let us consider the one-step plans [Stay ] and [Go], each of which receives the reward for the current state followed by the (discounted) reward for the state reached after the action:
 
-α\[Stay \](0) = R(0) + γ(0.9R(0) + 0.1R(1)) = 0.1
+α[Stay ](0) = R(0) + γ(0.9R(0) + 0.1R(1)) = 0.1
 
-α\[Stay \](1) = R(1) + γ(0.9R(1) + 0.1R(0)) = 1.9
+α[Stay ](1) = R(1) + γ(0.9R(1) + 0.1R(0)) = 1.9
 
-α\[Go\](0) = R(0) + γ(0.9R(1) + 0.1R(0)) = 0.9
+α[Go](0) = R(0) + γ(0.9R(1) + 0.1R(0)) = 0.9
 
-α\[Go\](1) = R(1) + γ(0.9R(0) + 0.1R(1)) = 1.1
+α[Go](1) = R(1) + γ(0.9R(0) + 0.1R(1)) = 1.1
 
-The hyperplanes (lines, in this case) for b ·α\[Stay\] and b ·α\[Go\] are shown in Figure 17.8(a) and their maximum is shown in bold. The bold line therefore represents the utility function for the finite-horizon problem that allows just one action, and in each “piece” of the piecewise linear utility function the optimal action is the first action of the corresponding conditional plan. In this case, the optimal one-step policy is to _Stay_ when b(1) > 0.5 and _Go_ otherwise.
+The hyperplanes (lines, in this case) for b ·α[Stay] and b ·α[Go] are shown in Figure 17.8(a) and their maximum is shown in bold. The bold line therefore represents the utility function for the finite-horizon problem that allows just one action, and in each “piece” of the piecewise linear utility function the optimal action is the first action of the corresponding conditional plan. In this case, the optimal one-step policy is to _Stay_ when b(1) > 0.5 and _Go_ otherwise.
 
 Once we have utilities αp(s) for all the conditional plans p of depth 1 in each physical state s, we can compute the utilities for conditional plans of depth 2 by considering each possible first action, each possible subsequent percept, and then each way of choosing a depth-1 plan to execute for each percept:
 
-\[Stay ; **if** Percept = 0 **then** Stay **else** Stay \]
+[Stay ; **if** Percept = 0 **then** Stay **else** Stay ]
 
-\[Stay ; **if** Percept = 0 **then** Stay **else** Go\] . . .  
+[Stay ; **if** Percept = 0 **then** Stay **else** Go] . . .  
 
 
 
@@ -8285,9 +6993,9 @@ ity
 
 Probability of state 1
 
-\[_Stay_\]
+[_Stay_]
 
-\[_Go_\]
+[_Go_]
 
 0
 
@@ -8399,7 +7107,7 @@ sensor model P (e | s), rewards R(s), discount γ
 
 ε, the maximum error allowed in the utility of any state **local variables**: U , U ′, sets of plans p with associated utility vectors αp
 
-U ′← a set containing just the empty plan \[ \], with α\[ \](s)= R(s)
+U ′← a set containing just the empty plan [ ], with α[ ](s)= R(s)
 
 **repeat** U ←U ′
 
@@ -8543,13 +7251,13 @@ This chapter has concentrated on making decisions in uncertain environments. But
 
 games with simultaneous moves and other sources of partial observability. (Game theorists use the terms **perfect information** and **imperfect information** rather than fully and partially observable.) Game theory can be used in at least two ways:
 
-1\. **Agent design**: Game theory can analyze the agent’s decisions and compute the expected utility for each decision (under the assumption that other agents are acting optimally according to game theory). For example, in the game **two-finger Morra**, two players, O and E, simultaneously display one or two fingers. Let the total number of fingers be f . If f is odd, O collects f dollars from E; and if f is even, E collects f dollars from O. Game theory can determine the best strategy against a rational player and the expected return for each player.4
+1. **Agent design**: Game theory can analyze the agent’s decisions and compute the expected utility for each decision (under the assumption that other agents are acting optimally according to game theory). For example, in the game **two-finger Morra**, two players, O and E, simultaneously display one or two fingers. Let the total number of fingers be f . If f is odd, O collects f dollars from E; and if f is even, E collects f dollars from O. Game theory can determine the best strategy against a rational player and the expected return for each player.4
 
 4 Morra is a recreational version of an **inspection game**. In such games, an inspector chooses a day to inspect a facility (such as a restaurant or a biological weapons plant), and the facility operator chooses a day to hide all the nasty stuff. The inspector wins if the days are different, and the facility operator wins if they are the same.  
 
 Section 17.5. Decisions with Multiple Agents: Game Theory 667
 
-2\. **Mechanism design**: When an environment is inhabited by many agents, it might be possible to define the rules of the environment (i.e., the game that the agents must play) so that the collective good of all agents is maximized when each agent adopts the game-theoretic solution that maximizes its own utility. For example, game theory can help design the protocols for a collection of Internet traffic routers so that each router has an incentive to act in such a way that global throughput is maximized. Mechanism design can also be used to construct intelligent **multiagent systems** that solve complex problems in a distributed fashion.
+2. **Mechanism design**: When an environment is inhabited by many agents, it might be possible to define the rules of the environment (i.e., the game that the agents must play) so that the collective good of all agents is maximized when each agent adopts the game-theoretic solution that maximizes its own utility. For example, game theory can help design the protocols for a collection of Internet traffic routers so that each router has an incentive to act in such a way that global throughput is maximized. Mechanism design can also be used to construct intelligent **multiagent systems** that solve complex problems in a distributed fashion.
 
 **17.5.1 Single-move games**
 
@@ -8581,7 +7289,7 @@ game theory for a _policy_). A **pure strategy** is a deterministic policy; for 
 
 a pure strategy is just a single action. For many games an agent can do better with a **mixed strategy**, which is a randomized policy that selects actions according to a probability distri-MIXED STRATEGY
 
-bution. The mixed strategy that chooses action a with probability p and action b otherwise is written \[p: a; (1 − p): b\]. For example, a mixed strategy for two-finger Morra might be \[0.5: one ; 0.5: two\]. A **strategy profile** is an assignment of a strategy to each player; givenSTRATEGY PROFILE
+bution. The mixed strategy that chooses action a with probability p and action b otherwise is written [p: a; (1 − p): b]. For example, a mixed strategy for two-finger Morra might be [0.5: one ; 0.5: two]. A **strategy profile** is an assignment of a strategy to each player; givenSTRATEGY PROFILE
 
 the strategy profile, the game’s **outcome** is a numeric value for each player.OUTCOME  
 
@@ -8667,7 +7375,7 @@ Combining these two arguments, we see that the true utility U of the solution to
 
 UE,O ≤ U ≤ UO,E or in this case, − 3 ≤ U ≤ 2 .
 
-To pinpoint the value of U , we need to turn our analysis to mixed strategies. First, observe the following: _once the first player has revealed his or her strategy, the second player might as well choose a pure strategy._ The reason is simple: if the second player plays a mixed strategy, \[p: one ; (1− p): two \], its expected utility is a linear combination (p ·uone +(1− p) ·utwo) of
+To pinpoint the value of U , we need to turn our analysis to mixed strategies. First, observe the following: _once the first player has revealed his or her strategy, the second player might as well choose a pure strategy._ The reason is simple: if the second player plays a mixed strategy, [p: one ; (1− p): two ], its expected utility is a linear combination (p ·uone +(1− p) ·utwo) of
 
 6 or a constant—see page 162.  
 
@@ -8767,19 +7475,19 @@ _q_
 
 (e) (f)
 
-\[_p_: _one_; (1 _– p_): _two_\] \[_q_: _one_; (1 _– q_): _two_\]
+[_p_: _one_; (1 _– p_): _two_] [_q_: _one_; (1 _– q_): _two_]
 
-2_p_ _–_ 3(1 _– p_) 2_q_ _–_ 3(1 _– q_)3_p_ _\+_ 4(1 _– p_) 3_q_ _\+_ 4(1 _– q_)
+2_p_ _–_ 3(1 _– p_) 2_q_ _–_ 3(1 _– q_)3_p_ _+_ 4(1 _– p_) 3_q_ _+_ 4(1 _– q_)
 
 2 -3
 
-\-3
+-3
 
-\-3
+-3
 
-\-3
+-3
 
-\-3
+-3
 
 4 2
 
@@ -8787,7 +7495,7 @@ _q_
 
 2
 
-\-3 -3 4
+-3 -3 4
 
 4
 
@@ -8801,7 +7509,7 @@ With this observation in mind, the minimax trees can be thought of as having inf
 
 player can choose. Each of these leads to a node with two branches corresponding to the pure strategies for the second player. We can depict these infinite trees finitely by having one “parameterized” choice at the root:
 
-- If E chooses first, the situation is as shown in Figure 17.12(c). E chooses the strategy \[p: one; (1−p): two \] at the root, and then O chooses a pure strategy (and hence a move) given the value of p. If O chooses one , the expected payoff (to E) is 2p−3(1−p)= 5p−
+- If E chooses first, the situation is as shown in Figure 17.12(c). E chooses the strategy [p: one; (1−p): two ] at the root, and then O chooses a pure strategy (and hence a move) given the value of p. If O chooses one , the expected payoff (to E) is 2p−3(1−p)= 5p−
 
 3; if O chooses two, the expected payoff is −3p + 4(1 − p)= 4 − 7p. We can draw these two payoffs as straight lines on a graph, where p ranges from 0 to 1 on the x-axis, as shown in Figure 17.12(e). O, the minimizer, will always choose the lower of the two lines, as shown by the heavy lines in the figure. Therefore, the best that E can do at the root is to choose p to be at the intersection point, which is where
 
@@ -8809,13 +7517,13 @@ player can choose. Each of these leads to a node with two branches corresponding
 
 The utility for E at this point is UE,O = − 1/12.
 
-- If O moves first, the situation is as shown in Figure 17.12(d). O chooses the strategy \[q: one; (1 − q): two\] at the root, and then E chooses a move given the value of q. The payoffs are 2q−3(1−q)= 5q−3 and−3q+4(1−q)= 4−7q.7 Again, Figure 17.12(f) shows that the best O can do at the root is to choose the intersection point:
+- If O moves first, the situation is as shown in Figure 17.12(d). O chooses the strategy [q: one; (1 − q): two] at the root, and then E chooses a move given the value of q. The payoffs are 2q−3(1−q)= 5q−3 and−3q+4(1−q)= 4−7q.7 Again, Figure 17.12(f) shows that the best O can do at the root is to choose the intersection point:
 
 5q − 3 = 4− 7q ⇒ q = 7/12 .
 
 The utility for E at this point is UO,E = − 1/12.
 
-Now we know that the true utility of the original game lies between −1/12 and −1/12, that is, it is exactly −1/12! (The moral is that it is better to be O than E if you are playing this game.) Furthermore, the true utility is attained by the mixed strategy \[7/12: one ; 5/12: two\], which should be played by both players. This strategy is called the **maximin equilibrium** ofMAXIMIN
+Now we know that the true utility of the original game lies between −1/12 and −1/12, that is, it is exactly −1/12! (The moral is that it is better to be O than E if you are playing this game.) Furthermore, the true utility is attained by the mixed strategy [7/12: one ; 5/12: two], which should be played by both players. This strategy is called the **maximin equilibrium** ofMAXIMIN
 
 EQUILIBRIUM
 
@@ -8831,7 +7539,7 @@ Section 17.5. Decisions with Multiple Agents: Game Theory 673
 
 highest (or lowest) intersection point of the remaining hyperplanes. Finding this choice is an example of a **linear programming** problem: maximizing an objective function subject to linear constraints. Such problems can be solved by standard techniques in time polynomial in the number of actions (and in the number of bits used to specify the reward function, if you want to get technical).
 
-The question remains, what should a rational agent actually _do_ in playing a single game of Morra? The rational agent will have derived the fact that \[7/12: one; 5/12: two\] is the maximin equilibrium strategy, and will assume that this is mutual knowledge with a rational opponent. The agent could use a 12-sided die or a random number generator to pick randomly according to this mixed strategy, in which case the expected payoff would be -1/12 for E. Or the agent could just decide to play one , or two. In either case, the expected payoff remains -1/12 for E. Curiously, unilaterally choosing a particular action does not harm one’s expected payoff, but allowing the other agent to know that one has made such a unilateral decision _does_ affect the expected payoff, because then the opponent can adjust his strategy accordingly.
+The question remains, what should a rational agent actually _do_ in playing a single game of Morra? The rational agent will have derived the fact that [7/12: one; 5/12: two] is the maximin equilibrium strategy, and will assume that this is mutual knowledge with a rational opponent. The agent could use a 12-sided die or a random number generator to pick randomly according to this mixed strategy, in which case the expected payoff would be -1/12 for E. Or the agent could just decide to play one , or two. In either case, the expected payoff remains -1/12 for E. Curiously, unilaterally choosing a particular action does not harm one’s expected payoff, but allowing the other agent to know that one has made such a unilateral decision _does_ affect the expected payoff, because then the opponent can adjust his strategy accordingly.
 
 Finding equilibria in non-zero-sum games is somewhat more complicated. The general approach has two steps: (1) Enumerate all possible subsets of actions that might form mixed strategies. For example, first try all strategy profiles where each player uses a single action, then those where each player uses either one or two actions, and so on. This is exponential in the number of actions, and so only applies to relatively small games. (2) For each strategy profile enumerated in (1), check to see if it is an equilibrium. This is done by solving a set of equations and inequalities that are similar to the ones used in the zero-sum case. For two players these equations are linear and can be solved with basic linear programming techniques, but for three or more players they are nonlinear and may be very difficult to solve.
 
@@ -8925,7 +7633,7 @@ The extensive-form tree for this game is shown in Figure 17.13. Nonterminal stat
 
 0,0!
 
-\-1,+1 !
+-1,+1 !
 
 1/6: AA
 
@@ -8959,7 +7667,7 @@ _k_
 
 0,0
 
-\-2,+2
+-2,+2
 
 _c_
 
@@ -8997,7 +7705,7 @@ but does not know what card player 1 has. (Due to the limits of two-dimensional 
 
 One way to solve an extensive game is to convert it to a normal-form game. Recall that the normal form is a matrix, each row of which is labeled with a pure strategy for player 1, and each column by a pure strategy for player 2. In an extensive game a pure strategy for player _i_ corresponds to an action for each information set involving that player. So in Figure 17.13, one pure strategy for player 1 is “raise when in I1,1 (that is, when I have an ace), and check when in I1,2 (when I have a king).” In the payoff matrix below, this strategy is called _rk_. Similarly, strategy _cf_ for player 2 means “call when I have an ace and fold when I have a king.” Since this is a zero-sum game, the matrix below gives only the payoff for player 1; player 2 always has the opposite payoff:
 
-2:_cc_ 2:_cf_ 2:_ff_ 2:_fc_ 1:_rr_ 0 -1/6 1 7/6 1:_kr_ \-1/3 -1/6 5/6 2/3 1:_rk_ 1/3 **0** 1/6 1/2 1:_kk_ 0 **0** 0 0
+2:_cc_ 2:_cf_ 2:_ff_ 2:_fc_ 1:_rr_ 0 -1/6 1 7/6 1:_kr_ -1/3 -1/6 5/6 2/3 1:_rk_ 1/3 **0** 1/6 1/2 1:_kk_ 0 **0** 0 0
 
 This game is so simple that it has two pure-strategy equilibria, shown in bold: _cf_ for player 2 and _rk_ or _kk_ for player 1. But in general we can solve extensive games by converting to normal form and then finding a solution (usually a mixed strategy) using standard linear programming methods. That works in theory. But if a player has I information sets and a actions per set, then that player will have a
 
@@ -9063,7 +7771,7 @@ choices from the agents in the game, and (3) an outcome rule, known to all agent
 
 Let’s consider **auctions** first. An auction is a mechanism for selling some goods to membersAUCTION
 
-of a pool of bidders. For simplicity, we concentrate on auctions with a single item for sale. Each bidder i has a utility value vi for having the item. In some cases, each bidder has a **private value** for the item. For example, the first item sold on eBay was a broken laser pointer, which sold for $14.83 to a collector of broken laser pointers. Thus, we know that the collector has vi ≥ $14.83, but most other people would have vj \* $14.83. In other cases, such as auctioning drilling rights for an oil tract, the item has a **common value**—the tract will produce some amount of money, X, and all bidders value a dollar equally—but there is uncertainty as to what the actual value of X is. Different bidders have different information, and hence different estimates of the item’s true value. In either case, bidders end up with their own vi. Given vi, each bidder gets a chance, at the appropriate time or times in the auction, to make a bid bi. The highest bid, bmax wins the item, but the price paid need not be bmax; that’s part of the mechanism design.
+of a pool of bidders. For simplicity, we concentrate on auctions with a single item for sale. Each bidder i has a utility value vi for having the item. In some cases, each bidder has a **private value** for the item. For example, the first item sold on eBay was a broken laser pointer, which sold for $14.83 to a collector of broken laser pointers. Thus, we know that the collector has vi ≥ $14.83, but most other people would have vj * $14.83. In other cases, such as auctioning drilling rights for an oil tract, the item has a **common value**—the tract will produce some amount of money, X, and all bidders value a dollar equally—but there is uncertainty as to what the actual value of X is. Different bidders have different information, and hence different estimates of the item’s true value. In either case, bidders end up with their own vi. Given vi, each bidder gets a chance, at the appropriate time or times in the auction, to make a bid bi. The highest bid, bmax wins the item, but the price paid need not be bmax; that’s part of the mechanism design.
 
 The best-known auction mechanism is the **ascending-bid**,8 or **English auction**, inASCENDING-BID
 
@@ -9107,7 +7815,7 @@ the other bidders seeing it. With this mechanism, there is no longer a simple do
 
 A small change in the mechanism for sealed-bid auctions produces the **sealed-bid second-price auction**, also known as a **Vickrey auction**.10 In such auctions, the winner pays
 
-SEALED-BID SECOND-PRICE AUCTION VICKREY AUCTION the price of the _second_\-highest bid, bo, rather than paying his own bid. This simple modifi-
+SEALED-BID SECOND-PRICE AUCTION VICKREY AUCTION the price of the _second_-highest bid, bo, rather than paying his own bid. This simple modifi-
 
 cation completely eliminates the complex deliberations required for standard (or **first-price)** sealed-bid auctions, because the dominant strategy is now simply to bid vi; the mechanism is truth-revealing. Note that the utility of agent i in terms of his bid bi, his value vi, and the best bid among the other agents, bo, is
 
@@ -9157,7 +7865,7 @@ GROVES
 
 VCG each agent to report its true utility and that achieves an efficient allocation of the goods. The trick is that each agent pays a tax equivalent to the loss in global utility that occurs because of the agent’s presence in the game. The mechanism works like this:
 
-1\. The center asks each agent to report its value for receiving an item. Call this bi. 2. The center allocates the goods to a subset of the bidders. We call this subset A, and use
+1. The center asks each agent to report its value for receiving an item. Call this bi. 2. The center allocates the goods to a subset of the bidders. We call this subset A, and use
 
 the notation bi(A) to mean the result to i under this allocation: bi if i is in A (that is, i
 
@@ -9165,7 +7873,7 @@ is a winner), and 0 otherwise. The center chooses A to maximize total reported u
 
 ∑ i bi(A).
 
-3\. The center calculates (for each i) the sum of the reported utilities for all the winners except i. We use the notation B
+3. The center calculates (for each i) the sum of the reported utilities for all the winners except i. We use the notation B
 
 −i = ∑
 
@@ -9283,7 +7991,7 @@ Mechanism design is used in multiagent planning (Hunsberger and Grosz, 2000; Sto
 
 EXERCISES
 
-**17.1** For the 4× 3 world shown in Figure 17.1, calculate which squares can be reached from (1,1) by the action sequence \[Up,Up,Right ,Right ,Right \] and with what probabilities. Explain how this computation is related to the prediction task (see Section 15.2.1) for a hidden Markov model.
+**17.1** For the 4× 3 world shown in Figure 17.1, calculate which squares can be reached from (1,1) by the action sequence [Up,Up,Right ,Right ,Right ] and with what probabilities. Explain how this computation is related to the prediction task (see Section 15.2.1) for a hidden Markov model.
 
 **17.2** Select a specific member of the set of policies that are optimal for R(s) > 0 as shown in Figure 17.2(b), and calculate the fraction of time the agent spends in each state, in the limit, if the policy is executed forever. (_Hint_: Construct the state-to-state transition probability matrix corresponding to the policy and see Exercise 15.2.)
 
@@ -9345,7 +8053,7 @@ Implement value iteration for this world for each value of r below. Use discount
 
 
 
-\-50 +1 +1 +1 +1 +1 +1 +1
+-50 +1 +1 +1 +1 +1 +1 +1
 
 +50 -1 -1 -1 -1 -1 -1 -1
 
@@ -9357,21 +8065,21 @@ Implement value iteration for this world for each value of r below. Use discount
 
 _Start_
 
-_r_ \-1
+_r_ -1
 
-\-1
+-1
 
-\-1
+-1
 
 +10
 
-\-1
+-1
 
-\-1
+-1
 
-\-1
+-1
 
-\-1
+-1
 
 (a) (b)
 
