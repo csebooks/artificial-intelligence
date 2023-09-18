@@ -5,7 +5,7 @@ weight: 4
 
   
 
-# 1 INTRODUCTION
+# INTRODUCTION
 
 _In which we try to explain why we consider artificial intelligence to be a subject most worthy of study, and in which we try to decide what exactly it is, this being a good thing to decide before embarking._
 
