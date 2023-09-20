@@ -1,6 +1,6 @@
 ---
 title: 'Artificial Intelligence'
-weight: 4
+weight: 1
 ---
 
   
@@ -48,9 +48,7 @@ The **Turing Test**, proposed by Alan Turing (1950), was designed to provide a s
 By distinguishing between _human_ and _rational_ behavior, we are not suggesting that humans are necessarily “irrational” in the sense of “emotionally unstable” or “insane.” One merely need note that we are not perfect: not all chess players are grandmasters; and, unfortunately, not everyone gets an A on the exam. Some systematic errors in human reasoning are cataloged by Kahneman _et al._ (1982).  
 ```
 
-Turing’s test deliberately avoided direct physical interaction between the interrogator and the computer, because _physical_ simulation of a person is unnecessary for intelligence. However, the so-called **total Turing Test** includes a video signal so that the interrogator can test theTOTAL TURING TEST
-
-subject’s perceptual abilities, as well as the opportunity for the interrogator to pass physical objects “through the hatch.” To pass the total Turing Test, the computer will need
+Turing’s test deliberately avoided direct physical interaction between the interrogator and the computer, because _physical_ simulation of a person is unnecessary for intelligence. However, the so-called **total Turing Test** includes a video signal so that the interrogator can test the subject’s perceptual abilities, as well as the opportunity for the interrogator to pass physical objects “through the hatch.” To pass the total Turing Test, the computer will need
 
 - **computer vision** to perceive objects, and
 
@@ -513,7 +511,7 @@ For the currently infeasible tasks, try to find out what the difficulties are an
 
 **1.15** Various subfields of AI have held contests by defining a standard task and inviting researchers to do their best. Examples include the DARPA Grand Challenge for robotic cars, The International Planning Competition, the Robocup robotic soccer league, the TREC information retrieval event, and contests in machine translation, speech recognition. Investigate five of these contests, and describe the progress made over the years. To what degree have the contests advanced toe state of the art in AI? Do what degree do they hurt the field by drawing energy away from new ideas?  
 
-# 2 INTELLIGENT AGENTS
+# INTELLIGENT AGENTS
 
 _In which we discuss the nature of agents, perfect or otherwise, the diversity of environments, and the resulting menagerie of agent types._
 

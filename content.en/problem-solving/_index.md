@@ -1,6 +1,6 @@
 ---
 title: 'Problem-Solving'
-weight: 5
+weight: 2
 ---
 
   
@@ -49,7 +49,7 @@ A **problem** can be defined formally by five components:
 
 - The **initial state** that the agent starts in. For example, the initial state for our agent in Romania might be described as In(Arad). 
 
-**function** SIMPLE-PROBLEM-SOLVING-AGENT(percept ) **returns** an action 
+**function** SIMPLE-PROBLEM-SOLVING-AGENT(percept ) **returns** an action \
 **persistent**: seq , an action sequence, initially empty 
 state, some description of the current world state 
 goal , a goal, initially null 
