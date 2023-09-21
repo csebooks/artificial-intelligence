@@ -1,6 +1,6 @@
 ---
 title: 'Communicating, Perceiving, and Acting'
-weight: 9
+weight: 6
 ---
 
   

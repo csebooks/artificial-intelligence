@@ -190,7 +190,7 @@ The only real alternative theory is mysticism: that minds operate in some mystic
 
 Brains and digital computers have somewhat different properties. Figure 1.3 shows that computers have a cycle time that is a million times faster than a brain. The brain makes up for that with far more storage and interconnection than even a high-end personal computer, although the largest supercomputers have a capacity that is similar to the brain’s. (It should be noted, however, that the brain does not seem to use all of its neurons simultaneously.) Futurists make much of these numbers, pointing to an approaching **singularity** at which computers reach a superhuman level of performance (Vinge, 1993; Kurzweil, 2005), but the raw comparisons are not especially informative. Even with a computer of virtually unlimited capacity, we still would not know how to achieve the brain’s level of intelligence.
 
-### 1.2.5 Psychology
+### Psychology
 
 - How do humans and animals think and act?
 
@@ -701,9 +701,9 @@ Each kind of agent program combines particular components in particular ways to 
 
 
 
-**function** REFLEX-VACUUM-AGENT([location ,status]) **returns** an action
-**if** status = Dirty **then return** Suck
-**else if** location = A **then return** Right
+**function** REFLEX-VACUUM-AGENT([location ,status]) **returns** an action\
+**if** status = Dirty **then return** Suck\
+**else if** location = A **then return** Right\
 **else if** location = B **then return** Left
 
 **Figure 2.8** The agent program for a simple reflex agent in the two-state vacuum environment. This program implements the agent function tabulated in Figure 2.3.
@@ -758,11 +758,11 @@ Figure 2.11 gives the structure of the model-based reflex agent with internal st
 
 ![Alt text](figure-2.11.png)
 
-**function** MODEL-BASED-REFLEX-AGENT(percept ) **returns** an action 
-**persistent**: state, the agent’s current conception of the world state
+**function** MODEL-BASED-REFLEX-AGENT(percept ) **returns** an action \
+**persistent**: state, the agent’s current conception of the world state 
 
-state←UPDATE-STATE(state,action ,percept ,model ) 
-rule←RULE-MATCH(state, rules) 
+state←UPDATE-STATE(state,action ,percept ,model ) \
+rule←RULE-MATCH(state, rules) \
 action← rule.ACTION
 
 **return** action

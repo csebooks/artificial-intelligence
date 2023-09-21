@@ -1,6 +1,6 @@
 ---
 title: 'Knowledge, reasoning, and planning'
-weight: 6
+weight: 3
 ---
 
   

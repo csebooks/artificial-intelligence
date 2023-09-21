@@ -50,19 +50,19 @@ A **problem** can be defined formally by five components:
 - The **initial state** that the agent starts in. For example, the initial state for our agent in Romania might be described as In(Arad). 
 
 **function** SIMPLE-PROBLEM-SOLVING-AGENT(percept ) **returns** an action \
-**persistent**: seq , an action sequence, initially empty 
-state, some description of the current world state 
-goal , a goal, initially null 
+**persistent**: seq , an action sequence, initially empty \
+state, some description of the current world state \
+goal , a goal, initially null \
 problem , a problem formulation
 
-state←UPDATE-STATE(state,percept ) 
-**if** seq is empty **then**
-goal← FORMULATE-GOAL(state) 
-problem← FORMULATE-PROBLEM(state, goal ) 
-seq← SEARCH(problem) 
-**if** seq = failure **then return** a null action
-action← FIRST(seq) 
-seq←REST(seq) 
+state←UPDATE-STATE(state,percept ) \
+**if** seq is empty **then** \
+goal← FORMULATE-GOAL(state) \
+problem← FORMULATE-PROBLEM(state, goal ) \
+seq← SEARCH(problem) \
+**if** seq = failure **then return** a null action \
+action← FIRST(seq) \
+seq←REST(seq) \
 **return** action
 
 **Figure 3.1** A simple problem-solving agent. It first formulates a goal and a problem, searches for a sequence of actions that would solve the problem, and then executes the actions one at a time. When this is complete, it formulates another goal and starts over.
@@ -257,8 +257,8 @@ Search algorithms require a data structure to keep track of the search tree that
 
 Given the components for a parent node, it is easy to see how to compute the necessary components for a child node. The function CHILD-NODE takes a parent node and an action and returns the resulting child node:
 
-**function** CHILD-NODE(problem ,parent ,action) **returns** a node 
-**return** a node with
+**function** CHILD-NODE(problem ,parent ,action) **returns** a node \
+**return** a node with \
   STATE = problem .RESULT(parent .STATE,action ), PARENT = parent , ACTION = action , 
   PATH-COST = parent .PATH-COST + problem .STEP-COST(parent .STATE,action )
 
@@ -315,20 +315,20 @@ How does breadth-first search rate according to the four criteria from the previ
 
 
 
-**function** BREADTH-FIRST-SEARCH(problem
-**returns** a solution, or failure
+**function** BREADTH-FIRST-SEARCH(problem \
+**returns** a solution, or failure 
 
-node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 
-**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) 
-frontier← a FIFO queue with node as the only element 
+node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 \
+**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) \
+frontier← a FIFO queue with node as the only element \
 explored← an empty set  
-**loop do**
-  **if** EMPTY?( frontier ) **then return** failure node← POP( frontier ) /* chooses the shallowest node in frontier */ 
-  add node .STATE to explored
-  **for each** action **in** problem .ACTIONS(node.STATE) **do** 
-    child←CHILD-NODE(problem ,node ,action) 
-    **if** child .STATE is not in explored or frontier **then**
-      **if** problem .GOAL-TEST(child .STATE) **then return** SOLUTION(child ) 
+**loop do** \
+  **if** EMPTY?( frontier ) **then return** failure node← POP( frontier ) /* chooses the shallowest node in frontier */ \
+  add node .STATE to explored \
+  **for each** action **in** problem .ACTIONS(node.STATE) **do** \
+    child←CHILD-NODE(problem ,node ,action) \
+    **if** child .STATE is not in explored or frontier **then** \
+      **if** problem .GOAL-TEST(child .STATE) **then return** SOLUTION(child ) \
     frontier← INSERT(child , frontier )
 
 **Figure 3.11** Breadth-first search on a graph.
@@ -378,20 +378,20 @@ In addition to the ordering of the queue by path cost, there are two other signi
 
 
 
-**function** UNIFORM-COST-SEARCH(problem) **returns** a solution, or failure
-node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 
-frontier← a priority queue ordered by PATH-COST, with node as the only element 
-explored← an empty set 
-**loop do**
-**if** EMPTY?( frontier ) **then return** failure
-node← POP( frontier ) /* chooses the lowest-cost node in frontier */ 
-**if** problem .GOAL-TEST(node.STATE) **then return** SOLUTION(node) 
-add node .STATE to explored
-**for each** action **in** problem .ACTIONS(node.STATE) **do** 
-child←CHILD-NODE(problem ,node ,action) 
-**if** child .STATE is not in explored or frontier **then**
-frontier← INSERT(child , frontier ) 
-**else if** child .STATE is in frontier with higher PATH-COST **then**
+**function** UNIFORM-COST-SEARCH(problem) **returns** a solution, or failure \
+node← a node with STATE = problem .INITIAL-STATE, PATH-COST = 0 \
+frontier← a priority queue ordered by PATH-COST, with node as the only element \
+explored← an empty set \
+**loop do** \
+**if** EMPTY?( frontier ) **then return** failure \
+node← POP( frontier ) /* chooses the lowest-cost node in frontier */ \
+**if** problem .GOAL-TEST(node.STATE) **then return** SOLUTION(node) \
+add node .STATE to explored \
+**for each** action **in** problem .ACTIONS(node.STATE) **do** \ 
+child←CHILD-NODE(problem ,node ,action) \
+**if** child .STATE is not in explored or frontier **then** \
+frontier← INSERT(child , frontier ) \
+**else if** child .STATE is in frontier with higher PATH-COST **then** \
 replace that frontier node with child
 
 **Figure 3.14** Uniform-cost search on a graph. The algorithm is identical to the general graph search algorithm in Figure 3.7, except for the use of a priority queue and the addition of an extra check in case a shorter path to a frontier state is discovered. The data structure for frontier needs to support efficient membership testing, so it should combine the capabilities of a priority queue and a hash table.
@@ -439,19 +439,20 @@ Sometimes, depth limits can be based on knowledge of the problem. For example, o
 
 
 
-**function** DEPTH-LIMITED-SEARCH(problem , limit ) **returns** a solution, or failure/cutoff **return** RECURSIVE-DLS(MAKE-NODE(problem .INITIAL-STATE),problem , limit )
+**function** DEPTH-LIMITED-SEARCH(problem , limit ) **returns** a solution, or failure cutoff **return** \ 
+RECURSIVE-DLS(MAKE-NODE(problem .INITIAL-STATE),problem , limit ) 
 
-**function** RECURSIVE-DLS(node,problem , limit ) **returns** a solution, or failure/cutoff 
-**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) 
-**else if** limit = 0 **then return** cutoff
+**function** RECURSIVE-DLS(node,problem , limit ) **returns** a solution, or failure/cutoff \
+**if** problem .GOAL-TEST(node .STATE) **then return** SOLUTION(node) \ 
+**else if** limit = 0 **then return** cutoff 
 
-**else** 
-cutoff occurred?← false 
+**else** \ 
+cutoff occurred?← false \
 **for each** action **in** problem .ACTIONS(node.STATE) **do**
 
-child←CHILD-NODE(problem ,node ,action
-result←RECURSIVE-DLS(child ,problem , limit − 1
-**if** result = cutoff **then** cutoff occurred?← true 
+child←CHILD-NODE(problem ,node ,action \
+result←RECURSIVE-DLS(child ,problem , limit − 1 \
+**if** result = cutoff **then** cutoff occurred?← true \
 **else if** result ≠ failure **then return** result
 
 **if** cutoff occurred? **then return** cutoff **else return** failure
@@ -470,10 +471,10 @@ Depth-limited search can be implemented as a simple modification to the general 
 Iterative deepening search may seem wasteful because states are generated multiple times. It turns out this is not too costly. The reason is that in a search tree with the same (or nearly the same) branching factor at each level, most of the nodes are in the bottom level, so it does not matter much that the upper levels are generated multiple times. In an iterative deepening search, the nodes on the bottom level (depth d) are generated once, those on the  
 
 
-**function** ITERATIVE-DEEPENING-SEARCH(problem) **returns** a solution, or failure 
-**for** depth = 0 **to**∞ **do**
-result←DEPTH-LIMITED-SEARCH(problem ,depth) 
-**if** result ≠ cutoff **then return** result
+**function** ITERATIVE-DEEPENING-SEARCH(problem) **returns** a solution, or failure \
+**for** depth = 0 **to** ∞ **do** \
+result←DEPTH-LIMITED-SEARCH(problem ,depth) \
+**if** result ≠ cutoff **then return** result 
 
 **Figure 3.18** The iterative deepening search algorithm, which repeatedly applies depthlimited search with increasing limits. It terminates when a solution is found or if the depthlimited search returns failure , meaning that no solution exists.
 
@@ -560,31 +561,32 @@ Admissible heuristics are by nature optimistic because they think the cost of so
 
 A second, slightly stronger condition called **consistency** (or sometimes **monotonicity**)is required only for applications of A∗ to graph search.9 A heuristic h(n) is consistent if, for every node n and every successor n′ of n generated by any action a, the estimated cost of reaching the goal from n is no greater than the step cost of getting to n′ plus the estimated cost of reaching the goal from n′:
 
-h(n) ≤ c(n, a, n ′) + h(n ′) .
+h(n) ≤ c(n, a, n′) + h(n′) .
 
-This is a form of the general **triangle inequality**, which stipulates that each side of a triangle cannot be longer than the sum of the other two sides. Here, the triangle is formed by n, n ′,and the goal G~n~ closest to n. For an admissible heuristic, the inequality makes perfect sense: if there were a route from n toG~n~via n′ that was cheaper than h(n), that would violate the property that h(n) is a lower bound on the cost to reach G~n~.
+This is a form of the general **triangle inequality**, which stipulates that each side of a triangle cannot be longer than the sum of the other two sides. Here, the triangle is formed by n, n′,and the goal G~n~ closest to n. For an admissible heuristic, the inequality makes perfect sense: if there were a route from n toG~n~via n′ that was cheaper than h(n), that would violate the property that h(n) is a lower bound on the cost to reach G~n~.
 
-It is fairly easy to show (Exercise 3.29) that every consistent heuristic is also admissible. Consistency is therefore a stricter requirement than admissibility, but one has to work quite hard to concoct heuristics that are admissible but not consistent. All the admissible heuristics we discuss in this chapter are also consistent. Consider, for example, hSLD . We know that the general triangle inequality is satisfied when each side is measured by the straight-line distance and that the straight-line distance between n and n′ is no greater than c(n, a, n ′).Hence, hSLD is a consistent heuristic.
+It is fairly easy to show (Exercise 3.29) that every consistent heuristic is also admissible. Consistency is therefore a stricter requirement than admissibility, but one has to work quite hard to concoct heuristics that are admissible but not consistent. All the admissible heuristics we discuss in this chapter are also consistent. Consider, for example, hSLD . We know that the general triangle inequality is satisfied when each side is measured by the straight-line distance and that the straight-line distance between n and n′ is no greater than c(n, a, n′).Hence, hSLD is a consistent heuristic.
 
-**Optimality of A***
+**Optimality of A**
 
 As we mentioned earlier, A∗ has the following properties: _the tree-search version of_ A ∗ _is_ _optimal if_ h(n) _is admissible, while the graph-search version is optimal if_ h(n) _is consistent._ 
 We show the second of these two claims since it is more useful. The argument essentially mirrors the argument for the optimality of uniform-cost search, with g replaced by f—just as in the A∗ algorithm itself.
 
-The first step is to establish the following: _if_ h(n) _is consistent, then the values of_ f(n) _along any path are nondecreasing._ The proof follows directly from the definition of consistency. Suppose n ′ is a successor of n; then g(n′)= g(n) + c(n, a, n ′) for some action a, and we have
+The first step is to establish the following: _if_ h(n) _is consistent, then the values of_ f(n) _along any path are nondecreasing._ The proof follows directly from the definition of consistency. Suppose n′ is a successor of n; then g(n′)= g(n) + c(n, a, n′) for some action a, and we have
 
-f(n ′) = g(n ′) + h(n ′) = g(n) + c(n, a, n ′) + h(n ′) ≥ g(n) + h(n) = f(n) .
+f(n′) = g(n′) + h(n′) = g(n) + c(n, a, n′) + h(n′) ≥ g(n) + h(n) = f(n) .
 
 The next step is to prove that _whenever_ A ∗ _selects a node_ n _for expansion, the optimal path_ _to that node has been found._ Were this not the case, there would have to be another frontier node n′ on the optimal path from the start node to n, by the graph separation property of
 
 9 With an admissible but inconsistent heuristic, A∗ requires some extra bookkeeping to ensure optimality.  
 
 ![Alt text](figure-3.24a.png)
+
 ![Alt text](figure-3.24b.png)
 
 ![Alt text](figure-3.25.png)
 
-Figure 3.9; because f is nondecreasing along any path, n ′ would have lower f -cost than n and would have been selected first. 
+Figure 3.9; because f is nondecreasing along any path, n′ would have lower f -cost than n and would have been selected first. 
 
 From the two preceding observations, it follows that the sequence of nodes expanded by A∗ using GRAPH-SEARCH is in nondecreasing order of f(n). Hence, the first goal node selected for expansion must be an optimal solution because f is the true cost for goal nodes (which have h= 0) and all later goal nodes will be at least as expensive.
 
@@ -592,15 +594,15 @@ The fact that f -costs are nondecreasing along any path also means that we can d
 
 With uniform-cost search (A∗ search using h(n) = 0), the bands will be “circular” around the start state. With more accurate heuristics, the bands will stretch toward the goal state and become more narrowly focused around the optimal path. If C∗ is the cost of the optimal solution path, then we can say the following:
 
-- A∗ expands all nodes with f(n) < C ∗.
+- A∗ expands all nodes with f(n) < C∗.
 
-- A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C ∗) before selecting a goal node.
+- A∗ might then expand some of the nodes right on the “goal contour” (where f(n) = C∗) before selecting a goal node.
 
 Completeness requires that there be only finitely many nodes with cost less than or equal to C∗, a condition that is true if all step costs exceed some finite ε and if b is finite. 
 
 Notice that A∗ expands no nodes with f(n) > C∗—for example, Timisoara is not expanded in Figure 3.24 even though it is a child of the root. We say that the subtree below Timisoara is **pruned**; because hSLD is admissible, the algorithm can safely ignore this subtree while still guaranteeing optimality. The concept of pruning—eliminating possibilities from consideration without having to examine them—is important for many areas of AI.
 
-One final observation is that among optimal algorithms of this type—algorithms that extend search paths from the root and use the same heuristic information—A∗ is **optimally efficient** for any given consistent heuristic. That is, no other optimal algorithm is guaranteed to expand fewer nodes than A∗ (except possibly through tie-breaking among nodes with f(n)= C∗). This is because any algorithm that _does not_ expand all nodes with f(n) < C ∗runs the risk of missing the optimal solution. 
+One final observation is that among optimal algorithms of this type—algorithms that extend search paths from the root and use the same heuristic information—A∗ is **optimally efficient** for any given consistent heuristic. That is, no other optimal algorithm is guaranteed to expand fewer nodes than A∗ (except possibly through tie-breaking among nodes with f(n)= C∗). This is because any algorithm that _does not_ expand all nodes with f(n) < C∗runs the risk of missing the optimal solution. 
 
 That A∗ search is complete, optimal, and optimally efficient among all such algorithmsis rather satisfying. Unfortunately, it does not mean that A∗ is the answer to all our searching needs. The catch is that, for most problems, the number of states within the goal contour search space is still exponential in the length of the solution. The details of the analysis are beyond the scope of this book, but the basic results are as follows. For problems with constant step costs, the growth in run time as a function of the optimal solution depth d is analyzed in terms of the the **absolute error** or the **relative error** of the heuristic. The absolute error is  defined as Δ ≡ h ∗ − h, where h^∗^ is the actual cost of getting from the root to the goal, and the relative error is defined as ε ≡ (h^∗^ − h)/h^∗^.
 

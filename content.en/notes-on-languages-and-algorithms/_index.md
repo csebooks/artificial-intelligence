@@ -1,6 +1,6 @@
 ---
 title: 'Notes on Languages and Algorithms'
-weight: 12
+weight: 9
 ---
 
   

@@ -1,6 +1,6 @@
 ---
 title: 'Uncertain knowledge and reasoning'
-weight: 7
+weight: 4
 ---
 
 

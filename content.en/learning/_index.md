@@ -1,6 +1,6 @@
 ---
 title: 'Learning'
-weight: 8
+weight: 5
 ---
 
   
