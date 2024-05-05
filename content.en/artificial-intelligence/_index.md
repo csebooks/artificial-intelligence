@@ -278,9 +278,7 @@ Minsky supervised a series of students who chose limited problems that appeared 
 
 If the number of customers Tom gets is twice the square of 20 percent of the number of advertisements he runs, and the number of advertisements he runs is 45, what is the number of customers Tom gets?  
 
-
 ![Alt text](figure-1.4.png)
-
 
 The most famous microworld was the blocks world, which consists of a set of solid blocks placed on a tabletop (or more often, a simulation of a tabletop), as shown in Figure 1.4. A typical task in this world is to rearrange the blocks in a certain way, using a robot hand that can pick up one block at a time. The blocks world was home to the vision project of David Huffman (1971), the vision and constraint-propagation work of David Waltz (1975), the learning theory of Patrick Winston (1970), the natural-language-understanding program of Terry Winograd (1972), and the planner of Scott Fahlman (1974).
 
@@ -319,6 +317,7 @@ The naive version of the program generated all possible structures consistent wi
 **then** there is a ketone subgroup
 
 ---
+
 Recognizing that the molecule contains a particular substructure reduces the number of possible candidates enormously. DENDRAL was powerful because All the relevant theoretical knowledge to solve these problems has been mapped over from its general form in the [spectrum prediction component] (“first principles”) to efficient special forms (“cookbook recipes”). (Feigenbaum _et al._, 1971)
 
 The significance of DENDRAL was that it was the first successful _knowledge-intensive_ system: its expertise derived from large numbers of special-purpose rules. Later systems also incorporated the main theme of McCarthy’s Advice Taker approach—the clean separation of the knowledge (in the form of rules) from the reasoning component.
@@ -551,9 +550,10 @@ Looking at Figure 2.3, we see that various vacuum-world agents can be defined si
 1 If the agent uses some randomization to choose its actions, then we would have to try each sequence many times to identify the probability of each action. One might imagine that acting randomly is rather silly, but we show later in this chapter that it can be very intelligent.  
 
 ---
-![Alt text](figure-2.2.png)
 
-![Alt text](figure-2.3.png)
+![A vacuum-cleaner world with just two locations](figure-2.2.png)
+
+![Partial tabulation of a simple agent function for the vacuum-cleaner world shown in Figure](figure-2.3.png)
 
 Before closing this section, we should emphasize that the notion of an agent is meant to be a tool for analyzing systems, not an absolute characterization that divides the world into agents and non-agents. One could view a hand-held calculator as an agent that chooses the action of displaying “4” when given the percept sequence “2 + 2 =,” but such an analysis would hardly aid our understanding of the calculator. In a sense, all areas of engineering can be seen as designing artifacts that interact with the world; AI operates at (what the authors consider to be) the most interesting end of the spectrum, where the artifacts have significant computational resources and the task environment requires nontrivial decision making.
 
@@ -579,6 +579,7 @@ What is rational at any given time depends on four things:
 This leads to a **definition of a rational agent**:DEFINITION OF A RATIONAL AGENT
 
 ---
+
 _For each possible percept sequence, a rational agent should select an action that is expected to maximize its performance measure, given the evidence provided by the percept sequence and whatever built-in knowledge the agent has._  
 
 ---
@@ -606,6 +607,7 @@ agent knows the _actual_ outcome of its actions and can act accordingly; but omn
 This example shows that rationality is not the same as perfection. Rationality maximizes _expected_ performance, while perfection maximizes _actual_ performance. Retreating from a requirement of perfection is not just a question of being fair to agents. The point is that if we expect an agent to do what turns out to be the best action after the fact, it will be impossible to design an agent to fulfill this specification—unless we improve the performance of crystal balls or time machines.
 
 ---
+
 2 See N. Henderson, “New door latches urged for Boeing 747 jumbo jets,” _Washington Post_, August 24, 1989.  
 
 ---
@@ -674,7 +676,7 @@ Figure 2.6 lists the properties of a number of familiar environments. Note that 
 
 3 The word “sequential” is also used in computer science as the antonym of “parallel.” The two meanings are largely unrelated.  
 
-![Alt text](figure-2.6.png)
+![Example of task environments and their characterictics](figure-2.6.png)
 
 batch of defective parts, the robot should learn from several observations that the distribution of defects has changed, and should modify its behavior for subsequent parts. We have not included a “known/unknown” column because, as explained earlier, this is not strictly a property of the environment. For some environments, such as chess and poker, it is quite easy to supply the agent with full knowledge of the rules, but it is nonetheless interesting to consider how an agent might learn to play these games without such knowledge.
 
