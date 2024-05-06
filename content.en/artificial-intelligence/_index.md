@@ -688,10 +688,12 @@ The code repository associated with this book (aima.cs.berkeley.edu) includes im
 
 So far we have talked about agents by describing _behavior_—the action that is performed after any given sequence of percepts. Now we must bite the bullet and talk about how the insides work. The job of AI is to design an **agent program** that implements the agent function the mapping from percepts to actions. We assume this program will run on some sort of computing device with physical sensors and actuators—we call this the **architecture**:
 
----js
-agent= architecture+ program .
+```js
 
----
+agent = architecture + program.
+
+```
+
 Obviously, the program we choose has to be one that is appropriate for the architecture. If the program is going to recommend actions like _Walk_, the architecture had better have legs. The architecture might be just an ordinary PC, or it might be a robotic car with several onboard computers, cameras, and other sensors. In general, the architecture makes the percepts from the sensors available to the program, runs the program, and feeds the program’s action choices to the actuators as they are generated. Most of this book is about designing agent programs, although Chapters 24 and 25 deal directly with the sensors and actuators.
 
 ### Agent programs
@@ -702,7 +704,7 @@ We describe the agent programs in the simple pseudocode language that is defined
 
 4 There are other choices for the agent program skeleton; for example, we could have the agent programs be **coroutines** that run asynchronously with the environment. Each such coroutine has an input and output port and consists of a loop that reads the input port for percepts and writes actions to the output port.  
 
-![Alt text](figure-2.7.png)
+![TABLE-DRIVEN-AGENT](figure-2.7.png)
 
 this way, we as designers must construct a table that contains the appropriate action for every possible percept sequence.
 
@@ -739,6 +741,7 @@ Notice that the vacuum agent program is very small indeed compared to the corres
 Simple reflex behaviors occur even in more complex environments. Imagine yourself as the driver of the automated taxi. If the car in front brakes and its brake lights come on, then you should notice this and initiate braking. In other words, some processing is done on the visual input to establish the condition we call “The car in front is braking.” Then, this triggers some established connection in the agent program to the action “initiate braking.” We call such a connection a **condition–action rule**,5 written as
 
 ---
+
 if car-in-front-is-braking then initiate-braking.
 
 ---
@@ -747,10 +750,11 @@ Humans also have many such connections, some of which are learned responses (as 
 The program in Figure 2.8 is specific to one particular vacuum environment. A more general and flexible approach is first to build a general-purpose interpreter for condition– action rules and then to create rule sets for specific task environments. Figure 2.9 gives the structure of this general program in schematic form, showing how the condition–action rules allow the agent to make the connection from percept to action. (Do not worry if this seems
 
 ---
+
 5 Also called **situation–action rules**, **productions**, or **if–then rules**.  
 
 ---
-![Alt text](figure-2.9.png)
+![Schematic diagram of a simple reflex agent](figure-2.9.png)
 
 **function** SIMPLE-REFLEX-AGENT(percept ) **returns** an action **persistent**: rules, a set of condition–action rules
 
@@ -782,7 +786,7 @@ Figure 2.11 gives the structure of the model-based reflex agent with internal st
 
 ![Alt text](figure-2.11.png)
 
-**function** MODEL-BASED-REFLEX-AGENT(percept ) **returns** an action \
+**function** MODEL-BASED-REFLEX-AGENT(percept ) \ **returns** an action \
 **persistent**: state, the agent’s current conception of the world state 
 
 state←UPDATE-STATE(state,action ,percept ,model ) \
@@ -838,7 +842,7 @@ At this point, the reader may be wondering, “Is it that simple? We just build 
 We have described agent programs with various methods for selecting actions. We have not, so far, explained how the agent programs _come into being_. In his famous early paper, Turing (1950) considers the idea of actually programming his intelligent machines by hand.  
 
 
-Performance standard
+**Performance standard**
 
 ![Alt text](figure-2.15.png)
 
@@ -923,8 +927,6 @@ Interest in agents and in agent design has risen rapidly in recent years, partly
 **2.3** For each of the following assertions, say whether it is true or false and support your answer with examples or counterexamples where appropriate.
 
 **a**. An agent that senses only partial information about the state cannot be perfectly rational.  
-
-
 
 **b**. There exist task environments in which no pure reflex agent can behave rationally.
 
