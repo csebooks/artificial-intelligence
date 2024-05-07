@@ -3,8 +3,6 @@ title: 'Communicating, Perceiving, and Acting'
 weight: 6
 ---
 
-  
-
 # NATURAL LANGUAGE PROCESSING
 
 _In which we see how to make use of the copious knowledge that is expressed in natural language._
@@ -27,7 +25,7 @@ Natural languages are also **ambiguous**. “He saw her duck” can mean either 
 
 Finally, natural languages are difficult to deal with because they are very large, and constantly changing. Thus, our language models are, at best, an approximation. We start with the simplest possible approximations and move up from there.
 
-### _N_-gram character models
+### N-gram character models 
 
 Ultimately, a written text is composed of letters, digits, punctuation, and spaces
 in English (and more exotic characters in some other languages). Thus, one of the simplest language models is a probability distribution over sequences of characters. As in Chapter 15, we write P (c~1:N~ ) for the probability of a sequence of N characters, C~1~ through c~N~ . In one Web collection, P (“the”)= 0.027 and P (“zgq”)= 0.000000002. A sequence of written symbols of length n is called an n-gram (from the Greek root for writing or letters), with special case “unigram” for 1-gram, “bigram” for 2-gram, and “trigram” for 3-gram. A model of the probability distribution of n-letter sequences is thus called an n-**gram model**. (But be care-N ful: we can have n-gram models over sequences of words, syllables, or other units; not just over characters.)
@@ -75,7 +73,7 @@ Perplexity(C~1~:N ) = P (C~1~:N )^1/N^
 
 Perplexity can be thought of as the reciprocal of probability, normalized by sequence length. It can also be thought of as the weighted average branching factor of a model. Suppose there are 100 characters in our language, and our model says they are all equally likely. Then for a sequence of any length, the perplexity will be 100. If some characters are more likely than others, and the model reflects that, then the model will have a perplexity less than 100.
 
-###  _N_-gram word models
+### N-gram word models
 
 Now we turn to n-gram models over words rather than characters. All the same mechanism applies equally to word and character models. The main difference is that the **vocabulary** the set of symbols that make up the corpus and the model—is larger. There are only about 100 characters in most languages, and sometimes we build character models that are even more restrictive, for example by treating “A” and “a” as the same symbol or by treating all punctuation as the same symbol. But with word models we have at least tens of thousands of symbols, and sometimes millions. The wide range is because it is not clear what constitutes a word. In English a sequence of letters surrounded by spaces is a word, but in some languages, like Chinese, words are not separated by spaces, and even in English many decisions must be made to have a clear policy on word boundaries: how many words are in “ne’er-do-well”? Or in “(Tel:1-800-960-5660x123)”?
 
@@ -99,13 +97,13 @@ We now consider in depth the task of **text classification,** also known as **ca
 
 Spam: Wholesale Fashion Watches -57% today. Designer watches for cheap ... 
 Spam: You can buy ViagraFr$1.85 All Medications at unbeatable prices! ... 
-Spam: WE CAN TREAT ANYTHING YOU SUFFER FROM JUST TRUST US ... 
+Spam: WE CAN TREAT ANYTHING YOU SUFFER FROM JUST TRUST US... 
 Spam: Sta.rt earn*ing the salary yo,u d-eserve by o’btaining the prope,r crede’ntials!
 
 Ham: The practical significance of hypertree width in identifying more ... 
 Ham: Abstract: We will motivate the problem of social identity clustering: ... 
 Ham: Good to see you my friend. Hey Peter, It was good to hear from you. ... 
-Ham: PDS implies convexity of the resulting optimization problem (Kernel Ridge ...
+Ham: PDS implies convexity of the resulting optimization problem Kernel Ridge ...
 
 From this excerpt we can start to get an idea of what might be good features to include in the supervised learning model. Word n-grams such as “for cheap” and “You can buy” seem to be indicators of spam (although they would have a nonzero probability in ham as well). Character-level features also seem important: spam is more likely to be all uppercase and to have punctuation embedded in words. Apparently the spammers thought that the word bigram “you deserve” would be too indicative of spam, and thus wrote “yo,u d-eserve” instead. A character model should detect this. We could either create a full character n-gram model of spam and ham, or we could handcraft features such as “number of punctuation marks embedded in words.”
 
@@ -115,7 +113,7 @@ Note that we have two complementary ways of talking about classification. In the
 
 where P (c) is estimated just by counting the total number of spam and ham messages. This approach works well for spam detection, just as it did for language identification.  
 
-In the machine-learning approach we represent the message as a set of feature/value pairs and apply a classification algorithm h to the feature vector **X**. We can make the language-modeling and machine-learning approaches compatible by thinking of the n-grams as features. This is easiest to see with a unigram model. The features are the words in the vocabulary: “a,” “aardvark,” . . ., and the values are the number of times each word appears in the message. That makes the feature vector large and sparse. If there are 100,000 words in the language model, then the feature vector has length 100,000, but for a short email message almost all the features will have count zero. This unigram representation has been called the **bag of words** model. You can think of the model as putting the words of the training corpusin a bag and then selecting words one at a time. The notion of order of the words is lost; a unigram model gives the same probability to any permutation of a text. Higher-order n-gram models maintain some local notion of word order.
+In the machine-learning approach we represent the message as a set of feature/value pairs and apply a classification algorithm h to the feature vector **X**. We can make the language-modeling and machine-learning approaches compatible by thinking of the n-grams as features. This is easiest to see with a unigram model. The features are the words in the vocabulary: “a,” “aardvark,” and the values are the number of times each word appears in the message. That makes the feature vector large and sparse. If there are 100,000 words in the language model, then the feature vector has length 100,000, but for a short email message almost all the features will have count zero. This unigram representation has been called the **bag of words** model. You can think of the model as putting the words of the training corpusin a bag and then selecting words one at a time. The notion of order of the words is lost; a unigram model gives the same probability to any permutation of a text. Higher-order n-gram models maintain some local notion of word order.
 
 With bigrams and trigrams the number of features is squared or cubed, and we can add in other, non-n-gram features: the time the message was sent, whether a URL or an image is part of the message, an ID number for the sender of the message, the sender’s number of previous spam and ham messages, and so on. The choice of features is the most important part of creating a good spam detector—more important than the choice of algorithm for processing the features. In part this is because there is a lot of training data, so if we can propose a feature, the data can accurately determine if it is good or not. It is necessary to constantly update features, because spam detection is an **adversarial task**; the spammers modify their spam in response to the spam detector’s changes.
 
