@@ -826,9 +826,12 @@ S(Statement (Speaker , pred (obj ))) → NP(obj ) VP(pred)
 S(Command (Speaker , pred (Hearer ))) → VP(pred ) .
 
 **Long-distance dependencies**: Questions introduce a new grammatical complexity. In “Who did the agent tell you to give the gold to?” the final word “to” should be parsed as [PP to ], where the “ ” denotes a gap or **trace** where an NP is missing; the missing  is licensed by the first word of the sentence, “who.” A complex system of augmentations is used to make sure that the missing NPs match up with the licensing words in just the right way, and prohibit gaps in the wrong places. For example, you can’t have a gap in one branch of an NP conjunction: “What did he play [NP Dungeons and ]?” is ungrammatical. But you can have the same gap in both branches of a VP conjunction: “What did you [VP [VP smell ] and [VP shoot an arrow at ]]?” **Ambiguity**: In some cases, hearers are consciously aware of ambiguity in an utterance. Here are some examples taken from newspaper headlines:
-```
+
+---
+
 5 If this interpretation seems unlikely, consider “Every Protestant believes in a just God.”  
-```
+
+---
 
 Squad helps dog bite victim. 
 Police begin campaign to run down jaywalkers. 
@@ -906,9 +909,12 @@ Sometimes there is _no choice_ that can yield a completely satisfactory translat
 All translation systems must model the source and target languages, but systems vary in the type of models they use. Some systems attempt to analyze the source language text all the way into an interlingua knowledge representation and then generate sentences in the target language from that representation. This is difficult because it involves three unsolved problems: creating a complete knowledge representation of everything; parsing into that representation; and generating sentences from that representation.
 
 Other systems are based on a **transfer model**. They keep a database of translation rules (or examples), and whenever the rule (or example) matches, they translate directly. Transfer can occur at the lexical, syntactic, or semantic level. For example, a strictly syntactic rule maps English [_Adjective Noun_] to French [_Noun Adjective_]. A mixed syntactic and lexical rule maps French [S1 “et puis” S2] to English [S1 “and then” S2]. Figure 23.12 diagrams the various transfer points.
-```
+
+---
+
 7 Warren Weaver (1949) reports that Max Zeldner points out that the great Hebrew poet H. N. Bialik once said that translation “is like kissing the bride through a veil.”  
-```
+
+---
 
 ![Alt text](figure-23.12.png)
 
@@ -939,9 +945,12 @@ Figure 23.13 shows an example of the process. At the top, the sentence “There 
 d~i~ = START(f~i~)− END(f~i−1~)− 1 ,
 
 where START(f~i~) is the ordinal number of the first word of phrase f~i~ in the French sentence, and END(f~i−1~) is the ordinal number of the last word of phrase f~i−1~. In Figure 23.13 we see that f~5~, “à 2 2,” immediately follows f~4~, “qui dort,” and thus d5 = 0. Phrase f~2~, however, has moved one words to the right of f~1~, so d2 =1. As a special case we have d1 =0, because f~1~ starts at position 1 and END(f0) is defined to be 0 (even though f0 does not exist). Now that we have defined the distortion, d~i~, we can define the probability distribution for distortion, **P**(d~i~). Note that for sentences bounded by length n we have |d~i~| ≤ n , and
-```
+
+---
+
 8 For the finer points of translation, n-grams are clearly not enough. Marcel Proust’s 4000-page novel _A la récherche du temps perdu_ begins and ends with the same word (_longtemps_), so some translators have decided to do the same, thus basing the translation of the final word on one that appeared roughly 2 million words earlier.  
-```
+
+---
 
 so the full probability distribution **P**(d~i~) has only 2n + 1 elements, far fewer numbers to learn than the number of permutations, n!. That is why we defined the permutation in this circuitous way. Of course, this is a rather impoverished model of distortion. It doesn’t say that adjectives are usually distorted to appear after the noun when we are translating from English to French—that fact is represented in the French language model, P (f). The distortion probability is completely independent of the words in the phrases—it depends only on the integer value d~i~. The probability distribution provides a summary of the volatility of the permutations; how likely a distortion of P (d= 2) is, compared to P (d= 0), for example.
 
@@ -955,9 +964,11 @@ All that remains is to learn the phrasal and distortion probabilities. We sketch
 
 1. **Find parallel texts**: First, gather a parallel bilingual corpus. For example, a **Hansard** is a record of parliamentary debate. Canada, Hong Kong, and other countries produce bilingual Hansards, the European Union publishes its official documents in 11 languages, and the United Nations publishes multilingual documents. Bilingual text is also available online; some Web sites publish parallel content with parallel URLs, for
 
-```
+---
+
 9 Named after William Hansard, who first published the British parliamentary debates in 1811.  
-```
+
+---
 
 example, /en/ for the English page and /fr/ for the corresponding French page. The leading statistical translation systems train on hundreds of millions of words of parallel text and billions of words of monolingual text.
 
@@ -1149,7 +1160,8 @@ Adv → **slowly**        Prep → **to**
 Article → **the**       Noun → **supermarket**
 
 Which of the following three grammars, combined with the lexicon, generates the given sentence? Show the corresponding parse tree(s).  
-```
+
+---
 
 (A):                   (B):                   (C): 
 
@@ -1170,7 +1182,8 @@ PP → Prep NP           Vmod → Adv              PP → Prep NP
 NP → Noun              Adv → PP                NP → Noun
 
                        PP → Prep NP
-```
+---
+
 For each of the preceding three grammars, write down three sentences of English and three sentences of non-English generated by the grammar. Each sentence should be significantly different, should be at least six words long, and should include some new lexical entries (which you should define). Suggest ways to improve each grammar to avoid generating the non-English sentences.
 
 **23.7** Collect some examples of time expressions, such as “two o’clock,” “midnight,” and “12:46.” Also think up some examples that are ungrammatical, such as “thirteen o’clock” or “half past two fifteen.” Write a grammar for the time language.
@@ -1819,9 +1832,13 @@ _In which agents are endowed with physical effectors with which to do mischief._
 Most of today’s robots fall into one of three primary categories. **Manipulators**, or robot arms (Figure 25.1(a)), are physically anchored to their workplace, for example in a factory assembly line or on the International Space Station. Manipulator motion usually involves a chain of controllable joints, enabling such robots to place their effectors in any position within the workplace. Manipulators are by far the most common type of industrial robots, with approximately one million units installed worldwide. Some mobile manipulators are used in hospitals to assist surgeons. Few car manufacturers could survive without robotic manipulators, and some manipulators have even been used to generate original artwork.
 
 The second category is the **mobile robot**. Mobile robots move about their environment using wheels, legs, or similar mechanisms. They have been put to use delivering food in hospitals, moving containers at loading docks, and similar tasks. **Unmanned ground vehicles**, or UGVs, drive autonomously on streets, highways, and off-road. The **planetary rover** shown in Figure 25.2(b) explored Mars for a period of 3 months in 1997. Subsequent NASA robots include the twin Mars Exploration Rovers (one is depicted on the cover of this book), which landed in 2003 and were still operating six years later. Other types of mobile robots include **unmanned air vehicles** (UAVs), commonly used for surveillance, crop-spraying, and
-```
+
+---
+
 1 In Chapter 2 we talked about **actuators**, not effectors. Here we distinguish the effector (the physical device) from the actuator (the control line that communicates a command to the effector).
-```
+
+---
+
 ![Alt text](figure-25.1.png)
 
 ![Alt text](figure-25.2.png)
@@ -1859,9 +1876,12 @@ The third important class is **proprioceptive sensors**, which inform the robot 
 Effectors are the means by which robots move and change the shape of their bodies. To understand the design of effectors, it will help to talk about motion and shape in the abstract, using the concept of a **degree of freedom** (DOF) We count one degree of freedom for each independent direction in which a robot, or one of its effectors, can move. For example, a rigid mobile robot such as an AUV has six degrees of freedom, three for its (x, y, z) location in space and three for its angular orientation, known as _yaw_, _roll_, and _pitch_. These six degrees define the **kinematic state**2 or **pose** of the robot. The **dynamic state** of a robot includes these six plus an additional six dimensions for the rate of change of each kinematic dimension, that is, their velocities.
 
 For nonrigid bodies, there are additional degrees of freedom within the robot itself. For example, the elbow of a human arm possesses two degree of freedom. It can flex the upper arm towards or away, and can rotate right or left. The wrist has three degrees of freedom. It can move up and down, side to side, and can also rotate. Robot joints also have one, two, or three degrees of freedom each. Six degrees of freedom are required to place an object, such as a hand, at a particular point in a particular orientation. The arm in Figure 25.4(a)
-```
+
+---
+
 2 “Kinematic” is from the Greek word for _motion_, as is “cinema.”  
-```
+
+---
 
 has exactly six degrees of freedom, created by five **revolute joints** that generate rotational motion and one **prismatic joint** that generates sliding motion. You can verify that the human arm as a whole has more than six degrees of freedom by a simple experiment: put your hand on the table and notice that you still have the freedom to rotate your elbow without changing the configuration of your hand. Manipulators that have extra degrees of freedom are easier to control than robots with only the minimum number of DOFs. Many industrial manipulators therefore have seven DOFs, not six.
 
