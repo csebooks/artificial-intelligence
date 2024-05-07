@@ -395,10 +395,10 @@ Given a set of matches, a simple template-generation scheme can find templates t
 
 In the experiment run by Brin, the first 199 matches generated three templates. The most productive template was
 
-```
- <LI> <B> Title </B> 
- by Author ( URL: www.sff.net/locus/c
-```
+---
+- **Title** by Author URL: www.sff.net/locus/c
+
+---
 
 The three templates were then used to retrieve 4047 more (author, title) examples. The examples were then used to generate more templates, and so on, eventually yielding over 15,000 titles. Given a good set of templates, the system can collect a good set of examples. Given a good set of examples, the system can build a good set of templates.
 
