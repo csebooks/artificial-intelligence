@@ -155,9 +155,7 @@ The BM25 function takes all three of these into account. We assume we have creat
 
 ![Alt text](image-3.png)
 
-where |dj | is the length of document dj in words, and L is the average document length in the corpus: L = ∑ i |d~i~|/N . We have two parameters, k and b, that can be tuned by cross-validation; typical values are k = 2.0 and b = 0.75. IDF (qi) is the inverse document  
-
-frequency of word qi, given by
+where |dj | is the length of document dj in words, and L is the average document length in the corpus: L = ∑ i |d~i~|/N . We have two parameters, k and b, that can be tuned by cross-validation; typical values are k = 2.0 and b = 0.75. IDF (qi) is the inverse document frequency of word qi, given by
 
 ![Alt text](image-4.png)
 
@@ -203,8 +201,6 @@ text—the underlined text in a hyperlink—to index a page, even though the anc
 where PR(p) is the PageRank of page p, N is the total number of pages in the corpus, in~i~ are the pages that link in to p, and C(ini) is the count of the total number of out-links on page ini. The constant d is a damping factor. It can be understood through the **random surfer model**: imagine a Web surfer who starts at some random page and begins exploring.
 With probability d (we’ll assume d= 0.85) the surfer clicks on one of the links on the page (choosing uniformly among them), and with probability 1 − d she gets bored with the page and restarts on a random page anywhere on the Web. The PageRank of page p is then the probability that the random surfer will be at page p at any point in time. PageRank can be computed by an iterative procedure: start with all pages having PR(p)= 1, and iterate the algorithm, updating ranks until they converge.  
 
-
-
 ### The HITS algorithm
 
 The Hyperlink-Induced Topic Search algorithm, also known as “Hubs and Authorities” or HITS, is another influential link-analysis algorithm (see Figure 22.1). HITS differs from PageRank in several ways. First, it is a query-dependent measure: it rates pages with respect to a query. That means that it must be computed anew for each query—a computational burden that most search engines have elected not to take on. Given a query, HITS first finds a set of pages that are relevant to the query. It does that by intersecting hit lists of query words, and then adding pages in the link neighborhood of these pages—pages that link to or are linked from one of the pages in the original relevant set.
@@ -241,11 +237,14 @@ In this section we describe six different approaches to information extraction, 
 
 The simplest type of information extraction system is an **attribute-based extraction** system that assumes that the entire text refers to a single object and the task is to extract attributes of that object. For example, we mentioned in Section 12.7 the problem of extracting from the text “IBM ThinkBook 970. Our price: $399.00” the set of attributes { Manufacturer=IBM, Model=ThinkBook970, Price=$399.00 }. We can address this problem by defining a **template** (also known as a pattern) for each attribute we would like to extract. The template is defined by a finite state automaton, the simplest example of which is the **regular expression**, or regex. Regular expressions are used in Unix commands such as grep, in programming languages such as Perl, and in word processors such as Microsoft Word. The details vary slightly from one tool to another and so are best learned from the appropriate manual, but here we show how to build up a regular expression template for prices in dollars:
 
-
 [0-9] matches any digit from 0 to 9
+
 [0-9]+ matches one or more digits
+
 [.][0-9][0-9] matches a period followed by two digits
+
 ([.][0-9][0-9])? matches a period followed by two digits, or nothing
+
 [$][0-9]+([.][0-9][0-9])? matches $249.99 or $1.23 or $1000000 or . . .
 
 Templates are often defined with three parts: a prefix regex, a target regex, and a postfix regex. For prices, the target regex is as above, the prefix would look for strings such as “price:” and the postfix could be empty. The idea is that some clues about an attribute come from the attribute value itself and some come from the surrounding text.
