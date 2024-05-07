@@ -3,8 +3,6 @@ title: 'Learning'
 weight: 5
 ---
 
-  
-
 # LEARNING FROM EXAMPLES
 
 _In which we describe agents that can improve their behavior through diligent study of their own experiences._

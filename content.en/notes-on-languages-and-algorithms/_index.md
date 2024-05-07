@@ -3,8 +3,6 @@ title: 'Notes on Languages and Algorithms'
 weight: 9
 ---
 
-  
-
 # NOTES ON LANGUAGES AND ALGORITHMS
 
 # DEFINING LANGUAGES WITH BACKUS–NAUR FORM (BNF)

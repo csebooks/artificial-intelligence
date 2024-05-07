@@ -3,8 +3,6 @@ title: 'Uncertain knowledge and reasoning'
 weight: 4
 ---
 
-
-
 # QUANTIFYING UNCERTAINTY
 
 _In which we see how an agent can tame uncertainty with degrees of belief._

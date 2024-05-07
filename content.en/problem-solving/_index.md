@@ -3,8 +3,6 @@ title: 'Problem-Solving'
 weight: 2
 ---
 
-  
-
 # SOLVING PROBLEMS BY SEARCHING
 
 _In which we see how an agent can find a sequence of actions that achieves its goals when no single action will do._

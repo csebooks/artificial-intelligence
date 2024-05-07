@@ -3,9 +3,7 @@ title: 'Knowledge, reasoning, and planning'
 weight: 3
 ---
 
-  
-
-# 7 LOGICAL AGENTS
+# LOGICAL AGENTS
 
 _In which we design agents that can form representations of a complex world, use a process of inference to derive new representations about the world, and use these new representations to deduce what to do._
 

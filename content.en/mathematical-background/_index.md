@@ -3,8 +3,6 @@ title: 'Mathematical background'
 weight: 8
 ---
 
-  
-
 # A MATHEMATICAL BACKGROUND
 
 ## COMPLEx~i~TY ANALYSIS AND O() NOTATION
