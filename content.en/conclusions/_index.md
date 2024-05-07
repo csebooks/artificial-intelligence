@@ -3,8 +3,6 @@ title: 'Conclusions'
 weight: 7
 ---
 
-  
-
 # PHILOSOPHICAL FOUNDATIONS
 
 _In which we consider what it means to think and whether artifacts could and should ever do so._
@@ -52,9 +50,13 @@ It is well known, through the work of Turing (1936) and Gödel (1931), that cer
 - G(F ) is a sentence of F , but cannot be proved within F .
 
 - If F is consistent, then G(F ) is true.
-```
+
+---
+
 1 For example, the opera Coppélia (1870), the novel _Do Androids Dream of Electric Sheep?_ (1968), the movies _AI_ (2001) and _Wall-E_ (2008), and in song, Noel Coward’s 1955 version of _Let’s Do It: Let’s Fall in Love_ predicted “probably we’ll live to see machines do it.” He didn’t.  
-```
+
+---
+
 
 Philosophers such as J. R. Lucas (1961) have claimed that this theorem shows that machines are mentally inferior to humans, because machines are formal systems that are limited by the incompleteness theorem—they cannot establish the truth of their own Gödel sentence—while humans have no such limitation. This claim has caused decades of controversy, spawning a vast literature, including two books by the mathematician Sir Roger Penrose (1989, 1994) that repeat the claim with some fresh twists (such as the hypothesis that humans are different because their brains operate by quantum gravity). We will examine only three of the problems with the claim.
 
@@ -101,7 +103,9 @@ Turing calls this the argument from **consciousness**—the machine has to be aw
 Turing’s response to the objection is interesting. He could have presented reasons that machines can in fact be conscious (or have phenomenology, or have intentions). Instead, he maintains that the question is just as ill-defined as asking, “Can machines think?” Besides, why should we insist on a higher standard for machines than we do for humans? After all, in ordinary life we never have _any_ direct evidence about the internal mental states of other humans. Nevertheless, Turing says, “Instead of arguing continually over this point, it is usual to have the polite convention that everyone thinks.”
 
 Turing argues that Jefferson would be willing to extend the polite convention to machines if only he had experience with ones that act intelligently. He cites the following dialog, which has become such a part of AI’s oral tradition that we simply have to include it:
-```
+
+---
+
 HUMAN: In the first line of your sonnet which reads “shall I compare thee to a summer’s day,” would not a “spring day” do as well or better?
 MACHINE: It wouldn’t scan. 
 HUMAN: How about “a winter’s day.” That would scan all right. 
@@ -110,7 +114,9 @@ HUMAN: Would you say Mr. Pickwick reminded you of Christmas?
 MACHINE: In a way. 
 HUMAN: Yet Christmas is a winter’s day, and I do not think Mr. Pickwick would mind the comparison.  
 MACHINE: I don’t think you’re serious. By a winter’s day one means a typical winter’s  day, rather than a special one like Christmas.
-```
+
+---
+
 One can easily imagine some future time in which such conversations with machines are commonplace, and it becomes customary to make no linguistic distinction between “real” and “artificial” thinking. A similar transition occurred in the years after 1848, when artificial urea was synthesized for the first time by Frederick Wöhler. Prior to this event, organic and inorganic chemistry were essentially disjoint enterprises and many thought that no process could exist that would convert inorganic chemicals into organic material. Once the synthesis was accomplished, chemists agreed that artificial urea _was_ urea, because it had all the right physical properties. Those who had posited an intrinsic property possessed by organic material that inorganic material could never have were faced with the impossibility of devising any test that could reveal the supposed deficiency of artificial urea.
 
 For thinking, we have not yet reached our 1848 and there are those who believe that artificial thinking, no matter how impressive, will never be real. For example, the philosopher John Searle (1980) argues as follows:
@@ -133,9 +139,13 @@ If physicalism is correct, it must be the case that the proper description of a 
 The simplicity of this view is challenged by some simple thought experiments. Imagine, if you will, that your brain was removed from your body at birth and placed in a marvelously engineered vat. The vat sustains your brain, allowing it to grow and develop. At the same time, electronic signals are fed to your brain from a computer simulation of an entirely fictitious world, and motor signals from your brain are intercepted and used to modify the simulation as appropriate.2 In fact, the simulated life you live replicates exactly the life you would have lived, had your brain not been placed in the vat, including simulated eating of simulated hamburgers. Thus, you could have a brain state identical to that of someone who is really eating a real hamburger, but it would be literally false to say that you have the mental state “knowing that one is eating a hamburger.” You aren’t eating a hamburger, you have never even experienced a hamburger, and you could not, therefore, have such a mental state.
 
 This example seems to contradict the view that brain states determine mental states. One way to resolve the dilemma is to say that the content of mental states can be interpreted from two different points of view. The “**wide content**” view interprets it from the point of view of an omniscient outside observer with access to the whole situation, who can distinguish differences in the world. Under this view, the content of mental states involves both the brain state and the environment history. **Narrow content**, on the other hand, considers only the brain state. The narrow content of the brain states of a real hamburger-eater and a brain-in-avat “hamburger”-“eater” is the same in both cases.
-```
+
+---
+
 2 This situation may be familiar to those who have seen the 1999 film _The Matrix_.  
-```
+
+---
+
 
 Wide content is entirely appropriate if one’s goals are to ascribe mental states to others who share one’s world, to predict their likely behavior and its effects, and so on. This is the setting in which our ordinary language about mental content has evolved. On the other hand, if one is concerned with the question of whether AI systems are really thinking and really do have mental states, then narrow content is appropriate; it simply doesn’t make sense to say that whether or not an AI system is really thinking depends on conditions outside that system. Narrow content is also relevant if we are thinking about designing AI systems or understanding their operation, because it is the narrow content of a brain state that determines what will be the (narrow content of the) next brain state. This leads naturally to the idea that what matters about a brain state—what makes it have one kind of mental content and not another—is its functional role within the mental operation of the entity involved.
 
@@ -148,9 +158,13 @@ The claims of functionalism are illustrated most clearly by the brain replacemen
 We are concerned with both the external behavior and the internal experience of the subject, during and after the operation. By the definition of the experiment, the subject’s external behavior must remain unchanged compared with what would be observed if the operation were not carried out.3 Now although the presence or absence of consciousness cannot easily be ascertained by a third party, the subject of the experiment ought at least to be able to record any changes in his or her own conscious experience. Apparently, there is a direct clash of intuitions as to what would happen. Moravec, a robotics researcher and functionalist, is convinced his consciousness would remain unaffected. Searle, a philosopher and biological naturalist, is equally convinced his consciousness would vanish:
 
 You find, to your total amazement, that you are indeed losing control of your external behavior. You find, for example, that when doctors test your vision, you hear them say “We are holding up a red object in front of you; please tell us what you see.” You want
-```
+
+---
+
 3 One can imagine using an identical “control” subject who is given a placebo operation, for comparison.  
-```
+
+---
+
 
 to cry out “I can’t see anything. I’m going totally blind.” But you hear your voice saying in a way that is completely out of your control, “I see a red object in front of me.” . .   your conscious experience slowly shrinks to nothing, while your externally observable behavior remains the same. (Searle, 1992)
 
@@ -177,9 +191,13 @@ The system consists of a human, who understands only English, equipped with a ru
 So far, so good. But from the outside, we see a system that is taking input in the form of Chinese sentences and generating answers in Chinese that are as “intelligent” as those in the conversation imagined by Turing.4 Searle then argues: the person in the room does not understand Chinese (given). The rule book and the stacks of paper, being just pieces of paper, do not understand Chinese. Therefore, there is no understanding of Chinese. _Hence, according to Searle, running the right program does not necessarily generate understanding._
 
 Like Turing, Searle considered and attempted to rebuff a number of replies to his argument. Several commentators, including John McCarthy and Robert Wilensky, proposed what Searle calls the systems reply. The objection is that asking if the human in the room understands Chinese is analogous to asking if the CPU can take cube roots. In both cases, the answer is no, and in both cases, according to the systems reply, the entire system _does_ have the capacity in question. Certainly, if one asks the Chinese Room whether it understands Chinese, the answer would be affirmative (in fluent Chinese). By Turing’s polite convention, this should be enough. Searle’s response is to reiterate the point that the understanding is not in the human and cannot be in the paper, so there cannot be any understanding. He seems to be relying on the argument that a property of the whole must reside in one of the parts. Yet
-```
+
+---
+
 4 The fact that the stacks of paper might contain trillions of pages and the generation of answers would take millions of years has no bearing on the _logical_ structure of the argument. One aim of philosophical training is to develop a finely honed sense of which objections are germane and which are not.  
-```
+
+---
+
 
 water is wet, even though neither H nor O2 is. The real claim made by Searle rests upon the following four axioms (Searle, 1990):
 
@@ -249,9 +267,13 @@ Second, specifying the right utility function for an AI system to maximize is no
 Third, the AI system’s learning function may cause it to evolve into a system with unintended behavior. This scenario is the most serious, and is unique to AI systems, so we will cover it in more depth. I. J. Good wrote (1965),
 
 Let an **ultraintelligent machine** be defined as a machine that can far surpass all the intellectual activities of any man however clever. Since the design of machines is one of these intellectual activities, an ultraintelligent machine could design even better machines; there would then unquestionably be an “intelligence explosion,” and the intelligence of man would be left far behind. Thus the first ultraintelligent machine is the _last_ invention that man need ever make, provided that the machine is docile enough to tell us how to keep it under control.
-```
+
+---
+
 5 As a young man, Charles Babbage was influenced by reading _Frankenstein_.  
-```
+
+---
+
 
 The “intelligence explosion” has also been called the **technological singularity** by mathematics professor and science fiction author Vernor Vinge, who writes (1993), “Within thirty years, we will have the technological means to create superhuman intelligence. Shortly after, the human era will be ended.” Good and Vinge (and many others) correctly note that the curve of technological progress (on many measures) is growing exponentially at present (consider Moore’s Law). However, it is a leap to extrapolate that the curve will continue to a singularity of near-infinite growth. So far, every other technology has followed an S-shaped curve, where the exponential growth eventually tapers off. Sometimes new technologies step in when the old ones plateau; sometimes we hit hard limits. With less than a century of high-technology history to go on, it is difficult to extrapolate hundreds of years ahead.
 
@@ -278,9 +300,13 @@ Yudkowsky (2008) goes into more detail about how to design a **Friendly AI**. He
 We can’t just give a program a static utility function, because circumstances, and our desired responses to circumstances, change over time. For example, if technology had allowed us to design a super-powerful AI agent in 1800 and endow it with the prevailing morals of the time, it would be fighting today to reestablish slavery and abolish women’s right to vote. On the other hand, if we build an AI agent today and tell it to evolve its utility function, how can we assure that it won’t reason that “Humans think it is moral to kill annoying insects, in part because insect brains are so primitive. But human brains are primitive compared to my powers, so it must be moral for me to kill humans.”
 
 Omohundro (2008) hypothesizes that even an innocuous chess program could pose a risk to society. Similarly, Marvin Minsky once suggested that an AI program designed to solve the Riemann Hypothesis might end up taking over all the resources of Earth to build more powerful supercomputers to help achieve its goal. The moral is that even if you only want your program to play chess or prove theorems, if you give it the capability to learn and alter itself, you need safeguards. Omohundro concludes that “Social structures which cause individuals to bear the cost of their negative externalities would go a long way toward ensuring a stable and positive future,” This seems to be an excellent idea for society in general, regardless of the possibility of ultraintelligent machines.
-```
+
+---
+
 6 A robot might notice the inequity that a human is allowed to kill another in self-defense, but a robot is required to sacrifice its own life to save a human.  
-```
+
+---
+
 
 We should note that the idea of safeguards against change in utility function is not a new one. In the _Odyssey_, Homer (ca. 700 B.C.) described Ulysses’ encounter with the sirens, whose song was so alluring it compelled sailors to cast themselves into the sea. Knowing it would have that effect on him, Ulysses ordered his crew to bind him to the mast so that he could not perform the self-destructive act. It is interesting to think how similar safeguards could be built into AI systems.
 
