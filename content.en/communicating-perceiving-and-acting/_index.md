@@ -526,12 +526,11 @@ a∗b ∗, a sequence of any number of as followed by any number of bs.
 
 The grammars higher up in the hierarchy have more expressive power, but the algorithms for dealing with them are less efficient. Up to the 1980s, linguists focused on context-free and context-sensitive languages. Since then, there has been renewed interest in regular grammars, brought about by the need to process and learn from gigabytes or terabytes of online text very quickly, even at the cost of a less complete analysis. As Fernando Pereira put it, “The older I get, the further down the Chomsky hierarchy I go.” To see what he means, compare Pereira and Warren (1980) with Mohri, Pereira, and Riley (2002) (and note that these three authors all now work on large text corpora at Google).  
 
-
 There have been many competing language models based on the idea of phrase structure; we will describe a popular model called the **probabilistic context-free grammar**, or PCFG.^1^ A **grammar** is a collection of rules that defines a **language** as a set of allowable strings of words. “Context-free” is described in the sidebar on page 889, and “probabilistic” means that the grammar assigns a probability to every string. Here is a PCFG rule:
 
 VP → Verb [0.70]
 
-| VP NP [0.30] .
+VP NP [0.30] .
 
 Here VP (_verb phrase_) and NP (_noun phrase_) are **non-terminal symbols**. The grammar also refers to actual words, which are called **terminal symbols**. This rule is saying that with probability 0.70 a verb phrase consists solely of a verb, and with probability 0.30 it is a VP followed by an NP . Appendix B describes non-probabilistic context-free grammars. 
 
@@ -554,7 +553,6 @@ The next step is to combine the words into phrases. Figure 23.2 shows a grammar 
 
 ![Alt text](image-15.png)
 
-
 gives a constructive proof that the string of words is indeed a sentence according to the rules of E~0~. The E~0~ grammar generates a wide range of English sentences such as the following:
 
 John is in the pit The wumpus that stinks is in 2 2 Mary is in Boston and the wumpus is near 3 2
@@ -565,7 +563,6 @@ Unfortunately, the grammar **overgenerates**: that is, it generates sentences th
 
 **Parsing** is the process of analyzing a string of words to uncover its phrase structure, according to the rules of a grammar. Figure 23.4 shows that we can start with the S symbol and search top down for a tree that has the words as its leaves, or we can start with the words and search bottom up for a tree that culminates in an S . Both top-down and bottom-up parsing can be inefficient, however, because they can end up repeating effort in areas of the search space that lead to dead ends. Consider the following two sentences:
 
-Have the students in section 2 of Computer Science 101 take the exam. 
 Have the students in section 2 of Computer Science 101 taken the exam?
 
 Even though they share the first 10 words, these sentences have very different parses, because the first is a command and the second is a question. A left-to-right parsing algorithm would have to guess whether the first word is part of a command or a question and will not be able to tell if the guess is correct until at least the eleventh word, _take_ or _taken._ If the algorithm guesses wrong, it will have to backtrack all the way to the first word and reanalyze the whole sentence under the other interpretation.  
@@ -599,10 +596,7 @@ P [Y , start , len1 ] × P [Z , start + len1 , len2 ] × p)
 
 equivalent to “Autumn abandons autumn.) With E0 the sentence has four parses:
 
-[S [S [NP Fall leaves] fall] and [S [NP spring leaves] spring] 
-[S [S [NP Fall leaves] fall] and [S spring [VP leaves spring]] 
-[S [S Fall [VP leaves fall]] and [S [NP spring leaves] spring] 
-[S [S Fall [VP leaves fall]] and [S spring [VP leaves spring]] .
+[S [NP Fall leaves] fall] and [S [NP spring leaves] spring] 
 
 If we had c two-ways-ambiguous conjoined subsentences, we would have 2c ways of choosing parses for the subsentences.3 How does the CYK algorithm process these 2c parse trees in O(c3) time? The answer is that it doesn’t examine all the parse trees; all it has to do is compute the probability of the most probable tree. The subtrees are all represented in the P table, and with a little work we could enumerate them all (in exponential time), but the beauty of the CYK algorithm is that we don’t have to enumerate them unless we want to.
 
@@ -618,9 +612,7 @@ In practice we are usually not interested in all parses; just the best one or be
 [VP did n’t
 [VP [VP hear [NP *-1]] or 
 [VP [ADVP even] see [NP *-1]] 
-[NP-1 him]]]]]]]]
-
-.]
+[NP-1 him]]]]]]]].]
 
 **Figure 23.6** Annotated tree for the sentence “Her eyes were glazed as if she didn’t hear or even see him.” from the Penn Treebank. Note that in this grammar there is a distinction between an object noun phrase (_NP_) and a subject noun phrase (_NP-SBJ_). Note also a grammatical phenomenon we have not covered yet: the movement of a phrase from one part of the tree to another. This tree analyzes the phrase “hear or even see him” as consisting of two constituent VPs, [VP hear [NP *-1]] and [VP [ADVP even] see [NP *-1]], both of which have a missing object, denoted *-1, which refers to the NP labeled elsewhere in the tree as [NP-1 him].
 
@@ -669,8 +661,6 @@ VP(v) → Verb(v) [P~2~(v)]
 NP(n) → Article(a) Adjs(j) Noun(n) [P~3~(n, a)]
 
 Noun(**banana**) → **banana** [pn]
-
-. . . . . .
 
 Here the probability P~1~(v, n) depends on the head words v and n. We would set this probability to be relatively high when v is “eat” and n is “banana,” and low when n is “bandanna.”  
 
