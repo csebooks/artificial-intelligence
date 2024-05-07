@@ -702,8 +702,6 @@ PronounS → **I** | **you** | **he** | **she** | **it** | . . .
 
 PronounO → **me** | **you** | **him** | **her** | **it** | . . .
 
-. . .
-
 E2 : S (head) → NP(Sbj , pn , h) VP(pn , head) | . . .
 
 NP(c, pn , head) → Pronoun(c, pn , head ) | Noun(c, pn , head) | . . .
@@ -716,7 +714,6 @@ Pronoun(Sbj , 1S , **I**) → **I** Pronoun(Sbj , 1P , **we**) → **we** Pronou
 
 Pronoun(Obj , 3P , **them**) → **them**
 
-. . .
 
 **Figure 23.7** Top: part of a grammar for the language E~1~, which handles subjective and objective cases in noun phrases and thus does not overgenerate quite as badly as E0. The portions that are identical to E0 have been omitted. Bottom: part of an augmented grammar for E2, with three augmentations: case agreement, subject–verb agreement, and head word. _Sbj, Obj, 1S, 1P_ and _3P_ are constants, and lowercase names are variables.
 
