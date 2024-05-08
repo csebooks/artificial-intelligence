@@ -102,9 +102,13 @@ A fully specified **probability model** associates a numerical probability P (ω
 For example, if we assume that each die is fair and the rolls don’t interfere with each other, then each of the possible worlds (1,1), (1,2), . . ., (6,6) has probability 1/36. On the other hand, if the dice conspire to produce the same number, then the worlds (1,1), (2,2), (3,3), etc., might have higher probabilities, leaving the others with lower probabilities.
 
 Probabilistic assertions and queries are not usually about particular possible worlds, but about sets of them. For example, we might be interested in the cases where the two dice add up to 11, the cases where doubles are rolled, and so on. In probability theory, these sets are called **events**—a term already used extensively in Chapter 12 for a different concept. In AI, the sets are always described by **propositions** in a formal language. (One such language is described in Section 13.2.2.) For each proposition, the corresponding set contains just those possible worlds in which the proposition holds. The probability associated with a proposition
-```
+
+---
+
 1 For now, we assume a discrete, countable set of worlds. The proper treatment of the continuous case brings in certain complications that are less relevant for most purposes in AI.  
-```
+
+---
+
 
 is defined to be the sum of the probabilities of the worlds in which it holds:
 
@@ -266,9 +270,13 @@ This process is called **marginalization**, or **summing out**—because we sum 
 ![Alt text](13.6.png)
 
 This rule is called **conditioning**. Marginalization and conditioning turn out to be useful rules for all kinds of derivations involving probability expressions. In most cases, we are interested in computing _conditional_ probabilities of some variables, given evidence about others. Conditional probabilities can be found by first using
-```
+
+---
+
 4 So called because of a common practice among actuaries of writing the sums of observed frequencies in the margins of insurance tables.  
-```
+
+---
+
 
 Equation (13.3) to obtain an expression in terms of unconditional probabilities and then evaluating the expression from the full joint distribution. For example, we can compute the probability of a cavity, given evidence of a toothache, as follows:
 
@@ -416,9 +424,13 @@ can also be used (see Exercise 13.17). Section 13.4 showed that absolute indepen
 = **P**(Toothache | Cavity)**P**(Catch | Cavity)**P**(Cavity) (using 13.19).
 
 (The reader can easily check that this equation does in fact hold in Figure 13.3.) In this way, the original large table is decomposed into three smaller tables. The original table has seven
-```
+
+---
+
 5 We assume that the patient and dentist are distinct individuals.  
-```
+
+---
+
 
 independent numbers (23 = 8 entries in the table, but they must sum to 1, so 7 are independent). The smaller tables contain five independent numbers (for a conditional probability distributions such as **P**(T |C there are two rows of two numbers, and each row sums to 1, so that’s two independent numbers; for a prior distribution like **P**(C) there is only one independent number). Going from seven to five might not seem like a major triumph, but the point is that, for n symptoms that are all conditionally independent given Cavity , the size of the representation grows as O(n) instead of O(2^n^). That means that _conditional independence assertions can allow probabilistic systems to scale up; moreover, they are much more commonly available than absolute independence assertions._ Conceptually, Cavity **separates** Toothache and Catch because it is a direct cause of both of them. The decomposition of large probabilistic domains into weakly connected subsets through conditional independence is one of the most important developments in the recent history of AI.
 
@@ -656,9 +668,13 @@ Chapter 13 introduced the basic elements of probability theory and noted the imp
 In Chapter 13, we saw that the full joint probability distribution can answer any question about the domain, but can become intractably large as the number of variables grows. Furthermore, specifying probabilities for possible worlds one by one is unnatural and tedious.
 
 We also saw that independence and conditional independence relationships among variables can greatly reduce the number of probabilities that need to be specified in order to define the full joint distribution. This section introduces a data structure called a **Bayesian network**^1^ to represent the dependencies among variables. Bayesian networks can represent essentially _any_ full joint probability distribution and in many cases can do so very concisely.
-```
+
+---
+
 1 This is the most common name, but there are many synonyms, including **belief network**, **probabilistic network**, **causal network**, and **knowledge map**. In statistics, the term **graphical model** refers to a somewhat broader class that includes Bayesian networks. An extension of Bayesian networks called a **decision network** or **influence diagram** is covered in Chapter 16.
-```
+
+---
+
 
 A Bayesian network is a directed graph in which each node is annotated with quantitative probability information. The full specification is as follows:
 
@@ -855,9 +871,13 @@ Then the probability of Buys given Cost might be
 P (buys |Cost = c) = Φ((−c + μ)/σ) ,
 
 which means that the cost threshold occurs around μ, the width of the threshold region is proportional to σ, and the probability of buying decreases as cost increases. This **probit distri-**
-```
+
+---
+
 3 It follows that inference in linear Gaussian networks takes only O(n 3 ) time in the worst case, regardless of the network topology. In Section 14.4, we see that inference for networks of discrete variables is NP-hard.  
-```
+
+---
+
 
 ![Alt text](figure-14.7.png)
 
@@ -904,9 +924,13 @@ An improvement can be obtained from the following simple observations: the P (b)
 ![Alt text](14.8d.png)
 
 This expression can be evaluated by looping through the variables in order, multiplying CPT entries as we go. For each summation, we also need to loop over the variable’s possible
-```
+
+---
+
 4 An expression such as Pe P (a, e) means to sum P (A = a, E = e) for all possible values of e. When E is Boolean, there is an ambiguity in that P (e) is used to mean both P (E = true) and P (E = e), but it should be clear from context which is intended; in particular, in the context of a sum the latter is intended. 
-```
+
+---
+
 
 
 values. The structure of this computation is shown in Figure 14.8. Using the numbers from Figure 14.2, we obtain P (b | j,m) = α× 0.00059224. The corresponding computation for ¬b yields α× 0.0014919; hence,
@@ -1297,9 +1321,13 @@ In Chapter 8, we explained the representational advantages possessed by first-or
 For example, suppose that an online book retailer would like to provide overall evaluations of products based on recommendations received from its customers. The evaluation will take the form of a posterior distribution over the quality of the book, given the available evidence. The simplest solution to base the evaluation on the average recommendation, perhaps with a variance determined by the number of recommendations, but this fails to take into account the fact that some customers are kinder than others and some are less honest than others. Kind customers tend to give high recommendations even to fairly mediocre books, while dishonest customers give very high or very low recommendations for reasons other than quality—for example, they might work for a publisher.^6^
 
 For a single customer C~1~, recommending a single book B~1~, the Bayes net might look like the one shown in Figure 14.17(a). (Just as in Section 9.1, expressions with parentheses such as Honest(C~1~) are just fancy symbols—in this case, fancy names for random variables.)
-```
+
+---
+
 6 A game theorist would advise a dishonest customer to avoid detection by occasionally recommending a good book from a competitor. See Chapter 17.  
-```
+
+---
+
 
 With two customers and two books, the Bayes net looks like the one in Figure 14.17(b). For larger numbers of books and customers, it becomes completely impractical to specify the network by hand.
 
@@ -1330,9 +1358,13 @@ Section 14.6.2 explores one approach to dealing with this problem. The idea is t
 symbols that are used; as shown in Figure 14.18 (bottom), there is no uncertainty about the mapping from symbols to objects or about the objects that exist. We will call models defined in this way **relational probability models**, or RPMs.7 The most significant difference between the semantics of RPMs and the database semantics introduced in Section 8.2.8 is that RPMs do not make the closed-world assumption—obviously, assuming that every unknown fact is false doesn’t make sense in a probabilistic reasoning system!
 
 When the underlying assumptions of database semantics fail to hold, RPMs won’t work well. For example, a book retailer might use an ISBN (International Standard Book Number) as a constant symbol to name each book, even though a given “logical” book (e.g., “Gone With the Wind”) may have several ISBNs. It would make sense to aggregate recommendations across multiple ISBNs, but the retailer may not know for sure which ISBNs are really the same book. (Note that we are not reifying the _individual copies_ of the book, which might be necessary for used-book sales, car sales, and so on.) Worse still, each customer is identified by a login ID, but a dishonest customer may have thousands of IDs! In the computer security field, these multiple IDs are called **sibyls** and their use to confound a reputation system is called a **sibyl attack**. Thus, even a simple application in a relatively well-defined online domain involves both **existence uncertainty** (what are the real books and customers underlying the observed data) and **identity uncertainty** (which symbol really refer to the same object). We need to bite the bullet and define probability models based on the standard semantics of first-order logic, for which the possible worlds vary in the objects they contain and in the mappings from symbols to objects. Section 14.6.3 shows how to do this.
-```
+
+---
+
 7 The name _relational probability model_ was given by Pfeffer (2000) to a slightly different representation, but the underlying ideas are the same.  
-```
+
+---
+
 
 ### Relational probability models
 
@@ -1365,9 +1397,13 @@ Recommendation (c, b) ∼ **if** Honest(c) **then**
 HonestRecCPT (Kindness(c),Quality(b))
 
 **else** 〈0.4, 0.1, 0.0, 0.1, 0.4〉 .
-```
+
+---
+
 8 Some technical conditions must be observed to guarantee that the RPM defines a proper distribution. First, the dependencies must be _acyclic_, otherwise the resulting Bayesian network will have cycles and will not define a proper distribution. Second, the dependencies must be _well-founded_, that is, there can be no infinite ancestor chains, such as might arise from recursive dependencies. Under some circumstances (see Exercise 14.6), a fixedpoint calculation yields a well-defined probability model for a recursive RPM.  
-```
+
+---
+
 
 ![Alt text](figure-14.19.png)
 
@@ -1428,9 +1464,13 @@ We expect honest customers to have just one ID, whereas dishonest customers migh
 This statement defines the number of login IDs for a given owner, who is a customer. The Owner function is called an **origin function** because it says where each generated objectORIGIN FUNCTION
 
 came from. In the formal semantics of BLOG (as distinct from first-order logic), the domain elements in each possible world are actually generation histories (e.g., “the fourth login ID of the seventh customer”) rather than simple tokens.
-```
+
+---
+
 9 A distribution LogNormal [μ, σ ^2^ ](x) is equivalent to a distribution N [μ, σ^2^ ](x) over log e (x). 
-```
+
+---
+
  
 
 Subject to technical conditions of acyclicity and well-foundedness similar to those for RPMs, open-universe models of this kind define a unique distribution over possible worlds. Furthermore, there exist inference algorithms such that, for every such well-defined model and every first-order query, the answer returned approaches the true posterior arbitrarily closely in the limit. There are some tricky issues involved in designing these algorithms. For example, an MCMC algorithm cannot sample directly in the space of possible worlds when the size of those worlds is unbounded; instead, it samples finite, partial worlds, relying on the fact that only finitely many objects can be relevant to the query in distinct ways. Moreover, transitions must allow for merging two objects into one or splitting one into two. (Details are given in the references at the end of the chapter.) Despite these complications, the basic principle established in Equation (14.13) still holds: the probability of any sentence is well defined and can be calculated.
@@ -1594,9 +1634,13 @@ Fuzzy sets were developed by Lotfi Zadeh (1965) in response to the perceived dif
 
 The resurgence of probability depended mainly on Pearl’s development of Bayesian networks as a method for representing and using conditional independence information. This resurgence did not come without a fight; Peter Cheeseman’s (1985) pugnacious “In Defense of Probability” and his later article “An Inquiry into Computer Understanding” (Cheeseman, 1988, with commentaries) give something of the flavor of the debate. Eugene Charniak helped present the ideas to AI researchers with a popular article, “Bayesian networks without tears”11 (1991), and book (1993). The book by Dean and Wellman (1991) also helped introduce Bayesian networks to AI researchers. One of the principal philosophical objections of the logicists was that the numerical calculations that probability theory was thought to require were not apparent to introspection and presumed an unrealistic level of precision in our uncertain knowledge. The development of **qualitative probabilistic networks** (Wellman, 1990a) provided a purely qualitative abstraction of Bayesian networks, using the notion of positive and negative influences between variables. Wellman shows that in many cases such information is sufficient for optimal decision making without the need for the precise specification of probability values. Goldszmidt and Pearl (1996) take a similar approach. Work by Adnan Darwiche and Matt Ginsberg (1992) extracts the basic properties of conditioning and evidence combination from probability theory and shows that they can also be applied in logical and default reasoning. Often, programs speak louder than words, and the ready avail-
 
-```
+
+---
+
 11 The title of the original version of the article was “Pearl for swine.”  
-```
+
+---
+
 
 ability of high-quality software such as the Bayes Net toolkit (Murphy, 2001) accelerated the adoption of the technology.
 
@@ -1842,9 +1886,13 @@ We view the world as a series of snapshots, or **time slices**, each of which co
 Consider the following example: You are the security guard stationed at a secret underground installation. You want to know whether it’s raining today, but your only access to the outside world occurs each morning when you see the director coming in with, or without, an umbrella. For each day t, the set **E**~t~ thus contains a single evidence variable Umbrellat or U~t~ for short (whether the umbrella appears), and the set **X**~t~ contains a single state variable Rain t or Rt for short (whether it is raining). Other problems can involve larger sets of variables. In the diabetes example, we might have evidence variables, such as MeasuredBloodSugar t and PulseRate t, and state variables, such as BloodSugar t and StomachContents t. (Notice that BloodSugar t and MeasuredBloodSugar t are not the same variable; this is how we deal with noisy measurements of actual quantities.)
 
 The interval between time slices also depends on the problem. For diabetes monitoring, a suitable interval might be an hour rather than a day. In this chapter we assume the interval between slices is fixed, so we can label times by integers. We will assume that the state sequence starts at t =0; for various uninteresting reasons, we will assume that evidence starts arriving at t = 1 rather than t = 0. Hence, our umbrella world is represented by state variables r~0~, R~1~, R~2~, . . . and evidence variables U~1~, U~2~, . . .. We will use the notation a:b to denote the sequence of integers from a to b (inclusive), and the notation **X**a:b to denote the set of variables from **X**a to **X**b. For example, U~1~:3 corresponds to the variables U~1~, U~2~, U~3~.
-```
+
+---
+
 1 Uncertainty over _continuous_ time can be modeled by **stochastic differential equations** (SDEs). The models studied in this chapter can be viewed as discrete-time approximations to SDEs.  
-```
+
+---
+
 
 ![Alt text](figure-15.1.png)
 
@@ -1893,9 +1941,13 @@ Having set up the structure of a generic temporal model, we can formulate the ba
 - **Filtering**: This is the task of computing the **belief state**—the posterior distribution over the most recent state—given all evidence to date. Filtering2 is also called **state estimation**. In our example, we wish to compute **P**(**X**~t~ | **e**~1:t~). In the umbrella example, this would mean computing the probability of rain today, given all the observations of the umbrella carrier made so far. Filtering is what a rational agent does to keep track of the current state so that rational decisions can be made. It turns out that an almost identical calculation provides the likelihood of the evidence sequence, P (**e**~1:t~).
 
 - **Prediction**: This is the task of computing the posterior distribution over the _future_ state, given all evidence to date. That is, we wish to compute **P**(**X**~t+k~ | **e**~1:t~) for some k > 0. In the umbrella example, this might mean computing the probability of rain three days from now, given all the observations to date. Prediction is useful for evaluating possible courses of action based on their expected outcomes.
-```
+
+---
+
 2 The term “filtering” refers to the roots of this problem in early work on signal processing, where the problem is to filter out the noise in a signal by estimating its underlying properties.  
-```
+
+---
+
 
 - **Smoothing**: This is the task of computing the posterior distribution over a _past_ state, given all evidence up to the present. That is, we wish to compute **P**(**X**~k~ | **e**~1:t~) for some k such that 0 ≤ k < t. In the umbrella example, it might mean computing the probability that it rained last Wednesday, given all the observations of the umbrella carrier made up to today. Smoothing provides a better estimate of the state than was available at the time, because it incorporates more evidence.^3^
 
@@ -1916,9 +1968,13 @@ As we pointed out in Section 7.7.3, a useful filtering algorithm needs to mainta
 **P**(**X**~t+1~ | **e**~1:t+1~) = f(**e**~t+1~, **P**(**X**~t~ | **e**~1:t~)) ,
 
 for some function f . This process is called **recursive estimation**. We can view the calculation
-```
+
+---
+
 3 In particular, when tracking a moving object with inaccurate position observations, smoothing gives a smoother estimated trajectory than filtering—hence the name.  
-```
+
+---
+
 
 as being composed of two parts: first, the current state distribution is projected forward from t to t+1; then it is updated using the new evidence **e**~t+1~. This two-part process emerges quite simply when the formula is rearranged:
 
@@ -2089,9 +2145,13 @@ The algorithm we have just described is called the **Viterbi algorithm**, after 
 The preceding section developed algorithms for temporal probabilistic reasoning using a general framework that was independent of the specific form of the transition and sensor models. In this and the next two sections, we discuss more concrete models and applications that illustrate the power of the basic algorithms and in some cases allow further improvements.
 
 We begin with the **hidden Markov model**, or **HMM**. An HMM is a temporal probabilistic model in which the state of the process is described by a _single discrete_ random variable. The possible values of the variable are the possible states of the world. The umbrella example described in the preceding section is therefore an HMM, since it has just one state variable: Rain t. What happens if you have a model with two or more state variables? You can still fit it into the HMM framework by combining the variables into a single “megavariable” whose values are all possible tuples of values of the individual state variables. We will see that the restricted structure of HMMs allows for a simple and elegant matrix implementation of all the basic algorithms.^4^
-```
+
+---
+
 4 The reader unfamiliar with basic operations on vectors and matrices might wish to consult Appendix A before proceeding with this section.  
-```
+
+---
+
 
 ### Simplified matrix algorithms
 
@@ -2326,9 +2386,13 @@ It is worth looking in more depth at the nature of the sensor model for BMeter~t
 Anyone with hands-on experience of robotics, computerized process control, or other forms of automatic sensing will readily testify to the fact that small amounts of measurement noise are often the least of one’s problems. Real sensors _fail_. When a sensor fails, it does not necessarily send a signal saying, “Oh, by the way, the data I’m about to send you is a load of nonsense.” Instead, it simply sends the nonsense. The simplest kind of failure is called a **transient failure**, where the sensor occasionally decides to send some nonsense. For example, the battery level sensor might have a habit of sending a zero when someone bumps the robot, even if the battery is fully charged.
 
 Let’s see what happens when a transient failure occurs with a Gaussian error model that doesn’t accommodate such failures. Suppose, for example, that the robot is sitting quietly and observes 20 consecutive battery readings of 5. Then the battery meter has a temporary seizure
-```
+
+---
+
 5 Strictly speaking, a Gaussian distribution is problematic because it assigns nonzero probability to large negative charge levels. The **beta distribution** is sometimes a better choice for a variable whose range is restricted.  
-```
+
+---
+
 
 and the next reading is BMeter~21~ = 0. What will the simple Gaussian error model lead us to believe about Battery~21~? According to Bayes’ rule, the answer depends on both the sensor model **P**(BMeter~21~ =0 |Battery~21~) and the prediction **P**(Battery~21~ |BMeter~1:20~). If the probability of a large sensor error is significantly less likely than the probability of a transition to Battery~21~ = 0, even if the latter is very unlikely, then the posterior distribution will assign a high probability to the battery’s being empty. A second reading of 0 at t = 22 will make this conclusion almost certain. If the transient failure then disappears and the reading returns to 5 from t = 23 onwards, the estimate for the battery level will quickly return to 5, as if by magic. This course of events is illustrated in the upper curve of Figure 15.14(a), which shows the expected value of Battery~t~ over time, using a discrete Gaussian error model.
 
@@ -2650,9 +2714,13 @@ Exactly one of (A ≻ B), (B ≻ A), or (A ∼ B) holds.
 A ≻ B ≻ C ⇒ ∃ p [p,A; 1− p,C] ∼ B .
 
 - **Substitutability**: If an agent is indifferent between two lotteries A and B, then the agent is indifferent between two more complex lotteries that are the same except that B
-```
+
+---
+
 2 We apologize to readers whose local airlines no longer offer food on long flights.  
-```
+
+---
+
 
 is substituted for A in one of them. This holds regardless of the probabilities and the other outcome(s) in the lotteries.
 
@@ -2683,9 +2751,13 @@ U(A) = U(B) ⇔ A ∼ B
 - **Expected Utility of a Lottery**: The utility of a lottery is the sum of the probability of each outcome times the utility of that outcome.
 
 U([p~1~, S~1~; . . . ; pn, S~n~]) = ∑~i~ p~i~ U (S~i~) .
-```
+
+---
+
 3 We can account for the enjoyment of gambling by encoding gambling events into the state description; for example, “Have $10 and gambled” could be preferred to “Have $10 and didn’t gamble.”  
-```
+
+---
+
 
 ![Alt text](figure-16.1.png)
 
@@ -2701,9 +2773,13 @@ As in game-playing, in a deterministic environment an agent just needs a prefere
 **utility function**.
 
 It is important to remember that the existence of a utility function that describes an agent’s preference behavior does not necessarily mean that the agent is _explicitly_ maximizing that utility function in its own deliberations. As we showed in Chapter 2, rational behavior can be generated in any number of ways. By observing a rational agent’s preferences, however, an observer can construct the utility function that represents what the agent is actually trying to achieve (even if the agent doesn’t know it).
-```
+
+---
+
 4 In this sense, utilities resemble temperatures: a temperature in Fahrenheit is 1.8 times the Celsius temperature plus 32. You get the same results in either measurement system.  
-```
+
+---
+
 
 ## UTILITY FUNCTIONS
 
@@ -2752,9 +2828,13 @@ If we restrict our attention to the positive part of the curves, where the slope
 U(L) < U(S~EMV (L)~) .
 
 That is, agents with curves of this shape are **risk-averse**: they prefer a sure thing with a payoff that is less than the expected monetary value of a gamble. On the other hand, in the “desperate” region at large negative wealth in Figure 16.2(b), the behavior is **risk-seeking**.
-```
+
+---
+
 5 Such behavior might be called desperate, but it is rational if one is already in a desperate situation.  
-```
+
+---
+
 
 
 The value an agent will accept in lieu of a lottery is called the **certainty equivalent** of the lottery. Studies have shown that most people will accept about $400 in lieu of a gamble that gives $1000 half the time and $0 the other half—that is, the certainty equivalent of the lottery is $400, while the EMV is $500. The difference between the EMV of a lottery and its certainty equivalent is called the **insurance premium**. Risk aversion is the basis for the insurance industry, because it means that insurance premiums are positive. People would rather pay a small insurance premium than gamble the price of their house against the chance of a fire. From the insurance company’s point of view, the price of the house is very small compared with the firm’s total reserves. This means that the insurer’s utility curve is approximately linear over such a small region, and the gamble costs the company almost nothing.
@@ -2787,22 +2867,34 @@ Decision theory is a **normative theory**: it describes how a rational agent _sh
 
 
 The best-known problem is the Allais paradox (Allais, 1953). People are given a choice between lotteries A and B and then between C and D, which have the following prizes:
-```
+
+---
+
 A : 80% chance of $4000       C : 20% chance of $4000 
 B : 100% chance of $3000      D : 25% chance of $3000
-```
+
+---
+
 Most people consistently prefer B over A (taking the sure thing), and C over D (taking the higher EMV). The normative analysis disagrees! We can see this most easily if we use the freedom implied by Equation (16.2) to set U($0) = 0. In that case, then B ≻ A implies that U($3000) > 0.8 U($4000), whereas C ' D implies exactly the reverse. In other words, there is no utility function that is consistent with these choices. One explanation for the apparently irrational preferences is the **certainty effect** (Kahneman and Tversky, 1979): people are strongly attracted to gains that are certain. There are several reasons why this may be so. First, people may prefer to reduce their computational burden; by choosing certain outcomes, they don’t have to compute with probabilities. But the effect persists even when the computations involved are very easy ones. Second, people may distrust the legitimacy of the stated probabilities. I trust that a coin flip is roughly 50/50 if I have control over the coin and the flip, but I may distrust the result if the flip is done by someone with a vested interest in the outcome.6 In the presence of distrust, it might be better to go for the sure thing.7 Third, people may be accounting for their emotional state as well as their financial state. People know they would experience **regret** if they gave up a certain reward (B) for an 80% chance at a higher reward and then lost. In other words, if A is chosen, there is a 20% chance of getting no money _and feeling like a complete idiot_, which is worse than just getting no money. So perhaps people who choose B over A and C over D are not being irrational; they are just saying that they are willing to give up $200 of EMV to avoid a 20% chance of feeling like an idiot.
 
 A related problem is the Ellsberg paradox. Here the prizes are fixed, but the probabilities are underconstrained. Your payoff will depend on the color of a ball chosen from an urn. You are told that the urn contains 1/3 red balls, and 2/3 either black or yellow balls, but you don’t know how many black and how many yellow. Again, you are asked whether you prefer lottery A or B; and then C or D:
-```
+
+---
+
 A : $100 for a red ball       C : $100 for a red or yellow ball 
 B : $100 for a black ball     D : $100 for a black or yellow ball .
-```
+
+---
+
 It should be clear that if you think there are more red than black balls then you should prefer A over B and C over D; if you think there are fewer red than black you should prefer the opposite. But it turns out that most people prefer A over B and also prefer D over C , even though there is no state of the world for which this is rational. It seems that people have **ambiguity aversion**: A gives you a 1/3 chance of winning, while B could be anywhere  between 0 and 2/3. Similarly, D gives you a 2/3 chance, while C could be anywhere between 1/3 and 3/3. Most people elect the known probability rather than the unknown unknowns.
-```
+
+---
+
 6 For example, the mathematician/magician Persi Diaconis can make a coin flip come out the way he wants every time (Landhuis, 2004). 
 7 Even the sure thing may not be certain. Despite cast-iron promises, we have not yet received that $27,000,000 from the Nigerian bank account of a previously unknown deceased relative.  
-```
+
+---
+
 
 Yet another problem is that the exact wording of a decision problem can have a big impact on the agent’s choices; this is called the **framing effect**. Experiments show that people like a medical procedure that it is described as having a “90% survival rate” about twice as much as one described as having a “10% death rate,” even though these two statements mean exactly the same thing. This discrepancy in judgment has been found in multiple experiments and is about the same whether the subjects were patients in a clinic, statistically sophisticated business school students, or experienced doctors.
 
@@ -2829,9 +2921,13 @@ Suppose that airport site S~1~ costs less, generates less noise pollution, and i
 That is fine for the deterministic case, in which the attribute values are known for sure. What about the general case, where the outcomes are uncertain? A direct analog of strict dominance can be constructed, where, despite the uncertainty, all possible concrete outcomes for S~1~ strictly dominate all possible outcomes for S~2~. (See Figure 16.4(b).) Of course, this will probably occur even less often than in the deterministic case.
 
 Fortunately, there is a more useful generalization called **stochastic dominance**, which occurs very frequently in real problems. Stochastic dominance is easiest to understand in the context of a single attribute. Suppose we believe that the cost of siting the airport at S~1~ is uniformly distributed between $2.8 billion and $4.8 billion and that the cost at S~2~ is uniformly distributed between $3 billion and $5.2 billion. Figure 16.5(a) shows these distributions, with cost plotted as a negative value. Then, given only the information that utility decreases with
-```
+
+---
+
 8 In some cases, it may be necessary to subdivide the range of values so that utility varies monotonically within each range. For example, if the RoomTemperature attribute has a utility peak at 70◦F, we would split it into two attributes measuring the difference from the ideal, one colder and one hotter. Utility would then be monotonically increasing in each attribute.  
-```
+
+---
+
 
 ![Alt text](figure-16.4.png)
 
@@ -2909,9 +3005,13 @@ actions. In this case, the AirportSite action can take on a different value for 
 A simplified form is also used in many cases. The notation remains identical, but the chance nodes describing the outcome state are omitted. Instead, the utility node is connected directly to the current-state nodes and the decision node. In this case, rather than representing a utility function on outcome states, the utility node represents the _expected_ utility associated with each action, as defined in Equation (16.1) on page 611; that is, the node is associated with an **action-utility function** (also known as a **Q-function** in reinforcement learning, as described in Chapter 21). Figure 16.7 shows the action-utility representation of the airport siting problem.
 
 Notice that, because the Noise , Deaths , and Cost chance nodes in Figure 16.6 refer to future states, they can never have their values set as evidence variables. Thus, the simplified version that omits these nodes can be used whenever the more general form can be used. Although the simplified form contains fewer nodes, the omission of an explicit description of the outcome of the siting decision means that it is less flexible with respect to changes in circumstances. For example, in Figure 16.6, a change in aircraft noise levels can be reflected by a change in the conditional probability table associated with the Noise node, whereas a change in the weight accorded to noise pollution in the utility function can be reflected by
-```
+
+---
+
 9 These nodes are also called **value nodes** in the literature.  
-```
+
+---
+
 
 ![Alt text](figure-16.7.png)
 
@@ -2958,9 +3058,13 @@ Now we can calculate the expected profit, given the survey information:
 Therefore, the company should be willing to pay the seismologist up to C/n dollars for the information: the information is worth as much as the block itself.
 
 The value of information derives from the fact that _with_ the information, one’s course of action can be changed to suit the _actual_ situation. One can discriminate according to the situation, whereas without the information, one has to do what’s best on average over the possible situations. In general, the value of a given piece of information is defined to be the difference in expected value between best actions before and after information is obtained.
-```
+
+---
+
 10 In the United States, the only question that is always asked beforehand is whether the patient has insurance.  
-```
+
+---
+
 
 ### A general formula for perfect information
 
@@ -2975,9 +3079,13 @@ To get some intuition for this formula, consider the simple case where there are
 Suppose that a~1~ and a~2~ represent two different routes through a mountain range in winter. a~1~ is a nice, straight highway through a low pass, and a~2~ is a winding dirt road over the top. Just given this information, a~1~ is clearly preferable, because it is quite possible that a~2~ is blocked by avalanches, whereas it is unlikely that anything blocks a~1~. U~1~ is therefore clearly higher than U~2~. It is possible to obtain satellite reports E~j~ on the actual state of each road that would give new expectations, U′~1~ and U′~2~ , for the two crossings. The distributions for these expectations are shown in Figure 16.8(a). Obviously, in this case, it is not worth the expense of obtaining satellite reports, because it is unlikely that the information derived from them will change the plan. With no change, information has no value.
 
 Now suppose that we are choosing between two different winding dirt roads of slightly different lengths and we are carrying a seriously injured passenger. Then, even when U~1~ and U~2~ are quite close, the distributions of U′~1~ and U′~2~ are very broad. There is a significantpossibility that the second route will turn out to be clear while the first is blocked, and in this
-```
+
+---
+
 11 There is no loss of expressiveness in requiring perfect information. Suppose we wanted to model the case in which we become somewhat more certain about a variable. We can do that by introducing _another_ variable about which we learn perfect information. For example, suppose we initially have broad uncertainty about the variable Temperature . Then we gain the perfect knowledge Thermometer = 37; this gives us imperfect information about the true Temperature , and the uncertainty due to measurement error is encoded in the sensor model **P**(Thermometer |Temperature). See Exercise 16.17 for another example.  
-```
+
+---
+
 
 ![Alt text](figure-16.8.png)
 
@@ -3301,9 +3409,13 @@ Each time a given policy is executed starting from the initial state, the stocha
 An optimal policy for the world of Figure 17.1 is shown in Figure 17.2(a). Notice that, because the cost of taking a step is fairly small compared with the penalty for ending up in (4,2) by accident, the optimal policy for the state (3,1) is conservative. The policy recommends taking the long way round, rather than taking the shortcut and thereby risking entering (4,2).
 
 The balance of risk and reward changes depending on the value of R(s) for the nonterminal states. Figure 17.2(b) shows optimal policies for four different ranges of R(s). When R(s) ≤ −1.6284, life is so painful that the agent heads straight for the nearest exit, even if the exit is worth –1. When −0.4278 ≤ R(s) ≤ −0.0850, life is quite unpleasant; the agent takes the shortest route to the +1 state and is willing to risk falling into the –1 state by accident. In particular, the agent takes the shortcut from (3,1). When life is only slightly dreary (−0.0221 < R(s) < 0), the optimal policy takes _no risks at all_. In (4,1) and (3,2), the agent heads directly away from the –1 state so that it cannot fall in by accident, even though this means banging its head against the wall quite a few times. Finally, if R(s) > 0, then life is positively enjoyable and the agent avoids _both_ exits. As long as the actions in (4,1), (3,2),
-```
+
+---
+
 1 Some definitions of MDPs allow the reward to depend on the action and outcome too, so the reward function is R(s, a, s′). This simplifies the description of some environments but does not change the problem in any fundamental way, as shown in Exercise 17.4.  
-```
+
+---
+
 
 ![Alt text](figure-17.2.png)
 
@@ -3370,9 +3482,13 @@ The utility function U(s) allows the agent to select actions by using the princi
 ![Alt text](17.4.png)
 
 The next two sections describe algorithms for finding optimal policies.
-```
+
+---
+
 2 Although this seems obvious, it does not hold for finite-horizon policies or for other ways of combining rewards over time. The proof follows directly from the uniqueness of the utility function on states, as shown in Section 17.2.  
-```
+
+---
+
 
 
 ## VALUE ITERATION
@@ -3390,7 +3506,9 @@ This is called the **Bellman equation**, after Richard Bellman (1957). The utili
 states—defined by Equation (17.2) as the expected utility of subsequent state sequences—are solutions of the set of Bellman equations. In fact, they are the _unique_ solutions, as we show in Section 17.2.3.
 
 Let us look at one of the Bellman equations for the 4× 3 world. The equation for the state (1,1) is
-```
+
+---
+
 U(1, 1) = −0.04 + γ max[ 0.8U(1, 2) + 0.1U(2, 1) + 0.1U(1, 1), (Up)
 
                          0.9U(1, 1) + 0.1U(1, 2), (Left)
@@ -3398,7 +3516,9 @@ U(1, 1) = −0.04 + γ max[ 0.8U(1, 2) + 0.1U(2, 1) + 0.1U(1, 1), (Up)
                          0.9U(1, 1) + 0.1U(2, 1), (Down)
 
                          0.8U(2, 1) + 0.1U(1, 2) + 0.1U(1, 1) ]. (Right)
-```
+
+---
+
 When we plug in the numbers from Figure 17.3, we find that _Up_ is the best action.
 
 ### The value iteration algorithm
@@ -3500,9 +3620,13 @@ The description of Markov decision processes in Section 17.1 assumed that the en
 To get a handle on POMDPs, we must first define them properly. A POMDP has the same elements as an MDP—the transition model P (s′ | s, a), actions A(s), and reward function R(s)—but, like the partially observable search problems of Section 4.4, it also has a **sensor model** P (e | s). Here, as in Chapter 15, the sensor model specifies the probability of perceiving evidence e in state s.3 For example, we can convert the 4× 3 world of Figure 17.1 into a POMDP by adding a noisy or partial sensor instead of assuming that the agent knows its location exactly. Such a sensor might measure the _number of adjacent walls_, which happens to be 2 in all the nonterminal squares except for those in the third column, where the value is 1; a noisy version might give the wrong value with probability 0.1.
 
 In Chapters 4 and 11, we studied nondeterministic and partially observable planning problems and identified the **belief state**—the set of actual states the agent might be in—as a key concept for describing and calculating solutions. In POMDPs, the belief state b becomes a _probability distribution_ over all possible states, just as in Chapter 15. For example, the initial
-```
+
+---
+
 3 As with the reward function for MDPs, the sensor model can also depend on the action and outcome state, but again this change is not fundamental.  
-```
+
+---
+
 
 belief state for the 4× 3 POMDP could be the uniform distribution over the nine nonterminal states, i.e., 〈1/9 ,1/9 ,1/9 ,1/9 ,1/9 ,1/9 ,1/9 ,1/9 ,1/9 , 0, 0〉. We write b(s) for the probability assigned to the actual state s by belief state b. The agent can calculate its current belief state as the conditional probability distribution over the actual states given the sequence of percepts and actions so far. This is essentially the **filtering** task described in Chapter 15. The basic recursive filtering equation (15.5 on page 572) shows how to calculate the new belief state from the previous belief state and the new evidence. For POMDPs, we also have an action to consider, but the result is essentially the same. If b(s) was the previous belief state, and the agent does action a and then perceives evidence e, then the new belief state is given by
 
@@ -3626,9 +3750,13 @@ Decision-theoretic agents based on dynamic decision networks have a number of ad
 This chapter has concentrated on making decisions in uncertain environments. But what if the uncertainty is due to other agents and the decisions they make? And what if the decisions of those agents are in turn influenced by our decisions? We addressed this question once before, when we studied games in Chapter 5. There, however, we were primarily concerned with turn-taking games in fully observable environments, for which minimax search can be used to find optimal moves. In this section we study the aspects of **game theory** that analyze games with simultaneous moves and other sources of partial observability. (Game theorists use the terms **perfect information** and **imperfect information** rather than fully and partially observable.) Game theory can be used in at least two ways:
 
 1. **Agent design**: Game theory can analyze the agent’s decisions and compute the expected utility for each decision (under the assumption that other agents are acting optimally according to game theory). For example, in the game **two-finger Morra**, two players, O and E, simultaneously display one or two fingers. Let the total number of fingers be f . If f is odd, O collects f dollars from E; and if f is even, E collects f dollars from O. Game theory can determine the best strategy against a rational player and the expected return for each player.4
-```
+
+---
+
 4 Morra is a recreational version of an **inspection game**. In such games, an inspector chooses a day to inspect a facility (such as a restaurant or a biological weapons plant), and the facility operator chooses a day to hide all the nasty stuff. The inspector wins if the days are different, and the facility operator wins if they are the same.  
-```
+
+---
+
 
 2. **Mechanism design**: When an environment is inhabited by many agents, it might be possible to define the rules of the environment (i.e., the game that the agents must play) so that the collective good of all agents is maximized when each agent adopts the game-theoretic solution that maximizes its own utility. For example, game theory can help design the protocols for a collection of Internet traffic routers so that each router has an incentive to act in such a way that global throughput is maximized. Mechanism design can also be used to construct intelligent **multiagent systems** that solve complex problems in a distributed fashion.
 
@@ -3667,9 +3795,13 @@ Alice has discovered that testify is a **dominant strategy** for the game. We sa
 A dominant strategy is a strategy that dominates all others. It is irrational to play a dominated strategy, and irrational not to play a dominant strategy if one exists. Being rational, Alice chooses the dominant strategy. We need just a bit more terminology: we say that an outcome is **Pareto optimal**5 if there is no other outcome that all players would prefer. An outcome is **Pareto dominated** by another outcome if all players would prefer the other outcome.
 
 If Alice is clever as well as rational, she will continue to reason as follows: Bob’s dominant strategy is also to testify. Therefore, he will testify and we will both get five years. When each player has a dominant strategy, the combination of those strategies is called a **dominant strategy equilibrium**. In general, a strategy profile forms an **equilibrium** if no player can benefit by switching strategies, given that every other player sticks with the same
-```
+
+---
+
 5 Pareto optimality is named after the economist Vilfredo Pareto (1848–1923).  
-```
+
+---
+
 
 strategy. An equilibrium is essentially a **local optimum** in the space of policies; it is the top of a peak that slopes downward along every dimension, where a dimension corresponds to a player’s strategy choices.
 
@@ -3697,9 +3829,13 @@ But _which_ mixed strategy? In 1928, von Neumann developed a method for finding 
 Combining these two arguments, we see that the true utility U of the solution to the original game must satisfy UE,O ≤ U ≤ UO,E or in this case, − 3 ≤ U ≤ 2 .
 
 To pinpoint the value of U , we need to turn our analysis to mixed strategies. First, observe the following: _once the first player has revealed his or her strategy, the second player might as well choose a pure strategy._ The reason is simple: if the second player plays a mixed strategy, [p: one ; (1− p): two ], its expected utility is a linear combination (p ·uone +(1− p) ·utwo) of
-```
+
+---
+
 6 or a constant—see page 162.  
-```
+
+---
+
 ![Alt text](figure---17.12.png)
 
 **Figure 17.12** (a) and (b): Minimax game trees for two-finger Morra if the players take turns playing pure strategies. (c) and (d): Parameterized game trees where the first player plays a mixed strategy. The payoffs depend on the probability parameter (p or q) in the mixed strategy. (e) and (f): For any particular value of the probability parameter, the second player will choose the “better” of the two actions, so the value of the first player’s mixed strategy is given by the heavy lines. The first player will choose the probability parameter for the mixed strategy at the intersection point.
@@ -3725,9 +3861,13 @@ Now we know that the true utility of the original game lies between −1/12 and 
 Our result for two-finger Morra is an example of the general result by von Neumann: _every two-player zero-sum game has a maximin equilibrium when you allow mixed strategies._ Furthermore, every Nash equilibrium in a zero-sum game is a maximin for both players. A player who adopts the maximin strategy has two guarantees: First, no other strategy can do better against an opponent who plays well (although some other strategies might be better at exploiting an opponent who makes irrational mistakes). Second, the player continues to do just as well even if the strategy is revealed to the opponent.
 
 The general algorithm for finding maximin equilibria in zero-sum games is somewhat more involved than Figures 17.12(e) and (f) might suggest. When there are n possible actions, a mixed strategy is a point in n-dimensional space and the lines become hyperplanes. It’s also possible for some pure strategies for the second player to be dominated by others, so that they are not optimal against _any_ strategy for the first player. After removing all such strategies (which might have to be done repeatedly), the optimal choice at the root is the
-```
+
+---
+
 7 It is a coincidence that these equations are the same as those for p; the coincidence arises because UE(one, two) = UE(two, one) = − 3. This also explains why the optimal strategy is the same for both players.  
-```
+
+---
+
 
 highest (or lowest) intersection point of the remaining hyperplanes. Finding this choice is an example of a **linear programming** problem: maximizing an objective function subject to linear constraints. Such problems can be solved by standard techniques in time polynomial in the number of actions (and in the number of bits used to specify the reward function, if you want to get technical).
 
@@ -3816,9 +3956,13 @@ Examples of mechanism design include auctioning off cheap airline tickets, routi
 Let’s consider **auctions** first. An auction is a mechanism for selling some goods to members of a pool of bidders. For simplicity, we concentrate on auctions with a single item for sale. Each bidder i has a utility value vi for having the item. In some cases, each bidder has a **private value** for the item. For example, the first item sold on eBay was a broken laser pointer, which sold for $14.83 to a collector of broken laser pointers. Thus, we know that the collector has vi ≥ $14.83, but most other people would have vj * $14.83. In other cases, such as auctioning drilling rights for an oil tract, the item has a **common value**—the tract will produce some amount of money, X, and all bidders value a dollar equally—but there is uncertainty as to what the actual value of X is. Different bidders have different information, and hence different estimates of the item’s true value. In either case, bidders end up with their own vi. Given vi, each bidder gets a chance, at the appropriate time or times in the auction, to make a bid bi. The highest bid, bmax wins the item, but the price paid need not be bmax; that’s part of the mechanism design.
 
 The best-known auction mechanism is the **ascending-bid**,8 or **English auction**, in which the center starts by asking for a minimum (or **reserve**) bid bmin. If some bidder is
-```
+
+---
+
 8 The word “auction” comes from the Latin _augere_, to increase.  
-```
+
+---
+
 
 willing to pay that amount, the center then asks for bmin + d, for some increment d, and continues up from there. The auction ends when nobody is willing to bid anymore; then the last bidder wins the item, paying the price he bid.
 
@@ -3841,9 +3985,13 @@ A small change in the mechanism for sealed-bid auctions produces the **sealed-bi
 ![Alt text](17.15.png)
 
 To see that b~i~ = v~i~ is a dominant strategy, note that when (v~i~ − bo) is positive, any bid that wins the auction is optimal, and bidding v~i~ in particular wins the auction. On the other hand, when (v~i~ − bo) is negative, any bid that loses the auction is optimal, and bidding v~i~ in
-```
+
+---
+
 9 There is actually a small chance that the agent with highest v~i~ fails to get the goods, in the case in which bo < v~i~ < bo + d. The chance of this can be made arbitrarily small by decreasing the increment d. 10 Named after William Vickrey (1914–1996), who won the 1996 Nobel Prize in economics for this work and died of a heart attack three days later.  
-```
+
+---
+
 
 particular loses the auction. So bidding v~i~ is optimal for all possible values of bo, and in fact, v~i~ is the only bid that has this property. Because of its simplicity and the minimal computation requirements for both seller and bidders, the Vickrey auction is widely used in constructing distributed AI systems. Also, Internet search engines conduct over a billion auctions a day to sell advertisements along with their search results, and online auction sites handle $100 billion a year in goods, all using variants of the Vickrey auction. Note that the expected value to the seller is bo, which is the same expected return as the limit of the English auction as the increment d goes to zero. This is actually a very general result: the **revenue equivalence theorem** states that, with a few minor caveats, any auction mechanism where risk-neutral bidders have values v~i~ known only to themselves (but know a probability distribution from which those values are sampled), will yield the same expected revenue. This principle means that the various mechanisms are not competing on the basis of revenue generation, but rather on other qualities.
 
