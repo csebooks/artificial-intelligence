@@ -51,7 +51,9 @@ The algorithms in this book are described in pseudocode. Most of the pseudocode 
 
 - **Generators** and **yield**: the notation “**generator** G(x ) **yields** numbers” defines G as a generator function. This is best understood by an example. The code fragment shown in  
 
-```
+
+---
+
 generator POWERS-OF-2() yields ints 
 
 i← 1 
@@ -65,7 +67,9 @@ i← 2 × i
 for p in POWERS-OF-2() do
 
 PRINT(p)
-```
+
+---
+
 **Figure B.1** Example of a generator function and its invocation within a loop.
 
 Figure B.1 prints the numbers 1, 2, 4, . . . , and never stops. The call to POWERS-OF-2 returns a generator, which in turn yields one value each time the loop code asks for the next element of the collection. Even though the collection is infinite, it is enumerated one element at a time.

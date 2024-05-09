@@ -688,11 +688,15 @@ The code repository associated with this book (aima.cs.berkeley.edu) includes im
 
 So far we have talked about agents by describing _behavior_—the action that is performed after any given sequence of percepts. Now we must bite the bullet and talk about how the insides work. The job of AI is to design an **agent program** that implements the agent function the mapping from percepts to actions. We assume this program will run on some sort of computing device with physical sensors and actuators—we call this the **architecture**:
 
-```js
+
+---
+js
 
 agent = architecture + program.
 
-```
+
+---
+
 
 Obviously, the program we choose has to be one that is appropriate for the architecture. If the program is going to recommend actions like _Walk_, the architecture had better have legs. The architecture might be just an ordinary PC, or it might be a robotic car with several onboard computers, cameras, and other sensors. In general, the architecture makes the percepts from the sensors available to the program, runs the program, and feeds the program’s action choices to the actuators as they are generated. Most of this book is about designing agent programs, although Chapters 24 and 25 deal directly with the sensors and actuators.
 
