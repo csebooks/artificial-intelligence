@@ -12,13 +12,17 @@ Computer scientists are often faced with the task of comparing algorithms to see
 ### Asymptotic analysis
 
 We will consider algorithm analysis through the following example, a program to compute the sum of a sequence of numbers:
-```
+
+---
+
 function SUMMATION(sequence) returns a number 
 sum← 0 
 for i = 1 to LENGTH(sequence) do
 sum← sum + sequence[i] 
 return sum
-```
+
+---
+
 The first step in the analysis is to abstract over the input, in order to find some parameter or parameters that characterize the size of the input. In this example, the input can be characterized by the length of the sequence, which we will call n. The second step is to abstract over the implementation, to find some measure that reflects the running time of the algorithm but is not tied to a particular compiler or computer. For the SUMMATION program, this could be just the number of lines of code executed, or it could be more detailed, measuring the number of additions, assignments, array references, and branches executed by the algorithm.
 
 Either way gives us a characterization of the total number of steps taken by the algorithm as a function of the size of the input. We will call this characterization T (n). If we count lines of code, we have T (n)= 2n + 2 for our example.
