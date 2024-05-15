@@ -33,7 +33,7 @@ Toothache ⇒ Cavity .
 
 The problem is that this rule is wrong. Not all patients with toothaches have cavities; some of them have gum disease, an abscess, or one of several other problems:
 
-Toothache ⇒ Cavity ∨GumProblem ∨ Abscess . . .
+Toothache ⇒ Cavity ∨GumProblem ∨ Abscess
 
 Unfortunately, in order to make the rule true, we have to add an almost unlimited list of possible problems. We could try turning the rule into a causal rule:
 

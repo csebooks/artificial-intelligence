@@ -5366,13 +5366,13 @@ Next we invent a time scale and associate points on that scale with moments, giv
 
 Interval (i) ⇒ Duration(i)= (Time(End(i)) − Time(Begin(i))) .
 
-Time(Begin(AD1900))= Seconds(0) .
+Time(Begin(AD1900)) = Seconds(0) .
 
-Time(Begin(AD2001))= Seconds(3187324800) .
+Time(Begin(AD2001)) = Seconds(3187324800) .
 
-Time(End(AD2001))= Seconds(3218860800) .
+Time(End(AD2001)) = Seconds(3218860800) .
 
-Duration(AD2001)= Seconds(31536000) .
+Duration(AD2001) = Seconds(31536000) .
 
 To make these numbers easier to read, we also introduce a function Date , which takes six arguments (hours, minutes, seconds, day, month, and year) and returns a time point:
 
@@ -5728,7 +5728,8 @@ RelevantChain(start , end , query) ⇔ (start = end)
 
 Now we must define what it means for _text_ to be a _RelevantCategoryName_ for _query_. First, we need to relate strings to the categories they name. This is done using the predicate Name(s, c), which says that string s is a name for category c—for example, we might assert that Name(“laptops”,LaptopComputers ). Some more examples of the _Name_ predicate appear in Figure 12.9(b). Next, we define relevance. Suppose that _query_ is “laptops.” Then RelevantCategoryName(query , text) is true when one of the following holds:
 
-- The _text_ and _query_ name the same category—e.g., “notebooks” and “laptop```s.”
+- The _text_ and _query_ name the same category—e.g., “notebooks” and “laptops.”
+
 ```
 11 An alternative to the link-following strategy is to use an Internet search engine; the technology behind Internet search, information retrieval, will be covered in Section 22.3.  
 ```
