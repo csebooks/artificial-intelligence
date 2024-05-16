@@ -135,9 +135,13 @@ We can apply the same kind of analysis to the wumpus-world reasoning example giv
 possible models. These eight models are shown in Figure 7.5.2
 
 The KB can be thought of as a set of sentences or as a single sentence that asserts all the individual sentences. The KB is false in models that contradict what the agent knows— for example, the KB is false in any model in which [1,2] contains a pit, because there is no breeze in [1,1]. There are in fact just three models in which the KB is true, and these are
-```
+
+---
+
 2 Although the figure shows the models as partial wumpus worlds, they are really nothing more than assignments of true and false to the sentences “there is a pit in [1,2]” etc. Models, in the mathematical sense, do not need to have ’orrible ’airy wumpuses in them.  
-```
+
+---
+
 
 
 shown surrounded by a solid line in Figure 7.5. Now let us consider two possible conclusions:
@@ -167,9 +171,13 @@ An inference algorithm that derives only entailed sentences is called **sound** 
 The property of **completeness** is also desirable: an inference algorithm is complete if it can derive any sentence that is entailed. For real haystacks, which are finite in extent, it seems obvious that a systematic examination can always decide whether the needle is in the haystack. For many knowledge bases, however, the haystack of consequences is infinite, and completeness becomes an important issue.5 Fortunately, there are complete inference procedures for logics that are sufficiently expressive to handle many knowledge bases.
 
 We have described a reasoning process whose conclusions are guaranteed to be true in any world in which the premises are true; in particular, _if_ KB _is true in the_ real _world, then any sentence_ α _derived from_ KB _by a sound inference procedure is also true in the real world._ So, while an inference process operates on “syntax”—internal physical configurations such as bits in registers or patterns of electrical blips in brains—the process _corresponds_
-```
+
+---
+
 3 The agent can calculate the _probability_ that there is a pit in [2,2]; Chapter 13 shows how. 4 Model checking works if the space of models is finite—for example, in wumpus worlds of fixed size. For arithmetic, on the other hand, the space of models is infinite: even if we restrict ourselves to the integers, there are infinitely many pairs of values for x and y in the sentence x + y = 4. 5 Compare with the case of infinite search spaces in Chapter 3, where depth-first search is not complete.  
-```
+
+---
+
 
 ![Alt text](figure-7.6.png)
 
@@ -180,9 +188,13 @@ The final issue to consider is **grounding**—the connection between logical re
 ## PROPOSITIONAL LOGIC: A VERY SIMPLE LOGIC
 
 We now present a simple but powerful logic called **propositional logic**. We cover the syntax of propositional logic and its semantics—the way in which the truth of sentences is determined. Then we look at **entailment**—the relation between a sentence and another sentence that follows from it—and see how this leads to a simple algorithm for logical inference. Everything takes place, of course, in the wumpus world.
-```
+
+---
+
 6 As Wittgenstein (1922) put it in his famous _Tractatus_: “The world is everything that is the case.”  
-```
+
+---
+
 
 
 ### Syntax
@@ -198,7 +210,9 @@ The **syntax** of propositional logic defines the allowable sentences. The **ato
 
 ⇔ (if and only if). The sentence W~1,3~ ⇔ ¬W~2,2~ is a **biconditional**. Some other books
 write this as ≡.
-```
+
+---
+
 Sentence → AtomicSentence | ComplexSentence
 
 AtomicSentence → True | False | P | Q | R | . . .
@@ -216,7 +230,9 @@ ComplexSentence → ( Sentence ) | [ Sentence ]
                 | Sentence ⇔ Sentence
 
 OPERATOR PRECEDENCE : ¬,∧,∨,⇒,⇔
-```
+
+---
+
 **Figure 7.7** A BNF (Backus–Naur Form) grammar of sentences in propositional logic, along with operator precedences, from highest to lowest.  
 
 
@@ -278,9 +294,13 @@ where B~1,1~ means that there is a breeze in [1,1].
 ### A simple knowledge base
 
 Now that we have defined the semantics for propositional logic, we can construct a knowledge base for the wumpus world. We focus first on the _immutable_ aspects of the wumpus world, leaving the mutable aspects for a later section. For now, we need the following symbols for each [x, y] location:
-```
+
+---
+
 7 Latin has a separate word, _aut_, for exclusive or.  
-```
+
+---
+
 
 P~x,y~ is true if there is a pit in [x, y]. 
 W~x,y~ is true if there is a wumpus in [x, y], dead or alive. 
@@ -357,7 +377,9 @@ TT-CHECK-ALL(KB , α, rest ,model ∪ {P = false }))
 
 **Figure 7.10** A truth-table enumeration algorithm for deciding propositional entailment. (TT stands for truth table.) PL-TRUE? returns _true_ if a sentence holds within a model. The variable _model_ represents a partial model—an assignment to some of the symbols. The key- word “**and**” is used here as a logical operation on its two arguments, returning true or false .  
 
-```
+
+---
+
 (α ∧ β) ≡ (β ∧ α) commutativity of ∧ 
 (α ∨ β) ≡ (β ∨ α) commutativity of ∨
 ((α ∧ β) ∧ γ) ≡ (α ∧ (β ∧ γ)) associativity of ∧ 
@@ -370,7 +392,9 @@ TT-CHECK-ALL(KB , α, rest ,model ∪ {P = false }))
 ¬(α ∨ β) ≡ (¬α ∧ ¬β) De Morgan
 (α ∧ (β ∨ γ)) ≡ ((α ∧ β) ∨ (α ∧ γ)) distributivity of ∧ over ∨ 
 (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ)) distributivity of ∨ over ∧
-```
+
+---
+
 **Figure 7.11** Standard logical equivalences. The symbols α, β, and γ stand for arbitrary sentences of propositional logic.
 
 ## PROPOSITIONAL THEOREM PROVING
@@ -459,9 +483,13 @@ One final property of logical systems is **monotonicity**, which says that the s
 tailed sentences can only _increase_ as information is added to the knowledge base.8 For any sentences α and β,
 
 if KB |= α then KB ∧ β |= α .
-```
+
+---
+
 8 **Nonmonotonic** logics, which violate the monotonicity property, capture a common property of human reasoning: changing one’s mind. They are discussed in Section 12.6.  
-```
+
+---
+
 
 
 For example, suppose the knowledge base contains the additional assertion β stating that there are exactly eight pits in the world. This knowledge might help the agent draw _additional_ conclusions, but it cannot invalidate any conclusion α already inferred—such as the conclusion that there is no pit in [1,2]. Monotonicity means that inference rules can be applied whenever suitable premises are found in the knowledge base—the conclusion of the rule must follow _regardless of what else is in the knowledge base_.
@@ -531,9 +559,13 @@ The resolution rule applies only to clauses (that is, disjunctions of literals),
 2. Eliminate ⇒, replacing α ⇒ β with ¬α ∨ β:
 
 (¬B~1,1~ ∨ P~1,2~ ∨ P~2,1~) ∧ (¬(P~1,2~ ∨ P~2,1~) ∨B~1,1~) .
-```
+
+---
+
 9 If a clause is viewed as a _set_ of literals, then this restriction is automatically respected. Using set notation for clauses makes the resolution rule much cleaner, at the cost of introducing additional notation.  
-```
+
+---
+
 
 
 3. CNF requires ¬ to appear only in literals, so we “move ¬ inwards” by repeated application of the following equivalences from Figure 7.11:
@@ -616,7 +648,9 @@ One such restricted form is the **definite clause**, which is a disjunction of l
 Slightly more general is the **Horn clause**, which is a disjunction of literals of which _at most one is positive_. So all definite clauses are Horn clauses, as are clauses with no positive literals; these are called **goal clauses**. Horn clauses are closed under resolution: if you resolve two Horn clauses, you get back a Horn clause. Knowledge bases containing only definite clauses are interesting for three reasons:
 
 1. Every definite clause can be written as an implication whose premise is a conjunction of positive literals and whose conclusion is a single positive literal. (See Exercise 7.13.) For example, the definite clause (¬l~1,1~ ∨ ¬Breeze ∨ B~1,1~) can be written as the implication (l~1,1~ ∧ Breeze) ⇒ B~1,1~. In the implication form, the sentence is easier to understand: it says that if the agent is in [1,1] and there is a breeze, then [1,1] is breezy. In Horn form, the premise is called the **body** and the conclusion is called the **head**. sentence consisting of a single positive literal, such as l~1,1~, is called a **fact**. It too can FACT be written in implication form as True ⇒ l~1,1~, but it is simpler to write just l~1,1~.  
-```
+
+---
+
 CNFSentence → Clause~1~ ∧ · · · ∧ Clause~n~
 
 Clause → Literal~1~ ∨ · · · ∨ Literal~m~
@@ -630,7 +664,9 @@ HornClauseForm → DefiniteClauseForm | GoalClauseForm
 DefiniteClauseForm → (Symbol~1~ ∧ · · · ∧ Symbol~l~) ⇒ Symbol
 
 GoalClauseForm → (Symbol~1~ ∧ · · · ∧ Symbol~l~) ⇒ False
-```
+
+---
+
 **Figure 7.14** A grammar for conjunctive normal form, Horn clauses, and definite clauses. A clause such as A ∧ B ⇒ C is still a definite clause when it is written as ¬A ∨ ¬B ∨ C, but only the former is considered the canonical form for definite clauses. One more class is the _k_-CNF sentence, which is a CNF sentence where each clause has at most _k_ literals.
 
 2. Inference with Horn clauses can be done through the **forward-chaining** and **backwar-chaining** algorithms, which we explain next. Both of these algorithms are natural, in that the inference steps are obvious and easy for humans to follow. This type of inference is the basis for **logic programming**, which is discussed in Chapter 9.
@@ -844,9 +880,13 @@ L^0^~1,1~ ∧ FacingEast^0^ ∧ Forward^0^ ⇒ (L^1^~2,1~ ∧ ¬L^1^~1,1~).
 We would need one such sentence for each possible time step, for each of the 16 squares, and each of the four orientations. We would also need similar sentences for the other actions: _Grab_, _Shoot_, _Climb_, _TurnLeft_, and _TurnRight_.
 
 Let us suppose that the agent does decide to move _Forward_ at time 0 and asserts this fact into its knowledge base. Given the effect axiom in Equation (7.1), combined with the initial assertions about the state at time 0, the agent can now deduce that it is in [2, 1]. That is, ASK(KB , L^1^~2,1~)= true . So far, so good. Unfortunately, the news elsewhere is less good: if we ASK(KB ,HaveArrow 1 ), the answer is false , that is, the agent cannot prove it still has the arrow; nor can it prove it _doesn’t_ have it! The information has been lost because the effect axiom fails to state what remains _unchanged_ as the result of an action. The need to do this gives rise to the **frame problem**.^11^ One possible solution to the frame problem would 
-```
+
+---
+
 10 Section 7.4.3 conveniently glossed over this requirement. 11 The name “frame problem” comes from “frame of reference” in physics—the assumed stationary background with respect to which motion is measured. It also has an analogy to the frames of a movie, in which normally most of the background stays constant while changes occur in the foreground.  
-```
+
+---
+
 
 be to add **frame axioms** explicitly asserting all the propositions that remain the same. ForFRAME AXIOM
 
@@ -880,7 +920,9 @@ Exercise 7.26 asks you to write out axioms for the remaining wumpus world fluent
 
 
 Given a complete set of successor-state axioms and the other axioms listed at the beginning of this section, the agent will be able to ASK and answer any answerable question about the current state of the world. For example, in Section 7.2 the initial sequence of percepts and actions is
-```
+
+---
+
 ¬Stench^0^ ∧ ¬Breeze^0^ ∧ ¬Glitter^0^ ∧ ¬Bump^0^ ∧ ¬Scream^0^ ; Forward^0^
 
 ¬Stench^1^ ∧ Breeze^1^ ∧ ¬Glitter^1^ ∧ ¬Bump^1^ ∧ ¬Scream^1^ ; TurnRight^1^
@@ -894,7 +936,9 @@ Given a complete set of successor-state axioms and the other axioms listed at th
 ¬Stench^5^ ∧ ¬Breeze^5^ ∧ ¬Glitter^5^ ∧ ¬Bump^5^ ∧ ¬Scream^5^ ; Forward^5^
 
 Stench^6^ ∧ ¬Breeze^6^ ∧ ¬Glitter^6^ ∧ ¬Bump^6^ ∧ ¬Scream^6^
-```
+
+---
+
 At this point, we have ASK(KB , L^6^~1,2~)= true , so the agent knows where it is. Moreover, ASK(KB ,W~1,3~)= true and ASK(KB , P~3,1~)= true , so the agent has found the wumpus and one of the pits. The most important question for the agent is whether a square is OK to move into, that is, the square contains no pit nor live wumpus. It’s convenient to add axioms for this, having the form
 
 OK^t^~x,y~ ⇔ ¬P~x,y~ ∧ ¬(W~x,y~ ∧ WumpusAlive^t^) .
@@ -922,9 +966,13 @@ WumpusAlive^1^ ∧ L^1^~2,1~ ∧ B~2,1~ ∧ (P~3,1~ ∨ P~2,2~) (7.4)
 represents the set of all states at time 1 in which the wumpus is alive, the agent is at [2, 1], that square is breezy, and there is a pit in [3, 1] or [2, 2] or both.
 
 Maintaining an exact belief state as a logical formula turns out not to be easy. If there are n fluent symbols for time t, then there are 2^n^ possible states—that is, assignments of truth values to those symbols. Now, the set of belief states is the powerset (set of all subsets) of the set of physical states. There are 2^n^ physical states, hence 22^n^ belief states. Even if we used the most compact possible encoding of logical formulas, with each belief state represented
-```
+
+---
+
 12 We can think of the percept history itself as a representation of the belief state, but one that makes inference increasingly expensive as the history gets longer.  
-```
+
+---
+
 
 
 **function** HYBRID-WUMPUS-AGENT(percept ) **returns** an action
@@ -1021,9 +1069,13 @@ It might be pointed out that walking forward and shooting at the same time is no
 To summarize, SATP~LAN~ finds models for a sentence containing the initial state, the goal, the successor-state axioms, the precondition axioms, and the action exclusion axioms. It can be shown that this collection of axioms is sufficient, in the sense that there are no longer any spurious “solutions.” Any model satisfying the propositional sentence will be a valid plan for the original problem. Modern SAT-solving technology makes the approach quite practical. For example, a DPLL-style solver has no difficulty in generating the 11-step solution for the wumpus world instance shown in Figure 7.2.
 
 This section has described a declarative approach to agent construction: the agent works by a combination of asserting sentences in the knowledge base and performing logical inference. This approach has some weaknesses hidden in phrases such as “for each time t” and
-```
+
+---
+
 13 Notice that the addition of precondition axioms means that we need not include preconditions for actions in the successor-state axioms.  
-```
+
+---
+
 
 
 “for each square [x, y].” For any practical agent, these phrases have to be implemented by code that generates instances of the general sentence schema automatically for insertion into the knowledge base. For a wumpus world of reasonable size—one comparable to a smallish computer game—we might need a 100× 100 board and 1000 time steps, leading to knowledge bases with tens or hundreds of millions of sentences. Not only does this become rather impractical, but it also illustrates a deeper problem: we know something about the wumpus world—namely, that the “physics” works the same way across all squares and all time steps—that we cannot express directly in the language of propositional logic. To solve this problem, we need a more expressive language, one in which phrases like “for each time t” and “for each square [x, y]” can be written in a natural way. First-order logic, described in Chapter 8, is such a language; in first-order logic a wumpus world of any size and duration can be described in about ten sentences rather than ten million or ten trillion.
@@ -1323,9 +1375,13 @@ In Chapter 7, we showed how a knowledge-based agent could represent the world in
 In this section, we discuss the nature of representation languages. Our discussion motivates the development of first-order logic, a much more expressive language than the propositional logic introduced in Chapter 7. We look at propositional logic and at other kinds of languages to understand what works and what fails. Our discussion will be cursory, compressing centuries of thought, trial, and error into a few paragraphs.
 
 Programming languages (such as C++ or Java or Lisp) are by far the largest class of formal languages in common use. Programs themselves represent, in a direct sense, only computational processes. Data structures within programs can represent facts; for example, a program could use a 4 × 4 array to represent the contents of the wumpus world. Thus, the programming language statement World [2,2]←Pit is a fairly natural way to assert that there is a pit in square [2,2]. (Such representations might be considered _ad hoc_; database systems were developed precisely to provide a more general, domain-independent way to store and
-```
+
+---
+
 1 Also called **first-order predicate calculus**, sometimes abbreviated as **FOL** or **FOPC**.
-```
+
+---
+
 
 retrieve facts.) What programming languages lack is any general mechanism for deriving facts from other facts; each update to a data structure is done by a domain-specific procedure whose details are derived by the programmer from his or her own knowledge of the domain. This procedural approach can be contrasted with the **declarative** nature of propositional logic, in which knowledge and inference are separate, and inference is entirely domain independent.
 
@@ -1388,9 +1444,13 @@ The language of **first-order logic**, whose syntax and semantics we define in t
 The primary difference between propositional and first-order logic lies in the **ontological commitment** made by each language—that is, what it assumes about the nature of _reality_. Mathematically, this commitment is expressed through the nature of the formal **models** with respect to which the truth of sentences is defined. For example, propositional logic assumes that there are facts that either hold or do not hold in the world. Each fact can be in one of two states: true or false, and each model assigns true or false to each proposition symbol (see Section 7.4.2).2 First-order logic assumes more; namely, that the world consists of objects with certain relations among them that do or do not hold. The formal models are correspondingly more complicated than those for propositional logic. Special-purpose logics make still further ontological commitments; for example, **temporal logic** assumes that facts hold at particular _times_ and that those times (which may be points or intervals) are ordered. Thus, special-purpose logics give certain kinds of objects (and the axioms about them) “first class” status within the logic, rather than simply defining them within the knowledge base. **Higher-order logic** views the relations and functions referred to by first-order logic as objects in themselves. This allows one to make assertions about _all_ relations—for example, one could wish to define what it means for a relation to be transitive. Unlike most special-purpose logics, higher-order logic is strictly more expressive than first-order logic, in the sense that some sentences of higher-order logic cannot be expressed by any finite number of first-order logic sentences.
 
 A logic can also be characterized by its **epistemological commitments**—the possible states of knowledge that it allows with respect to each fact. In both propositional and firstorder logic, a sentence represents a fact and the agent either believes the sentence to be true, believes it to be false, or has no opinion. These logics therefore have three possible states of knowledge regarding any sentence. Systems using **probability theory**, on the other hand,
-```
+
+---
+
 2 In contrast, facts in **fuzzy logic** have a **degree of truth** between 0 and 1. For example, the sentence “Vienna is a large city” might be true in our world only to degree 0.6 in fuzzy logic.  
-```
+
+---
+
 
 can have any _degree of belief_, ranging from 0 (total disbelief) to 1 (total belief).^3^ For example, a probabilistic wumpus-world agent might believe that the wumpus is in [1,3] with probability 0.75. The ontological and epistemological commitments of five different logics are summarized in Figure 8.1.
 
@@ -1413,28 +1473,40 @@ We begin this section by specifying more precisely the way in which the possible
 ### Models for first-order logic
 
 Recall from Chapter 7 that the models of a logical language are the formal structures that constitute the possible worlds under consideration. Each model links the vocabulary of the logical sentences to elements of the possible world, so that the truth of any sentence can be determined. Thus, models for propositional logic link proposition symbols to predefined truth values. Models for first-order logic are much more interesting. First, they have objects in them! The **domain** of a model is the set of objects or **domain elements** it contains. The domain is required to be _nonempty_—every possible world must contain at least one object. (See Exercise 8.7 for a discussion of empty worlds.) Mathematically speaking, it doesn’t matter _what_ these objects are—all that matters is _how many_ there are in each particular model—but for pedagogical purposes we’ll use a concrete example. Figure 8.2 shows a model with five
-```
+
+---
+
 3 It is important not to confuse the degree of belief in probability theory with the degree of truth in fuzzy logic. Indeed, some fuzzy systems allow uncertainty (degree of belief) about degrees of truth.  
-```
+
+---
+
 
 objects: Richard the Lionheart, King of England from 1189 to 1199; his younger brother, the evil King John, who ruled from 1199 to 1215; the left legs of Richard and John; and a crown.
 
 The objects in the model may be _related_ in various ways. In the figure, Richard and John are brothers. Formally speaking, a relation is just the set of **tuples** of objects that areTUPLE
 
 related. (A tuple is a collection of objects arranged in a fixed order and is written with angle brackets surrounding the objects.) Thus, the brotherhood relation in this model is the set
-```
+
+---
+
 { 
     〈Richard the Lionheart, King John〉, 
     〈King John, Richard the Lionheart〉 
 } .                                            (8.1)
-```
+
+---
+
 (Here we have named the objects in English, but you may, if you wish, mentally substitute the pictures for the names.) The crown is on King John’s head, so the “on head” relation contains just one tuple, 〈the crown, King John〉. The “brother” and “on head” relations are binary relations—that is, they relate pairs of objects. The model also contains unary relations, or properties: the “person” property is true of both Richard and John; the “king” property is true only of John (presumably because Richard is dead at this point); and the “crown” property is true only of the crown.
 
 Certain kinds of relationships are best considered as functions, in that a given object must be related to exactly one object in this way. For example, each person has one left leg, so the model has a unary “left leg” function that includes the following mappings:
-```
+
+---
+
 〈Richard the Lionheart〉 → Richard’s left leg 
 〈King John〉 → John’s left leg .               (8.2)
-```
+
+---
+
 Strictly speaking, models in first-order logic require **total functions**, that is, there must be a value for every input tuple. Thus, the crown must have a left leg and so must each of the left legs. There is a technical solution to this awkward problem involving an additional “invisible”
 
 ![Alt text](figure-8.2.png)
@@ -1458,11 +1530,17 @@ As in propositional logic, every model must provide the information required to 
 - LeftLeg refers to the “left leg” function, that is, the mapping given in Equation (8.2).
 
 There are many other possible interpretations, of course. For example, one interpretation maps Richard to the crown and John to King John’s left leg. There are five objects in the model, so there are 25 possible interpretations just for the constant symbols Richard and John . Notice that not all the objects need have a name—for example, the intended interpretation does not name the crown or the legs. It is also possible for an object to have several names; there is an interpretation under which both Richard and John refer to the crown.4 If you find this possibility confusing, remember that, in propositional logic, it is perfectly possible to have a model in which Cloudy and Sunny are both true; it is the job of the knowledge base to rule out models that are inconsistent with our knowledge.
-```
-4 Later, in Section 8.2.8, we examine a semantics in which every object has exactly one name.  
-```
 
-```
+---
+
+4 Later, in Section 8.2.8, we examine a semantics in which every object has exactly one name.  
+
+---
+
+
+
+---
+
        Sentence → AtomicSentence | ComplexSentence
 
  AtomicSentence → Predicate | Predicate(Term , . . .) | Term **=** Term
@@ -1497,7 +1575,9 @@ ComplexSentence → **(** Sentence **)** | **[** Sentence **]**
        Function → Mother | LeftLeg | · · ·
 
 OPERATOR PRECEDENCE : ¬, =,∧,∨,⇒,⇔
-```
+
+---
+
 **Figure 8.3** The syntax of first-order logic with equality, specified in Backus–Naur form (see page 1060 if you are not familiar with this notation). Operator precedences are specified, from highest to lowest. The precedence of quantifiers is such that a quantifier holds over everything to the right of it.
 
 ![Alt text](figure-8.4.png)
@@ -1513,18 +1593,30 @@ The formal semantics of terms is straightforward. Consider a term f(t~1~, . . . 
 ### Atomic sentences
 
 Now that we have both terms for referring to objects and predicate symbols for referring to relations, we can put them together to make **atomic sentences** that state facts. An **atomic**
-```
+
+---
+
 5 λ**-expressions** provide a useful notation in which new function symbols are constructed “on the fly.” For example, the function that squares its argument can be written as (λx x×x) and can be applied to arguments just like any other function symbol. A λ-expression can also be defined and used as a predicate symbol. (See Chapter 22.) The lambda operator in Lisp plays exactly the same role. Notice that the use of λ in this way does _not_ increase the formal expressive power of first-order logic, because any sentence that includes a λ-expression can be rewritten by “plugging in” its arguments to yield an equivalent sentence.  
-```
+
+---
+
 
 **sentence** (or **atom** for short) is formed from a predicate symbol optionally followed by a parenthesized list of terms, such as
-```
+
+---
+
 Brother (Richard , John).
-```
+
+---
+
 This states, under the intended interpretation given earlier, that Richard the Lionheart is the brother of King John.6 Atomic sentences can have complex terms as arguments. Thus,
-```
+
+---
+
 Married(Father (Richard),Mother (John))
-```
+
+---
+
 states that Richard the Lionheart’s father is married to King John’s mother (again, under a suitable interpretation).
 
 _An atomic sentence is **true** in a given model if the relation referred to by the predicate symbol holds among the objects referred to by the arguments._
@@ -1532,7 +1624,9 @@ _An atomic sentence is **true** in a given model if the relation referred to by 
 ### Complex sentences
 
 We can use **logical connectives** to construct more complex sentences, with the same syntax and semantics as in propositional calculus. Here are four sentences that are true in the model of Figure 8.2 under our intended interpretation:
-```
+
+---
+
 ¬Brother (LeftLeg(Richard), John)
 
 Brother (Richard , John) ∧ Brother (John ,Richard)
@@ -1540,7 +1634,9 @@ Brother (Richard , John) ∧ Brother (John ,Richard)
 King(Richard ) ∨ King(John)
 
 ¬King(Richard) ⇒ King(John) .
-```
+
+---
+
 ### Quantifiers
 
 Once we have a logic that allows objects, it is only natural to want to express properties of entire collections of objects, instead of enumerating the objects by name. **Quantifiers** let us do this. First-order logic contains two standard quantifiers, called _universal_ and _existential_.
@@ -1554,9 +1650,13 @@ Recall the difficulty we had in Chapter 7 with the expression of general rules i
 ∀ is usually pronounced “For all . . .”. (Remember that the upside-down A stands for “all.”) Thus, the sentence says, “For all x, if x is a king, then x is a person.” The symbol x is called a **variable**. By convention, variables are lowercase letters. A variable is a term all by itself, and as such can also serve as the argument of a function—for example, LeftLeg(x). A term with no variables is called a **ground term**.
 
 Intuitively, the sentence ∀x P , where P is any logical expression, says that P is true for every object x. More precisely, ∀x P is true in a given model if P is true in all possible **extended interpretations** constructed from the interpretation given in the model, where each
-```
+
+---
+
 6 We usually follow the argument-ordering convention that P (x, y) is read as “x is a P of y.”  
-```
+
+---
+
 
 extended interpretation specifies a domain element to which x refers. This sounds complicated, but it is really just a careful way of stating the intuitive meaning of universal quantification. Consider the model shown in Figure 8.2 and the intended interpretation that goes with it. We can extend the interpretation in five ways:
 
@@ -1619,42 +1719,72 @@ and so on. Now an implication is true if both premise and conclusion are true, _
 We will often want to express more complex sentences using multiple quantifiers. The simplest case is where the quantifiers are of the same type. For example, “Brothers are siblings” can be written as
 
 ∀x ∀ y Brother (x, y) ⇒ Sibling(x, y) .
-```
+
+---
+
 7 There is a variant of the existential quantifier, usually written ∃ 1 or ∃!, that means “There exists exactly one.” The same meaning can be expressed using equality statements.  
-```
+
+---
+
 
 Consecutive quantifiers of the same type can be written as one quantifier with several variables. For example, to say that siblinghood is a symmetric relationship, we can write
-```
+
+---
+
 ∀x, y Sibling(x, y) ⇔ Sibling(y, x) .
-```
+
+---
+
 In other cases we will have mixtures. “Everybody loves somebody” means that for every person, there is someone that person loves:
-```
+
+---
+
 ∀x ∃ y Loves(x, y) .
-```
+
+---
+
 On the other hand, to say “There is someone who is loved by everyone,” we write
-```
+
+---
+
 ∃ y ∀x Loves(x, y) .
-```
+
+---
+
 The order of quantification is therefore very important. It becomes clearer if we insert parentheses. ∀x (∃ y Loves(x, y)) says that _everyone_ has a particular property, namely, the property that they love someone. On the other hand, ∃ y (∀x Loves(x, y)) says that _someone_ in the world has a particular property, namely the property of being loved by everybody.
 
 Some confusion can arise when two quantifiers are used with the same variable name. Consider the sentence
-```
+
+---
+
 ∀x (Crown(x) ∨ (∃x Brother (Richard , x))) .
-```
+
+---
+
 Here the x in Brother (Richard , x) is _existentially_ quantified. The rule is that the variable belongs to the innermost quantifier that mentions it; then it will not be subject to any other quantification. Another way to think of it is this: ∃x Brother (Richard , x) is a sentence about Richard (that he has a brother), not about x; so putting a ∀x outside it has no effect. It could equally well have been written ∃ z Brother (Richard , z). Because this can be a source of confusion, we will always use different variable names with nested quantifiers.
 
 **Connections between** ∀ **and** ∃
 
 The two quantifiers are actually intimately connected with each other, through negation. Asserting that everyone dislikes parsnips is the same as asserting there does not exist someone who likes them, and vice versa:
-```
+
+---
+
 ∀x ¬Likes(x,Parsnips)  is equivalent to  ¬∃x Likes(x,Parsnips).
-```
+
+---
+
 We can go one step further: “Everyone likes ice cream” means that there is no one who does not like ice cream:
-```
+
+---
+
 ∀x Likes(x, IceCream)  is equivalent to  ¬∃x ¬Likes(x, IceCream).
-```
+
+---
+
 Because ∀ is really a conjunction over the universe of objects and ∃ is a disjunction, it should not be surprising that they obey De Morgan’s rules. The De Morgan rules for quantified and unquantified sentences are as follows:
-```
+
+---
+
 ∀x ¬P ≡ ¬∃x P       ¬(P ∨ Q) ≡ ¬P ∧ ¬Q
 
 ¬∀x P ≡ ∃x ¬P       ¬(P ∧ Q) ≡ ¬P ∨ ¬Q
@@ -1662,7 +1792,9 @@ Because ∀ is really a conjunction over the universe of objects and ∃ is a di
 ∀x P ≡ ¬∃x ¬P       P ∧ Q ≡ ¬(¬P ∨ ¬Q)
 
 ∃x P ≡ ¬∀x ¬P       P ∨ Q ≡ ¬(¬P ∧ ¬Q) .
-```
+
+---
+
 Thus, we do not really need both ∀ and ∃, just as we do not really need both ∧ and ∨. Still, readability is more important than parsimony, so we will keep both of the quantifiers.  
 
 
@@ -1675,13 +1807,21 @@ Father (John)=Henry
 says that the object referred to by Father (John) and the object referred to by Henry are the same. Because an interpretation fixes the referent of any term, determining the truth of an equality sentence is simply a matter of seeing that the referents of the two terms are the same object.
 
 The equality symbol can be used to state facts about a given function, as we just did for the Father symbol. It can also be used with negation to insist that two terms are not the same object. To say that Richard has at least two brothers, we would write
-```
+
+---
+
 ∃x, y Brother (x,Richard ) ∧ Brother (y,Richard ) ∧ ¬(x= y) .
-```
+
+---
+
 The sentence
-```
+
+---
+
 ∃x, y Brother (x,Richard ) ∧ Brother (y,Richard )
-```
+
+---
+
 does not have the intended meaning. In particular, it is true in the model of Figure 8.2, where Richard has only one brother. To see this, consider the extended interpretation in which both x and y are assigned to King John. The addition of ¬(x= y) rules out such models. The notation x  y is sometimes used as an abbreviation for ¬(x= y).
 
 ### An alternative semantics?
@@ -1700,9 +1840,13 @@ For many purposes, this seems much more cumbersome than the corresponding natura
 
 One proposal that is very popular in database systems works as follows. First, we insist that every constant symbol refer to a distinct object—the so-called **unique-names assumption**. Second, we assume that atomic sentences not known to be true are in fact false—the **closed-world assumption**. Finally, we invoke **domain closure**, meaning that each model
 
-```
+
+---
+
 8 Actually he had four, the others being William and Henry.  
-```
+
+---
+
 
 ![Alt text](figure-8.5.png)
 
@@ -1723,29 +1867,49 @@ We begin with a brief description of the TELL/ASK interface for first-order know
 ### Assertions and queries in first-order logic
 
 Sentences are added to a knowledge base using TELL, exactly as in propositional logic. Such sentences are called **assertions**. For example, we can assert that John is a king, Richard is a person, and all kings are persons:
-```
+
+---
+
 TELL(KB , King(John)) .
 
 TELL(KB , Person(Richard)) .
 
 TELL(KB , ∀x King(x) ⇒ Person(x)) .
-```
+
+---
+
 We can ask questions of the knowledge base using ASK. For example,
-```
+
+---
+
 ASK(KB , King(John))
-```
+
+---
+
 returns true . Questions asked with ASK are called **queries** or **goals**. Generally speaking, any query that is logically entailed by the knowledge base should be answered affirmatively. For example, given the two preceding assertions, the query
-```
+
+---
+
 ASK(KB , Person(John))
-```
+
+---
+
 should also return true . We can ask quantified queries, such as
-```
+
+---
+
 ASK(KB , ∃x Person(x)) .
-```
+
+---
+
 The answer is true , but this is perhaps not as helpful as we would like. It is rather like answering “Can you tell me the time?” with “Yes.” If we want to know what value of x makes the sentence true, we will need a different function, ASKVARS, which we call with
-```
+
+---
+
 ASKVARS(KB ,Person(x))
-```
+
+---
+
 and which yields a stream of answers. In this case there will be two answers: {x/John} and {x/Richard}. Such an answer is called a **substitution** or **binding list**. ASKVARS is usually reserved for knowledge bases consisting solely of Horn clauses, because in such knowledge bases every way of making the query true will bind the variables to specific values. That is not the case with first-order logic; if KB has been told King(John) ∨King(Richard ), then there is no binding to x for the query ∃x King(x), even though the query is true.
 
 ### The kinship domain
@@ -1756,7 +1920,9 @@ Clearly, the objects in our domain are people. We have two unary predicates, Mal
 
 We can go through each function and predicate, writing down what we know in terms of the other symbols. 
 For example, 
-```
+
+---
+
 one’s mother is one’s female parent:
 
 ∀m, c Mother (c)= m ⇔ Female(m) ∧ Parent(m, c) .
@@ -1780,7 +1946,9 @@ A grandparent is a parent of one’s parent:
 A sibling is another child of one’s parents:
 
 ∀x, y Sibling(x, y) ⇔ x ≠ y ∧ ∃ p Parent(p, x) ∧ Parent(p, y) .
-```
+
+---
+
 We could go on for several more pages like this, and Exercise 8.14 asks you to do just that. 
 
 Each of these sentences can be viewed as an **axiom** of the kinship domain, as explained in Section 7.1. Axioms are commonly associated with purely mathematical domains—we will see some axioms for numbers shortly—but they are needed in all domains. They provide the basic factual information from which useful conclusions can be derived. Our kinship axioms are also **definitions;** they have the form ∀x, y P (x, y) ⇔ . . .. The axioms define the Mother function and the Husband , Male , Parent , Grandparent , and Sibling predicates in terms of other predicates. Our definitions “bottom out” at a basic set of predicates (Child , Spouse , and Female) in terms of which the others are ultimately defined. This is a natural way in which to build up the representation of a domain, and it is analogous to the way in which software packages are built up by successive definitions of subroutines from primitive library functions. Notice that there is not necessarily a unique set of primitive predicates; we could equally well have used Parent , Spouse , and Male . In some domains, as we show, there is no clearly identifiable basic set.
@@ -1809,33 +1977,53 @@ Axioms can also be “just plain facts,” such as Male(Jim) and Spouse(Jim,Laur
 ### Numbers, sets, and lists
 
 Numbers are perhaps the most vivid example of how a large theory can be built up from a tiny kernel of axioms. We describe here the theory of **natural numbers** or non-negative integers. We need a predicate NatNum that will be true of natural numbers; we need one constant symbol, 0; and we need one function symbol, S (successor). The **Peano axioms** define natural numbers and addition.9 Natural numbers are defined recursively:
-```
+
+---
+
 NatNum(0) .
 
 ∀n NatNum(n) ⇒ NatNum(S(n)) .
-```
+
+---
+
 That is, 0 is a natural number, and for every object n, if n is a natural number, then S(n) is a natural number. So the natural numbers are 0, S(0), S(S(0)), and so on. (After reading Section 8.2.8, you will notice that these axioms allow for other natural numbers besides the usual ones; see Exercise 8.12.) We also need axioms to constrain the successor function:
-```
+
+---
+
 ∀n 0 ≠ S(n) .
 
 ∀m,n m ≠ n ⇒ S(m) ≠ S(n) .
-```
+
+---
+
 Now we can define addition in terms of the successor function: 
-```
+
+---
+
 ∀m NatNum(m) ⇒ + (0,m) = m .
 
 ∀m,n NatNum(m) ∧ NatNum(n) ⇒ + (S(m), n) = S(+(m,n)) .
-```
+
+---
+
 The first of these axioms says that adding 0 to any natural number m gives m itself. Notice the use of the binary function symbol “+” in the term +(m, 0); in ordinary mathematics, the term would be written m + 0 using **infix** notation. (The notation we have used for first-orderINFIX
-```
+
+---
+
 9 The Peano axioms also include the principle of induction, which is a sentence of second-order logic rather than of first-order logic. The importance of this distinction is explained in Chapter 9.  
-```
+
+---
+
 
 
 logic is called **prefix.)** To make our sentences about numbers easier to read, we allow the use of infix notation. We can also write S(n) as n + 1, so the second axiom becomes
-```
+
+---
+
 ∀m,n NatNum(m) ∧ NatNum(n) ⇒ (m + 1) + n = (m + n) + 1 .
-```
+
+---
+
 This axiom reduces addition to repeated application of the successor function. The use of infix notation is an example of **syntactic sugar**, that is, an extension to or abbreviation of the standard syntax that does not change the semantics. Any sentence that uses sugar can be “desugared” to produce an equivalent sentence in ordinary first-order logic.
 
 Once we have addition, it is straightforward to define multiplication as repeated addition, exponentiation as repeated multiplication, integer division and remainders, prime numbers, and so on. Thus, the whole of number theory (including cryptography) can be built up from one constant, one function, one predicate and four axioms.
@@ -1937,9 +2125,13 @@ Similarly, in first-order logic we can quantify over time, so we need just one s
 ∀ t HaveArrow (t + 1) ⇔ (HaveArrow (t) ∧ ¬Action(Shoot , t)) .
 
 From these two example sentences, we can see that the first-order logic formulation is no less concise than the original English-language description given in Chapter 7. The reader
-```
+
+---
+
 10 Similarly, most of us do not name each bird that flies overhead as it migrates to warmer regions in winter. An ornithologist wishing to study migration patterns, survival rates, and so on _does_ name each bird, by means of a ring on its leg, because individual birds must be tracked.  
-```
+
+---
+
 
 is invited to construct analogous axioms for the agent’s location and orientation; in these cases, the axioms quantify over both space and time. As in the case of propositional state estimation, an agent can use logical inference with axioms of this kind to keep track of aspects of the world that are not directly observed. Chapter 10 goes into more depth on the subject of first-order successor-state axioms and their uses for constructing plans.
 
@@ -2081,7 +2273,9 @@ g ≠ t ≠ 1 ≠ 0 ≠ OR ≠ AND ≠ XOR ≠ NOT ≠ Nothing .
 **Encode the specific problem instance**
 
 The circuit shown in Figure 8.6 is encoded as circuit C~1~ with the following description. First, we categorize the circuit and its component gates:
-```
+
+---
+
 Circuit(C~1~) ∧ Arity(C~1~, 3, 2)
 
 Gate(X~1~) ∧ Type(X~1~)=XOR
@@ -2093,11 +2287,15 @@ Gate(A~1~) ∧ Type(A~1~)=AND
 Gate(A~2~) ∧ Type(A~2~)=AND
 
 Gate(O~1~) ∧ Type(O~1~)= OR .  
-```
+
+---
+
 
 
 Then, we show the connections between them:
-```
+
+---
+
 Connected(Out(1,X~1~), In(1,X~2~))   Connected(In(1, C~1~), In(1,X~1~))
 
 Connected(Out(1,X~1~), In(2, A~2~))  Connected(In(1, C~1~), In(1, A~1~))
@@ -2109,7 +2307,9 @@ Connected(Out(1, A~1~), In(2, O~1~)) Connected(In(2, C~1~), In(2, A~1~))
 Connected(Out(1,X~2~),Out(1, C~1~))  Connected(In(3, C~1~), In(2,X~2~))
 
 Connected(Out(1, O~1~),Out(2, C~1~)) Connected(In(3, C~1~), In(1, A~2~)) .
-```
+
+---
+
 **Pose queries to the inference procedure**
 
 What combinations of inputs would cause the first output of C~1~ (the sum bit) to be 0 and the second output of C~1~ (the carry bit) to be 1?
@@ -2453,7 +2653,9 @@ Let us begin with universal quantifiers. Suppose our knowledge base contains the
 ∀x King(x) ∧Greedy(x) ⇒ Evil(x) .
 
 Then it seems quite permissible to infer any of the following sentences:
-```
+
+---
+
 King(John) ∧ Greedy(John) ⇒ Evil(John)
 
 King(Richard ) ∧ Greedy(Richard) ⇒ Evil(Richard)
@@ -2462,7 +2664,9 @@ King(Father (John)) ∧ Greedy(Father (John)) ⇒ Evil(Father (John)) .
   .
   .
   .
-```
+
+---
+
 The rule of **Universal Instantiation** (**UI** for short) says that we can infer any sentence obtained by substituting a **ground term** (a term without variables) for the variable.1 To write out the inference rule formally, we use the notion of **substitutions** introduced in Section 8.3. Let SUBST(θ, α) denote the result of applying the substitution θ to the sentence α. Then the rule is written
 
 ∀ v α 
@@ -2488,9 +2692,13 @@ Crown(C~1~) ∧ OnHead(C~1~, John)
 as long as C~1~ does not appear elsewhere in the knowledge base. Basically, the existential sentence says there is some object satisfying a condition, and applying the existential instantiation rule just gives a name to that object. Of course, that name must not already belong to another object. Mathematics provides a nice example: suppose we discover that there is a number that is a little bigger than 2.71828 and that satisfies the equation d(x^y^)/dy = x^y^ for x. We can give this number a name, such as e, but it would be a mistake to give it the name of an existing object, such as π. In logic, the new name is called a **Skolem constant**. Existential Instantiation is a special case of a more general process called **skolemization**, which we cover in Section 9.5.
 
 Whereas Universal Instantiation can be applied many times to produce many different consequences, Existential Instantiation can be applied once, and then the existentially quantified sentence can be discarded. For example, we no longer need ∃x Kill(x,Victim) once we have added the sentence Kill(Murderer ,Victim). Strictly speaking, the new knowledge base is not logically equivalent to the old, but it can be shown to be **inferentially equivalent** in the sense that it is satisfiable exactly when the original knowledge base is satisfiable.
-```
+
+---
+
 1 Do not confuse these substitutions with the extended interpretations used to define the semantics of quantifiers. The substitution replaces a variable with a term (a piece of syntax) to produce a new sentence, whereas an interpretation maps a variable to an object in the domain.  
-```
+
+---
+
 
 
 ### Reduction to propositional inference
@@ -2498,7 +2706,9 @@ Whereas Universal Instantiation can be applied many times to produce many differ
 Once we have rules for inferring nonquantified sentences from quantified sentences, it becomes possible to reduce first-order inference to propositional inference. In this section we give the main ideas; the details are given in Section 9.5.
 
 The first idea is that, just as an existentially quantified sentence can be replaced by one instantiation, a universally quantified sentence can be replaced by the set of _all possible_ instantiations. For example, suppose our knowledge base contains just the sentences
-```
+
+---
+
 ∀ x King(x) ∧ Greedy(x) ⇒ Evil(x)
 
 King(John)
@@ -2506,13 +2716,19 @@ King(John)
 Greedy(John)
 
 Brother (Richard , John) .                 (9.1)
-```
+
+---
+
 Then we apply UI to the first sentence using all possible ground-term substitutions from the vocabulary of the knowledge base—in this case, {x/John} and {x/Richard}. We obtain
-```
+
+---
+
 King(John) ∧ Greedy(John) ⇒ Evil(John)
 
 King(Richard ) ∧ Greedy(Richard) ⇒ Evil(Richard) ,
-```
+
+---
+
 and we discard the universally quantified sentence. Now, the knowledge base is essentially propositional if we view the ground atomic sentences—King (John), Greedy(John), and so on—as proposition symbols. Therefore, we can apply any of the complete propositional algorithms in Chapter 7 to obtain conclusions such as Evil(John).
 
 This technique of **propositionalization** can be made completely general, as we show in Section 9.5; that is, every first-order knowledge base and query can be propositionalized in such a way that entailment is preserved. Thus, we have a complete decision procedure for entailment . . . or perhaps not. There is a problem: when the knowledge base includes a function symbol, the set of possible ground-term substitutions is infinite! For example, if the knowledge base mentions the Father symbol, then infinitely many nested terms such as Father (Father (Father (John))) can be constructed. Our propositional algorithms will have difficulty with an infinitely large set of sentences.
@@ -2524,13 +2740,17 @@ We have sketched an approach to first-order inference via propositionalization t
 ## UNIFICATION AND LIFTING
 
 The preceding section described the understanding of first-order inference that existed up to the early 1960s. The sharp-eyed reader (and certainly the computational logicians of the early 1960s) will have noticed that the propositionalization approach is rather inefficient. For example, given the query Evil(x) and the knowledge base in Equation (9.1), it seems perverse to generate sentences such as King(Richard ) ∧Greedy(Richard) ⇒ Evil(Richard ). Indeed, the inference of Evil(John) from the sentences
-```
+
+---
+
 ∀ x King(x) ∧Greedy(x) ⇒ Evil(x)
 
 King(John)
 
 Greedy(John)
-```
+
+---
+
 seems completely obvious to a human being. We now show how to make it completely obvious to a computer.
 
 ### A first-order inference rule
@@ -2558,7 +2778,9 @@ SUBST(θ, q) .
 There are n+1 premises to this rule: the n atomic sentences p~i~ ′ and the one implication. The
 
 conclusion is the result of applying the substitution θ to the consequent q. For our example:
-```
+
+---
+
 P~1~′ is King(John)         P~1~ is King(x)
 
 p~2~′ is Greedy(y)          p~2~ is Greedy(x)
@@ -2566,7 +2788,9 @@ p~2~′ is Greedy(y)          p~2~ is Greedy(x)
 θ is {x/John , y/John}      q is Evil(x)
 
 SUBST(θ, q) is Evil(John) .
-```
+
+---
+
 It is easy to show that Generalized Modus Ponens is a sound inference rule. First, we observe that, for any sentence p (whose variables are assumed to be universally quantified) and for any substitution θ,
 
 p |= SUBST(θ, p)
@@ -2590,12 +2814,18 @@ Lifted inference rules require finding substitutions that make different logical
 UNIFY(p, q)= θ where SUBST(θ, p)= SUBST(θ, q) .
 
 Let us look at some examples of how UNIFY should behave. Suppose we have a query AskVars(Knows(John , x)): whom does John know? Answers to this query can be found
-```
+
+---
+
 2 Generalized Modus Ponens is more general than Modus Ponens (page 249) in the sense that the known facts and the premise of the implication need match only up to a substitution, rather than exactly. On the other hand, Modus Ponens allows any sentence α as the premise, rather than just a conjunction of atomic sentences.  
-```
+
+---
+
 
 by finding all sentences in the knowledge base that unify with Knows(John , x). Here are the results of unification with four different sentences that might be in the knowledge base:
-```
+
+---
+
 UNIFY(Knows(John , x), Knows(John , Jane)) = {x/Jane}
 
 UNIFY(Knows(John , x), Knows(y,Bill)) = {x/Bill , y/John}
@@ -2603,7 +2833,9 @@ UNIFY(Knows(John , x), Knows(y,Bill)) = {x/Bill , y/John}
 UNIFY(Knows(John , x), Knows(y,Mother (y))) = {y/John , x/Mother (John)}
 
 UNIFY(Knows(John , x), Knows(x,Elizabeth)) = fail .
-```
+
+---
+
 The last unification fails because x cannot take on the values John and Elizabeth at the same time. Now, remember that Knows(x,Elizabeth) means “Everyone knows Elizabeth,” so we _should_ be able to infer that John knows Elizabeth. The problem arises only because the two sentences happen to use the same variable name, x. The problem can be avoided by **standardizing apart** one of the two sentences being unified, which means renaming it variables to avoid name clashes. For example, we can rename x in Knows(x,Elizabeth) to X~1~7 (a new variable name) without changing its meaning. Now the unification will work:
 
 UNIFY(Knows(John , x), Knows(X~17~,Elizabeth)) = {x/Elizabeth , X~17~/John} .
@@ -2660,12 +2892,16 @@ and tens of millions of employees. Answering a query such as Employs(x,Richard )
 For this particular query, it would help if facts were indexed both by predicate and by second argument, perhaps using a combined hash table key. Then we could simply construct the key from the query and retrieve exactly those facts that unify with the query. For other queries, such as Employs(IBM , y), we would need to have indexed the facts by combining the predicate with the first argument. Therefore, facts can be stored under multiple index keys, rendering them instantly accessible to various queries that they might unify with.
 
 Given a sentence to be stored, it is possible to construct indices for _all possible_ queries that unify with it. For the fact Employs(IBM ,Richard), the queries are
-```
+
+---
+
 Employs(IBM ,Richard)     Does IBM employ Richard? 
 Employs(x,Richard )       Who employs Richard? 
 Employs(IBM , y)          Whom does IBM employ? 
 Employs(x, y)             Who employs whom?
-```
+
+---
+
 These queries form a **subsumption lattice**, as shown in Figure 9.2(a). The lattice has some interesting properties. For example, the child of any node in the lattice is obtained from its parent by a single substitution; and the “highest” common descendant of any two nodes is the result of applying their most general unifier. The portion of the lattice above any ground fact can be constructed systematically (Exercise 9.5). A sentence with repeated constants has a slightly different lattice, as shown in Figure 9.2(b). Function symbols and variables in the sentences to be stored introduce still more interesting lattice structures.
 
 The scheme we have described works very well whenever the lattice contains a small number of nodes. For a predicate with n arguments, however, the lattice contains O(2^n^) nodes. If function symbols are allowed, the number of nodes is also exponential in the size of the terms in the sentence to be stored. This can lead to a huge number of indices. At some point, the benefits of indexing are outweighed by the costs of storing and maintaining all the indices. We can respond by adopting a fixed policy, such as maintaining indices only on keys composed of a predicate plus each argument, or by using an adaptive policy that creates indices to meet the demands of the kinds of queries being asked. For most AI systems, the number of facts to be stored is small enough that efficient indexing is considered a solved problem. For commercial databases, where facts number in the billions, the problem has been the subject of intensive study and technology development..  
@@ -2832,9 +3068,13 @@ American(x) ∧Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x)
 and the fact American(West). This partial match is then discarded and rebuilt on the second iteration (when the rule succeeds). It would be better to retain and gradually complete the partial matches as new facts arrive, rather than discarding them.
 
 The **rete** algorithm3 was the first to address this problem. The algorithm preprocesses the set of rules in the knowledge base to construct a sort of dataflow network in which each
-```
+
+---
+
 3 Rete is Latin for net. The English pronunciation rhymes with treaty.  
-```
+
+---
+
 
 node is a literal from a rule premise. Variable bindings flow through the network and are filtered out when they fail to match a literal. If two literals in a rule share a variable—for example, Sells(x, y, z) ∧ Hostile(z) in the crime example—then the bindings from each literal are filtered through an equality node. A variable binding reaching a node for an nary literal such as Sells(x, y, z) might have to wait for bindings for the other variables to be established before the process can continue. At any given point, the state of a rete network captures all the partial matches of the rules, avoiding a great deal of recomputation.
 
@@ -2849,9 +3089,13 @@ The final source of inefficiency in forward chaining appears to be intrinsic to 
 One way to avoid drawing irrelevant conclusions is to use backward chaining, as described in Section 9.4. Another solution is to restrict forward chaining to a selected subset of rules, as in PL-FC-ENTAILS? (page 258). A third approach has emerged in the field of **deductive databases**, which are large-scale databases, like relational databases, but which use forward chaining as the standard inference tool rather than SQL queries. The idea is to rewrite the rule set, using information from the goal, so that only relevant variable bindings—those belonging to a so-called **magic set**—are considered during forward inference. For example, if the goal is Criminal(West), the rule that concludes Criminal(x) will be rewritten to include an extra conjunct that constrains the value of x:
 
 Magic(x) ∧ American(x) ∧Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x) .
-```
+
+---
+
 4 The word **production** in **production systems** denotes a condition–action rule.  
-```
+
+---
+
 
 The fact Magic(West) is also added to the KB. In this way, even if the knowledge base contains facts about millions of Americans, only Colonel West will be considered during the forward inference process. The complete process for defining magic sets and rewriting the knowledge base is too complex to go into here, but the basic idea is to perform a sort of “generic” backward inference from the goal in order to work out which variable bindings need to be constrained. The magic sets approach can therefore be thought of as a kind of hybrid between forward inference and backward preprocessing.
 
@@ -2906,16 +3150,24 @@ Prolog programs are sets of definite clauses written in a notation somewhat diff
 criminal(X) :- american(X), weapon(Y), sells(X,Y,Z), hostile(Z).
 
 The notation [E|L] denotes a list whose first element is E and whose rest is L. Here is a Prolog program for append(X,Y,Z), which succeeds if list Z is the result of appending lists X and Y:
-```
+
+---
+
 append([],Y,Y). 
 append([A|X],Y,[A|Z]) :- append(X,Y,Z).
-```
+
+---
+
 In English, we can read these clauses as (1) appending an empty list with a list Y produces the same list Y and (2) [A|Z] is the result of appending [A|X] onto Y, provided that Z is the result of appending X onto Y. In most high-level languages we can write a similar recursive function that describes how to append two lists. The Prolog definition is actually much more powerful, however, because it describes a _relation_ that holds among three arguments, rather than a _function_ computed from two arguments. For example, we can ask the query append(X,Y,[1,2]): what two lists can be appended to give [1,2]? We get back the solutions
-```
+
+---
+
 X=[] Y=[1,2]; 
 X=[1] Y=[2]; 
 X=[1,2] Y=[]
-```
+
+---
+
 The execution of Prolog programs is done through depth-first backward chaining, where clauses are tried in the order in which they are written in the knowledge base. Some aspects of Prolog fall outside standard logical inference:
 
 - Prolog uses the database semantics of Section 8.2.8 rather than first-order semantics, and this is apparent in its treatment of equality and negation (see Section 9.4.5).
@@ -2939,9 +3191,13 @@ First, our implementation had to explicitly manage the iteration over possible r
 Second, our simple implementation of FOL-BC-ASK spends a good deal of time generating substitutions. Instead of explicitly constructing substitutions, Prolog has logic variables that remember their current binding. At any point in time, every variable in the program either is unbound or is bound to some value. Together, these variables and values implicitly define the substitution for the current branch of the proof. Extending the path can only add new variable bindings, because an attempt to add a different binding for an already bound variable results in a failure of unification. When a path in the search fails, Prolog will back up to a previous choice point, and then it might have to unbind some variables. This is done by keeping track of all the variables that have been bound in a stack called the **trail**. As each new variable is bound by UNIFY-VAR, the variable is pushed onto the trail. When a goal fails and it is time to back up to a previous choice point, each of the variables is unbound as it is removed from the trail.
 
 Even the most efficient Prolog interpreters require several thousand machine instructions per inference step because of the cost of index lookup, unification, and building the recursive call stack. In effect, the interpreter always behaves as if it has never seen the program before; for example, it has to _find_ clauses that match the goal. A compiled Prolog
-```
+
+---
+
 5 Note that if the Peano axioms are provided, such goals can be solved by inference within a Prolog program.  
-```
+
+---
+
 
 **procedure** APPEND(ax , y ,az , continuation)
 
@@ -3048,9 +3304,13 @@ becomes, in CNF,
 ¬American(x) ∨ ¬Weapon(y) ∨ ¬Sells(x, y, z) ∨ ¬Hostile(z) ∨ Criminal(x) .
 
 _Every sentence of first-order logic can be converted into an inferentially equivalent CNF sentence._ In particular, the CNF sentence will be unsatisfiable just when the original sentence is unsatisfiable, so we have a basis for doing proofs by contradiction on the CNF sentences.
-```
+
+---
+
 6 A clause can also be represented as an implication with a conjunction of atoms in the premise and a disjunction of atoms in the conclusion (Exercise 7.13). This is called **implicative normal form** or **Kowalski form** (especially when written with a right-to-left implication symbol (Kowalski, 1979)) and is often much easier to read.  
-```
+
+---
+
 
 The procedure for conversion to CNF is similar to the propositional case, which we saw on page 253. The principal difference arises from the need to eliminate existential quantifiers. We illustrate the procedure by translating the sentence “Everyone who loves all animals is loved by someone,” or
 
@@ -3119,7 +3379,9 @@ Resolution proves that KB |= α by proving KB ∧ ¬α unsatisfiable, that is, b
 ![Alt text](figure-9.11.png)
 
 Figure 7.12, so we need not repeat it here. Instead, we give two example proofs. The first is the crime example from Section 9.3. The sentences in CNF are
-```
+
+---
+
 ¬American(x) ∨ ¬Weapon(y) ∨ ¬Sells(x, y, z) ∨ ¬Hostile(z) ∨ Criminal(x)
 
 ¬Missile(x) ∨ ¬Owns(Nono, x) ∨ Sells(West , x,Nono)
@@ -3131,7 +3393,9 @@ Figure 7.12, so we need not repeat it here. Instead, we give two example proofs.
 Owns(Nono,M~1~)                       Missile(M~1~)
 
 American(West)                        Enemy(Nono,America) .
-```
+
+---
+
 We also include the negated goal ¬Criminal(West). The resolution proof is shown in Figure 9.11. Notice the structure: single “spine” beginning with the goal clause, resolving against clauses from the knowledge base until the empty clause is generated. This is characteristic of resolution on Horn clause knowledge bases. In fact, the clauses along the main spine correspond _exactly_ to the consecutive values of the goals variable in the backward-chaining algorithm of Figure 9.6. This is because we always choose to resolve with a clause whose positive literal unified with the leftmost literal of the “current” clause on the spine; this is exactly what happens in backward chaining. Thus, backward chaining is just a special case of resolution with a particular control strategy to decide which resolution to perform next.
 
 Our second example makes use of Skolemization and involves clauses that are not definite clauses. This results in a somewhat more complex proof structure. In English, the problem is as follows:
@@ -3219,7 +3483,9 @@ For example, if S contains just the clause ¬P (x, F (x,A))∨¬Q(x,A)∨ R(x,B)
 - **Saturation**: If S is a set of clauses and P is a set of ground terms, then P (S), the saturation of S with respect to P , is the set of all ground clauses obtained by applying all possible consistent substitutions of ground terms in P with variables in S.
 
 - **Herbrand base**: The saturation of a set S of clauses with respect to its Herbrand universe is called the Herbrand base of S, written as HS(S). For example, if S contains solely the clause just given, then HS(S) is the infinite set of clauses
-```
+
+---
+
 {¬P (A,F (A,A)) ∨ ¬Q(A,A) ∨ R(A,B),
 
 ¬P (B,F (B,A)) ∨ ¬Q(B,A) ∨ R(B,B),
@@ -3227,7 +3493,9 @@ For example, if S contains just the clause ¬P (x, F (x,A))∨¬Q(x,A)∨ R(x,B)
 ¬P (F (A,A), F (F (A,A), A)) ∨ ¬Q(F (A,A), A) ∨ R(F (A,A), B),
 
 ¬P (F (A,B), F (F (A,B), A)) ∨ ¬Q(F (A,B), A) ∨ R(F (A,B), B), . . . }
-```
+
+---
+
 These definitions allow us to state a form of **Herbrand’s theorem** (Herbrand, 1930):
 
 If a set S of clauses is unsatisfiable, then there exists a finite subset of HS(S) that is also unsatisfiable.
@@ -3258,7 +3526,9 @@ proof using the clauses of S itself, which are not necessarily ground clauses. W
 Let C~1~ and C~2~ be two clauses with no shared variables, and let C′~1~ and C′~2~ beground instances of C~1~ and C~2~. If C ′ is a resolvent of C′~1~ and C′~2~ , then there existsa clause C such that (1) C is a resolvent of C~1~ and C~2~ and (2) C ′ is a groundinstance of C .
 
 This is called a **lifting lemma**, because it lifts a proof step from ground clauses up to general first-order clauses. In order to prove his basic lifting lemma, Robinson had to invent unification and derive all of the properties of most general unifiers. Rather than repeat the proof here, we simply illustrate the lemma:
-```
+
+---
+
 C~1~ = ¬P (x, F (x,A)) ∨ ¬Q(x,A) ∨ R(x,B)
 
 C~2~ = ¬N(G(y), z) ∨ P (H(y), z)
@@ -3270,7 +3540,9 @@ C′~2~ = ¬N(G(B), F (H(B), A)) ∨ P (H(B), F (H(B), A))
 C′= ¬N(G(B), F (H(B), A)) ∨ ¬Q(H(B), A) ∨ R(H(B), B)
 
 C = ¬N(G(y), F (H(y), A)) ∨ ¬Q(H(y), A) ∨ R(H(y), B) .
-```
+
+---
+
 We see that indeed C ′ is a ground instance of C . In general, for C′~1~ and C′~2~ to have anyresolvents, they must be constructed by first applying to C~1~ and C~2~ the most general unifier of a pair of complementary literals in C~1~ and C~2~. From the lifting lemma, it is easy to derive a similar statement about any sequence of applications of the resolution rule:
 
 For any clause C ′ in the resolution closure of S′ there is a clause C in the resolution closure of S such that C′ is a ground instance of C and the derivation of C is the same length as the derivation of C′.
@@ -3285,7 +3557,9 @@ None of the inference methods described so far in this chapter handle an asserti
 
 
 for each predicate and function:
-```
+
+---
+
 ∀ x x= x
 
 ∀ x, y x= y ⇒ y = x
@@ -3307,7 +3581,9 @@ for each predicate and function:
     .
     .
 
-```
+
+---
+
 Given these sentences, a standard inference procedure such as resolution can perform tasks requiring equality reasoning, such as solving mathematical equations. However, these axioms will generate a lot of conclusions, most of them not helpful to a proof. So there has been a search for more efficient ways of handling equality. One alternative is to add inference rules rather than axioms. The simplest rule, **demodulation**, takes a unit clause x= y and some clause α that contains the term x, and yields a new clause formed by substituting y for x within α. It works if the term within α unifies with x; it need not be exactly equal to x. Note that demodulation is directional; given x = y, the x always gets replaced with y, never vice versa. That means that demodulation can be used for simplifying expressions using demodulators such as x + 0= x or x^1^ = x. As another example, given
 
 Father (Father (x)) = PaternalGrandfather (x)
@@ -3635,26 +3911,38 @@ Each **state** is represented as a conjunction of fluents that are ground, funct
 **Actions** are described by a set of action schemas that implicitly define the ACTIONS(s) and RESULT(s, a) functions needed to do a problem-solving search. We saw in Chapter 7 that any system for action description needs to solve the frame problem—to say what changes and what stays the same as the result of the action. Classical planning concentrates on problems where most actions leave most things unchanged. Think of a world consisting of a bunch of objects on a flat surface. The action of nudging an object causes that object to change its location by a vector Δ. A concise description of the action should mention only Δ; it shouldn’t have to mention all the objects that stay in place. PDDL does that by specifying the result of an action in terms of what changes; everything that stays the same is left unmentioned.
 
 A set of ground (variable-free) actions can be represented by a single **action schema**. The schema is a **lifted** representation—it lifts the level of reasoning from propositional logic to a restricted subset of first-order logic. For example, here is an action schema for flying a plane from one location to another:
-```
+
+---
+
 Action(Fly(p, from , to),
 
 PRECOND:At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
 
 EFFECT:¬At(p, from) ∧ At(p, to))
-```
+
+---
+
 The schema consists of the action name, a list of all the variables used in the schema, a **precondition** and an **effect**. Although we haven’t said yet how the action schema converts into logical sentences, think of the variables as being universally quantified. We are free to choose whatever values we want to instantiate the variables. For example, here is one ground
-```
+
+---
+
 1 PDDL was derived from the original STRIPS planning language(Fikes and Nilsson, 1971). which is slightly more restricted than PDDL: STRIPS preconditions and goals cannot contain negative literals.  
-```
+
+---
+
 
 action that results from substituting values for all the variables:
-```
+
+---
+
 Action(Fly(P~1~,SFO , JFK ),
 
 PRECOND:At(P~1~,SFO) ∧ Plane(P~1~) ∧ Airport(SFO) ∧ Airport(JFK )
 
 EFFECT:¬At(P~1~,SFO) ∧ At(P~1~, JFK ))
-```
+
+---
+
 The precondition and effect of an action are each conjunctions of literals (positive or negated atomic sentences). The precondition defines the states in which the action can be executed, and the effect defines the result of executing the action. An action a can be executed in state s if s entails the precondition of a. Entailment can also be expressed with the set semantics: s |= q iff every positive literal in q is in s and every negated literal in q is not. In formal notation we say
 
 (a ∈ ACTIONS(s)) ⇔ s |= PRECOND(a) ,
@@ -3687,7 +3975,9 @@ In PDDL the times and states are implicit in the action schemas: the preconditio
 
 A set of action schemas serves as a definition of a planning _domain_. A specific _problem_ within the domain is defined with the addition of an initial state and a goal. The **initial**  
 
-```
+
+---
+
 Init(At(C~1~, SFO) ∧ At(C~2~, JFK ) ∧ At(P~1~, SFO) ∧ At(p~2~, JFK )
 
     ∧ Cargo(C~1~) ∧ Cargo(C~2~) ∧ Plane(P~1~) ∧ Plane(p~2~)
@@ -3713,7 +4003,9 @@ Action(Fly(p, from , to),
     PRECOND: At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
 
     EFFECT: ¬ At(p, from) ∧ At(p, to))
-```
+
+---
+
 **Figure 10.1** A PDDL description of an air cargo transportation planning problem.
 
 **state** is a conjunction of ground atoms. (As with all states, the closed-world assumption is used, which means that any atoms that are not mentioned are false.) The **goal** is just like a precondition: a conjunction of literals (positive or negative) that may contain variables, such as At(p,SFO) ∧ Plane(p). Any variables are treated as existentially quantified, so this goal is to have _any_ plane at SFO. The problem is solved when we can find a sequence of actions that end in a state s that entails the goal. For example, the state Rich ∧ Famous ∧ Miserable entails the goal Rich ∧ Famous , and the state Plane(Plane~1~) ∧ At(Plane~1~,SFO) entails the goal At(p,SFO) ∧ Plane(p).
@@ -3732,7 +4024,9 @@ Finally, there is the problem of spurious actions such as Fly(P~1~, JFK , JFK ),
 ### Example: The spare tire problem
 
 Consider the problem of changing a flat tire (Figure 10.2). The goal is to have a good spare tire properly mounted onto the car’s axle, where the initial state has a flat tire on the axle and a good spare tire in the trunk. To keep it simple, our version of the problem is an abstract one, with no sticky lug nuts or other complications. There are just four actions: removing the spare from the trunk, removing the flat tire from the axle, putting the spare on the axle, and leaving the car unattended overnight. We assume that the car is parked in a particularly bad neighborhood, so that the effect of leaving it overnight is that the tires disappear. A solution to the problem is [Remove(Flat ,Axle),Remove(Spare ,Trunk ),PutOn(Spare ,Axle)].
-```
+
+---
+
 Init(Tire(Flat) ∧ Tire(Spare) ∧ At(Flat ,Axle) ∧ At(Spare,Trunk))
 
 Goal(At(Spare,Axle))
@@ -3754,16 +4048,24 @@ Action(LeaveOvernight ,
     PRECOND: EFFECT: ¬ At(Spare,Ground) ∧ ¬ At(Spare,Axle) ∧ ¬ At(Spare,Trunk)
 
     ∧ ¬ At(Flat ,Ground) ∧ ¬ At(Flat ,Axle) ∧ ¬ At(Flat , Trunk))
-```
+
+---
+
 **Figure 10.2** The simple spare tire problem.
 
 ### Example: The blocks world
 
 One of the most famous planning domains is known as the **blocks world**. This domain consists of a set of cube-shaped blocks sitting on a table.2 The blocks can be stacked, but only one block can fit directly on top of another. A robot arm can pick up a block and move it to another position, either on the table or on top of another block. The arm can pick up only one block at a time, so it cannot pick up a block that has another one on it. The goal will always be to build one or more stacks of blocks, specified in terms of what blocks are on top
-```
+
+---
+
 2 The blocks world used in planning research is much simpler than SHRDLU’s version, shown on page 20.  
-```
-```
+
+---
+
+
+---
+
 Init(On(A,Table) ∧ On(B,Table) ∧ On(C, A)
 
     ∧ Block (A) ∧ Block (B) ∧ Block (C) ∧ Clear (B) ∧ Clear (C))
@@ -3782,7 +4084,9 @@ Action(MoveToTable(b, x),
     PRECOND: On(b, x) ∧ Clear (b) ∧ Block (b) ∧ (b ≠x), 
     
     EFFECT: On(b,Table) ∧ Clear (x) ∧ ¬On(b, x))
-```
+
+---
+
 **Figure 10.3** A planning problem in the blocks world: building a three-block tower. One solution is the sequence [MoveToTable(C, A),Move(B,Table , C),Move(A,Table , B)].
 
 ![Alt text](figure-10.4.png)
@@ -3905,9 +4209,13 @@ Another possibility is the **ignore delete lists** heuristic. Assume for a momen
 The relaxed problems leave us with a simplified—but still expensive—planning problem just to calculate the value of the heuristic function. Many planning problems have 10^100^ states or more, and relaxing the _actions_ does nothing to reduce the number of states. Therefore, we now look at relaxations that decrease the number of states by forming a **state abstraction**—a many-to-one mapping from states in the ground representation of the problem to the abstract representation. 
 
 The easiest form of state abstraction is to ignore some fluents. For example, consider an air cargo problem with 10 airports, 50 planes, and 200 pieces of cargo. Each plane can be at one of 10 airports and each package can be either in one of the planes or unloaded at one of the airports. So there are 50^10^ × 200^50+10^ ≈ 10^155^ states. Now consider a particular problem in that domain in which it happens that all the packages are at just 5 of the airports, and all packages at a given airport have the same destination. Then a useful abstraction of the problem is to drop all the At fluents except for the ones involving one plane and one package at each of the 5 airports. Now there are only 5^10^ × 5^5+10^ ≈ 10^17^ states. A solution in this abstract state space will be shorter than a solution in the original space (and thus will be an admissible heuristic), and the abstract solution is easy to extend to a solution to the original problem (by adding additional Load and Unload actions).
-```
+
+---
+
 3 Many problems are written with this convention. For problems that aren’t, replace every negative literal ¬P
-```
+
+---
+
 in a goal or precondition with a new positive literal, P ′.  
 
 ![Alt text](figure-10.6.png)
@@ -3934,7 +4242,9 @@ the actions executed at preceding time steps. If it is possible that either P or
 
 Planning graphs work only for propositional planning problems—ones with no variables. As we mentioned on page 368, it is straightforward to propositionalize a set of ac 
 
-```
+
+---
+
 Init(Have(Cake))
 
 Goal (Have(Cake) ∧ Eaten(Cake))
@@ -3950,7 +4260,9 @@ Action(Bake(Cake)
     PRECOND: ¬ Have(Cake)
 
     EFFECT: Have(Cake))
-```
+
+---
+
 **Figure 10.7** The “have cake and eat cake too” problem.
 
 ![Alt text](figure-10.8.png)
@@ -4347,7 +4659,9 @@ The previous chapter introduced the most basic concepts, representations, and al
 The classical planning representation talks about _what to do_, and in _what order_, but the representation cannot talk about time: _how long_ an action takes and _when_ it occurs. For example, the planners of Chapter 10 could produce a schedule for an airline that says which planes are assigned to which flights, but we really need to know departure and arrival times as well. This is the subject matter of **scheduling**. The real world also imposes many **resource constraints**; for example, an airline has a limited number of staff—and staff who are on one flight cannot be on another at the same time. This section covers methods for representing and solving planning problems that include temporal and resource constraints.
 
 The approach we take in this section is “plan first, schedule later”: that is, we divide the overall problem into a _planning_ phase in which actions are selected, with some ordering constraints, to meet the goals of the problem, and a later _scheduling_ phase, in which temporal information is added to the plan to ensure that it meets resource and deadline constraints.
-```
+
+---
+
 Jobs({AddEngine1 ≺AddWheels~1~ ≺ Inspect~1~},
 
     {AddEngine2 ≺AddWheels~2~ ≺ Inspect~2~})
@@ -4373,7 +4687,9 @@ Action(AddWheels~2~ , DURATION:15, CONSUME:LugNuts(20),
 Action(Inspect i, DURATION:10, 
 
     USE:Inspectors(1))
-```
+
+---
+
 **Figure 11.1** A job-shop scheduling problem for assembling two cars, with resource constraints. The notation A≺B means that action A must precede action B.
 
 This approach is common in real-world manufacturing and logistical settings, where the planning phase is often performed by human experts. The automated methods of Chapter 10 can also be used for the planning phase, provided that they produce plans with just the minimal ordering constraints required for correctness. G RAPHPLAN (Section 10.3), SATP~LAN~ (Section 10.4.1), and partial-order planners (Section 10.4.4) can do this; search-based methods (Section 10.2) produce totally ordered plans, but these can easily be converted to plans with minimal ordering constraints.
@@ -4439,7 +4755,9 @@ In this example, we see that planning can occur both before and during the execu
 
 The basic formalism we adopt to understand hierarchical decomposition comes from the area of **hierarchical task networks** or HTN planning. As in classical planning (Chapter 10), we assume full observability and determinism and the availability of a set of actions, now called **primitive actions**, with standard precondition–effect schemas. The key additional concept is the **high-level action** or HLA—for example, the action “Go to San Francisco airport” in the
 
-```
+
+---
+
 Refinement(Go(Home,SFO),
 
   STEPS: [Drive(Home,SFOLongTermParking),
@@ -4470,7 +4788,9 @@ Refinement(Navigate([a, b], [x, y]),
     STEPS: [Right ,Navigate([a + 1, b], [x, y])] )
 
 . . .
-```
+
+---
+
 **Figure 11.4** Definitions of possible refinements for two high-level actions: going to San Francisco airport and navigating in the vacuum world. In the latter case, note the recursive nature of the refinements and the use of preconditions.
 
 example given earlier. Each HLA has one or more possible **refinements,** into a sequence of actions, each of which may be an HLA or a primitive action (which has no refinements by definition). For example, the action “Go to San Francisco airport,” represented formally as Go(Home,SFO), might have two possible refinements, as shown in Figure 11.4. The same figure shows a **recursive** refinement for navigation in the vacuum world: to get to a destination, take a step, and then go to the destination.
@@ -4478,9 +4798,13 @@ example given earlier. Each HLA has one or more possible **refinements,** into a
 These examples show that high-level actions and their refinements embody knowledge about _how to do things_. For instance, the refinements for Go(Home,SFO) say that to get to the airport you can drive or take a taxi; buying milk, sitting down, and moving the knight to e4 are not to be considered.
 
 An HLA refinement that contains only primitive actions is called an **implementation** of the HLA. For example, in the vacuum world, the sequences [Right ,Right ,Down ] and [Down ,Right ,Right ] both implement the HLA Navigate([1, 3], [3, 2]). An implementation of a high-level plan (a sequence of HLAs) is the concatenation of implementations of each HLA in the sequence. Given the precondition–effect definitions of each primitive action, it is straightforward to determine whether any given implementation of a high-level plan achieves the goal. We can say, then, that _a high-level plan achieves the goal from a given state if at least one of its implementations achieves the goal from that state._ The “at least one” in this definition is crucial—not _all_ implementations need to achieve the goal, because the agent gets
-```
+
+---
+
 1 HTN planners often allow refinement into partially ordered plans, and they allow the refinements of two different HLAs in a plan to _share_ actions. We omit these important complications in the interest of understanding the basic concepts of hierarchical planning.  
-```
+
+---
+
 
 to decide which implementation it will execute. Thus, the set of possible implementations in HTN planning—each of which may have a different outcome—is not the same as the set of possible outcomes in nondeterministic planning. There, we required that a plan work for _all_ outcomes because the agent doesn’t get to choose the outcome; nature does.
 
@@ -4806,9 +5130,13 @@ Given a mechanism for computing exact or approximate belief states, we can gener
 Imagine watching a spot-welding robot in a car plant. The robot’s fast, accurate motions are repeated over and over again as each car passes down the line. Although technically impressive, the robot probably does not seem at all _intelligent_ because the motion is a fixed, preprogrammed sequence; the robot obviously doesn’t “know what it’s doing” in any meaningful sense. Now suppose that a poorly attached door falls off the car just as the robot is about to apply a spot-weld. The robot quickly replaces its welding actuator with a gripper, picks up the door, checks it for scratches, reattaches it to the car, sends an email to the floor supervisor, switches back to the welding actuator, and resumes its work. All of a sudden, the robot’s behavior seems _purposive_ rather than rote; we assume it results not from a vast, precomputed contingent plan but from an online replanning process—which means that the robot _does_ need to know what it’s trying to do.
 
 Replanning presupposes some form of **execution monitoring** to determine the need for a new plan. One such need arises when a contingent planning agent gets tired of planning for every little contingency, such as whether the sky might fall on its head.3 Some branches of a partially constructed contingent plan can simply say Replan ; if such a branch is reached during execution, the agent reverts to planning mode. As we mentioned earlier, the decision as to how much of the problem to solve in advance and how much to leave to replanning is one that involves tradeoffs among possible events with different costs and probabilities of occurring. Nobody wants to have their car break down in the middle of the Sahara desert and only then think about having enough water.
-```
+
+---
+
 2 If cyclic solutions are required for a nondeterministic problem, AND–OR search must be generalized to a loopy version such as LAO∗ (Hansen and Zilberstein, 2001). 3 In 1954, a Mrs. Hodges of Alabama was hit by meteorite that crashed through her roof. In 1992, a piece of the Mbale meteorite hit a small boy on the head; fortunately, its descent was slowed by banana leaves (Jenniskens _et al._, 1994). And in 2009, a German boy claimed to have been hit in the hand by a pea-sized meteorite. No serious injuries resulted from any of these incidents, suggesting that the need for preplanning against such contingencies is sometimes overstated.  
-```
+
+---
+
 
 ![Alt text](figure-11.9.png)
 
@@ -4844,9 +5172,13 @@ Action monitoring is a simple method of execution monitoring, but it can sometim
 Plan monitoring also allows for **serendipity**—accidental success. If someone comes along and paints the table red at the same time that the agent is painting the chair red, then the final plan preconditions are satisfied (the goal has been achieved), and the agent can go home early.
 
 It is straightforward to modify a planning algorithm so that each action in the plan is annotated with the action’s preconditions, thus enabling action monitoring. It is slightly
-```
+
+---
+
 4 Plan monitoring means that finally, after 424 pages, we have an agent that is smarter than a dung beetle (see page 39). A plan-monitoring agent would notice that the dung ball was missing from its grasp and would replan to get another ball and plug its hole.  
-```
+
+---
+
 
 more complex to enable plan monitoring. Partial-order and planning-graph planners have the advantage that they have already built up structures that contain the relations necessary for plan monitoring. Augmenting state-space planners with the necessary annotations can be done by careful bookkeeping as the goal fluents are regressed through the plan.
 
@@ -4859,9 +5191,13 @@ Trouble occurs when an action is actually not nondeterministic, but rather depen
 So far, we have assumed that only one agent is doing the sensing, planning, and acting. When there are multiple agents in the environment, each agent faces a **multiagent planning problem** in which it tries to achieve its own goals with the help or hindrance of others.
 
 Between the purely single-agent and truly multiagent cases is a wide spectrum of problems that exhibit various degrees of decomposition of the monolithic agent. An agent with multiple effectors that can operate concurrently—for example, a human who can type and speak at the same time—needs to do **multieffector planning** to manage each effector while handling positive and negative interactions among the effectors. When the effectors are physically decoupled into detached units—as in a fleet of delivery robots in a factory— multieffector planning becomes **multibody planning**. A multibody problem is still a “standard” single-agent problem as long as the relevant sensor information collected by each body can be pooled—either centrally or within each body—to form a common estimate of the world state that then informs the execution of the overall plan; in this case, the multiple bodies act as a single body. When communication constraints make this impossible, we have
-```
+
+---
+
 5 Futile repetition of a plan repair is exactly the behavior exhibited by the sphex wasp (page 39).  
-```
+
+---
+
 
 what is sometimes called a **decentralized planning** problem; this is perhaps a misnomer, because the planning phase is centralized but the execution phase is at least partially decoupled. In this case, the subplan constructed for each body may need to include explicit communicative actions with other bodies. For example, multiple reconnaissance robots covering a wide area may often be out of radio contact with each other and should share their findings during times when communication is feasible.
 
@@ -4876,9 +5212,13 @@ The issues involved in multiagent planning can be divided roughly into two sets.
 For the time being, we will treat the multieffector, multibody, and multiagent settings in the same way, labeling them generically as **multiactor** settings, using the generic term **actor** toMULTIACTOR
 
 ACTOR cover effectors, bodies, and agents. The goal of this section is to work out how to define transition models, correct plans, and efficient planning algorithms for the multiactor setting. A correct plan is one that, if executed by the actors, achieves the goal. (In the true multiagent setting, of course, the agents may not agree to execute any particular plan, but at least they
-```
+
+---
+
 6 We apologize to residents of the United Kingdom, where the mere act of contemplating a game of tennis guarantees rain.  
-```
+
+---
+
 
 Actors(A, B)
 
@@ -5125,10 +5465,14 @@ Basketballs ⊂ Balls
 
 - All members of a category have some properties. 
 (x ∈ Basketballs) ⇒ Spherical (x)
-```
+
+---
+
 1 Turning a proposition into an object is called reification,from the Latin word _res_, or thing. John McCarthy proposed the term “thingification,” but it never caught on. 
 2 The famous biologist J. B. S. Haldane deduced “An inordinate fondness for beetles” on the part of the Creator.  
-```
+
+---
+
 
 - Members of a category can be recognized by some properties. 
 Orange(x) ∧ Round(x) ∧Diameter(x)= 9.5′′ ∧ x ∈ Balls ⇒ x ∈  Basketballs
@@ -5298,7 +5642,9 @@ If this is too verbose, we can define an alternative three-argument version of t
 E~1~ ∈ Flyings(Shankar ,SF ,DC ) .
 
 We then use Happens(E~1~, i) to say that the event E~1~ took place over the time interval i, and we say the same thing in functional form with Extent(E~1~)= i. We represent time intervals by a (start, end) pair of times; that is, i = (t~1~, t~2~) is the time interval that starts at t~1~ and ends at t~2~. The complete set of predicates for one version of the event calculus is
-```
+
+---
+
 T (f, t)              Fluent f is true at time t
 
 Happens(e, i)         Event e happens over the time interval i
@@ -5310,12 +5656,18 @@ Terminates(e, f, t)   Event e causes fluent f to cease to hold at time t
 Clipped (f, i)        Fluent f ceases to be true at some point during time interval i
 
 Restored (f, i)       Fluent f becomes true sometime during time interval i
-```
+
+---
+
 We assume a distinguished event, Start , that describes the initial state by saying which fluents are initiated or terminated at the start time. We define T by saying that a fluent holds at a point in time if the fluent was initiated by an event at some time in the past and was not made false (clipped) by an intervening event. A fluent does not hold if it was terminated by an event and
-```
+
+---
+
 3 The terms “event” and “action” may be used interchangeably. Informally, “action” connotes an agent while “event” connotes the possibility of agentless actions. 
 4 Some versions of event calculus do not distinguish event categories from instances of the categories.  
-```
+
+---
+
 
 not made true (restored) by another event. Formally, the axioms are:
 
@@ -5512,9 +5864,13 @@ We might also want to assert that persons have two legs—that is,
 As before, we need to be careful not to assert that a category has legs; the single-boxed link in Figure 12.5 is used to assert properties of every member of a category.
 
 The semantic network notation makes it convenient to perform **inheritance** reasoning of the kind introduced in Section 12.2. For example, by virtue of being a person, Mary inherits the property of having two legs. Thus, to find out how many legs Mary has, the inheritance algorithm follows the MemberOf link from Mary to the category she belongs to, and then follows SubsetOf links up the hierarchy until it finds a category for which there is a boxed Legs link—in this case, the Persons category. The simplicity and efficiency of this inference
-```
+
+---
+
 5 Several early systems failed to distinguish between properties of members of a category and properties of the category as a whole. This can lead directly to inconsistencies, as pointed out by Drew McDermott (1976) in his article “Artificial Intelligence Meets Natural Stupidity.” Another common problem was the use of IsA links for both subset and membership relations, in correspondence with English usage: “a cat is a mammal” and “Fifi is a cat.” See Exercise 12.22 for more on these issues.  
-```
+
+---
+
 
 ![Alt text](figure-12.5.png)
 
@@ -5580,10 +5936,14 @@ All(Son ,And(Unemployed ,Married ,All(Spouse ,Doctor ))),
 All(Daughter ,And(Professor ,Fills(Department ,Physics ,Math)))) .
 
 We leave it as an exercise to translate this into first-order logic. Perhaps the most important aspect of description logics is their emphasis on tractability of inference. A problem instance is solved by describing it and then asking if it is subsumed by one of several possible solution categories. In standard first-order logic systems, predicting the solution time is often impossible. It is frequently left to the user to engineer the representation to detour around sets of sentences that seem to be causing the system to take several weeks to solve a problem. The thrust in description logics, on the other hand, is to ensure that subsumption-testing can be solved in time polynomial in the size of the descriptions.7
-```
+
+---
+
 6 Notice that the language does _not_ allow one to simply state that one concept, or category, is a subset of another. This is a deliberate policy: subsumption between categories must be derivable from some aspects of the descriptions of the categories. If not, then something is missing from the descriptions. 
 7 CLASSIC provides efficient subsumption testing in practice, but the worst-case run time is exponential.  
-```
+
+---
+
 
 
 This sounds wonderful in principle, until one realizes that it can only have one of two consequences: either hard problems cannot be stated at all, or they require exponentially large descriptions! However, the tractability results do shed light on what sorts of constructs cause problems and thus help the user to understand how different representations behave. For example, description logics usually lack _negation_ and _disjunction_. Each forces firstorder logical systems to go through a potentially exponential case analysis in order to ensure completeness. CLASSIC allows only a limited form of disjunction in the Fills and One Of constructs, which permit disjunction over explicitly enumerated individuals but not over descriptions. With disjunctive descriptions, nested definitions can lead easily to an exponential number of alternative routes by which one category can subsume another.
@@ -5597,9 +5957,13 @@ In the preceding section, we saw a simple example of an assertion with default s
 We have seen two examples of reasoning processes that violate the **monotonicity** property of logic that was proved in Chapter 7.8 In this chapter we saw that a property inherited by all members of a category in a semantic network could be overridden by more specific information for a subcategory. In Section 9.4.5, we saw that under the closed-world assumption, if a proposition α is not mentioned in KB then KB |= ¬α, but KB ∧ α |= α.
 
 Simple introspection suggests that these failures of monotonicity are widespread in commonsense reasoning. It seems that humans often “jump to conclusions.” For example, when one sees a car parked on the street, one is normally willing to believe that it has four wheels even though only three are visible. Now, probability theory can certainly provide a conclusion that the fourth wheel exists with high probability, yet, for most people, the possibility of the car’s not having four wheels _does not arise unless some new evidence presents itself_. Thus, it seems that the four-wheel conclusion is reached _by default_, in the absence of any reason to doubt it. If new evidence arrives—for example, if one sees the owner carrying a wheel and notices that the car is jacked up—then the conclusion can be retracted. This kind of reasoning is said to exhibit **nonmonotonicity**, because the set of beliefs does not grow monotonically over time as new evidence arrives. **Nonmonotonic logics** have been devised with modified notions of truth and entailment in order to capture such behavior. We will look at two such logics that have been studied extensively: circumscription and default logic.
-```
+
+---
+
 8 Recall that monotonicity requires all entailed sentences to remain entailed after new sentences are added to the KB. That is, if KB |= α then KB ∧ β |= α.  
-```
+
+---
+
 
 **Circumscription** can be seen as a more powerful and precise version of the closedworld assumption. The idea is to specify particular predicates that are assumed to be “as false as possible”—that is, false for every object except those for which they are known to be true. For example, suppose we want to assert the default rule that birds fly. We would introduce a predicate, say Abnormal~1~(x), and write
 
@@ -5624,9 +5988,13 @@ This rule means that if Bird(x) is true, and if Flies(x) is consistent with the 
 P : J~1~, . . . , J~n~/C
 
 where P is called the prerequisite, C is the conclusion, and Ji are the justifications—if any one of them can be proven false, then the conclusion cannot be drawn. Any variable that
-```
+
+---
+
 9 For the closed-world assumption, one model is preferred to another if it has fewer true atoms—that is, preferred models are **minimal** models. There is a natural connection between the closed-world assumption and definiteclause KBs, because the fixed point reached by forward chaining on definite-clause KBs is the unique minimal model. See page 258 for more on this point.  
-```
+
+---
+
 
 appears in Ji or C must also appear in P . The Nixon-diamond example can be represented in default logic with one fact and two default rules:
 
@@ -5643,9 +6011,13 @@ Since 1980, when nonmonotonic logics were first proposed, a great deal of progre
 ### Truth maintenance systems
 
 We have seen that many of the inferences drawn by a knowledge representation system will have only default status, rather than being absolutely certain. Inevitably, some of these inferred facts will turn out to be wrong and will have to be retracted in the face of new information. This process is called **belief revision**.10 Suppose that a knowledge base KB contains a sentence P—perhaps a default conclusion recorded by a forward-chaining algorithm, or perhaps just an incorrect assertion—and we want to execute TELL(KB , ¬P ). To avoid creating a contradiction, we must first execute RETRACT(KB , P ). This sounds easy enough.
-```
+
+---
+
 10 Belief revision is often contrasted with **belief update**, which occurs when a knowledge base is revised to reflect a change in the world rather than new information about a fixed world. Belief update combines belief revision with reasoning about time and change; it is also related to the process of **filtering** described in Chapter 15.  
-```
+
+---
+
 
 Problems arise, however, if any _additional_ sentences were inferred from P and asserted in the KB. For example, the implication P ⇒ Q might have been used to add Q. The obvious “solution”—retracting all sentences inferred from P—fails because such sentences may have other justifications besides P . For example, if R and R ⇒ Q are also in the KB, then Q does not have to be removed after all. **Truth maintenance systems**, or TMSs, are designed to handle exactly these kinds of complications. 
 
@@ -5730,9 +6102,13 @@ Now we must define what it means for _text_ to be a _RelevantCategoryName_ for _
 
 - The _text_ and _query_ name the same category—e.g., “notebooks” and “laptops.”
 
-```
+
+---
+
 11 An alternative to the link-following strategy is to use an Internet search engine; the technology behind Internet search, information retrieval, will be covered in Section 22.3.  
-```
+
+---
+
 
 ![Alt text](figure-12.9.png)
 
