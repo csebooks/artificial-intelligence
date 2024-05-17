@@ -4805,7 +4805,6 @@ An HLA refinement that contains only primitive actions is called an **implementa
 
 ---
 
-
 to decide which implementation it will execute. Thus, the set of possible implementations in HTN planning—each of which may have a different outcome—is not the same as the set of possible outcomes in nondeterministic planning. There, we required that a plan work for _all_ outcomes because the agent doesn’t get to choose the outcome; nature does.
 
 The simplest case is an HLA that has exactly one implementation. In that case, we can compute the preconditions and effects of the HLA from those of the implementation (see Exercise 11.3) and then treat the HLA exactly as if it were a primitive action itself. It can be shown that the right collection of HLAs can result in the time complexity of blind search dropping from exponential in the solution depth to linear in the solution depth, although devising such a collection of HLAs may be a nontrivial task in itself. When HLAs have multiple possible implementations, there are two options: one is to search among the implementations for one that works, as in Section 11.2.2; the other is to reason directly about the HLAs—despite the multiplicity of implementations—as explained in Section 11.2.3. The latter method enables the derivation of provably correct abstract plans, without the need to consider their implementations.
@@ -4932,9 +4931,7 @@ solution←APPEND(ANGELIC-SEARCH(problem ,hierarchy ,action ), solution)
 s~f~ ← s~i~
 **return** solution
 
-**Figure 11.8** A hierarchical planning algorithm that uses angelic semantics to identify and commit to high-level plans that work while avoiding high-level plans that don’t. The predicate MAKING-PROGRESS checks to make sure that we aren’t stuck in an infinite regression of refinements. At top level, call ANGELIC-SEARCH with [Act ] as the initialPlan .
-
-goal through the final action. 
+**Figure 11.8** A hierarchical planning algorithm that uses angelic semantics to identify and commit to high-level plans that work while avoiding high-level plans that don’t. The predicate MAKING-PROGRESS checks to make sure that we aren’t stuck in an infinite regression of refinements. At top level, call ANGELIC-SEARCH with [Act ] as the initialPlan. goal through the final action. 
 
 The ability to commit to or reject high-level plans can give ANGELIC-SEARCH a significant computational advantage over HIERARCHICAL-SEARCH, which in turn may have a large advantage over plain old BREADTH-FIRST-SEARCH. Consider, for example, cleaning up a large vacuum world consisting of rectangular rooms connected by narrow corridors. It makes sense to have an HLA for _Navigate_ (as shown in Figure 11.4) and one for _CleanWholeRoom_. (Cleaning the room could be implemented with the repeated application of another HLA to clean each row.) Since there are five actions in this domain, the cost for BREADTH-FIRST-SEARCH grows as 5^d^, where d is the length of the shortest solution (roughly twice the total number of squares); the algorithm cannot manage even two 2 × 2 rooms. HIERARCHICAL-SEARCH is more efficient, but still suffers from exponential growth because it tries all ways of cleaning that are consistent with the hierarchy. 
 scales approximately linearly in the number of squares—it commits to a good high-level sequence and prunes away the other options. Notice that cleaning a set of rooms by cleaning each room in turn is hardly rocket science: it is easy for humans precisely because of the hierarchical structure of the task. When we consider how difficult humans find it to solve small puzzles such as the 8-puzzle, it seems likely that the human capacity for solving complex problems derives to a great extent from their skill in abstracting and decomposing the problem to eliminate combinatorics.
@@ -4953,7 +4950,7 @@ Init(Object(Table) ∧ Object(Chair) ∧ Can(C~1~) ∧ Can(C~2~) ∧ InView(Tabl
 
 Goal (Color (Chair , c) ∧ Color(Table, c))
 
- There are two actions: removing the lid from a paint can and painting an object using the paint from an open can. The action schemas are straightforward, with one exception: we now allow preconditions and effects to contain variables that are not part of the action’s variable list. That is, Paint(x, can) does not mention the variable c, representing the color of the paint in the can. In the fully observable case, this is not allowed—we would have to name the action Paint(x, can , c). But in the partially observable case, we might or might not know what color is in the can. (The variable c is universally quantified, just like all the other variables in an action schema.)
+There are two actions: removing the lid from a paint can and painting an object using the paint from an open can. The action schemas are straightforward, with one exception: we now allow preconditions and effects to contain variables that are not part of the action’s variable list. That is, Paint(x, can) does not mention the variable c, representing the color of the paint in the can. In the fully observable case, this is not allowed—we would have to name the action Paint(x, can , c). But in the partially observable case, we might or might not know what color is in the can. (The variable c is universally quantified, just like all the other variables in an action schema.)
 
 Action(RemoveLid(can),
 
@@ -4999,7 +4996,7 @@ Section 4.4.1 (page 138) introduced the basic idea of searching in belief-state 
 
 The initial belief state for the sensorless painting problem can ignore InView fluents because the agent has no sensors. Furthermore, we take as given the unchanging facts Object(Table) ∧ Object(Chair) ∧ Can(C~1~) ∧ Can(C~2~) because these hold in every belief state. The agent doesn’t know the colors of the cans or the objects, or whether the cans are open or closed, but it does know that objects and cans have colors: ∀x ∃ c Color (x, c). After Skolemizing, (see Section 9.5), we obtain the initial belief state:
 
-b~0~ = Color(x,C(x)) .
+b~0~ = Color(x,C(x)).
 
 In classical planning, where the **closed-world assumption** is made, we would assume that any fluent not mentioned in a state is false, but in sensorless (and partially observable) planning we have to switch to an **open-world assumption** in which states contain both positive and negative fluents, and if a fluent does not appear, its value is unknown. Thus, the belief state corresponds exactly to the set of possible worlds that satisfy the formula. Given this initial belief state, the following action sequence is a solution:
 
@@ -5011,13 +5008,7 @@ First, note that in a given belief state b, the agent can consider any action wh
 
 b′= RESULT(b, a) = {s′ : s′= RESULTP (s, a) and s ∈ b}
 
-where RESULTP defines the physical transition model. For the time being, we assume that the initial belief state is always a conjunction of literals, that is, a 1-CNF formula. To construct the new belief state b
-
-′, we must consider what happens to each literal l in each physical state s in b when action a is applied. For literals whose truth value is already known in b, the truth value in b
-
-′ is computed from the current value and the add list and delete list of the action. (For example, if l is in the delete list of the action, then ¬l is added to b
-
-′.) What about a literal whose truth value is unknown in b? There are three cases:
+where RESULTP defines the physical transition model. For the time being, we assume that the initial belief state is always a conjunction of literals, that is, a 1-CNF formula. To construct the new belief state b′, we must consider what happens to each literal l in each physical state s in b when action a is applied. For literals whose truth value is already known in b, the truth value in b′ is computed from the current value and the add list and delete list of the action. (For example, if l is in the delete list of the action, then ¬l is added to b′.) What about a literal whose truth value is unknown in b? There are three cases:
 
 1. If the action adds l, then l will be true in b′ regardless of its initial value.
 
