@@ -5137,7 +5137,6 @@ Replanning presupposes some form of **execution monitoring** to determine the ne
 
 ---
 
-
 ![Alt text](figure-11.9.png)
 
 Replanning may also be needed if the agent’s model of the world is incorrect. The model for an action may have a **missing precondition**—for example, the agent may not know that removing the lid of a paint can often requires a screwdriver; the model may have a **missing effect**—for example, painting an object may get paint on the floor as well; or the model may have a **missing state variable**—for example, the model given earlier has no notion of the amount of paint in a can, of how its actions affect this amount, or of the need for the amount to be nonzero. The model may also lack provision for **exogenous events** such as someone knocking over the paint can. Exogenous events can also include changes in the goal, such as the addition of the requirement that the table and chair not be painted black. Without the ability to monitor and replan, an agent’s behavior is likely to be extremely fragile if it relies on absolute correctness of its model.
@@ -5198,7 +5197,6 @@ Between the purely single-agent and truly multiagent cases is a wide spectrum of
 
 ---
 
-
 what is sometimes called a **decentralized planning** problem; this is perhaps a misnomer, because the planning phase is centralized but the execution phase is at least partially decoupled. In this case, the subplan constructed for each body may need to include explicit communicative actions with other bodies. For example, multiple reconnaissance robots covering a wide area may often be out of radio contact with each other and should share their findings during times when communication is feasible.
 
 When a single entity is doing the planning, there is really only one goal, which all the bodies necessarily share. When the bodies are distinct agents that do their own planning, they may still share identical goals; for example, two human tennis players who form a doubles team share the goal of winning the match. Even with shared goals, however, the multibody and multiagent cases are quite different. In a multibody robotic doubles team, a single plan dictates which body will go where on the court and which body will hit the ball. In a multiagent doubles team, on the other hand, each agent decides what to do; without some method for **coordination**, both agents may decide to cover the same part of the court and each may leave the ball for the other to hit. The clearest case of a multiagent problem, of course, is when the agents have different goals. In tennis, the goals of two opposing teams are in direct conflict, leading to the zerosum situation of Chapter 5. Spectators could be viewed as agents if their support or disdain is a significant factor and can be influenced by the players’ conduct; otherwise, they can be treated as an aspect of nature—just like the weather—that is assumed to be indifferent to the players’ intentions.6
@@ -5211,7 +5209,7 @@ The issues involved in multiagent planning can be divided roughly into two sets.
 
 For the time being, we will treat the multieffector, multibody, and multiagent settings in the same way, labeling them generically as **multiactor** settings, using the generic term **actor** toMULTIACTOR
 
-ACTOR cover effectors, bodies, and agents. The goal of this section is to work out how to define transition models, correct plans, and efficient planning algorithms for the multiactor setting. A correct plan is one that, if executed by the actors, achieves the goal. (In the true multiagent setting, of course, the agents may not agree to execute any particular plan, but at least they
+ACTOR cover effectors, bodies, and agents. The goal of this section is to work out how to define transition models, correct plans, and efficient planning algorithms for the multiactor setting. A correct plan is one that, if executed by the actors, achieves the goal. In the true multiagent setting, of course, the agents may not agree to execute any particular plan, but at least they
 
 ---
 
@@ -5253,7 +5251,7 @@ The standard approach to loosely coupled problems is to pretend the problems are
 
 A first pass at a multiactor definition might look like Figure 11.10. With this definition, it is easy to see that the following **joint plan** plan works:
 
-PLAN 1: 
+**PLAN 1:**
 A : [Go(A,RightBaseline),Hit(A,Ball )]
 B : [NoOp(B),NoOp(B)] .
 
@@ -5370,7 +5368,7 @@ The boid model on page 429 is due to Reynolds (1987), who won an Academy Award f
 
 Recent book on multiagent systems include those by Weiss (2000a), Young (2004), Vlassis (2008), and Shoham and Leyton-Brown (2009). There is an annual conference on autonomous agents and multiagent systems (AAMAS).
 
-EXERCISES
+**EXERCISES**
 
 **11.1** The goals we have considered so far all ask the planner to make the world satisfy the goal at just one time step. Not all goals can be expressed this way: you do not achieve the goal of suspending a chandelier above the ground by throwing it in the air. More seriously, you wouldn’t want your spacecraft life-support system to supply oxygen one day but not the next. A _maintenance goal_ is achieved when the agent’s plan causes a condition to hold continuously from a given state onward. Describe how to extend the formalism of this chapter to support maintenance goals.
 
@@ -5667,7 +5665,6 @@ We assume a distinguished event, Start , that describes the initial state by say
 4 Some versions of event calculus do not distinguish event categories from instances of the categories.  
 
 ---
-
 
 not made true (restored) by another event. Formally, the axioms are:
 
