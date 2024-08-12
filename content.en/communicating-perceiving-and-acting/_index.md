@@ -253,13 +253,14 @@ If a regular expression for an attribute matches the text exactly once, then we 
 
 One step up from attribute-based extraction systems are **relational extraction** systems,which deal with multiple objects and the relations among them. Thus, when these systems see the text “$249.99,” they need to determine not just that it is a price, but also which object has that price. A typical relational-based extraction system is FASTUS, which handles news stories about corporate mergers and acquisitions. It can read the story Bridgestone Sports Co. said Friday it has set up a joint venture in Taiwan with a local concern and a Japanese trading house to produce golf clubs to be shipped to Japan.
 
-and extract the relations:
+**and extract the relations:**
 
-```
+---
 e∈ JointVentures ∧ Product(e, “golf clubs”) ∧Date(e, “Friday”) 
     ∧Member(e, “Bridgestone Sports Co”) 
     ∧Member(e, “a local concern”) ∧Member(e, “a Japanese trading house”) .
-```
+
+---
 
 A relational extraction system can be built as a series of **cascaded finite-state transducers**. That is, the system consists of a series of small, efficient finite-state automata (FSAs), where each automaton receives text as input, transduces the text into a different format, and passes it along to the next automaton. FASTUS consists of five stages:
 
@@ -339,7 +340,9 @@ One issue with HMMs for the information extraction task is that they model a lot
 
 Modeling this directly gives us some freedom. We don’t need the independence assumptions of the Markov model—we can have an **x**~t~ that is dependent on **x**1. A framework for this type of model is the **conditional random field,** or CRF, which models a conditional probability distribution of a set of target variables given a set of observed variables. Like Bayesian networks, CRFs can represent many different structures of dependencies among the variables. One common structure is the **linear-chain conditional random field** for representing Markov dependencies among variables in a temporal sequence. Thus, HMMs are the temporal version of naive Bayes models, and linear-chain CRFs are the temporal version of logistic regression, where the predicted target is an entire state sequence rather than a single binary variable.
 
+
 Let **e**1:N be the observations (e.g., words in a document), and **x**1:N be the sequence of hidden states (e.g., the prefix, target, and postfix states). A linear-chain conditional random field defines a conditional probability distribution:
+
 
 ![Alt text](image-8.png)
 
@@ -363,7 +366,8 @@ So far we have thought of information extraction as finding a specific set of re
 
 For example, Hearst (1992) looked at the problem of learning an ontology of concept categories and subcategories from a large corpus. (In 1992, a large corpus was a 1000-page encyclopedia; today it would be a 100-million-page Web corpus.) The work concentrated on templates that are very general (not tied to a specific domain) and have high precision (are almost always correct when they match) but low recall (do not always match). Here is one of the most productive templates:
 
-NP **such as** NP (**,** NP )* (**,**)? ((**and** | **or**) NP)? .
+NP **such as** NP (**,** NP)* (**,**)? ((**and** | **or**) NP)? .
+
 
 Here the bold words and commas must appear literally in the text, but the parentheses are for grouping, the asterisk means _repetition of zero or more_, and the question mark means _optional._ NP is a variable standing for a noun phrase; Chapter 23 describes how to identify noun phrases; for now just assume that we know some words are nouns and other words (such as verbs) that we can reliably assume are not part of a simple noun phrase. This template matches the texts “diseases such as rabies affect your dog” and “supports network protocols such as DNS,” concluding that rabies is a disease and DNS is a network protocol. Similar templates can be constructed with the key words “including,” “especially,” and “or other.” Of course these templates will fail to match many relevant passages, like “Rabies is a disease.” That is intentional. The “NP is a NP” template does indeed sometimes denote a subcategory relation, but it often means something else, as in “There is a God” or “She is a little tired.” With a large corpus we can afford to be picky; to use only the high-precision templates. We’ll miss many statements of a subcategory relationship, but most likely we’ll find a paraphrase of the statement somewhere else in the corpus in a form we can use.
 
