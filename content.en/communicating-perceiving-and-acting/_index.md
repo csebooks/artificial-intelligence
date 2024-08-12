@@ -376,9 +376,13 @@ Here the bold words and commas must appear literally in the text, but the parent
 The _subcategory_ relation is so fundamental that is worthwhile to handcraft a few templates to help identify instances of it occurring in natural language text. But what about the thousands of other relations in the world? There aren’t enough AI grad students in the world to create and debug templates for all of them. Fortunately, it is possible to _learn_ templates from a few examples, then use the templates to learn more examples, from which more templates can be learned, and so on. In one of the first experiments of this kind, Brin (1999) started with a data set of just five examples:
 
 (“Isaac Asimov”, “The Robots of Dawn”) 
+
 (“David Brin”, “Startide Rising”) 
+
 (“James Gleick”, “Chaos—Making a New Science”) 
+
 (“Charles Dickens”, “Great Expectations”) 
+
 (“William Shakespeare”, “The Comedy of Errors”)
 
 Clearly these are examples of the author–title relation, but the learning system had no knowledge of authors or titles. The words in these examples were used in a search over a Web corpus, resulting in 199 matches. Each match is defined as a tuple of seven strings,
